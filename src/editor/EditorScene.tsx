@@ -1,60 +1,61 @@
 import * as THREE from 'three';
-import { Camera, Canvas, useThree } from '@react-three/fiber';
-import { Box, CameraControls, Grid, OrbitControls, PivotControls, Select, TransformControls } from '@react-three/drei';
-import React, { useRef, useState } from 'react';
+import { Canvas, ThreeEvent, useThree } from '@react-three/fiber';
+import { Box, CameraControls, Environment, Grid, PivotControls, Plane, Select, Sphere, TransformControls, useCursor} from '@react-three/drei';
+import React, { ReactNode, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useControls } from 'leva';
-import { CreateBox } from './PrimitiveCreator/CreateBox';
+import { useStores } from '../App';
+import { ITransformData } from '../store/interface';
+import { JSX } from 'react/jsx-runtime';
+import { AddBox, AddSphere } from './PrimitiveCreator/Primitives';
+import { button, useControls } from 'leva';
 
-
-// let boxes[] = undefined;
+let mode = 0;
+let space = 0;
 
 export const EditorScene = observer(() => {
-    const [showControls, setShowControls] = useState<boolean>(false)
-    const [selectedMeshID, selectMesh] = useState<number>(-1);
-    // const {enableGrid} = useControls({enableGrid: true})
+    
+    const [toggle, setToggle] = useState(true);
+    useControls(
+      {
+        [toggle ? "activated" : "disabled"]: button(() => alert("hello"), {
+          disabled: !toggle
+        })
+      },
+      [toggle]
+    );
+
+    const {controlsTarget, controlsMode, controlsSpace, setControlsMode, setControlSpace, boxes, pushBox, setControlsTarget} = useStores()
+    document.oncontextmenu = function (e) {
+        setControlSpace(++space >= 2 ? (space = 0) : space)
+    }
+
+    document.body.onkeyup = function(e) {
+        if(e.key == " "|| e.code == "Space" || e.keyCode == 32) 
+            setControlsMode(++mode >= 3 ? (mode = 0) : mode)
+    }
+
+
     return (
         <>
-        {/* <button onClick={boxes.add(CreateBox)}><p>aaa </p></button> */}
-        <Canvas camera={{position:[-2,2,0]}}>
-            
-            {/* {enableGrid && <Grid infiniteGrid />} */}
-            <ambientLight intensity={1.0} />
-            <directionalLight intensity={0.5} position={[0,2,0]} />
-            <Select onChange={(selected) => console.log(selected)} onChangePointerUp={(selected) => console.log(selected)}>
-                <RenderModel selectModel={(id) => {selectMesh(id)}} position={[1,0,1]}/>
-                <RenderModel selectModel={(id) => {selectMesh(id)}} position={[1,0,-1]}/>
-            </Select>
-                {selectedMeshID != -1 && <Controls meshID={selectedMeshID} />}
+            <div style={{position:'absolute' ,zIndex:2}}>
+            <button onClick={() => setToggle((f) => !f)}>Click me</button>
+                <AddBox />
+                <AddSphere />
+            </div>
+        <Canvas shadows camera={{position:[-2,2,0]}}>
+            <Grid infiniteGrid />
+            <hemisphereLight intensity={1.5} groundColor="red" />
+            {boxes.map((value) => value)}
+            {controlsTarget != -1 && <Controls targetID={controlsTarget} mode={controlsMode} space={controlsSpace} />}
             <CameraControls makeDefault />
-        </Canvas>        
+            <Environment preset="city" />
+        </Canvas>
         </>
     )
 })
 
-const Controls = (meshID: number) => {
-    const {scene} = useThree();
-    const refTransformControls = useRef<any>();
-    return (
-        <>
-            <TransformControls ref={refTransformControls} object={scene.getObjectById(meshID.meshID)} />
-            {/* {console.log((refTransformControls.current))} */}
-        </>
-    );
+const Controls:React.FC<ITransformData> = (data) => {
+    return <TransformControls object={useThree().scene.getObjectById(data.targetID)} mode={data.mode} space={data.space} />;
 }
-
-const RenderModel:React.FC<{selectModel: (id: number)  => void, position:[number,number,number]}> =({selectModel, position}) => {
-    const ref = useRef<THREE.Mesh>(null);
-    return(
-        <Box 
-        ref={ref}
-        position={position}
-        onClick={(e) => {e.stopPropagation(), selectModel(ref.current.id)}}
-        />
-    )
-}
-
-
-
 
 export default EditorScene
