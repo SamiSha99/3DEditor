@@ -13,12 +13,7 @@ let mode = 0;
 let space = 0;
 
 export const EditorScene = observer(() => {
-    
-    
     const {controlsTarget, controlsMode, controlsSpace, setControlsMode, setControlSpace, boxes, pushBox, setControlsTarget} = useStores()
-    document.oncontextmenu = function (e) {
-        setControlSpace(++space >= 2 ? (space = 0) : space)
-    }
 
     document.body.onkeyup = function(e) {
         if(e.key == " "|| e.code == "Space" || e.keyCode == 32) 
@@ -33,6 +28,7 @@ export const EditorScene = observer(() => {
                 <AddSphere />
                 <AddCylinder />
                 <AddPlane />
+                <button onClick={() => setControlSpace(++space >= 2 ? (space = 0) : space)}>{controlsSpace.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())}</button>
             </div>
         <Canvas shadows camera={{position:[-2,2,0]}}>
             {/* //<fog attach="fog" args={['#202020', 5, 20]} /> */}
