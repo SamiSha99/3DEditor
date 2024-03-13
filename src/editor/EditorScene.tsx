@@ -4,9 +4,8 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';
 import { ITransformData } from '../store/interface';
-import { AddCube, AddSphere, AddCylinder, AddPlane, Exporter } from './PrimitiveCreator/Primitives';
-import { GLTFExporter } from 'three/examples/jsm/Addons.js';
-import { Object3D } from 'three';
+import { AddCube, AddSphere, AddCylinder, AddPlane } from './PrimitiveCreator/Primitives';
+import { Exporter } from './Exporter/Exporters';
 
 let mode = 0;
 let space = 0;

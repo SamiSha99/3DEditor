@@ -13,7 +13,7 @@ export class AppStore {
     // Object3D ID
     @observable controlsTarget: number
     // The Object3D
-    @observable controlsObject3D: Object3D
+    @observable controlsObject3D: Object3D | Object3D[]
 
     @observable controlsMode: 'translate' | 'rotate' | 'scale' | undefined
     @observable controlsSpace: 'world' | 'local'
