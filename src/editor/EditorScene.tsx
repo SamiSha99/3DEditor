@@ -28,7 +28,7 @@ export const EditorScene = observer(() => {
             </div>
         <Canvas shadows camera={{position:[-2,2,0]}}>
             <Box material-color={"red"} scale={[0.1,0.01,0.1]} position={[0,0,0] } />
-            <Grid infiniteGrid side={2}/>
+            <Grid cellColor={"#2080ff"} infiniteGrid side={2}/>
             {sceneComponents.map((value) => value)}
             {controlsTarget != -1 && <Controls targetID={controlsTarget} mode={controlsMode} space={controlsSpace} />}
             <CameraControls makeDefault />
