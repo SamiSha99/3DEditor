@@ -1,6 +1,5 @@
-import { ReactNode, StrictMode } from 'react'
+import { ReactNode } from 'react'
 import './App.css'
-import { Editor } from './editor/Editor.tsx'
 import { EditorScene } from './editor/EditorScene.tsx'
 
 import { useContext,createContext } from 'react'
