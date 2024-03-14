@@ -37,16 +37,9 @@ export const ExporterUSDZ = () => {
     const doExport = () => {
         const exporter = new USDZExporter();
         const object = controlsObject3D;
-        (exporter.parse(object as Object3D)).then(res => {
-            console.log(res);
-            const arraybuffer = res.buffer.slice(res.byteOffset, res.byteLength + res.byteOffset); 
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.href = URL.createObjectURL(new Blob( [ arraybuffer ], { type: 'application/octet-stream' } ));
-            a.download = 'export.usdz';
-            a.click();
-            document.removeChild(a);
+
+        (exporter.parse(object as Object3D)).then(result => {
+            exportUSDZ(result);
         }).catch((error) => {
             console.error("FAILED TO EXTRACT USDZ!!!", error);
         });
@@ -55,23 +48,25 @@ export const ExporterUSDZ = () => {
 }
 
 function exportGLB(result: ArrayBuffer) {
-    const a = document.createElement( 'a' );
-    // workaround for firefox
-    a.style.display = 'none';
-    document.body.appendChild( a );
-    a.href = URL.createObjectURL( new Blob( [ result ], { type: 'application/octet-stream' } ) );
-    a.download = 'export.glb';
-    a.click();
-    document.removeChild(a);
+    save(new Blob([result], {type: 'application/octet-stream'}), 'export.glb');
 }
 
 function exportGLTF(result: any) {
     const json = JSON.stringify(result, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    save(new Blob([json], {type: 'application/json'}), "export.gltf");
+}
+
+function exportUSDZ(result: Uint8Array) {
+    const arraybuffer = result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
+    save(new Blob([arraybuffer], {type: 'application/octet-stream'}), "export.usdz");
+}
+
+function save(blob: Blob, fileName: string) {
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'export.gltf';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
     a.click();
-    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
 }
