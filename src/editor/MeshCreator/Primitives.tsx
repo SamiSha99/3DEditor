@@ -29,12 +29,13 @@ export const AddCube = () => {
 }
 
 export const AddSphere = () => {
-    const {setControlsTarget, pushPrimitive} = useStores()
+    const {setControlsTarget, pushPrimitive, sceneComponents} = useStores()
     const [hovered, setHovered] = useState(false)
 
     const createNewBox = () => {
         const newBox =
-                <Sphere 
+                <Sphere
+                key={sceneComponents.length}
                 material={new THREE.MeshStandardMaterial()}
                 position={[0, 0, 0]}
                 onClick={(e) => {
@@ -56,12 +57,13 @@ export const AddSphere = () => {
 }
 
 export const AddCylinder = () => {
-    const {setControlsTarget, pushPrimitive} = useStores()
+    const {setControlsTarget, pushPrimitive, sceneComponents} = useStores()
     const [hovered, setHovered] = useState(false)
 
     const createNewCylinder = () => {
         const newCylinder =
-                <Cylinder 
+                <Cylinder
+                key={sceneComponents.length}
                 material={new THREE.MeshStandardMaterial()}
                 position={[0, 0, 0]}
                 onClick={(e) => {
@@ -83,12 +85,13 @@ export const AddCylinder = () => {
 }
 
 export const AddPlane = () => {
-    const {setControlsTarget, pushPrimitive} = useStores()
+    const {setControlsTarget, pushPrimitive, sceneComponents} = useStores()
     const [hovered, setHovered] = useState(false)
 
     const createNewPlane = () => {
         const newPlane =
                 <Plane 
+                key={sceneComponents.length}
                 material={new THREE.MeshStandardMaterial()}
                 position={[0, 0, 0]}
                 onClick={(e) => {
