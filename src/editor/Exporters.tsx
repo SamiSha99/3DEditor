@@ -1,6 +1,5 @@
 import { GLTFExporter, USDZExporter } from "three/examples/jsm/Addons.js";
 import { useStores } from "../App";
-import { useThree } from "@react-three/fiber";
 import { Object3D } from "three";
 
 export const Exporter = () => {

@@ -1,9 +1,9 @@
 import { ReactNode } from 'react'
 import './App.css'
-import { EditorScene } from './editor/EditorScene.tsx'
 
 import { useContext,createContext } from 'react'
 import { AppStore } from './store/appStore.ts'
+import Editor from './editor/Editor.tsx'
 
 
 export const StoreContext = createContext<AppStore>({} as any)
@@ -24,8 +24,7 @@ function App() {
     return (
         <>
         <StoreProvider store={new AppStore()}>
-            {/* <Editor/>     */}
-            <EditorScene />
+            <Editor/>
         </StoreProvider>
         </>
     )

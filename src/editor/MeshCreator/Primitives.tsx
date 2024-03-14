@@ -2,8 +2,6 @@ import * as THREE from 'three';
 import { Box, Cylinder, Plane, Sphere, useCursor } from '@react-three/drei';
 import { useState } from 'react';
 import { useStores } from '../../App';
-import { GLTFExporter } from 'three/examples/jsm/Addons.js';
-
 
 export const AddCube = () => {
     const {setControlsTarget, pushPrimitive, sceneComponents} = useStores()
