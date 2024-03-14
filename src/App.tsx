@@ -13,9 +13,7 @@ type StoreComponent = React.FC<{store:any,children:ReactNode}>
 
 const StoreProvider:StoreComponent = ({store,children})=>{
     return (
-        <StoreContext.Provider value={store}>
-            {children}
-        </StoreContext.Provider>
+        <StoreContext.Provider value={store} children={children} />
     )
 }
 
