@@ -5,43 +5,38 @@ import {
     Plane as _Plane, 
     Sphere as _Sphere, 
     useCursor } from '@react-three/drei';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useStores } from '../../App';
 
-export const Box = () => {
-    const {setControlsTarget, pushPrimitive, sceneComponents} = useStores()
-    const [hovered, setHovered] = useState(false)
+
+
+export const PrimitiveList = () => {
+    return (
+        <>
+            <GenerateBox />
+            <GenerateSphere/>
+            <GenerateCylinder />
+            <GeneratePlane />
+        </>
+    )
+}
+
+export const GenerateBox = () => {
+    const {pushPrimitive} = useStores()
     const createNewBox = () => {
-        const newBox = <_Box 
-            key={sceneComponents.length}
-            material={new THREE.MeshStandardMaterial()}
-            onClick={(e) => {
-                e.stopPropagation()
-                setControlsTarget(e.object)
-            }}
-            onPointerMissed={(e) => {
-                e.stopPropagation()
-            }}
-            onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
-            onPointerOut={() => (setHovered(false))}
-            />
-        pushPrimitive(newBox)
+        const box = <Box />
+        pushPrimitive(box)
     }
-    
-    // useCursor(hovered)
-    
     return (<button onClick={createNewBox}>Cube</button>)
 }
 
-export const Sphere = () => {
-    const {setControlsTarget, pushPrimitive, sceneComponents} = useStores()
+const Box:React.FC<{}> = () => {
     const [hovered, setHovered] = useState(false)
-
-    const createNewSphere = () => {
-        const newSphere = <_Sphere
-            key={sceneComponents.length}
+    const {setControlsTarget} = useStores()
+    useCursor(hovered)
+    return(
+        <_Box
             material={new THREE.MeshStandardMaterial()}
-            position={[0, 0, 0]}
             onClick={(e) => {
                 e.stopPropagation()
                 setControlsTarget(e.object)
@@ -51,49 +46,26 @@ export const Sphere = () => {
             }}
             onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
             onPointerOut={() => (setHovered(false))}
-            />   
-        pushPrimitive(newSphere)
-    }
-    useCursor(hovered)
-    
-    return (<button onClick={createNewSphere}>Sphere</button>)
+        />
+    )
 }
 
-export const Cylinder = () => {
-    const {setControlsTarget, pushPrimitive, sceneComponents} = useStores()
-    const [hovered, setHovered] = useState(false)
-
-    const createNewCylinder = () => {
-        const newCylinder = <_Cylinder
-            key={sceneComponents.length}
-            material={new THREE.MeshStandardMaterial()}
-            position={[0, 0, 0]}
-            onClick={(e) => {
-                e.stopPropagation()
-                setControlsTarget(e.object)
-            }}
-            onPointerMissed={(e) => {
-                e.stopPropagation()
-            }}
-            onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
-            onPointerOut={() => (setHovered(false))}
-            />    
-        pushPrimitive(newCylinder)
+export const GenerateSphere = () => {
+    const {pushPrimitive} = useStores()
+    const newSphere = () => {
+        const sphere = <Sphere />
+        pushPrimitive(sphere)
     }
-    useCursor(hovered)
-    
-    return (<button onClick={createNewCylinder}>Cylinder</button>)
+    return (<button onClick={newSphere}>Sphere</button>)
 }
 
-export const Plane = () => {
-    const {setControlsTarget, pushPrimitive, sceneComponents} = useStores()
+const Sphere:React.FC<{}> = () => {
     const [hovered, setHovered] = useState(false)
-
-    const createNewPlane = () => {
-        const newPlane = <_Plane 
-            key={sceneComponents.length}
+    const {setControlsTarget} = useStores()
+    useCursor(hovered)
+    return(
+        <_Sphere
             material={new THREE.MeshStandardMaterial()}
-            position={[0, 0, 0]}
             onClick={(e) => {
                 e.stopPropagation()
                 setControlsTarget(e.object)
@@ -103,10 +75,65 @@ export const Plane = () => {
             }}
             onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
             onPointerOut={() => (setHovered(false))}
-            />    
-        pushPrimitive(newPlane)
+        />
+    )
+}
+
+export const GenerateCylinder = () => {
+    const {pushPrimitive} = useStores()
+    const newCylinder = () => {
+        const cylinder = <Cylinder />
+        pushPrimitive(cylinder)
     }
+    return (<button onClick={newCylinder}>Cylinder</button>)
+}
+
+
+const Cylinder:React.FC<{}> = () => {
+    const [hovered, setHovered] = useState(false)
+    const {setControlsTarget} = useStores()
     useCursor(hovered)
-    
-    return (<button onClick={createNewPlane}>Plane</button>)
+    return(
+        <_Cylinder
+            material={new THREE.MeshStandardMaterial()}
+            onClick={(e) => {
+                e.stopPropagation()
+                setControlsTarget(e.object)
+            }}
+            onPointerMissed={(e) => {
+                e.stopPropagation()
+            }}
+            onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
+            onPointerOut={() => (setHovered(false))}
+        />
+    )
+}
+
+export const GeneratePlane = () => {
+    const {pushPrimitive} = useStores()
+    const newPlane = () => {
+        const plane = <Plane />
+        pushPrimitive(plane)
+    }
+    return (<button onClick={newPlane}>Plane</button>)
+}
+
+const Plane:React.FC<{}> = () => {
+    const [hovered, setHovered] = useState(false)
+    const {setControlsTarget} = useStores()
+    useCursor(hovered)
+    return(
+        <_Plane
+            material={new THREE.MeshStandardMaterial()}
+            onClick={(e) => {
+                e.stopPropagation()
+                setControlsTarget(e.object)
+            }}
+            onPointerMissed={(e) => {
+                e.stopPropagation()
+            }}
+            onPointerOver={(e) => (e.stopPropagation(), setHovered(true))}
+            onPointerOut={() => (setHovered(false))}
+        />
+    )
 }

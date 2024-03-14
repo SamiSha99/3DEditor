@@ -1,12 +1,13 @@
 import { Canvas, useThree } from '@react-three/fiber';
-import { Box, CameraControls, Environment, Grid, TransformControls } from '@react-three/drei';
+import { Box, CameraControls, Environment, Gltf, Grid, Outlines, TransformControls } from '@react-three/drei';
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';
 import { ITransformData } from '../store/interface';
+import * as THREE from 'three';
 
 export const EditorScene = observer(() => {
-    const {controlsTarget, controlsMode, controlsSpace, sceneComponents} = useStores()
+    const {controlsTarget, controlsObject3D, controlsMode, controlsSpace, sceneComponents} = useStores()
     return (
         <Canvas shadows camera={{position:[-2.5,2.5,0]}}>
             <Box material-color={"red"} scale={[0.1,0.01,0.1]} position={[0,0,0] } />
@@ -15,6 +16,7 @@ export const EditorScene = observer(() => {
             {controlsTarget != -1 && <Controls targetID={controlsTarget} mode={controlsMode} space={controlsSpace} />}
             <CameraControls makeDefault />
             <Environment preset="city" />
+            {/* <Gltf animations={[]} /> */}
         </Canvas>
     )
 })

@@ -7,6 +7,9 @@ const transformControlsSpaces = ['world', 'local']
 
 export class AppStore {
 
+    // When instancing meshes, increment this, thankfully this is all locally, important specifically for "key={}" parameter
+    meshInstanceIncremental: number = 0;
+
     // All components in the scene
     @observable sceneComponents: Array<ReactNode> = []
 
@@ -24,6 +27,7 @@ export class AppStore {
         this.controlsMode = 'translate'
         this.controlsSpace = 'world'
         this.controlsObject3D = new Object3D()
+        this.meshInstanceIncremental = 0;
     }
 
     @action.bound setControlsTarget = (object: Object3D) => {
@@ -40,4 +44,8 @@ export class AppStore {
     @action.bound setControlSpace = (mode: number) => {this.controlsSpace = transformControlsSpaces[mode] as 'world' | 'local'}
     @action.bound setControlSpaceByName = (mode: string) => {this.controlsSpace = mode as 'world' | 'local'}
     @action.bound pushPrimitive = (box: ReactNode) => (this.sceneComponents.push(box))
+
+    incrementMeshKey() {
+        return this.meshInstanceIncremental++;
+    }
 }

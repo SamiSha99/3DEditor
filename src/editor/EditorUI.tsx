@@ -1,4 +1,4 @@
-import { Box, Plane, Cylinder, Sphere } from './MeshCreator/Primitives'
+import { PrimitiveList } from './MeshCreator/Primitives'
 import { Exporter, ExporterUSDZ } from './Exporters';
 import { useStores } from '../App';
 import { observer } from 'mobx-react-lite';
@@ -14,10 +14,7 @@ export const EditorUI = observer(() => {
     }
     return (
         <div style={{position:'absolute', zIndex:2}}>
-            <Box />
-            <Sphere />
-            <Cylinder />
-            <Plane />
+            <PrimitiveList />
             <button onClick={() => setControlSpace(++space >= 2 ? (space = 0) : space)}>{controlsSpace.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())}</button>
             <Exporter />
             <ExporterUSDZ />
