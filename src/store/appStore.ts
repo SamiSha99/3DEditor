@@ -16,7 +16,7 @@ export class AppStore {
     // Object3D ID
     @observable controlsTarget: number
     // The Object3D
-    @observable controlsObject3D: Object3D | Object3D[]
+    @observable controlsObject3D: Object3D | Object3D[] | null
 
     @observable controlsMode: 'translate' | 'rotate' | 'scale' | undefined
     @observable controlsSpace: 'world' | 'local'
@@ -26,12 +26,12 @@ export class AppStore {
         this.controlsTarget = -1
         this.controlsMode = 'translate'
         this.controlsSpace = 'world'
-        this.controlsObject3D = new Object3D()
+        this.controlsObject3D = null
         this.meshInstanceIncremental = 0;
     }
 
     @action.bound setControlsTarget = (object: Object3D) => {
-        console.log(object,object.name,object.id);
+        // console.log(object,object.name,object.id);
         this.controlsObject3D = object
         this.controlsTarget = object.id
     }
@@ -43,8 +43,9 @@ export class AppStore {
     // 0 = world | 1 = local
     @action.bound setControlSpace = (mode: number) => {this.controlsSpace = transformControlsSpaces[mode] as 'world' | 'local'}
     @action.bound setControlSpaceByName = (mode: string) => {this.controlsSpace = mode as 'world' | 'local'}
-    @action.bound pushPrimitive = (box: ReactNode) => (this.sceneComponents.push(box))
+    @action.bound pushPrimitive = (primitive: ReactNode) => (this.sceneComponents.push(primitive))
 
+    // to-do better implementation? 
     incrementMeshKey() {
         return this.meshInstanceIncremental++;
     }
