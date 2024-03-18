@@ -1,5 +1,6 @@
 import { PrimitiveList } from './MeshCreator/Primitives'
 import { Exporter, ExporterUSDZ } from './Exporters';
+import { Importer } from './Importer';
 import { useStores } from '../App';
 import { observer } from 'mobx-react-lite';
 let mode = 0;
@@ -18,6 +19,7 @@ export const EditorUI = observer(() => {
             <button onClick={() => setControlSpace(++space >= 2 ? (space = 0) : space)}>{controlsSpace.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())}</button>
             <Exporter />
             <ExporterUSDZ />
+            <Importer />
         </div>
     )
 })

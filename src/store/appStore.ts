@@ -43,7 +43,7 @@ export class AppStore {
     // 0 = world | 1 = local
     @action.bound setControlSpace = (mode: number) => {this.controlsSpace = transformControlsSpaces[mode] as 'world' | 'local'}
     @action.bound setControlSpaceByName = (mode: string) => {this.controlsSpace = mode as 'world' | 'local'}
-    @action.bound pushPrimitive = (primitive: ReactNode) => (this.sceneComponents.push(primitive))
+    @action.bound pushPrimitive = (primitive: ReactNode) => (this.sceneComponents.push(primitive), console.log(primitive));
 
     // to-do better implementation? 
     incrementMeshKey() {

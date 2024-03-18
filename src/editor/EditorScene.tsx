@@ -1,5 +1,5 @@
 import { Canvas, useThree } from '@react-three/fiber';
-import { Box, CameraControls, Environment, Gltf, Grid, Outlines, TransformControls } from '@react-three/drei';
+import { Box, CameraControls, Environment, Grid, TransformControls } from '@react-three/drei';
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';

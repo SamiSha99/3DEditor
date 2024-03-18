@@ -8,6 +8,9 @@ export const Exporter = () => {
     const doExport = (binary : boolean = true) => {
         const exporter = new GLTFExporter();
         const object = controlsObject3D;
+        
+        if(!object) return; // null!!!!
+        
         exporter.parse(
             object,
             (result: { [key: string]: any; } | ArrayBuffer) => {
