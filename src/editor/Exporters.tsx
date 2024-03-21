@@ -1,57 +1,44 @@
 import { GLTFExporter, USDZExporter } from "three/examples/jsm/Addons.js";
-import { useStores } from "../App";
-import { Object3D } from "three";
-import { observer } from "mobx-react-lite";
+import { Object3D, Object3DEventMap } from "three";
 
-export const Exporter = observer(() => {
-    const {controlsObject3D, controlsTarget} = useStores();
+export function doExport() {
+   
+}
 
-    const doExport = (binary : boolean = true) => {
-        const exporter = new GLTFExporter();
-        console.log(controlsObject3D, controlsTarget)
-        const object = controlsObject3D;
+export function doExportGLTF(exportTarget: Object3D<Object3DEventMap> | Object3D<Object3DEventMap>[] | null, binary: boolean = false) {
+    const exporter = new GLTFExporter();
+    const object = exportTarget;
         
-        if(!object) return;
-        console.log(object);
+    if(!object) return;
 
+    exporter.parse(
+        object,
+        (result: { [key: string]: any; } | ArrayBuffer) => {
+            
+            if(binary && result instanceof ArrayBuffer)
+                exportGLB(result);
+            else
+                exportGLTF(result);
+            
+        },
+        function (error) {
+            console.error('Failed to export content!\n', error);
+    
+        },
+        {binary: binary}
+    );
+}
 
-        exporter.parse(
-            object,
-            (result: { [key: string]: any; } | ArrayBuffer) => {
-                
-                if(binary && result instanceof ArrayBuffer)
-                   exportGLB(result);
-                else
-                    exportGLTF(result);
-                
-            },
-            function (error) {
-                console.error('Failed to export content!\n', error);
-        
-            },
-            {binary: binary}
-        );
-    }
-    return <button onClick={() => doExport(false)}>Exporter</button>
-})
+export function doExportUSDZ(exportTarget: Object3D<Object3DEventMap> | Object3D<Object3DEventMap>[] | null) {
+    const exporter = new USDZExporter();
+    
+    if(!exportTarget) return console.warn("Export type null!");
 
-// IMPORTANT NOTE!!! (For future self (Me! Sami!))
-// USD/Z types only export one object, this can be literally the mesh or the scene
-// Find a solution to export multiple selected objects?
-export const ExporterUSDZ = () => {
-    const {controlsObject3D} = useStores();
-
-    const doExport = () => {
-        const exporter = new USDZExporter();
-        const object = controlsObject3D;
-
-        (exporter.parse(object as Object3D)).then(result => {
-            exportUSDZ(result);
-        }).catch((error) => {
-            console.error("FAILED TO EXTRACT USDZ!!!", error);
-        });
-    }
-    return <button onClick={() => doExport()}>Exporter USDZ</button>
+    (exporter.parse(exportTarget as Object3D)).then(result => {
+        exportUSDZ(result);
+    }).catch((error) => {
+        console.error("FAILED TO EXTRACT USDZ!!!", error);
+    });
 }
 
 function exportGLB(result: ArrayBuffer) {

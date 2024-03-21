@@ -1,22 +1,13 @@
 import { GLTFLoader, USDZLoader } from "three/examples/jsm/Addons.js";
-import { useStores } from "../App";
 import { Model } from "./MeshCreator/Models";
+import { ReactNode } from "react";
+
+type PushComponentToSceneAction = (node: ReactNode) => void;
 
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; // Extension of the file with '.'
 
-export const Importer = () => {
-    const {pushComponentToScene} = useStores();
-
-    const onClick = () => {
-        const input = document.createElement('input');
-        input.type = "file";
-        input.accept = ".gltf, .glb, .usdz";
-        input.style.display = "none";
-        input.onchange = (e => handleEvent(e as any));
-        input.click();
-    }
-
-    const handleEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
+export function doImport(pushComponentToScene: PushComponentToSceneAction) {
+    const handleEvent = (e: React.ChangeEvent<HTMLInputElement>, pushComponentToScene: PushComponentToSceneAction) => {
         const files = e.target.files as FileList;
         const buffer = files[0].arrayBuffer().then((value) => {
             const type = files[0].name.match(EXTENSION_REGEX)?.[0];
@@ -41,5 +32,13 @@ export const Importer = () => {
         })
     }
 
-    return <button onClick={() => onClick()}>Import</button>
+    const input = document.createElement('input');
+    input.type = "file";
+    input.accept = ".gltf, .glb, .usdz";
+    input.style.display = "none";
+    input.onchange = (e => {
+        handleEvent(e as any, pushComponentToScene)
+        // document.body.removeChild(input)
+    });
+    input.click();
 }

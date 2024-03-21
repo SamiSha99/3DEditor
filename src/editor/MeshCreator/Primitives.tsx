@@ -5,43 +5,13 @@ import {
     Plane as _Plane, 
     Sphere as _Sphere, 
     useCursor } from '@react-three/drei';
-import { useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { useStores } from '../../App';
 
-export const PrimitiveList = () => {
-    return (
-        <>
-            <GenerateBox />
-            <GenerateSphere />
-            <GenerateCylinder />
-            <GeneratePlane />
-        </>
-    )
-}
-
-const GenerateBox = () => {
-    const {pushComponentToScene} = useStores()
-    const createNewBox = () => pushComponentToScene(<Box />)
-    return (<button onClick={createNewBox}>Cube</button>)
-}
-
-const GenerateSphere = () => {
-    const {pushComponentToScene} = useStores()
-    const newSphere = () => pushComponentToScene(<Sphere />)
-    return (<button onClick={newSphere}>Sphere</button>)
-}
-
-const GenerateCylinder = () => {
-    const {pushComponentToScene} = useStores()
-    const newCylinder = () => pushComponentToScene(<Cylinder />)
-    return (<button onClick={newCylinder}>Cylinder</button>)
-}
-
-const GeneratePlane = () => {
-    const {pushComponentToScene} = useStores()
-    const newPlane = () => pushComponentToScene(<Plane />)
-    return (<button onClick={newPlane}>Plane</button>)
-}
+export function GenerateBox(pushComponentToScene: (node: ReactNode) => void) {pushComponentToScene(<Box />)}
+export function GenerateSphere(pushComponentToScene: (node: ReactNode) => void) {pushComponentToScene(<Sphere />)}
+export function GenerateCylinder(pushComponentToScene: (node: ReactNode) => void) {pushComponentToScene(<Cylinder />)}
+export function GeneratePlane(pushComponentToScene: (node: ReactNode) => void) {pushComponentToScene(<Plane />)}
 
 const Box:React.FC<{}> = () => {
     const [hovered, setHovered] = useState(false)
