@@ -4,10 +4,9 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';
 import { ITransformData } from '../store/interface';
-import * as THREE from 'three';
 
 export const EditorScene = observer(() => {
-    const {controlsTarget, controlsObject3D, controlsMode, controlsSpace, sceneComponents} = useStores()
+    const {controlsTarget, controlsMode, controlsSpace, sceneComponents} = useStores()
     return (
         <Canvas shadows camera={{position:[-2.5,2.5,0]}}>
             <Box material-color={"red"} scale={[0.1,0.01,0.1]} position={[0,0,0] } />
@@ -16,7 +15,6 @@ export const EditorScene = observer(() => {
             {controlsTarget != -1 && <Controls targetID={controlsTarget} mode={controlsMode} space={controlsSpace} />}
             <CameraControls makeDefault />
             <Environment preset="city" />
-            {/* <Gltf animations={[]} /> */}
         </Canvas>
     )
 })
@@ -24,6 +22,7 @@ export const EditorScene = observer(() => {
 
 const Controls:React.FC<ITransformData> = (data) => {
     // console.log(useThree().scene.getObjectById(data.targetID));
+    console.log(data);
     return <TransformControls object={useThree().scene.getObjectById(data.targetID)} mode={data.mode} space={data.space} />;
 }
 

@@ -1,9 +1,12 @@
 import { makeObservable, observable, action } from "mobx";
 import { ReactNode } from "react";
-import { Object3D } from "three";
+import { Object3D, Scene } from "three";
 
 const transformControlsModes = ['translate', 'rotate', 'scale', undefined]
 const transformControlsSpaces = ['world', 'local']
+
+type TransformModes = 'translate' | 'rotate' | 'scale' | undefined
+type TransformSpaces = 'world' | 'local'
 
 export class AppStore {
 
@@ -18,32 +21,51 @@ export class AppStore {
     // The Object3D
     @observable controlsObject3D: Object3D | Object3D[] | null
 
-    @observable controlsMode: 'translate' | 'rotate' | 'scale' | undefined
-    @observable controlsSpace: 'world' | 'local'
+    @observable controlsMode: TransformModes
+    @observable controlsSpace: TransformSpaces
     
     constructor(){
         makeObservable(this)
         this.controlsTarget = -1
         this.controlsMode = 'translate'
         this.controlsSpace = 'world'
-        this.controlsObject3D = null
+        this.controlsObject3D = null;
         this.meshInstanceIncremental = 0;
     }
 
     @action.bound setControlsTarget = (object: Object3D) => {
-        // console.log(object,object.name,object.id);
-        this.controlsObject3D = object
+        
+        // Selecting groups > the object itself for now
+        while(object.parent && !(object.parent instanceof Scene)) {
+            console.log(object.parent);
+            object = object.parent;
+        }
+        this.controlsObject3D = object;
         this.controlsTarget = object.id
     }
 
     // 0 = translate | 1 = rotate | 2 = scale
-    @action.bound setControlsMode = (mode: number) => {this.controlsMode = transformControlsModes[mode] as 'translate' | 'rotate' | 'scale' | undefined}
-    @action.bound setControlsModeByName = (mode: string) => {this.controlsMode = mode as 'translate' | 'rotate' | 'scale' | undefined}
+    @action.bound setControlsMode = (mode: number) => {
+        this.controlsMode = transformControlsModes[mode] as TransformModes
+    }
+    @action.bound setControlsModeByName = (mode: string) => {
+        this.controlsMode = mode as TransformModes
+    }
     
     // 0 = world | 1 = local
-    @action.bound setControlSpace = (mode: number) => {this.controlsSpace = transformControlsSpaces[mode] as 'world' | 'local'}
-    @action.bound setControlSpaceByName = (mode: string) => {this.controlsSpace = mode as 'world' | 'local'}
-    @action.bound pushPrimitive = (primitive: ReactNode) => (this.sceneComponents.push(primitive), console.log(primitive));
+    @action.bound setControlSpace = (mode: number) => {
+        this.controlsSpace = transformControlsSpaces[mode] as TransformSpaces
+    }
+
+    @action.bound setControlSpaceByName = (mode: string) => {
+        this.controlsSpace = mode as TransformSpaces
+    }
+
+    @action.bound pushComponentToScene = (node: ReactNode) => {
+        this.sceneComponents.push(node);
+        
+        console.log(node);
+    };
 
     // to-do better implementation? 
     incrementMeshKey() {

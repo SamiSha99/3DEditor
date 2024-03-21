@@ -20,26 +20,26 @@ export const PrimitiveList = () => {
 }
 
 const GenerateBox = () => {
-    const {pushPrimitive} = useStores()
-    const createNewBox = () => pushPrimitive(<Box />)
+    const {pushComponentToScene} = useStores()
+    const createNewBox = () => pushComponentToScene(<Box />)
     return (<button onClick={createNewBox}>Cube</button>)
 }
 
 const GenerateSphere = () => {
-    const {pushPrimitive} = useStores()
-    const newSphere = () => pushPrimitive(<Sphere />)
+    const {pushComponentToScene} = useStores()
+    const newSphere = () => pushComponentToScene(<Sphere />)
     return (<button onClick={newSphere}>Sphere</button>)
 }
 
 const GenerateCylinder = () => {
-    const {pushPrimitive} = useStores()
-    const newCylinder = () => pushPrimitive(<Cylinder />)
+    const {pushComponentToScene} = useStores()
+    const newCylinder = () => pushComponentToScene(<Cylinder />)
     return (<button onClick={newCylinder}>Cylinder</button>)
 }
 
 const GeneratePlane = () => {
-    const {pushPrimitive} = useStores()
-    const newPlane = () => pushPrimitive(<Plane />)
+    const {pushComponentToScene} = useStores()
+    const newPlane = () => pushComponentToScene(<Plane />)
     return (<button onClick={newPlane}>Plane</button>)
 }
 

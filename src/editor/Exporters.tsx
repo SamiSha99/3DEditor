@@ -1,16 +1,20 @@
 import { GLTFExporter, USDZExporter } from "three/examples/jsm/Addons.js";
 import { useStores } from "../App";
 import { Object3D } from "three";
+import { observer } from "mobx-react-lite";
 
-export const Exporter = () => {
-    const {controlsObject3D} = useStores();
+export const Exporter = observer(() => {
+    const {controlsObject3D, controlsTarget} = useStores();
 
     const doExport = (binary : boolean = true) => {
         const exporter = new GLTFExporter();
+        console.log(controlsObject3D, controlsTarget)
         const object = controlsObject3D;
         
-        if(!object) return; // null!!!!
-        
+        if(!object) return;
+        console.log(object);
+
+
         exporter.parse(
             object,
             (result: { [key: string]: any; } | ArrayBuffer) => {
@@ -22,14 +26,14 @@ export const Exporter = () => {
                 
             },
             function (error) {
-                console.log('Failed to export content!\n', error);
+                console.error('Failed to export content!\n', error);
         
             },
             {binary: binary}
         );
     }
     return <button onClick={() => doExport(false)}>Exporter</button>
-}
+})
 
 // IMPORTANT NOTE!!! (For future self (Me! Sami!))
 // USD/Z types only export one object, this can be literally the mesh or the scene
