@@ -61,9 +61,9 @@ export class AppStore {
         this.controlsSpace = mode as TransformSpaces
     }
 
+    // When a new component is made, push it to the scene
     @action.bound pushComponentToScene = (node: ReactNode) => {
         this.sceneComponents.push(node);
-        
         console.log(node);
     };
 
