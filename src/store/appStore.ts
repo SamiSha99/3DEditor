@@ -18,6 +18,8 @@ export class AppStore {
 
     // Object3D ID
     @observable controlsTarget: number
+    
+    @observable scene : Scene = new Scene();
     // The Object3D
     @observable controlsObject3D: Object3D | Object3D[] | null
 
@@ -64,7 +66,6 @@ export class AppStore {
     // When a new component is made, push it to the scene
     @action.bound pushComponentToScene = (node: ReactNode) => {
         this.sceneComponents.push(node);
-        console.log(node);
     };
 
     // to-do better implementation? 

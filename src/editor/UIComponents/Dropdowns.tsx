@@ -1,18 +1,19 @@
 import { ExportOutlined, ImportOutlined } from "@ant-design/icons";
-import { MenuProps, Dropdown, Button, message } from "antd";
+import { Dropdown, Button, message } from "antd";
 import { doExportGLTF, doExportUSDZ } from "../Exporters";
 import { useStores } from "../../App";
 import { doImport } from "../Importer";
 import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
+import { Object3D } from "three";
 
 export const FileDropDown = () => {
-    const {controlsObject3D, pushComponentToScene} = useStores();
+    const {controlsObject3D, sceneComponents, scene, pushComponentToScene} = useStores();
     return(
         <Dropdown
-            children={<Button>File</Button>}
+            children={<Button children={"File"} />}
             menu={{
             items: [{
-                label: 'Import',
+                label: 'Import Scene',
                 key: '1',
                 icon: <ImportOutlined />,
                 onClick: () => {
@@ -20,17 +21,30 @@ export const FileDropDown = () => {
                 }
             },
             {
-                label: 'Export',
+                label: 'Export Scene',
                 key: '2',
                 icon: <ExportOutlined />,
                 // to-do better implemetation for gltf/glb instead of a bool?
-                onClick: () => {doExportGLTF(controlsObject3D, false)}
+                onClick: () => {
+                    const sceneClone = scene.clone();
+                    const editorHelpers = sceneClone.getObjectByName('EDITOR_HELPER_DO_NOT_MODIFY');
+                    console.log(editorHelpers);
+                    if(editorHelpers)
+                        sceneClone.remove(editorHelpers);
+                    doExportGLTF(sceneClone, false)
+                }
             },
             {
-                label: 'Export USDZ',
+                label: 'Export Scene (USDZ)',
                 key: '3',
                 icon: <ExportOutlined />,
-                onClick: () => {doExportUSDZ(controlsObject3D)}
+                onClick: () => {
+                    const sceneClone = scene.clone();
+                    const editorHelpers = sceneClone.getObjectByName('EDITOR_HELPER_DO_NOT_MODIFY');
+                    if(editorHelpers)
+                        sceneClone.remove(editorHelpers);
+                    doExportUSDZ(sceneClone)
+                }
             }]
         }}/>
     )
@@ -41,7 +55,7 @@ export const CreateDropDown = () => {
 
     return(
         <Dropdown 
-            children={<Button>Create</Button>} 
+            children={<Button children={"Create"} />} 
             menu={{
                 items: [{
                     label: 'Cube',

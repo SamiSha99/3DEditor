@@ -16,9 +16,11 @@ export function GeneratePlane(pushComponentToScene: (node: ReactNode) => void) {
 const Box:React.FC<{}> = () => {
     const [hovered, setHovered] = useState(false)
     const {setControlsTarget} = useStores()
+    const ref = useRef<THREE.Mesh>(null!);
     useCursor(hovered)
     return(
         <_Box
+            ref={ref}
             material={new THREE.MeshStandardMaterial()}
             onClick={(e) => {e.stopPropagation(), setControlsTarget(e.object)}}
             onPointerMissed={(e) => {e.stopPropagation()}}

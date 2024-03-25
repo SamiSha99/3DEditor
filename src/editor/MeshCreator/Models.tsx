@@ -7,7 +7,7 @@ import { ThreeEvent } from "@react-three/fiber"
 export const Model:React.FC<{scene: THREE.Group<THREE.Object3DEventMap>}> = ({scene}) => {
     const [hovered, setHovered] = useState(false)
     const {setControlsTarget} = useStores()
-    const ref = useRef(null!);
+    const ref = useRef<THREE.Scene>(null!);
     
     return (
         <primitive 
