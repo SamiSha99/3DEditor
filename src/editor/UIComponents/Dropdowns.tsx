@@ -4,10 +4,9 @@ import { doExportGLTF, doExportUSDZ } from "../Exporters";
 import { useStores } from "../../App";
 import { doImport } from "../Importer";
 import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
-import { Object3D } from "three";
 
 export const FileDropDown = () => {
-    const {controlsObject3D, sceneComponents, scene, pushComponentToScene} = useStores();
+    const {scene, pushComponentToScene} = useStores();
     return(
         <Dropdown
             children={<Button children={"File"} />}
@@ -28,6 +27,7 @@ export const FileDropDown = () => {
                 onClick: () => {
                     const sceneClone = scene.clone();
                     const editorHelpers = sceneClone.getObjectByName('EDITOR_HELPER_DO_NOT_MODIFY');
+                    document.gete
                     console.log(editorHelpers);
                     if(editorHelpers)
                         sceneClone.remove(editorHelpers);
