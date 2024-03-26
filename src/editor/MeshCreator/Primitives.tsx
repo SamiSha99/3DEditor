@@ -1,3 +1,5 @@
+//to-do rework this! Maybe we can reference Object3Ds into the app store and then pass them as a clickable primitive FC via object={} argument!
+
 import * as THREE from 'three';
 import { 
     Box as _Box, 
@@ -7,6 +9,7 @@ import {
     useCursor } from '@react-three/drei';
 import { ReactNode, useRef, useState } from 'react';
 import { useStores } from '../../App';
+
 
 export function GenerateBox(pushComponentToScene: (node: ReactNode) => void) {pushComponentToScene(<Box />)}
 export function GenerateSphere(pushComponentToScene: (node: ReactNode) => void) {pushComponentToScene(<Sphere />)}
