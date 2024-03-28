@@ -1,5 +1,3 @@
-//to-do rework this! Maybe we can reference Object3Ds into the app store and then pass them as a clickable primitive FC via object={} argument!
-
 import * as THREE from 'three';
 import { 
     Box as _Box, 

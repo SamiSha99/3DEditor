@@ -1,6 +1,6 @@
 import { useStores } from "../../App"
 import * as THREE from 'three'
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ThreeEvent } from "@react-three/fiber"
 
 export class EditorObject {
@@ -20,6 +20,10 @@ export const EditorObjectNode:React.FC<{component: THREE.Object3D}> = ({componen
     const [hovered, setHovered] = useState(false);
     const {setControlsTarget} = useStores();
     const ref = useRef(null!);
+
+    useEffect(() => {
+        // make it do stuff
+    }, [])
 
     // [verify!] primitive seems rather dangerous considering its a manual dispose, better solution for this?
     // does it auto dispose? needs testing!

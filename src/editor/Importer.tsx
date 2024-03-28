@@ -1,6 +1,4 @@
 import { GLTFLoader, USDZLoader } from "three/examples/jsm/Addons.js";
-import { Model } from "./MeshCreator/Models";
-import { ReactNode } from "react";
 import { EditorObject } from "./Source/Object";
 
 type PushComponentToSceneAction = (node: EditorObject) => void;
