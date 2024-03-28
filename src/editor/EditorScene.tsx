@@ -6,7 +6,7 @@ import { useStores } from '../App';
 import { ITransformData } from '../store/interface';
 
 export const EditorScene = observer(() => {
-    const {sceneComponents, scene, controlsTarget, controlsMode, controlsSpace} = useStores()
+    const {objects, scene, controlsTarget, controlsMode, controlsSpace} = useStores()
 
     return (
         <Canvas scene={scene} shadows camera={{position:[-2.5,2.5,0]}}>
@@ -16,7 +16,7 @@ export const EditorScene = observer(() => {
                 {controlsTarget != -1 && <Controls targetID={controlsTarget} mode={controlsMode} space={controlsSpace} />}
             </group>
             <CameraControls makeDefault />
-            {sceneComponents.map((value) => value)}
+            {objects.map((value) => value.render())}
             <Environment preset="city" />
         </Canvas>
     )

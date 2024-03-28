@@ -27,7 +27,6 @@ export const FileDropDown = () => {
                 onClick: () => {
                     const sceneClone = scene.clone();
                     const editorHelpers = sceneClone.getObjectByName('EDITOR_HELPER_DO_NOT_MODIFY');
-                    document.gete
                     console.log(editorHelpers);
                     if(editorHelpers)
                         sceneClone.remove(editorHelpers);

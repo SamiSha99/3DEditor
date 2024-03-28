@@ -1,20 +1,18 @@
 import { makeObservable, observable, action } from "mobx";
 import { ReactNode } from "react";
 import { Object3D, Scene } from "three";
-
-const transformControlsModes = ['translate', 'rotate', 'scale', undefined]
-const transformControlsSpaces = ['world', 'local']
-
-type TransformModes = 'translate' | 'rotate' | 'scale' | undefined
-type TransformSpaces = 'world' | 'local'
+import * as TYPE from "./type";
+import { EditorObject } from "../editor/Source/Object";
 
 export class AppStore {
 
     // When instancing meshes, increment this, thankfully this is all locally, important specifically for "key={}" parameter
     meshInstanceIncremental: number = 0;
 
-    // All components in the scene
+    // All components in the scene, this is bad please replace!!
     @observable sceneComponents: Array<ReactNode> = []
+    // All objects in the scene including their react node renderer
+    @observable objects: Array<EditorObject> = []
 
     // Object3D ID
     @observable controlsTarget: number
@@ -23,8 +21,8 @@ export class AppStore {
     // The Object3D
     @observable controlsObject3D: Object3D | Object3D[] | null
 
-    @observable controlsMode: TransformModes
-    @observable controlsSpace: TransformSpaces
+    @observable controlsMode: TYPE.TransformModes
+    @observable controlsSpace: TYPE.TransformSpaces
     
     constructor(){
         makeObservable(this)
@@ -37,6 +35,7 @@ export class AppStore {
 
     @action.bound setControlsTarget = (object: Object3D) => {
         
+        console.log(this.controlsTarget);
         // Selecting groups > the object itself for now
         while(object.parent && !(object.parent instanceof Scene)) {
             console.log(object.parent);
@@ -44,28 +43,30 @@ export class AppStore {
         }
         this.controlsObject3D = object;
         this.controlsTarget = object.id
+        console.log(this.controlsTarget);
     }
 
     // 0 = translate | 1 = rotate | 2 = scale
     @action.bound setControlsMode = (mode: number) => {
-        this.controlsMode = transformControlsModes[mode] as TransformModes
+        this.controlsMode = TYPE.transformModes[mode] as TYPE.TransformModes; //transformControlsModes[mode] as TYPE.TransformModes
     }
     @action.bound setControlsModeByName = (mode: string) => {
-        this.controlsMode = mode as TransformModes
+        this.controlsMode = mode as TYPE.TransformModes
     }
     
     // 0 = world | 1 = local
     @action.bound setControlSpace = (mode: number) => {
-        this.controlsSpace = transformControlsSpaces[mode] as TransformSpaces
+        this.controlsSpace = TYPE.transformSpaces[mode] as TYPE.TransformSpaces
     }
 
     @action.bound setControlSpaceByName = (mode: string) => {
-        this.controlsSpace = mode as TransformSpaces
+        this.controlsSpace = mode as TYPE.TransformSpaces
     }
 
     // When a new component is made, push it to the scene
-    @action.bound pushComponentToScene = (node: ReactNode) => {
-        this.sceneComponents.push(node);
+    @action.bound pushComponentToScene = (object: EditorObject) => {
+        console.log(object);
+        this.objects.push(object);
     };
 
     // to-do better implementation? 

@@ -1,8 +1,9 @@
 import { GLTFLoader, USDZLoader } from "three/examples/jsm/Addons.js";
 import { Model } from "./MeshCreator/Models";
 import { ReactNode } from "react";
+import { EditorObject } from "./Source/Object";
 
-type PushComponentToSceneAction = (node: ReactNode) => void;
+type PushComponentToSceneAction = (node: EditorObject) => void;
 
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; // Extension of the file with '.'
 
@@ -15,13 +16,19 @@ export function doImport(pushComponentToScene: PushComponentToSceneAction) {
             switch(type) {
                 case ".gltf": 
                 case ".glb": 
-                    new GLTFLoader().parse(value, "", (res) => {pushComponentToScene(<Model scene={res.scene} />)});
+                    new GLTFLoader().parse(value, "", (res) => {
+                        let object: EditorObject = new EditorObject(res.scene);
+                        pushComponentToScene(object)
+                    });
                     break;
                 case ".usdz":
                 case ".usd":
                     const o = new USDZLoader().parse(value);
                     if(o)
-                        pushComponentToScene(<Model scene={o} />);
+                    {
+                        let object: EditorObject = new EditorObject(o);
+                        pushComponentToScene(object);
+                    }
                     else
                         console.error("Failed to file of", type, "type!");
                     break;
@@ -38,7 +45,6 @@ export function doImport(pushComponentToScene: PushComponentToSceneAction) {
     input.style.display = "none";
     input.onchange = (e => {
         handleEvent(e as any, pushComponentToScene)
-        // document.body.removeChild(input)
     });
     input.click();
 }

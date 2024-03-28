@@ -6,7 +6,7 @@ let space = 0;
 
 
 export const EditorUI = observer(() => {
-    const {controlsSpace, controlsMode, setControlsMode, setControlSpace, controlsObject3D} = useStores()
+    const {controlsSpace, setControlsMode, setControlSpace, controlsObject3D} = useStores()
     document.body.onkeyup = function(e) {
         if(e.key == " "|| e.code == "Space" || e.keyCode == 32) 
             setControlsMode(++mode >= 3 ? (mode = 0) : mode)
