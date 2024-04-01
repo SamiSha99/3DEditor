@@ -2,7 +2,7 @@ import { makeObservable, observable, action } from "mobx";
 import { ReactNode } from "react";
 import { Object3D, Scene } from "three";
 import * as TYPE from "./type";
-import { EditorObject } from "../editor/Source/Object";
+import { EditorObject } from "../editor/Source/EditorObject";
 
 export class AppStore {
 
@@ -24,13 +24,16 @@ export class AppStore {
     @observable controlsMode: TYPE.TransformModes
     @observable controlsSpace: TYPE.TransformSpaces
     
+    @observable environment: TYPE.Environments
+
     constructor(){
         makeObservable(this)
         this.controlsTarget = -1
-        this.controlsMode = 'translate'
-        this.controlsSpace = 'world'
+        this.controlsMode = TYPE.transformModes[0];
+        this.controlsSpace = TYPE.transformSpaces[0];
         this.controlsObject3D = null;
         this.meshInstanceIncremental = 0;
+        this.environment = TYPE.environments[0];
     }
 
     @action.bound setControlsTarget = (object: Object3D) => {
@@ -48,8 +51,9 @@ export class AppStore {
 
     // 0 = translate | 1 = rotate | 2 = scale
     @action.bound setControlsMode = (mode: number) => {
-        this.controlsMode = TYPE.transformModes[mode] as TYPE.TransformModes; //transformControlsModes[mode] as TYPE.TransformModes
+        this.controlsMode = TYPE.transformModes[mode] as TYPE.TransformModes;
     }
+
     @action.bound setControlsModeByName = (mode: string) => {
         this.controlsMode = mode as TYPE.TransformModes
     }
@@ -61,6 +65,14 @@ export class AppStore {
 
     @action.bound setControlSpaceByName = (mode: string) => {
         this.controlsSpace = mode as TYPE.TransformSpaces
+    }
+
+    @action.bound setEnvironment = (index: number) => {
+        this.environment = TYPE.environments[index];
+    }
+
+    @action.bound setEnvironmentByName = (environment: string) => {
+        this.environment = environment as TYPE.Environments;
     }
 
     // When a new component is made, push it to the scene

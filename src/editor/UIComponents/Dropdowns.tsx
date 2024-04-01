@@ -16,7 +16,16 @@ export const FileDropDown = () => {
                 key: '1',
                 icon: <ImportOutlined />,
                 onClick: () => {
-                    doImport(pushComponentToScene);
+                    doImport(pushComponentToScene, (res) => {
+                        if(res)
+                        {
+                            message.success("Import successful!");
+                        }
+                        else
+                        {
+                            message.error("Import failed!");
+                        }
+                    });
                 }
             },
             {
@@ -34,8 +43,22 @@ export const FileDropDown = () => {
                 }
             },
             {
-                label: 'Export Scene (USDZ)',
+                label: 'Export Scene (GLB)',
                 key: '3',
+                icon: <ExportOutlined />,
+                // to-do better implemetation for gltf/glb instead of a bool?
+                onClick: () => {
+                    const sceneClone = scene.clone();
+                    const editorHelpers = sceneClone.getObjectByName('EDITOR_HELPER_DO_NOT_MODIFY');
+                    console.log(editorHelpers);
+                    if(editorHelpers)
+                        sceneClone.remove(editorHelpers);
+                    doExportGLTF(sceneClone, true)
+                }
+            },
+            {
+                label: 'Export Scene (USDZ)',
+                key: '4',
                 icon: <ExportOutlined />,
                 onClick: () => {
                     const sceneClone = scene.clone();

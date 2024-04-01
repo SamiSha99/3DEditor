@@ -4,7 +4,7 @@ import {
     Cylinder as _Cylinder, 
     Plane as _Plane, 
     Sphere as _Sphere} from '@react-three/drei';
-import { EditorObject } from '../Source/Object';
+import { EditorObject } from '../Source/EditorObject';
 
 
 export function GenerateBox(pushComponentToScene: (object: EditorObject) => void) {
