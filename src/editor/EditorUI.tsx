@@ -8,7 +8,7 @@ let space = 0;
 let environment = 0;
 
 export const EditorUI = observer(() => {
-    const {controlsSpace, setControlsMode, setControlSpace, setEnvironment} = useStores()
+    const {controlsSpace, setControlsMode, setControlSpace, setEnvironment, controlsTarget, objects} = useStores()
     
     document.body.onkeyup = function(e) {
         if(e.key == " "|| e.code == "Space" || e.keyCode == 32) 
@@ -18,11 +18,16 @@ export const EditorUI = observer(() => {
         console.log(mode);  
     }
     return (
-        <div style={{position:'absolute', zIndex:2}}>
-            <FileDropDown />
-            <CreateDropDown />
-            <button onClick={() => setControlSpace(++space >= TYPES.transformSpaces.length ? (space = 0) : space)}>{controlsSpace.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())}</button>
-        </div>
+        <>
+            <div style={{position:'absolute', zIndex:2}}>
+                <FileDropDown />
+                <CreateDropDown />
+                <button onClick={() => setControlSpace(++space >= TYPES.transformSpaces.length ? (space = 0) : space)}>{controlsSpace.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())}</button>
+            </div>
+            {objects.map((value) => (
+                value.component?.id == controlsTarget && value.renderGUI()
+            ))} 
+        </>
     )
 })
 
