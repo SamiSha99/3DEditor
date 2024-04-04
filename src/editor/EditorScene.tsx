@@ -18,20 +18,23 @@ export const EditorScene = observer(() => {
     )
 })
 
-const Controls:React.FC<ITransformData> = (data) => {
-    const {scene} = useThree();
-    return (<TransformControls object={scene.getObjectById(data.targetID)} mode={data.mode} space={data.space} />);
-}
-
 const EditorHelpers = observer(() => {
     const {controlsTarget, controlsMode, controlsSpace} = useStores()
     return (
         <group name='EDITOR_HELPER_DO_NOT_MODIFY'>
             <Box material-color={"red"} scale={[0.5,0.01,0.5]} position={[0,0,0] } />
             <Grid cellColor={"#2080ff"} infiniteGrid side={2}/>
-            {controlsTarget != -1 && <Controls targetID={controlsTarget} mode={controlsMode} space={controlsSpace} />}
+            {/* to-do: support mutli selection!!! */}
+            {controlsTarget != -1 && <Controls targetID={controlsTarget as number} mode={controlsMode} space={controlsSpace} />}
         </group>
     )
 })
+
+const Controls:React.FC<ITransformData> = (data) => {
+    const { scene } = useThree();
+    const o = scene.getObjectById(data.targetID);
+
+    return (<TransformControls object={o} mode={data.mode} space={data.space} />);
+}
 
 export default EditorScene
