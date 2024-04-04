@@ -3,43 +3,42 @@ import { ReactNode } from "react";
 import { Object3D, Scene } from "three";
 import * as TYPE from "./type";
 import { EditorObject } from "../editor/Source/EditorObject";
+import { Pane } from "tweakpane";
 
 export class AppStore {
 
-    // When instancing meshes, increment this, thankfully this is all locally, important specifically for "key={}" parameter
-    meshInstanceIncremental: number = 0;
+    static _instance: AppStore;
 
-    // All components in the scene, this is bad please replace!!
-    @observable sceneComponents: Array<ReactNode> = []
     // All objects in the scene including their react node renderer
     @observable objects: Array<EditorObject> = []
 
     // Object3D ID
-    @observable controlsTarget: number
+    @observable controlsTarget: number | number[] | -1
     
     @observable scene : Scene = new Scene();
-    // The Object3D
+    // Currently selected Objects
     @observable controlsObject3D: Object3D | Object3D[] | null
+    @observable pane: Pane | null = null;
 
-    @observable controlsMode: TYPE.TransformModes
-    @observable controlsSpace: TYPE.TransformSpaces
-    
-    @observable environment: TYPE.Environments
+    @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
+    @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
+    @observable environment: TYPE.Environments = TYPE.environments[0];
 
     constructor(){
         makeObservable(this)
+        AppStore._instance = this;
         this.controlsTarget = -1
-        this.controlsMode = TYPE.transformModes[0];
-        this.controlsSpace = TYPE.transformSpaces[0];
         this.controlsObject3D = null;
-        this.meshInstanceIncremental = 0;
-        this.environment = TYPE.environments[0];
+    }
+
+    public static get Instance() {
+        return this._instance || (this._instance = new this());
     }
 
     @action.bound setControlsTarget = (object: Object3D) => {
         
-        console.log(this.controlsTarget);
-        // Selecting groups > the object itself for now
+        // Selects the highest in the hierachy regardless of which one clicked for now
+        // to-do add ungrouped selection?
         while(object.parent && !(object.parent instanceof Scene)) {
             console.log(object.parent);
             object = object.parent;
@@ -50,39 +49,14 @@ export class AppStore {
     }
 
     // 0 = translate | 1 = rotate | 2 = scale
-    @action.bound setControlsMode = (mode: number) => {
-        this.controlsMode = TYPE.transformModes[mode] as TYPE.TransformModes;
-    }
-
-    @action.bound setControlsModeByName = (mode: string) => {
-        this.controlsMode = mode as TYPE.TransformModes
-    }
-    
+    @action.bound setControlsMode = (mode: number) => {this.controlsMode = TYPE.transformModes[mode] as TYPE.TransformModes}
+    @action.bound setControlsModeByName = (mode: string) => {this.controlsMode = mode as TYPE.TransformModes}
     // 0 = world | 1 = local
-    @action.bound setControlSpace = (mode: number) => {
-        this.controlsSpace = TYPE.transformSpaces[mode] as TYPE.TransformSpaces
-    }
-
-    @action.bound setControlSpaceByName = (mode: string) => {
-        this.controlsSpace = mode as TYPE.TransformSpaces
-    }
-
-    @action.bound setEnvironment = (index: number) => {
-        this.environment = TYPE.environments[index];
-    }
-
-    @action.bound setEnvironmentByName = (environment: string) => {
-        this.environment = environment as TYPE.Environments;
-    }
-
+    @action.bound setControlSpace = (mode: number) => {this.controlsSpace = TYPE.transformSpaces[mode] as TYPE.TransformSpaces}
+    @action.bound setControlSpaceByName = (mode: string) => {this.controlsSpace = mode as TYPE.TransformSpaces}
+    // all default environment types
+    @action.bound setEnvironment = (index: number) => {this.environment = TYPE.environments[index]}
+    @action.bound setEnvironmentByName = (environment: string) => {this.environment = environment as TYPE.Environments}
     // When a new component is made, push it to the scene
-    @action.bound pushComponentToScene = (object: EditorObject) => {
-        console.log(object);
-        this.objects.push(object);
-    };
-
-    // to-do better implementation? 
-    incrementMeshKey() {
-        return this.meshInstanceIncremental++;
-    }
+    @action.bound pushComponentToScene = (object: EditorObject) => {this.objects.push(object)}
 }
