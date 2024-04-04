@@ -1,4 +1,4 @@
-import { GLTFExporter, USDZExporter } from "three/examples/jsm/Addons.js";
+import { GLTFExporter, OBJExporter, USDZExporter } from "three/examples/jsm/Addons.js";
 import { Object3D, Object3DEventMap } from "three";
 
 export function doExport() {
@@ -41,6 +41,15 @@ export function doExportUSDZ(exportTarget: Object3D<Object3DEventMap> | Object3D
     });
 }
 
+export function doExportOBJ(exportTarget: Object3D<Object3DEventMap> | Object3D<Object3DEventMap>[] | null) {
+    const exporter = new OBJExporter();
+    
+    if(!exportTarget) return console.warn("Export type null!");
+
+    const data = (exporter.parse(exportTarget as Object3D));
+    exportOBJ(data);
+}
+
 function exportGLB(result: ArrayBuffer) {
     save(new Blob([result], {type: 'application/octet-stream'}), 'export.glb');
 }
@@ -53,6 +62,10 @@ function exportGLTF(result: any) {
 function exportUSDZ(result: Uint8Array) {
     const arraybuffer = result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
     save(new Blob([arraybuffer], {type: 'application/octet-stream'}), "export.usdz");
+}
+
+function exportOBJ(result: string) {
+    save(new Blob([result], {type: 'model/obj'}), "export.obj")
 }
 
 function save(blob: Blob, fileName: string) {

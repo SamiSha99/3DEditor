@@ -2,7 +2,7 @@ import { ExportOutlined, ImportOutlined } from "@ant-design/icons";
 import { Dropdown, Button, message } from "antd";
 import { doExportGLTF, doExportUSDZ } from "../Exporters";
 import { useStores } from "../../App";
-import { doImport } from "../Importer";
+import { doImport } from "../Importers";
 import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
 
 export const FileDropDown = () => {
