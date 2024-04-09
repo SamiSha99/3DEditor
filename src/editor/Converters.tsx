@@ -8,7 +8,13 @@ export async function doConversion(to: string) {
         console.log("success on import:", result);
         if(result)
             Virtuealize_Canvas(result);
-        EXPORTER.doExportGLTF(result);
+        switch(to) {
+            case ".gltf":   EXPORTER.doExportGLTF(result);          break;
+            case ".glb":    EXPORTER.doExportGLTF(result, true);    break;
+            case ".obj":    EXPORTER.doExportOBJ(result);           break;
+            case ".usdz":   EXPORTER.doExportUSDZ(result);          break;
+            case ".fbx":    /* insert fbx here */                   break;
+        }
     });
 }
 
