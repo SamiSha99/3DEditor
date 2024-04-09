@@ -3,7 +3,7 @@ import { Object3D } from "three";
 import { Console } from "console";
 
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; // Extension of the file with '.'
-const ALLOWED_FORMAT_TYPES = ".gltf, .glb, .usdz, .obj, .fbx";
+const ALLOWED_FORMAT_TYPES = ".glb, .usdz, .obj, .fbx"; //".gltf"
 
 async function directoryTestSolution() {
     const folderHandle = await window.showDirectoryPicker();
@@ -31,9 +31,9 @@ export async function doImportNew(onHandle: (result: Object3D | null) => void) {
 
     const input = document.createElement('input');
     input.type = "file";
-    input.accept = ALLOWED_FORMAT_TYPES;
+    // input.accept = ALLOWED_FORMAT_TYPES;
     input.style.display = "none";
-    
+    // input.webkitdirectory = true;
     input.click();
     input.onchange = (e => {
         handleEventNew(e as any).then((value) => {
@@ -59,7 +59,7 @@ async function handleEventNew(e: React.ChangeEvent<HTMLInputElement>) {
         case ".obj":
 
             return files[0].text().then((text) => { 
-                if(type == ".gltf") return importGLTF(text, path);
+                // if(type == ".gltf") return importGLTF(text);
                 if(type == ".obj") return importOBJ(text)
                 return null;
             }).catch((error) => {
@@ -88,10 +88,13 @@ export function importOBJ(data: string) {
 }
 
 // to-do: verify if this can differntiate between gltf and glb?
-export async function importGLTF(buffer: ArrayBuffer | string, path: string = "./") {
-    new GLTFLoader().parse(buffer, "path", (gltf) => {
+export async function importGLTF(buffer: ArrayBuffer | string) {
+    new GLTFLoader().parse(buffer, "", (gltf) => {
         console.log(gltf);
         return gltf.scene;
+    }, (error) => {
+        console.warn("Error");
+        console.error(error);
     });
     return null;
 }
