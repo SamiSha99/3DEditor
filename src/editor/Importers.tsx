@@ -89,14 +89,15 @@ export function importOBJ(data: string) {
 
 // to-do: verify if this can differntiate between gltf and glb?
 export async function importGLTF(buffer: ArrayBuffer | string) {
-    new GLTFLoader().parse(buffer, "", (gltf) => {
+    
+    return new GLTFLoader().parseAsync(buffer, "").then((gltf) => {
         console.log(gltf);
         return gltf.scene;
-    }, (error) => {
+    }).catch((error) => {
         console.warn("Error");
         console.error(error);
+        return null;
     });
-    return null;
 }
 
 export async function importGLB(buffer: ArrayBuffer) {
