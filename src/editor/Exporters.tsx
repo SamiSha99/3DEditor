@@ -68,7 +68,7 @@ function exportOBJ(result: string) {
     save(new Blob([result], {type: 'model/obj'}), "export.obj")
 }
 
-function save(blob: Blob, fileName: string) {
+export function save(blob: Blob, fileName: string) {
     const a = document.createElement('a');
     a.style.display = 'none';
     document.body.appendChild(a);

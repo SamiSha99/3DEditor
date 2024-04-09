@@ -4,6 +4,7 @@ import { doExportGLTF, doExportUSDZ } from "../Exporters";
 import { useStores } from "../../App";
 import { doImport } from "../Importers";
 import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
+import { AppSettings } from "../../store/appSettings";
 
 export const FileDropDown = () => {
     const {scene, pushComponentToScene} = useStores();
@@ -35,7 +36,7 @@ export const FileDropDown = () => {
                 // to-do better implemetation for gltf/glb instead of a bool?
                 onClick: () => {
                     const sceneClone = scene.clone();
-                    const editorHelpers = sceneClone.getObjectByName('EDITOR_HELPER_DO_NOT_MODIFY');
+                    const editorHelpers = sceneClone.getObjectByName(AppSettings.EDITOR_HELPERS_NAME);
                     console.log(editorHelpers);
                     if(editorHelpers)
                         sceneClone.remove(editorHelpers);
@@ -49,7 +50,7 @@ export const FileDropDown = () => {
                 // to-do better implemetation for gltf/glb instead of a bool?
                 onClick: () => {
                     const sceneClone = scene.clone();
-                    const editorHelpers = sceneClone.getObjectByName('EDITOR_HELPER_DO_NOT_MODIFY');
+                    const editorHelpers = sceneClone.getObjectByName(AppSettings.EDITOR_HELPERS_NAME);
                     console.log(editorHelpers);
                     if(editorHelpers)
                         sceneClone.remove(editorHelpers);
@@ -62,7 +63,7 @@ export const FileDropDown = () => {
                 icon: <ExportOutlined />,
                 onClick: () => {
                     const sceneClone = scene.clone();
-                    const editorHelpers = sceneClone.getObjectByName('EDITOR_HELPER_DO_NOT_MODIFY');
+                    const editorHelpers = sceneClone.getObjectByName(AppSettings.EDITOR_HELPERS_NAME);
                     if(editorHelpers)
                         sceneClone.remove(editorHelpers);
                     doExportUSDZ(sceneClone)

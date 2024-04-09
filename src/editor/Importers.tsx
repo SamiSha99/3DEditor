@@ -64,7 +64,7 @@ async function handleEvent(e: React.ChangeEvent<HTMLInputElement>, pushComponent
     });
 }
 
-export async function doImportNew(result: (result:any) => void) {
+export function doImportNew(onHandle: (result:any) => void) {
     const input = document.createElement('input');
     input.type = "file";
     input.accept = ALLOWED_FORMAT_TYPES;
@@ -76,10 +76,9 @@ export async function doImportNew(result: (result:any) => void) {
         handleEventNew(e as any).then((value) => {
             console.log(value)
             value?.scale.set(0.01, 0.01,0.01);
-            result(value);
+            onHandle(value);
         }).catch((error) => {
             console.warn(error);
-            result(null);
         });
     });
 }
@@ -87,7 +86,7 @@ export async function doImportNew(result: (result:any) => void) {
 async function handleEventNew(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files as FileList;
     const type = files[0].name.match(EXTENSION_REGEX)?.[0];
-    const fr = new FileReader();
+    
     if(type == ".obj") {
         console.log("file[0]:",files[0])
         return files[0].text().then((result) => {

@@ -4,6 +4,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';
 import { ITransformData } from '../store/interface';
+import { AppSettings } from '../store/appSettings';
 
 export const EditorScene = observer(() => {
     const {objects, scene, environment} = useStores()
@@ -21,8 +22,8 @@ export const EditorScene = observer(() => {
 const EditorHelpers = observer(() => {
     const {controlsTarget, controlsMode, controlsSpace} = useStores()
     return (
-        <group name='EDITOR_HELPER_DO_NOT_MODIFY'>
-            <Box material-color={"red"} scale={[0.5,0.01,0.5]} position={[0,0,0] } />
+        <group name={AppSettings.EDITOR_HELPERS_NAME}>
+            <Box material-color={"red"} scale={[0.25,0.0005,0.25]} position={[0,0,0] } />
             <Grid cellColor={"#2080ff"} infiniteGrid side={2}/>
             {/* to-do: support mutli selection!!! */}
             {controlsTarget != -1 && <Controls targetID={controlsTarget as number} mode={controlsMode} space={controlsSpace} />}

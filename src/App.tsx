@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+
 import './App.css'
 
 import { useContext,createContext } from 'react'
@@ -20,11 +21,9 @@ const StoreProvider:StoreComponent = ({store,children})=>{
 function App() {
   
     return (
-        <>
         <StoreProvider store={new AppStore()}>
             <Editor/>
         </StoreProvider>
-        </>
     )
 }
 
