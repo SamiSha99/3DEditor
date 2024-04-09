@@ -17,7 +17,6 @@ export const EditorUI = observer(() => {
             setControlsMode(++mode > TYPES.transformSpaces.length ? (mode = 0) : mode)
         if(e.key.toUpperCase() == "E" || e.code == "KeyE")
             setEnvironment(++environment >= TYPES.environments.length ? (environment = 0) : environment);
-        console.log(mode);  
     }
     return (
         <>

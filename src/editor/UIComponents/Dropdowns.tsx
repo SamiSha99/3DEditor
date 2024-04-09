@@ -2,9 +2,11 @@ import { ExportOutlined, ImportOutlined } from "@ant-design/icons";
 import { Dropdown, Button, message } from "antd";
 import { doExportGLTF, doExportUSDZ } from "../Exporters";
 import { useStores } from "../../App";
-import { doImport } from "../Importers";
+import { doImportNew } from "../Importers";
 import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
 import { AppSettings } from "../../store/appSettings";
+import { EditorObject } from "../Source/EditorObject";
+import * as THREE from 'three';
 
 export const FileDropDown = () => {
     const {scene, pushComponentToScene} = useStores();
@@ -17,15 +19,14 @@ export const FileDropDown = () => {
                 key: '1',
                 icon: <ImportOutlined />,
                 onClick: () => {
-                    doImport(pushComponentToScene, (res) => {
-                        if(res)
-                        {
+                    doImportNew((onHandle) => {
+                        if(onHandle) {
+                            const editorObject = new EditorObject(onHandle);
+                            pushComponentToScene(editorObject);
                             message.success("Import successful!");
                         }
                         else
-                        {
                             message.error("Import failed!");
-                        }
                     });
                 }
             },
