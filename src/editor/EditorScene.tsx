@@ -22,6 +22,7 @@ export const EditorScene = observer(() => {
 
 const EditorHelpers = observer(() => {
     const {controlsTarget, controlsMode, controlsSpace} = useStores()
+    
     return (
         <group name={AppSettings.EDITOR_HELPERS_NAME}>
             <Box material-color={"red"} scale={[0.25,0.0005,0.25]} position={[0,0,0] } />
