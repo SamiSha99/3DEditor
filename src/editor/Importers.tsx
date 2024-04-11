@@ -1,42 +1,19 @@
 import { GLTFLoader, OBJLoader, USDZLoader } from "three/examples/jsm/Addons.js";
 import { Object3D } from "three";
-import { Console } from "console";
 
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; // Extension of the file with '.'
 const ALLOWED_FORMAT_TYPES = ".glb, .usdz, .obj, .fbx"; //".gltf"
 
-async function directoryTestSolution() {
-    const folderHandle = await window.showDirectoryPicker();
-    for await(const entry of folderHandle.values()){
-        console.log(entry.kind, entry.name);
-    }
-    return;
-    const [fileHandle] = await self.showOpenFilePicker();
-    console.log("handlers, 1) folder:", folderHandle, "2) file", fileHandle)
-    const relativePaths = await folderHandle.resolve(fileHandle);
-    console.log("relative paths:", relativePaths);
-    if(relativePaths === null) {
-
-    }
-    else {
-        for(const name of relativePaths){
-            console.log(name);
-        }
-    }
-
-    return;
-}
-
-export async function doImportNew(onHandle: (result: Object3D | null) => void) {
+export async function doImport(onHandle: (result: Object3D | null) => void) {
 
     const input = document.createElement('input');
     input.type = "file";
-    // input.accept = ALLOWED_FORMAT_TYPES;
+    input.accept = ALLOWED_FORMAT_TYPES;
     input.style.display = "none";
     // input.webkitdirectory = true;
     input.click();
     input.onchange = (e => {
-        handleEventNew(e as any).then((value) => {
+        handleImportEvent(e as any).then((value) => {
             // conversions are an industry disagreement nightmare, conclusion: 1 = meter, do not argue with me
             onHandle(value);
         }).catch((error) => {
@@ -45,7 +22,7 @@ export async function doImportNew(onHandle: (result: Object3D | null) => void) {
     });
 }
 
-async function handleEventNew(e: React.ChangeEvent<HTMLInputElement>) {
+async function handleImportEvent(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files as FileList;
     const type = files[0].name.match(EXTENSION_REGEX)?.[0];
     console.log("file:",files[0]);

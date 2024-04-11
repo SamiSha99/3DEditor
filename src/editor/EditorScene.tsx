@@ -13,7 +13,7 @@ export const EditorScene = observer(() => {
         <Canvas scene={scene} shadows camera={{position:[-2.5,2.5,0]}}>
             <CameraControls makeDefault />
             <EditorHelpers />
-            <ambientLight intensity={1} color={"red"} />
+            <ambientLight intensity={0} color={"red"} />
             {objects.map((value) => (value.render()))}
             {environment && <Environment preset={environment} />}
         </Canvas>
