@@ -6,6 +6,8 @@ import { importThenConvert } from './Converters';
 import { convertObject, loadFileData, screenshot } from './WaelRequest';
 import { EditorObject } from './Source/EditorObject';
 import { doExportUSDZ, save } from './Exporters';
+import { Mesh, MeshStandardMaterial, SRGBColorSpace, Texture } from 'three';
+import * as THREE from 'three';
 
 let mode = 0;
 let space = 0;
@@ -43,10 +45,14 @@ export const EditorUI = observer(() => {
                                 screenshot(result, blob => {
                                     if(blob)
                                         save(blob, "screenshot.png");
-                                    convertObject(result.children[0], ".usdz").then(file => {
-                                        if(file)
-                                            save(new Blob([file], {type: 'application/octet-stream'}), "export.usdz");
-                                    });
+                                    
+                                    // console.log(result.children[0]);
+                                    setTimeout(() => {
+                                        convertObject(result.children[0], ".usdz").then(file => {
+                                            if(file)
+                                                save(new Blob([file], {type: 'application/octet-stream'}), "export.usdz");
+                                        });
+                                    }, 1000);
                                 });
                                 const eo =  new EditorObject(result);
                                 pushComponentToScene(eo);

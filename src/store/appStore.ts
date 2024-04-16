@@ -40,9 +40,9 @@ export class AppStore {
         // Selects the highest in the hierachy regardless of which one clicked for now
         // to-do add ungrouped selection?
         while(object.parent && !(object.parent instanceof Scene)) {
-            console.log(object.parent);
             object = object.parent;
         }
+        console.log(object);
         this.controlsObject3D = object;
         this.controlsTarget = object.id
         console.log(this.controlsTarget);
