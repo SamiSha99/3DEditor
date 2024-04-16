@@ -45,10 +45,8 @@ export const EditorUI = observer(() => {
                                 screenshot(result, blob => {
                                     if(blob)
                                         save(blob, "screenshot.png");
-                                    
-                                    // console.log(result.children[0]);
                                     setTimeout(() => {
-                                        convertObject(result.children[0], ".usdz").then(file => {
+                                        convertObject(result, ".usdz").then(file => {
                                             if(file)
                                                 save(new Blob([file], {type: 'application/octet-stream'}), "export.usdz");
                                         });
