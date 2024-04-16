@@ -3,6 +3,9 @@ import { observer } from 'mobx-react-lite';
 import { CreateDropDown, FileDropDown } from './UIComponents/Dropdowns';
 import * as TYPES from '../store/type'
 import { importThenConvert } from './Converters';
+import { convertObject, loadFileData, screenshot } from './WaelRequest';
+import { EditorObject } from './Source/EditorObject';
+import { doExportUSDZ, save } from './Exporters';
 
 let mode = 0;
 let space = 0;
@@ -24,7 +27,35 @@ export const EditorUI = observer(() => {
                 <FileDropDown />
                 <CreateDropDown />
                 <button onClick={() => setControlSpace(++space >= TYPES.transformSpaces.length ? (space = 0) : space)}>{controlsSpace.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())}</button>
-                <button onClick={() => {importThenConvert(".obj")}}>Convert Test</button>
+                <button onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = "file";
+                    // input.accept = ALLOWED_FORMAT_TYPES;
+                    input.style.display = "none";
+                    input.click();
+                    input.onchange = (e => {
+                        const file = ((e as any as React.ChangeEvent<HTMLInputElement>).target.files as FileList)[0];
+                        file.arrayBuffer().then(value => {
+                            console.log("inside success!");
+                            loadFileData(value,".glb").then(result => {
+                                console.log("result:", result);
+                                if(!result) return;
+                                screenshot(result, blob => {
+                                    if(blob)
+                                        save(blob, "screenshot.png");
+                                    convertObject(result.children[0], ".usdz").then(file => {
+                                        if(file)
+                                            save(new Blob([file], {type: 'application/octet-stream'}), "export.usdz");
+                                    });
+                                });
+                                const eo =  new EditorObject(result);
+                                pushComponentToScene(eo);
+                            });
+                        });
+                    })
+                    // importThenConvert(".obj")
+                }}>
+                    Convert Test</button>
             </div>
             {objects.map((value) => (
                 value.component?.id == controlsTarget && value.renderGUI()

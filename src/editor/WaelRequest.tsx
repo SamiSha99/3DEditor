@@ -11,7 +11,7 @@ export const ALLOWED_FORMAT_TYPES = conversionOptionsArray.join(", ");
 export type ConversionOptions = typeof conversionOptionsArray[number];
 
 // Taking either text file as string 
-export function loadFileData(data: ArrayBuffer | string, type: AcceptableTypes) {
+export async function loadFileData(data: ArrayBuffer | string, type: AcceptableTypes) {
     let loadedModel = null;
     
     switch(type)
@@ -21,13 +21,14 @@ export function loadFileData(data: ArrayBuffer | string, type: AcceptableTypes) 
             break;
         case ".glb":
             if(data instanceof ArrayBuffer)
-                importGLB(data).then((res) => {
+                await importGLB(data).then((res) => {
                     loadedModel = res?.scene;
-                });
+                }).catch(err => console.log(err));
             else
                 console.error("GLB doesn't accept ArrayBuffer");
             break;
         case ".usdz":
+            
             if(data instanceof ArrayBuffer)
                 loadedModel = importUSDZ(data);
             else
@@ -90,10 +91,15 @@ export function screenshot(group: THREE.Object3D, onComplete: (blob: Blob | null
     
     const bound = new THREE.Box3().setFromObject(group);
     const size = bound.getSize(new THREE.Vector3());
-    const range = Math.max(size.x * size.y, size.x * size.z, size.y * size.z); // Highest 2D space from x*y | x*z | y*z
+    let range = Math.max(size.x * size.y, size.x * size.z, size.y * size.z); // Highest 2D space from x*y | x*z | y*z
     
+    // for those models that are too small than intended, ehhhh
+    if(size.x < 1 && size.x > -1 || size.y < 1 && size.y > -1 || size.z < 1 && size.z > -1) {
+        range = Math.max(size.x + size.y, size.x + size.z, size.y + size.z);
+    }
+
     const camera = new THREE.PerspectiveCamera();
-    camera.position.x = -range/2;
+    camera.position.x = range/2;
     camera.position.y = range/2;
     camera.position.z = range/2;
     camera.lookAt(bound.getCenter(new THREE.Vector3()));
@@ -143,8 +149,10 @@ export function convertToUSDZ(exportTarget: THREE.Object3D<THREE.Object3DEventMa
 }
 
 export function convertToOBJ(exportTarget: THREE.Object3D<THREE.Object3DEventMap>) {
-    if(!exportTarget) return console.warn("Export type null!");
-
+    if(!exportTarget) {
+        console.warn("Export type null!")
+        return null;
+    };
     const data = (new OBJExporter().parse(exportTarget));
     return data;
 }

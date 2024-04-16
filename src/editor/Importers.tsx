@@ -10,7 +10,6 @@ export async function doImport(onHandle: (result: Object3D | null) => void) {
     input.type = "file";
     input.accept = ALLOWED_FORMAT_TYPES;
     input.style.display = "none";
-    // input.webkitdirectory = true;
     input.click();
     input.onchange = (e => {
         handleImportEvent(e as any).then((value) => {

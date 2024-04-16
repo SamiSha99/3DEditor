@@ -6,7 +6,7 @@ import { Screenshot } from './ModelPreviewer';
 type ConversionTypes = ".gltf" | ".glb" | ".usdz" | ".obj"; // | ".fbx"
 
 export async function convertObject(object: THREE.Object3D, to: string) {
-
+    
 }
 
 export async function importThenConvert(to: ConversionTypes) {

@@ -34,7 +34,7 @@ export function doExportUSDZ(exportTarget: Object3D<Object3DEventMap> | Object3D
     
     if(!exportTarget) return console.warn("Export type null!");
 
-    (exporter.parse(exportTarget as Object3D)).then(result => {
+    (exporter.parse(exportTarget as Object3D, {quickLookCompatible: true, maxTextureSize:2048})).then(result => {
         exportUSDZ(result);
     }).catch((error) => {
         console.error("FAILED TO EXTRACT USDZ!!!", error);
