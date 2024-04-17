@@ -1,14 +1,12 @@
 import { GLTFLoader, OBJLoader, USDZLoader } from "three/examples/jsm/Addons.js";
-import { Object3D } from "three";
+import * as THREE from 'three';
 
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; // Extension of the file with '.'
-const ALLOWED_FORMAT_TYPES = ".glb, .usdz, .obj, .fbx"; //".gltf"
 
-export async function doImport(onHandle: (result: Object3D | null) => void) {
+export async function doImport(onHandle: (result: THREE.Object3D | null) => void) {
 
     const input = document.createElement('input');
     input.type = "file";
-    input.accept = ALLOWED_FORMAT_TYPES;
     input.style.display = "none";
     input.click();
     input.onchange = (e => {
@@ -30,7 +28,13 @@ async function handleImportEvent(e: React.ChangeEvent<HTMLInputElement>) {
     // return null;
     switch(type) {
         case ".gltf":
+        case ".zip":
             console.error("Not supported, for now, sorry!")
+            return null;
+            return files[0].text().then((text) => {
+                const url = URL.createObjectURL(files[0]);
+                return importGLTF(text, url);
+            })
             return null;
         case ".obj":
 
@@ -64,9 +68,9 @@ export function importOBJ(data: string) {
 }
 
 // to-do: verify if this can differntiate between gltf and glb?
-export async function importGLTF(buffer: ArrayBuffer | string) {
+export async function importGLTF(buffer: ArrayBuffer | string, path: string = "") {
     
-    return new GLTFLoader().parseAsync(buffer, "").then((gltf) => {
+    return new GLTFLoader().parseAsync(buffer, path+"/").then((gltf) => {
         console.log(gltf);
         return gltf.scene;
     }).catch((error) => {
@@ -85,3 +89,4 @@ export function importUSDZ(buffer: ArrayBuffer) {
     if(!o) console.warn("Failed to load a USD/Z file.");
     return o;
 }
+

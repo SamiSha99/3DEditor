@@ -1,5 +1,5 @@
 import { Canvas, useThree } from '@react-three/fiber';
-import { Box, CameraControls, Environment, Grid, TransformControls, Ambien } from '@react-three/drei';
+import { Box, CameraControls, Environment, Grid, TransformControls } from '@react-three/drei';
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';
@@ -8,12 +8,12 @@ import { AppSettings } from '../store/appSettings';
 
 export const EditorScene = observer(() => {
     const {objects, scene, environment} = useStores()
-    
+
     return (
         <Canvas scene={scene} shadows camera={{position:[-2.5,2.5,0]}}>
             <CameraControls makeDefault />
             <EditorHelpers />
-            <ambientLight intensity={Math.PI} color={"white"} />
+            <ambientLight intensity={1} color={"white"} />
             {objects.map((value) => (value.render()))}
             {environment && <Environment preset={environment} />}
         </Canvas>

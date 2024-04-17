@@ -1,6 +1,6 @@
 import { render } from 'react-dom';
 import * as THREE from 'three';
-import { GLTFLoader, OBJLoader, USDZLoader, RoomEnvironment, FBXLoader, GLTFExporter, USDZExporter, OBJExporter } from "three/examples/jsm/Addons.js";
+import { GLTFLoader, OBJLoader, USDZLoader, RoomEnvironment, FBXLoader, GLTFExporter, USDZExporter, OBJExporter, DRACOLoader } from "three/examples/jsm/Addons.js";
 
 const conversionOptionsArray = [".gltf" , ".glb" , ".usdz" , ".obj"] as const;
 

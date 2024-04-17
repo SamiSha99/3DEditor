@@ -8,6 +8,7 @@ import { EditorObject } from './Source/EditorObject';
 import { doExportUSDZ, save } from './Exporters';
 import { Mesh, MeshStandardMaterial, SRGBColorSpace, Texture } from 'three';
 import * as THREE from 'three';
+import * as MESH_UTILS from './Utils/MeshUtils';
 
 let mode = 0;
 let space = 0;
@@ -37,18 +38,19 @@ export const EditorUI = observer(() => {
                     input.click();
                     input.onchange = (e => {
                         const file = ((e as any as React.ChangeEvent<HTMLInputElement>).target.files as FileList)[0];
-                        file.arrayBuffer().then(value => {
+                        file.text().then(value => {
                             console.log("inside success!");
-                            loadFileData(value,".glb").then(result => {
+                            loadFileData(value,".obj").then(result => {
                                 console.log("result:", result);
                                 if(!result) return;
+                                MESH_UTILS.computeAllVertexNormals(result);
                                 screenshot(result, blob => {
                                     if(blob)
                                         save(blob, "screenshot.png");
                                     setTimeout(() => {
-                                        convertObject(result, ".usdz").then(file => {
+                                        convertObject(result, ".glb").then(file => {
                                             if(file)
-                                                save(new Blob([file], {type: 'application/octet-stream'}), "export.usdz");
+                                                save(new Blob([file], {type: 'application/octet-stream'}), "export.obj");
                                         });
                                     }, 1000);
                                 });

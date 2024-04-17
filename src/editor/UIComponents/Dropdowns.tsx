@@ -1,19 +1,19 @@
 import { ExportOutlined, ImportOutlined } from "@ant-design/icons";
 import { Dropdown, Button, message } from "antd";
 import { doExportGLTF, doExportUSDZ } from "../Exporters";
-import { useStores } from "../../App";
 import { doImport } from "../Importers";
+import { useStores } from "../../App";
 import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
 import { AppSettings } from "../../store/appSettings";
 import { EditorObject } from "../Source/EditorObject";
-import * as THREE from 'three';
+import * as MESH_UTILS from '.././Utils/MeshUtils'
 
 export const FileDropDown = () => {
     const {scene, pushComponentToScene} = useStores();
     return(
         <Dropdown
-            children={<Button children={"File"} />}
-            menu={{
+        children={<Button children={"File"} />}
+        menu={{
             items: [{
                 label: 'Import Scene',
                 key: '1',
@@ -21,6 +21,7 @@ export const FileDropDown = () => {
                 onClick: () => {
                     doImport((onHandle) => {
                         if(onHandle) {
+                            MESH_UTILS.computeAllVertexNormals(onHandle);
                             const editorObject = new EditorObject(onHandle);
                             pushComponentToScene(editorObject);
                             message.success("Import successful!");
@@ -29,6 +30,9 @@ export const FileDropDown = () => {
                             message.error("Import failed!");
                     });
                 }
+            },
+            {
+                type: "divider"
             },
             {
                 label: 'Export Scene',
