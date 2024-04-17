@@ -1,5 +1,6 @@
 import { GLTFExporter, OBJExporter, USDZExporter } from "three/examples/jsm/Addons.js";
 import { Object3D, Object3DEventMap } from "three";
+import { io } from "./Utils/Compression";
 
 export function doExport() {
    
@@ -50,8 +51,10 @@ export function doExportOBJ(exportTarget: Object3D<Object3DEventMap> | Object3D<
     exportOBJ(data);
 }
 
-function exportGLB(result: ArrayBuffer) {
-    save(new Blob([result], {type: 'application/octet-stream'}), 'export.glb');
+async function exportGLB(result: ArrayBuffer) {
+    // const document = await io.readBinary(new Uint8Array(result));
+    // const glb = await io.writeBinary(document);
+    save(new Blob([glb], {type: 'application/octet-stream'}), 'export.glb');
 }
 
 function exportGLTF(result: any) {
