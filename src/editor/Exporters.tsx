@@ -54,7 +54,7 @@ export function doExportOBJ(exportTarget: Object3D<Object3DEventMap> | Object3D<
 async function exportGLB(result: ArrayBuffer) {
     // const document = await io.readBinary(new Uint8Array(result));
     // const glb = await io.writeBinary(document);
-    save(new Blob([glb], {type: 'application/octet-stream'}), 'export.glb');
+    save(new Blob([result], {type: 'application/octet-stream'}), 'export.glb');
 }
 
 function exportGLTF(result: any) {
