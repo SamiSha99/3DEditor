@@ -27,7 +27,6 @@ const EditorHelpers = observer(() => {
         <group name={AppSettings.EDITOR_HELPERS_NAME}>
             <Box material-color={"red"} scale={[0.25,0.0005,0.25]} position={[0,0,0] } />
             <Grid cellColor={"#2080ff"} infiniteGrid side={2}/>
-            {/* to-do: support mutli selection!!! */}
             {controlsTarget != -1 && <Controls targetID={controlsTarget as number} mode={controlsMode} space={controlsSpace} />}
         </group>
     )

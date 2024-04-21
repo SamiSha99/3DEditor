@@ -79,21 +79,27 @@ export class EditorObject {
             object.renderOrder = ev.value;
         });
 
-        // const hierarchy  = this.pane.addFolder({title:"Hierarchy "})
-        // hierarchy.addButton({title:"Select Parent", disabled: object.parent == null || !(object.parent instanceof THREE.Scene)}).on("click", () => {
-            // console.log(object, "parent for it:", object.parent);
-            // if(object.parent)
-                // AppStore.Instance.setControlsTarget(object.parent);
-        // });
-        // if(object.parent && !(object.parent instanceof THREE.Scene))
-            // 
-        // object.children.map((child, number) => {
-            // hierarchy.addButton({title:"Select Child #" + number}).on("click", () => {
-                // if(child)
-                    // AppStore.Instance.setControlsTarget(child);
-            // });
-// 
-        // })
+        const hierarchy  = this.pane.addFolder({title:"Hierarchy"});
+        hierarchy.addButton({
+            title:(object.parent == null || object.parent instanceof THREE.Scene) ? "No Parent" : object.parent.name != "" ? object.parent.name : "Parent", 
+            disabled: object.parent == null || object.parent instanceof THREE.Scene
+        }).on("click", () => {
+            if(object.parent) {
+                AppStore.Instance.setControlsTarget(object.parent);
+                this.buildGUI(object.parent);
+            }
+        });
+            
+        object.children.map((child, number) => {
+            hierarchy.addButton({title:child.name != "" ? child.name : ("Child #" + number)}).on("click", () => {
+                if(child)
+                {
+                    AppStore.Instance.setControlsTarget(child);
+                    this.buildGUI(child);
+                }
+            });
+
+        })
     }
 
     destroyGUI() {
@@ -132,7 +138,7 @@ export const EditorObjectNode:React.FC<{node: EditorObject}> = ({node}) => {
                     ref={ref}
                     key={node.component?.id}
                     object={node.component}
-                    onClick={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation(), node.buildGUI(), setControlsTarget(e.object)}}
+                    onClick={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation(), node.buildGUI(e.object), setControlsTarget(e.object)}}
                     onPointerMissed={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation(), node.destroyGUI()}}
                     onPointerOver={(e: ThreeEvent<MouseEvent>) => (e.stopPropagation(), setHovered(true))}
                     onPointerOut={() => (setHovered(false))} 
