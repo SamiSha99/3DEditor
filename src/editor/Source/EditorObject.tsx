@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { useRef, useState } from "react"
 import { ThreeEvent } from "@react-three/fiber"
 import { Pane } from 'tweakpane';
+import { AppStore } from "../../store/appStore";
 
 export class EditorObject {
     component: THREE.Object3D | null = null;
@@ -78,8 +79,21 @@ export class EditorObject {
             object.renderOrder = ev.value;
         });
 
-      
-        // this.pane.addButton(PARAMS.parent)
+        // const hierarchy  = this.pane.addFolder({title:"Hierarchy "})
+        // hierarchy.addButton({title:"Select Parent", disabled: object.parent == null || !(object.parent instanceof THREE.Scene)}).on("click", () => {
+            // console.log(object, "parent for it:", object.parent);
+            // if(object.parent)
+                // AppStore.Instance.setControlsTarget(object.parent);
+        // });
+        // if(object.parent && !(object.parent instanceof THREE.Scene))
+            // 
+        // object.children.map((child, number) => {
+            // hierarchy.addButton({title:"Select Child #" + number}).on("click", () => {
+                // if(child)
+                    // AppStore.Instance.setControlsTarget(child);
+            // });
+// 
+        // })
     }
 
     destroyGUI() {
