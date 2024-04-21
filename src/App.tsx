@@ -19,7 +19,7 @@ const StoreProvider:StoreComponent = ({store,children})=>{
 }
 
 function App() {
-  
+    
     return (
         <StoreProvider store={new AppStore()}>
             <Editor/>

@@ -46,6 +46,7 @@ export class AppStore {
         this.controlsObject3D = object;
         this.controlsTarget = object.id
         console.log(this.controlsTarget);
+        (document.getElementById("requestUpdateEditor") as HTMLButtonElement).click();
     }
 
     // 0 = translate | 1 = rotate | 2 = scale

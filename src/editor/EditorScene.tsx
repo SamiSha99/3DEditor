@@ -1,6 +1,6 @@
 import { Canvas, useThree } from '@react-three/fiber';
 import { Box, CameraControls, Environment, Grid, TransformControls } from '@react-three/drei';
-import React from 'react';
+import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';
 import { ITransformData } from '../store/interface';
@@ -8,21 +8,24 @@ import { AppSettings } from '../store/appSettings';
 
 export const EditorScene = observer(() => {
     const {objects, scene, environment} = useStores()
-
+    const [reload, setReload] = useState(false);
     return (
-        <Canvas scene={scene} shadows camera={{position:[-2.5,2.5,0]}}>
-            <CameraControls makeDefault />
-            <EditorHelpers />
-            <ambientLight intensity={1} color={"white"} />
-            {objects.map((value) => (value.render()))}
-            {environment && <Environment preset={environment} />}
-        </Canvas>
+        <>
+            <button id="requestUpdateEditor" style={{display:"none"}} onClick={()=>setReload(!reload)}> test </button>
+            <Canvas scene={scene} shadows camera={{position:[-2.5,2.5,0]}}>
+                <CameraControls makeDefault />
+                <EditorHelpers />
+                <ambientLight intensity={1} color={"white"} />
+                {objects.map((value) => (value.render()))}
+                {environment && <Environment preset={environment} />}
+            </Canvas>
+        </>
     )
 })
 
 const EditorHelpers = observer(() => {
     const {controlsTarget, controlsMode, controlsSpace} = useStores()
-    
+    console.log("udpdating!!")
     return (
         <group name={AppSettings.EDITOR_HELPERS_NAME}>
             <Box material-color={"red"} scale={[0.25,0.0005,0.25]} position={[0,0,0] } />

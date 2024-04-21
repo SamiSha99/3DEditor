@@ -128,8 +128,6 @@ export const EditorObjectNode:React.FC<{node: EditorObject}> = ({node}) => {
     const {setControlsTarget} = useStores();
     const ref = useRef(null!);
 
-    // [verify!] primitive seems rather dangerous considering its a manual dispose, better solution for this?
-    // does it auto dispose? needs testing!
     return (
         <>
             {
