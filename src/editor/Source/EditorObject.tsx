@@ -11,15 +11,20 @@ export class EditorObject {
     testNumber: number = 0;
     // gui: GUI = new GUI();
     
-    constructor(component?: THREE.Object3D)
+    constructor(component?: THREE.Object3D, name?: string)
     {
         this.component = component ? component : null;
-        // this.gui.hide();
+        if(name)
+            this.component!.name = name;
         this.pane.hidden = true;
     }
     
-    buildGUI() {
-        console.log("building")
+    buildGUI(object: THREE.Object3D) {
+        
+        if(!object) {
+            if(!this.component) return false;
+            object = this.component;
+        };
         // "refresh"
         this.destroyGUI();
         this.paneDisposed = false;
@@ -27,41 +32,58 @@ export class EditorObject {
         this.pane.hidden = false;
 
         const PARAMS = {
-            position: {x: this.component?.position.x as number, y: this.component?.position.y as number, z: this.component?.position.z as number},
-            rotation: {x: this.component?.rotation.x as number, y: this.component?.rotation.y as number, z: this.component?.position.z as number},
-            scale: {x: this.component?.scale.x as number, y: this.component?.scale.y as number, z: this.component?.scale.z as number},
-            type: this.component?.type as string,
-            name: this.component?.name as string
+            position: {x: object.position.x as number, y: object.position.y as number, z: object.position.z as number},
+            rotation: {x: object.rotation.x as number, y: object.rotation.y as number, z: object.position.z as number},
+            scale: {x: object.scale.x as number, y: object.scale.y as number, z: object.scale.z as number},
+            type: object.type as string,
+            name: object.name as string,
+            visible: object.visible as boolean,
+            castShadow: object.castShadow as boolean,
+            receiveShadow: object.receiveShadow as boolean,
+            renderOrder: object.renderOrder as number,
+            parent: object.parent as THREE.Object3D
         };
 
-        this.pane.addBinding(PARAMS, 'type', {readonly:true});
+        this.pane.addBinding(PARAMS, 'type', {label: "Type", readonly:true});
         
-        this.pane.addBinding(PARAMS, 'name').on('change', (ev) => {
-            try {
-                this.component!.name = ev.value;
-            }
-            catch {
-                console.error("Failed to apply name to component!");
-            }
+        this.pane.addBinding(PARAMS, 'name', {label: "Name"}).on('change', (ev) => {
+            object.name = ev.value;
         });
 
-        this.pane.addBinding(PARAMS, 'position').on('change', (ev) => {
-            this.component?.position.set(ev.value.x, ev.value.y, ev.value.z);
-            console.log(ev);
+        this.pane.addBinding(PARAMS, 'position', {label: "Position"}).on('change', (ev) => {
+            object.position.set(ev.value.x, ev.value.y, ev.value.z);
         });
 
-        this.pane.addBinding(PARAMS, 'rotation').on('change', (ev) => {
-            this.component?.rotation.set(ev.value.x, ev.value.y, ev.value.z);
-            console.log(ev);
+        this.pane.addBinding(PARAMS, 'rotation', {label: "Rotation"}).on('change', (ev) => {
+            object.rotation.set(ev.value.x, ev.value.y, ev.value.z);
         });
 
-        this.pane.addBinding(PARAMS, 'scale').on('change', (ev) => {
-            this.component?.scale.set(ev.value.x, ev.value.y, ev.value.z);
-            console.log(ev);
+        this.pane.addBinding(PARAMS, 'scale', {label: "Scale"}).on('change', (ev) => {
+            object.scale.set(ev.value.x, ev.value.y, ev.value.z);
         });
+
+        this.pane.addBinding(PARAMS, 'visible', {label: "Visible"}).on('change', (ev) => {
+            object.visible = ev.value;
+        });
+
+        this.pane.addBinding(PARAMS, 'castShadow', {label: "Cast Shadow"}).on('change', (ev) => {
+            object.castShadow = ev.value;
+        });
+
+        this.pane.addBinding(PARAMS, 'receiveShadow', {label: "Receive Shadow"}).on('change', (ev) => {
+            object.receiveShadow = ev.value;
+        });
+        
+        this.pane.addBinding(PARAMS, 'renderOrder', {step: 1, label: "Render Order"}).on('change', (ev) => {
+            object.renderOrder = ev.value;
+        });
+
+      
+        // this.pane.addButton(PARAMS.parent)
     }
 
     destroyGUI() {
+
         if(this.paneDisposed) return;
         this.pane.dispose();
         this.paneDisposed = true;
