@@ -8,3 +8,5 @@
 6) obj to gltf, gltf to usdz, obj to usdz, and so on
     * NEEDS MORE RESEARCH!!!
 7) Check Bootstrap for React (npm bootstrap react-bootstrap(?) )
+
+8) theatric is a good solution but it seems to be very lack luster, homebrew it is then

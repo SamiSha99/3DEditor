@@ -2,21 +2,16 @@ import { useStores } from '../App';
 import { observer } from 'mobx-react-lite';
 import { CreateDropDown, FileDropDown } from './UIComponents/Dropdowns';
 import * as TYPES from '../store/type'
-import { importThenConvert } from './Converters';
 import { convertObject, loadFileData, screenshot } from './WaelRequest';
 import { EditorObject } from './Source/EditorObject';
-import { doExportUSDZ, save } from './Exporters';
-import { Mesh, MeshStandardMaterial, SRGBColorSpace, Texture } from 'three';
-import * as THREE from 'three';
+import { save } from './Exporters';
 import * as MESH_UTILS from './Utils/MeshUtils';
-
 let mode = 0;
 let space = 0;
 let environment = 0;
 
 export const EditorUI = observer(() => {
     const {controlsSpace, setControlsMode, setControlSpace, setEnvironment, controlsTarget, objects, pushComponentToScene} = useStores()
-    
     document.body.onkeyup = function(e) {
         if(document.activeElement?.tagName?.toLowerCase() != "body") return;
         if(e.key == " "|| e.code == "Space" || e.keyCode == 32) 
@@ -25,7 +20,7 @@ export const EditorUI = observer(() => {
             setEnvironment(++environment >= TYPES.environments.length ? (environment = 0) : environment);
     }
     return (
-        <>
+        <>        
             <div style={{position:'absolute', zIndex:2}}>
                 <FileDropDown />
                 <CreateDropDown />

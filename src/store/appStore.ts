@@ -4,6 +4,8 @@ import { Object3D, Scene } from "three";
 import * as TYPE from "./type";
 import { EditorObject } from "../editor/Source/EditorObject";
 import { Pane } from "tweakpane";
+import { buildPane, disposePane } from "../editor/Source/PaneBuilder";
+import { BindingTarget, BladeApi, BladeState, InputBindingController, MonitorBindingValue } from "@tweakpane/core";
 
 export class AppStore {
 
@@ -18,7 +20,8 @@ export class AppStore {
     @observable scene : Scene = new Scene();
     // Currently selected Objects
     @observable controlsObject3D: Object3D | Object3D[] | null
-    @observable pane: Pane | null = null;
+    @observable paneObject: Pane | null; // right side
+    @observable paneHierarchy: Pane | null = null; // left side 
 
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
@@ -46,7 +49,6 @@ export class AppStore {
         this.controlsObject3D = object;
         this.controlsTarget = object.id
         console.log(this.controlsTarget);
-        (document.getElementById("requestUpdateEditor") as HTMLButtonElement).click();
     }
 
     // 0 = translate | 1 = rotate | 2 = scale
@@ -60,4 +62,24 @@ export class AppStore {
     @action.bound setEnvironmentByName = (environment: string) => {this.environment = environment as TYPE.Environments}
     // When a new component is made, push it to the scene
     @action.bound pushComponentToScene = (object: EditorObject) => {this.objects.push(object)}
+
+    @action.bound buildPaneObject(object: Object3D) {
+        if(this.paneObject) {
+            disposePane(this.paneObject);
+            this.paneObject = null;
+        }
+        if(!this.paneObject) 
+            this.paneObject = new Pane({title:"Object Settings"});
+        
+        this.paneObject = buildPane(this.paneObject, object);
+        // this.paneObject.children.map((child) => console.log(child.element))
+        // this.paneObject.children.map((child) => {
+            // console.log(child.controller.viewProps);
+        // })
+        // console.log();
+    }
+    
+    @action.bound disposePaneObject() {
+        disposePane(this.paneObject);
+    }
 }

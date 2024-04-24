@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { useRef, useState } from "react"
 import { ThreeEvent } from "@react-three/fiber"
 import { Pane } from 'tweakpane';
-import { AppStore } from "../../store/appStore";
+import { AppStore } from "../../store/AppStore";
 
 export class EditorObject {
     component: THREE.Object3D | null = null;
@@ -33,73 +33,32 @@ export class EditorObject {
         this.pane.hidden = false;
 
         const PARAMS = {
-            position: {x: object.position.x as number, y: object.position.y as number, z: object.position.z as number},
-            rotation: {x: object.rotation.x as number, y: object.rotation.y as number, z: object.position.z as number},
-            scale: {x: object.scale.x as number, y: object.scale.y as number, z: object.scale.z as number},
-            type: object.type as string,
-            name: object.name as string,
-            visible: object.visible as boolean,
-            castShadow: object.castShadow as boolean,
-            receiveShadow: object.receiveShadow as boolean,
-            renderOrder: object.renderOrder as number,
             parent: object.parent as THREE.Object3D
         };
 
-        this.pane.addBinding(PARAMS, 'type', {label: "Type", readonly:true});
         
-        this.pane.addBinding(PARAMS, 'name', {label: "Name"}).on('change', (ev) => {
-            object.name = ev.value;
-        });
 
-        this.pane.addBinding(PARAMS, 'position', {label: "Position"}).on('change', (ev) => {
-            object.position.set(ev.value.x, ev.value.y, ev.value.z);
-        });
-
-        this.pane.addBinding(PARAMS, 'rotation', {label: "Rotation"}).on('change', (ev) => {
-            object.rotation.set(ev.value.x, ev.value.y, ev.value.z);
-        });
-
-        this.pane.addBinding(PARAMS, 'scale', {label: "Scale"}).on('change', (ev) => {
-            object.scale.set(ev.value.x, ev.value.y, ev.value.z);
-        });
-
-        this.pane.addBinding(PARAMS, 'visible', {label: "Visible"}).on('change', (ev) => {
-            object.visible = ev.value;
-        });
-
-        this.pane.addBinding(PARAMS, 'castShadow', {label: "Cast Shadow"}).on('change', (ev) => {
-            object.castShadow = ev.value;
-        });
-
-        this.pane.addBinding(PARAMS, 'receiveShadow', {label: "Receive Shadow"}).on('change', (ev) => {
-            object.receiveShadow = ev.value;
-        });
-        
-        this.pane.addBinding(PARAMS, 'renderOrder', {step: 1, label: "Render Order"}).on('change', (ev) => {
-            object.renderOrder = ev.value;
-        });
-
-        const hierarchy  = this.pane.addFolder({title:"Hierarchy"});
-        hierarchy.addButton({
-            title:(object.parent == null || object.parent instanceof THREE.Scene) ? "No Parent" : object.parent.name != "" ? object.parent.name : "Parent", 
-            disabled: object.parent == null || object.parent instanceof THREE.Scene
-        }).on("click", () => {
-            if(object.parent) {
-                AppStore.Instance.setControlsTarget(object.parent);
-                this.buildGUI(object.parent);
-            }
-        });
-            
-        object.children.map((child, number) => {
-            hierarchy.addButton({title:child.name != "" ? child.name : ("Child #" + number)}).on("click", () => {
-                if(child)
-                {
-                    AppStore.Instance.setControlsTarget(child);
-                    this.buildGUI(child);
-                }
-            });
-
-        })
+        // const hierarchy  = this.pane.addFolder({title:"Hierarchy"});
+        // hierarchy.addButton({
+            // title:(object.parent == null || object.parent instanceof THREE.Scene) ? "No Parent" : object.parent.name != "" ? object.parent.name : "Parent", 
+            // disabled: object.parent == null || object.parent instanceof THREE.Scene
+        // }).on("click", () => {
+            // if(object.parent) {
+                // AppStore.Instance.setControlsTarget(object.parent);
+                // this.buildGUI(object.parent);
+            // }
+        // });
+            // 
+        // object.children.map((child, number) => {
+            // hierarchy.addButton({title:child.name != "" ? child.name : ("Child #" + number)}).on("click", () => {
+                // if(child)
+                // {
+                    // AppStore.Instance.setControlsTarget(child);
+                    // this.buildGUI(child);
+                // }
+            // });
+// 
+        // })
     }
 
     destroyGUI() {
@@ -136,8 +95,8 @@ export const EditorObjectNode:React.FC<{node: EditorObject}> = ({node}) => {
                     ref={ref}
                     key={node.component?.id}
                     object={node.component}
-                    onClick={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation(), node.buildGUI(e.object), setControlsTarget(e.object)}}
-                    onPointerMissed={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation(), node.destroyGUI()}}
+                    onClick={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation(), setControlsTarget(e.object)}}
+                    onPointerMissed={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation()}}
                     onPointerOver={(e: ThreeEvent<MouseEvent>) => (e.stopPropagation(), setHovered(true))}
                     onPointerOut={() => (setHovered(false))} 
                 />
