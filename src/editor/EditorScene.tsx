@@ -5,7 +5,8 @@ import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';
 import { ITransformData } from '../store/interface';
 import { AppSettings } from '../store/appSettings';
-import { AppStore } from '../store/AppStore';
+import { Object3D } from 'three';
+import { TransformControls as TC } from 'three/examples/jsm/Addons.js';
 export const EditorScene = observer(() => {
     const {objects, scene, environment} = useStores()
     const [reload, setReload] = useState(false);
@@ -44,21 +45,14 @@ const EditorHelpers = observer(() => {
 
 const Controls:React.FC<ITransformData> = observer((data) => {
     const { scene } = useThree();
+    const { buildPaneObject } = useStores();
     const o = scene.getObjectById(data.targetID);
     
-    return (<TransformControls object={o} mode={data.mode} space={data.space} onObjectChange={(e) => {
-        const pane = AppStore.Instance.paneObject;
-        // pane?.children.map((child) => {
-            // console.log(child.element);
-            // console.log(child.element.childNodes[0].textContent);
-            // console.log(child, child.element.getElementsByTagName("input"));
-            // child.element.getElementsByTagName("input").value = ;
-        // })
-
-        // switch(data.mode)
-        // {
-            // case "translate":
-        // }
+    return (<TransformControls object={o} mode={data.mode} space={data.space} onMouseUp={(e) => {
+        if((e?.target as TC).object) {
+            const obj = (e?.target as TC).object;
+            buildPaneObject(obj as Object3D);
+        }
     }} />);
 })
 

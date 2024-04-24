@@ -20,45 +20,7 @@ export class EditorObject {
         this.pane.hidden = true;
     }
     
-    buildGUI(object: THREE.Object3D) {
-        
-        if(!object) {
-            if(!this.component) return false;
-            object = this.component;
-        };
-        // "refresh"
-        this.destroyGUI();
-        this.paneDisposed = false;
-        this.pane = new Pane();
-        this.pane.hidden = false;
-
-        const PARAMS = {
-            parent: object.parent as THREE.Object3D
-        };
-
-        
-
-        // const hierarchy  = this.pane.addFolder({title:"Hierarchy"});
-        // hierarchy.addButton({
-            // title:(object.parent == null || object.parent instanceof THREE.Scene) ? "No Parent" : object.parent.name != "" ? object.parent.name : "Parent", 
-            // disabled: object.parent == null || object.parent instanceof THREE.Scene
-        // }).on("click", () => {
-            // if(object.parent) {
-                // AppStore.Instance.setControlsTarget(object.parent);
-                // this.buildGUI(object.parent);
-            // }
-        // });
-            // 
-        // object.children.map((child, number) => {
-            // hierarchy.addButton({title:child.name != "" ? child.name : ("Child #" + number)}).on("click", () => {
-                // if(child)
-                // {
-                    // AppStore.Instance.setControlsTarget(child);
-                    // this.buildGUI(child);
-                // }
-            // });
-// 
-        // })
+    buildGUI(object: THREE.Object3D) {        
     }
 
     destroyGUI() {
