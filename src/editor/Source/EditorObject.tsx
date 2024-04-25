@@ -7,27 +7,12 @@ import { AppStore } from "../../store/AppStore";
 
 export class EditorObject {
     component: THREE.Object3D | null = null;
-    pane: Pane = new Pane();
-    paneDisposed: boolean = false;
-    testNumber: number = 0;
-    // gui: GUI = new GUI();
     
     constructor(component?: THREE.Object3D, name?: string)
     {
         this.component = component ? component : null;
         if(name)
             this.component!.name = name;
-        this.pane.hidden = true;
-    }
-    
-    buildGUI(object: THREE.Object3D) {        
-    }
-
-    destroyGUI() {
-
-        if(this.paneDisposed) return;
-        this.pane.dispose();
-        this.paneDisposed = true;
     }
     
     // The renderer to directly modify the selected component, maybe super call?
@@ -36,8 +21,6 @@ export class EditorObject {
             <p style={{position:"absolute", right:"0"}}>{this.component?.id}</p>
         )
     }
-
-
 
     render() {
         return this.component && <EditorObjectNode node={this} />;
@@ -57,7 +40,7 @@ export const EditorObjectNode:React.FC<{node: EditorObject}> = ({node}) => {
                     ref={ref}
                     key={node.component?.id}
                     object={node.component}
-                    onClick={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation(), setControlsTarget(e.object)}}
+                    onClick={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation()}}
                     onPointerMissed={(e: ThreeEvent<MouseEvent>) => {e.stopPropagation()}}
                     onPointerOver={(e: ThreeEvent<MouseEvent>) => (e.stopPropagation(), setHovered(true))}
                     onPointerOut={() => (setHovered(false))} 

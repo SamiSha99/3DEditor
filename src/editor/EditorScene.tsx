@@ -1,5 +1,5 @@
 import { Canvas, useThree } from '@react-three/fiber';
-import { Box, CameraControls, Environment, Grid, TransformControls } from '@react-three/drei';
+import { Box, CameraControls, CycleRaycast, Environment, Grid, TransformControls } from '@react-three/drei';
 import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';
@@ -7,9 +7,11 @@ import { ITransformData } from '../store/interface';
 import { AppSettings } from '../store/appSettings';
 import { Object3D } from 'three';
 import { TransformControls as TC } from 'three/examples/jsm/Addons.js';
+
 export const EditorScene = observer(() => {
-    const {objects, scene, environment} = useStores()
+    const {objects, scene, environment, controlsTarget, setControlsTarget} = useStores()
     const [reload, setReload] = useState(false);
+    
     return (
         <>
             <button id="requestUpdateEditor" style={{display:"none"}} onClick={()=>setReload(!reload)}> test </button>
@@ -25,7 +27,7 @@ export const EditorScene = observer(() => {
 })
 
 const EditorHelpers = observer(() => {
-    const {controlsTarget, controlsMode, controlsSpace, buildPaneObject} = useStores()
+    const {controlsTarget, controlsMode, controlsSpace, buildPaneObject, setControlsTarget, setIntersectedTargets} = useStores()
     const { scene } = useThree();
     
     useEffect(()=>{
@@ -36,6 +38,15 @@ const EditorHelpers = observer(() => {
 
     return (
         <group name={AppSettings.EDITOR_HELPERS_NAME}>
+            <CycleRaycast onChanged={(objects, cycle): any => {
+                    let res : Object3D[] = [];
+                    objects.map(o => {
+                        if(o.object)
+                            res.push(o.object);
+                    })
+                    if(res)
+                        setIntersectedTargets(res);
+                }} />
             <Box material-color={"red"} scale={[0.25,0.0005,0.25]} position={[0,0,0] } />
             <Grid cellColor={"#2080ff"} infiniteGrid side={2}/>
             {controlsTarget != -1 && <Controls targetID={controlsTarget as number} mode={controlsMode} space={controlsSpace} />}
@@ -48,7 +59,8 @@ const Controls:React.FC<ITransformData> = observer((data) => {
     const { buildPaneObject } = useStores();
     const o = scene.getObjectById(data.targetID);
     
-    return (<TransformControls object={o} mode={data.mode} space={data.space} onMouseUp={(e) => {
+    return (
+        <TransformControls object={o} mode={data.mode} space={data.space} onMouseUp={(e) => {
         if((e?.target as TC).object) {
             const obj = (e?.target as TC).object;
             buildPaneObject(obj as Object3D);

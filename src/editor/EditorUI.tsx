@@ -6,22 +6,31 @@ import { convertObject, loadFileData, screenshot } from './WaelRequest';
 import { EditorObject } from './Source/EditorObject';
 import { save } from './Exporters';
 import * as MESH_UTILS from './Utils/MeshUtils';
+
 let mode = 0;
 let space = 0;
 let environment = 0;
 
 export const EditorUI = observer(() => {
-    const {controlsSpace, setControlsMode, setControlSpace, setEnvironment, controlsTarget, objects, pushComponentToScene} = useStores()
+    const {controlsSpace, setControlsMode, setControlSpace, setEnvironment, controlsTarget, objects, pushComponentToScene, setControlsTarget, intersectedObjects} = useStores()
+    
     document.body.onkeyup = function(e) {
         if(document.activeElement?.tagName?.toLowerCase() != "body") return;
-        if(e.key == " "|| e.code == "Space" || e.keyCode == 32) 
+        if(e.key == " "|| e.code == "Space") 
             setControlsMode(++mode > TYPES.transformSpaces.length ? (mode = 0) : mode)
         if(e.key.toUpperCase() == "E" || e.code == "KeyE")
             setEnvironment(++environment >= TYPES.environments.length ? (environment = 0) : environment);
     }
+    
+    document.body.onmouseup = function(e) {
+        if(intersectedObjects?.length) {
+            setControlsTarget(intersectedObjects[0]);
+        }
+    }
+
     return (
         <>        
-            <div style={{position:'absolute', zIndex:2}}>
+            <div style={{}}>
                 <FileDropDown />
                 <CreateDropDown />
                 <button onClick={() => setControlSpace(++space >= TYPES.transformSpaces.length ? (space = 0) : space)}>{controlsSpace.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())}</button>

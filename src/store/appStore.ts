@@ -14,13 +14,14 @@ export class AppStore {
     // All objects in the scene including their react node renderer
     @observable objects: Array<EditorObject> = []
 
+    @observable intersectedObjects: Object3D[] | null = null;
     // Object3D ID
-    @observable controlsTarget: number | number[] | -1
+    @observable controlsTarget: number | number[] = -1;
     
     @observable scene : Scene = new Scene();
     // Currently selected Objects
-    @observable controlsObject3D: Object3D | Object3D[] | null
-    @observable paneObject: Pane | null; // right side
+    @observable controlsObject3D: Object3D | Object3D[] | null = null;
+    @observable paneObject: Pane | null = null; // right side
     @observable paneHierarchy: Pane | null = null; // left side 
 
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
@@ -30,12 +31,14 @@ export class AppStore {
     constructor(){
         makeObservable(this)
         AppStore._instance = this;
-        this.controlsTarget = -1
-        this.controlsObject3D = null;
     }
 
     public static get Instance() {
         return this._instance || (this._instance = new this());
+    }
+
+    @action.bound setIntersectedTargets = (result: Object3D[] | null) => {
+        this.intersectedObjects = result;
     }
 
     @action.bound setControlsTarget = (object: Object3D) => {
