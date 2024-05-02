@@ -6,7 +6,7 @@ export function doExport() {
    
 }
 
-export function doExportGLTF(exportTarget: Object3D<Object3DEventMap> | Object3D<Object3DEventMap>[] | null, binary: boolean = false) {
+export function doExportGLTF(exportTarget: Object3D<Object3DEventMap> | Object3D<Object3DEventMap>[] | null, binary: boolean = false, fileName: string = "export") {
     const exporter = new GLTFExporter();
     const object = exportTarget;
         
@@ -17,9 +17,9 @@ export function doExportGLTF(exportTarget: Object3D<Object3DEventMap> | Object3D
         (result: { [key: string]: any; } | ArrayBuffer) => {
             
             if(binary && result instanceof ArrayBuffer)
-                exportGLB(result);
+                exportGLB(result, fileName);
             else
-                exportGLTF(result);
+                exportGLTF(result, fileName);
             
         },
         function (error) {
@@ -30,7 +30,7 @@ export function doExportGLTF(exportTarget: Object3D<Object3DEventMap> | Object3D
     );
 }
 
-export function doExportUSDZ(exportTarget: Object3D<Object3DEventMap> | Object3D<Object3DEventMap>[] | null) {
+export function doExportUSDZ(exportTarget: Object3D<Object3DEventMap> | Object3D<Object3DEventMap>[] | null, fileName: string = "") {
     const exporter = new USDZExporter();
     
     if(!exportTarget) return console.warn("Export type null!");
@@ -42,7 +42,7 @@ export function doExportUSDZ(exportTarget: Object3D<Object3DEventMap> | Object3D
     });
 }
 
-export function doExportOBJ(exportTarget: Object3D<Object3DEventMap> | Object3D<Object3DEventMap>[] | null) {
+export function doExportOBJ(exportTarget: Object3D<Object3DEventMap> | Object3D<Object3DEventMap>[] | null, fileName: string = "") {
     const exporter = new OBJExporter();
     
     if(!exportTarget) return console.warn("Export type null!");
@@ -51,24 +51,24 @@ export function doExportOBJ(exportTarget: Object3D<Object3DEventMap> | Object3D<
     exportOBJ(data);
 }
 
-async function exportGLB(result: ArrayBuffer) {
+async function exportGLB(result: ArrayBuffer, fileName: string = "export") {
     // const document = await io.readBinary(new Uint8Array(result));
     // const glb = await io.writeBinary(document);
-    save(new Blob([result], {type: 'application/octet-stream'}), 'export.glb');
+    save(new Blob([result], {type: 'application/octet-stream'}), fileName + ".glb");
 }
 
-function exportGLTF(result: any) {
+function exportGLTF(result: any, fileName: string = "export") {
     const json = JSON.stringify(result, null, 2);
-    save(new Blob([json], {type: 'application/json'}), "export.gltf");
+    save(new Blob([json], {type: 'application/json'}), fileName + ".gltf");
 }
 
-function exportUSDZ(result: Uint8Array) {
+function exportUSDZ(result: Uint8Array, fileName: string = "export") {
     const arraybuffer = result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
-    save(new Blob([arraybuffer], {type: 'application/octet-stream'}), "export.usdz");
+    save(new Blob([arraybuffer], {type: 'application/octet-stream'}), fileName + ".usdz");
 }
 
-function exportOBJ(result: string) {
-    save(new Blob([result], {type: 'model/obj'}), "export.obj")
+function exportOBJ(result: string, fileName: string = "export") {
+    save(new Blob([result], {type: 'model/obj'}), fileName + ".obj")
 }
 
 export function save(blob: Blob, fileName: string) {

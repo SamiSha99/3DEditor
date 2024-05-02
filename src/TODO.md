@@ -10,3 +10,5 @@
 7) Check Bootstrap for React (npm bootstrap react-bootstrap(?) )
 
 8) theatric is a good solution but it seems to be very lack luster, homebrew it is then
+9) check user data to be useful
+10) Check how to remove editor related helpers before export to avoid adding components

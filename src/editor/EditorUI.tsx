@@ -1,18 +1,21 @@
 import { useStores } from '../App';
 import { observer } from 'mobx-react-lite';
-import { CreateDropDown, FileDropDown } from './UIComponents/Dropdowns';
+import { CreateDropDown, FileDropDown, AddDropDown } from './UIComponents/Dropdowns';
 import * as TYPES from '../store/type'
 import { convertObject, loadFileData, screenshot } from './WaelRequest';
 import { EditorObject } from './Source/EditorObject';
 import { save } from './Exporters';
 import * as MESH_UTILS from './Utils/MeshUtils';
+import { Checkbox } from 'antd';
 
 let mode = 0;
 let space = 0;
 let environment = 0;
 
 export const EditorUI = observer(() => {
-    const {controlsSpace, setControlsMode, setControlSpace, setEnvironment, controlsTarget, objects, pushComponentToScene, setControlsTarget, intersectedObjects} = useStores()
+    const {controlsSpace, setControlsMode, setControlSpace, 
+        setEnvironment, controlsTarget, objects, pushComponentToScene, 
+        setControlsTarget, intersectedObjects, useRootSelection, setRootSelection} = useStores()
     
     document.body.onkeyup = function(e) {
         if(document.activeElement?.tagName?.toLowerCase() != "body") return;
@@ -33,7 +36,11 @@ export const EditorUI = observer(() => {
             <div style={{}}>
                 <FileDropDown />
                 <CreateDropDown />
+                <AddDropDown />
                 <button onClick={() => setControlSpace(++space >= TYPES.transformSpaces.length ? (space = 0) : space)}>{controlsSpace.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())}</button>
+                <Checkbox checked={useRootSelection} onChange={(e) => {
+                    setRootSelection(e.target.checked);
+                }}></Checkbox>
                 <button onClick={() => {
                     const input = document.createElement('input');
                     input.type = "file";

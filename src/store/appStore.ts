@@ -28,6 +28,7 @@ export class AppStore {
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
     @observable environment: TYPE.Environments = TYPE.environments[0];
 
+    @observable useRootSelection: boolean = true;
     constructor(){
         makeObservable(this)
         AppStore._instance = this;
@@ -45,9 +46,9 @@ export class AppStore {
         
         // Selects the highest in the hierachy regardless of which one clicked for now
         // to-do add ungrouped selection?
-        // while(object.parent && !(object.parent instanceof Scene)) {
-            // object = object.parent;
-        // }
+        while(this.useRootSelection && object.parent && !(object.parent instanceof Scene)) {
+            object = object.parent;
+        }
         console.log(object);
         this.controlsObject3D = object;
         this.controlsTarget = object.id
@@ -66,6 +67,11 @@ export class AppStore {
     // When a new component is made, push it to the scene
     @action.bound pushComponentToScene = (object: EditorObject) => {this.objects.push(object)}
 
+    @action.bound setScene(scene: Scene) {
+        this.scene = scene;
+        this.objects.length = 0;
+    }
+
     @action.bound buildPaneObject(object: Object3D) {
         if(this.paneObject) {
             disposePane(this.paneObject);
@@ -75,13 +81,12 @@ export class AppStore {
             this.paneObject = new Pane({title:"Object Settings"});
         
         this.paneObject = buildPane(this.paneObject, object);
-        // this.paneObject.children.map((child) => console.log(child.element))
-        // this.paneObject.children.map((child) => {
-            // console.log(child.controller.viewProps);
-        // })
-        // console.log();
     }
     
+    @action.bound setRootSelection(b: boolean) {
+        this.useRootSelection = b;
+    }
+
     @action.bound disposePaneObject() {
         disposePane(this.paneObject);
     }
