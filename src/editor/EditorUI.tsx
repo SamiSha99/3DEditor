@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite';
 import { CreateDropDown, FileDropDown, AddDropDown } from './UIComponents/Dropdowns';
 import * as TYPES from '../store/type'
 import { convertObject, loadFileData, screenshot } from './WaelRequest';
-import { EditorObject } from './Source/EditorObject';
 import { save } from './Exporters';
 import * as MESH_UTILS from './Utils/MeshUtils';
 import { Checkbox } from 'antd';
@@ -14,7 +13,7 @@ let environment = 0;
 
 export const EditorUI = observer(() => {
     const {controlsSpace, setControlsMode, setControlSpace, 
-        setEnvironment, controlsTarget, objects, pushComponentToScene, 
+        setEnvironment, pushComponentToScene, 
         setControlsTarget, intersectedObjects, useRootSelection, setRootSelection} = useStores()
     
     document.body.onkeyup = function(e) {
@@ -44,14 +43,13 @@ export const EditorUI = observer(() => {
                 <button onClick={() => {
                     const input = document.createElement('input');
                     input.type = "file";
-                    // input.accept = ALLOWED_FORMAT_TYPES;
                     input.style.display = "none";
                     input.click();
                     input.onchange = (e => {
                         const file = ((e as any as React.ChangeEvent<HTMLInputElement>).target.files as FileList)[0];
                         file.text().then(value => {
                             console.log("inside success!");
-                            loadFileData(value,".obj").then(result => {
+                            loadFileData(value,".glb").then(result => {
                                 console.log("result:", result);
                                 if(!result) return;
                                 MESH_UTILS.computeAllVertexNormals(result);
@@ -65,18 +63,14 @@ export const EditorUI = observer(() => {
                                         });
                                     }, 1000);
                                 });
-                                const eo =  new EditorObject(result);
-                                pushComponentToScene(eo);
+                                // const eo =  new EditorObject(result);
+                                pushComponentToScene(result);
                             });
                         });
                     })
-                    // importThenConvert(".obj")
                 }}>
                     Convert Test</button>
             </div>
-            {objects.map((value) => (
-                value.component?.id == controlsTarget && value.renderGUI()
-            ))} 
         </>
     )
 })

@@ -3,26 +3,29 @@ import { Dropdown, Button, message, Modal, Input, Form, Select, Checkbox } from 
 import { doExportGLTF, doExportUSDZ } from "../Exporters";
 import { doImport } from "../Importers";
 import { useStores } from "../../App";
-import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
-import { AppSettings } from "../../store/appSettings";
-import { EditorObject } from "../Source/EditorObject";
+import { GenerateBox, GenerateCapsule, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
 import * as MESH_UTILS from '.././Utils/MeshUtils'
 import { GenerateButton } from "../MeshCreator/3DButton";
-import { VertexNormalsHelper } from "three/examples/jsm/Addons.js";
 import * as THREE from "three";
 import { useState } from "react";
-import { string } from "three/examples/jsm/nodes/Nodes.js";
-import { AppStore } from "../../store/AppStore";
 
 export const FileDropDown = () => {
-    const {scene, pushComponentToScene, setScene, controlsObject3D} = useStores();
+    const {pushComponentToScene, setScene, controlsObject3D, sceneObjects} = useStores();
     const [modalExport, toggleModalExport] = useState(false);
     return(
         <>
             <ExportModal open={modalExport} onCancel={() => {toggleModalExport(false)}} onSubmit={(res) => {
                 console.log("Exporting type", res.type, "for a file named", res.name, "using the", res.exportSelection ? "current selection." : "entire scene.")
-                
-                const selection = res.exportSelection ? controlsObject3D : prepareSceneForExport(scene);
+                let selection;
+                if(res.exportSelection) {
+                    selection = controlsObject3D;
+                }
+                else {
+                    const sceneExport = new THREE.Scene();
+                    if(sceneObjects)
+                        sceneExport.children = sceneObjects;
+                    selection = sceneExport;
+                }
                 console.log("selecton:", selection)
                 if(!selection) message.error('No selection detected, make sure you are selecting an Object before export.')
                 switch(res.type) {
@@ -44,10 +47,9 @@ export const FileDropDown = () => {
                     label: 'New Scene',
                     key: '0',
                     icon: <SwapOutlined />,
-                    disabled: true,
+                    disabled: false,
                     onClick: () => {
-                        
-                        setScene(new THREE.Scene());
+                        setScene();
                     }
                 },
                 {
@@ -61,9 +63,7 @@ export const FileDropDown = () => {
                         doImport((onHandle) => {
                             if(onHandle) {
                                 MESH_UTILS.computeAllVertexNormals(onHandle);
-                                console.log("Imported object:", onHandle);
-                                const editorObject = new EditorObject(onHandle);
-                                pushComponentToScene(editorObject);
+                                pushComponentToScene(onHandle);
                                 message.success("Import successful!");
                             }
                             else
@@ -97,7 +97,10 @@ export const CreateDropDown = () => {
                         {
                             label: 'Button',
                             key: '0',
-                            onClick: () => GenerateButton(pushComponentToScene)
+                            onClick: () => {
+                                const button = GenerateButton();
+                                pushComponentToScene(button);
+                            }
                         },
                         {
                             type: "divider"
@@ -105,22 +108,42 @@ export const CreateDropDown = () => {
                         {
                             label: 'Cube',
                             key: '1',
-                            onClick: () => GenerateBox(pushComponentToScene)
+                            onClick: () => {
+                                const res = GenerateBox()
+                                pushComponentToScene(res);
+                            }
                         },
                         {
                             label: 'Sphere',
                             key: '2',
-                            onClick: () => GenerateSphere(pushComponentToScene)
+                            onClick: () => {
+                                const res = GenerateSphere()
+                                pushComponentToScene(res);
+                            }
                         },
                         {
                             label: 'Plane',
                             key: '3',
-                            onClick: () => GeneratePlane(pushComponentToScene)
+                            onClick: () => {
+                                const res = GeneratePlane()
+                                pushComponentToScene(res);
+                            }
                         },
                         {
                             label: 'Cylinder',
                             key: '4',
-                            onClick: () => GenerateCylinder(pushComponentToScene)
+                            onClick: () => {
+                                const res = GenerateCylinder()
+                                pushComponentToScene(res);
+                            }
+                        },
+                        {
+                            label: 'Capsule',
+                            key: '5',
+                            onClick: () => {
+                                const res = GenerateCapsule()
+                                pushComponentToScene(res);
+                            }
                         }],
                     onClick: (e) => {
                         message.success('Generated ' + (e.domEvent.target as HTMLElement).innerText)
@@ -133,7 +156,7 @@ export const CreateDropDown = () => {
 
 export const AddDropDown = () => {
     const {pushComponentToScene, controlsObject3D} = useStores();
-    // const { scene } = useThree(); 
+    
     return(
         <Dropdown 
             children={<Button children={"Add"} />} 
@@ -143,10 +166,10 @@ export const AddDropDown = () => {
                         label: 'Button to Selected Object',
                         key: '0',
                         onClick: () => {
-                            const obj = GenerateButton(pushComponentToScene)
+                            const obj = GenerateButton()
                             if(!controlsObject3D) return;
-                            if(!Array.isArray(controlsObject3D) && obj.component)
-                                controlsObject3D?.add(obj.component);
+                            if(!Array.isArray(controlsObject3D) && obj)
+                                controlsObject3D?.add(obj);
                         }
                     },
                     {
@@ -155,22 +178,34 @@ export const AddDropDown = () => {
                     {
                         label: 'Cube',
                         key: '1',
-                        onClick: () => GenerateBox(pushComponentToScene)
+                        onClick: () => {
+                            const res = GenerateBox();
+                            pushComponentToScene(res);
+                        }
                     },
                     {
                         label: 'Sphere',
                         key: '2',
-                        onClick: () => GenerateSphere(pushComponentToScene)
+                        onClick: () => {
+                            const res = GenerateSphere();
+                            pushComponentToScene(res);
+                        }
                     },
                     {
                         label: 'Plane',
                         key: '3',
-                        onClick: () => GeneratePlane(pushComponentToScene)
+                        onClick: () => {
+                            const res = GeneratePlane();
+                            pushComponentToScene(res);
+                        }
                     },
                     {
                         label: 'Cylinder',
                         key: '4',
-                        onClick: () => GenerateCylinder(pushComponentToScene)
+                        onClick: () => {
+                            const res = GenerateCylinder();
+                            pushComponentToScene(res);
+                        }
                     }],
                 onClick: (e) => {
                     message.success('Generated ' + (e.domEvent.target as HTMLElement).innerText)
@@ -178,40 +213,6 @@ export const AddDropDown = () => {
             }}
         />
     )
-}
-
-function prepareSceneForExport(scene: THREE.Scene) {
-    const refs = cleanUpHelpers(scene);
-    const sceneClone = scene.clone();
-    const editorHelpers = sceneClone.getObjectByName(AppSettings.EDITOR_HELPERS_NAME);
-    const transHelper = sceneClone.getObjectByName("TRANSFORM_HELPER");
-    const what = sceneClone.getObjectByName("mesh_1");
-    console.log("????", what);
-    console.log("trans controls", transHelper)
-    console.log(editorHelpers);
-    if(transHelper) {
-        sceneClone.remove(transHelper);
-    }
-    if(editorHelpers)
-        sceneClone.remove(editorHelpers);
-    restoreHelpers(refs);
-    return sceneClone;
-}
-
-function cleanUpHelpers(scene: THREE.Scene) {
-    const helpers = scene.getObjectsByProperty("type","VertexNormalsHelper") as VertexNormalsHelper[];
-    let oldParents = [] as (THREE.Object3D | null)[];
-    console.log(helpers);
-    helpers.forEach(h => {
-        if(h.parent) {
-            oldParents.push(h.parent);
-            h.parent.remove(h);
-        }
-        else {
-            oldParents.push(null);
-        }
-    });
-    return {helpers, oldParents};
 }
 
 type ExportFormData = {name: string, type:".glb"|".usdz", exportSelection: boolean};
@@ -223,13 +224,8 @@ const ExportModal: React.FC<{open: boolean, onCancel: () => void, onSubmit: (res
         <Modal 
             title={"Export..."} 
             open={open} 
-            onOk={(e) => {
-                onSubmit(formData);
-            }} 
-            onCancel={(e) => {
-                onCancel();
-                // setModalType(open);
-            }}>
+            onOk={() => onSubmit(formData)} 
+            onCancel={() => onCancel()}>
                 <Form>
                     <Select title="Export as"
                         defaultValue=".glb"
@@ -245,16 +241,4 @@ const ExportModal: React.FC<{open: boolean, onCancel: () => void, onSubmit: (res
                 </Form>
         </Modal>
     )
-}
-
-function restoreHelpers(refs: {helpers: VertexNormalsHelper[], oldParents: (THREE.Object3D | null)[]}) {
-    const oldParents = refs.oldParents;
-    const helpers = refs.helpers;
-
-    oldParents.forEach((parent, indx) => {
-        console.log(oldParents[indx]);
-        if(oldParents[indx]) {
-            oldParents[indx]?.add(helpers[indx]);
-        }
-    });
 }

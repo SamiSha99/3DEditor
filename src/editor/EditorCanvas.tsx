@@ -1,32 +1,52 @@
-import { Canvas, useThree } from '@react-three/fiber';
-import { Box, CameraControls, CycleRaycast, Environment, Grid, Helper, TransformControls, useHelper } from '@react-three/drei';
+import { Canvas, useStore, useThree } from '@react-three/fiber';
+import { Box, Bvh, CameraControls, CycleRaycast, Environment, Grid, Helper, TransformControls, useHelper } from '@react-three/drei';
 import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '../App';
 import { ITransformData } from '../store/interface';
 import { AppSettings } from '../store/appSettings';
-import { BoxHelper, Object3D } from 'three';
+import { Box3, BoxHelper, Mesh, Object3D } from 'three';
 import { TransformControls as TC } from 'three/examples/jsm/Addons.js';
 
-export const EditorScene = observer(() => {
-    const {objects, scene, environment, controlsTarget, setControlsTarget} = useStores()
-    const [reload, setReload] = useState(false);
+export const EditorCanvas = observer(() => {
+    const {environment} = useStores()
+    // const [reload, setReload] = useState(false);
     
     return (
         <>
-            <button id="requestUpdateEditor" style={{display:"none"}} onClick={()=>setReload(!reload)}> test </button>
-            <Canvas scene={scene} shadows camera={{position:[-2.5,2.5,0]}}>
+            {/* <button id="requestUpdateEditor" onClick={()=>setReload(!reload)}> test </button> */}
+            <Canvas shadows camera={{position:[-2.5,2.5,0]}}>
                 <CameraControls  makeDefault />
+                <EditorScene />
                 <EditorHelpers />
-                {objects.map((value) => (value.render()))}
                 {environment && <Environment preset={environment} />}
             </Canvas>
         </>
     )
 })
 
+// Currently instantiated objects in the scene that can be modified
+const EditorScene = observer(() => {
+    const {sceneObjects} = useStores();
+
+    return (
+        <>
+            {
+            sceneObjects && sceneObjects.map((child) => 
+                <primitive 
+                    onClick={(e: any) => {e.stopPropagation()}}
+                    onPointerMissed={(e: any) => {e.stopPropagation()}}
+                    onPointerOver={(e: any) => (e.stopPropagation())}
+                    onPointerOut={(e: any) => (e.stopPropagation)} 
+                    object={child}
+                />
+            )}
+        </>
+    )
+})
+
 const EditorHelpers = observer(() => {
-    const {controlsTarget, controlsMode, controlsSpace, buildPaneObject, setIntersectedTargets} = useStores()
+    const {controlsTarget, controlsObject3D, controlsMode, controlsSpace, buildPaneObject, setIntersectedTargets} = useStores()
     const { scene } = useThree();
     
     useEffect(()=>{
@@ -37,7 +57,7 @@ const EditorHelpers = observer(() => {
 
     return (
         <group name={AppSettings.EDITOR_HELPERS_NAME}>
-            <CycleRaycast onChanged={(objects, cycle): any => {
+            <CycleRaycast onChanged={(objects): any => {
                     let res : Object3D[] = [];
                     console.log(objects);
                     objects.map(o => {
@@ -59,13 +79,8 @@ const Controls:React.FC<ITransformData> = observer((data) => {
     const { buildPaneObject } = useStores();
     const o = scene.getObjectById(data.targetID);
     
-    // const mesh = useRef(o as Object3D);
-    
     return (
-        <TransformControls name='TRANSFORM_HELPER' object={o} mode={data.mode} space={data.space} children={
-            <></>
-            // <Helper type={BoxHelper} args={['green']} />
-        } onMouseUp={(e) => {
+        <TransformControls name='TRANSFORM_HELPER' object={o} mode={data.mode} space={data.space} onMouseUp={(e) => {
         if((e?.target as TC).object) {
             const obj = (e?.target as TC).object;
             buildPaneObject(obj as Object3D);
@@ -73,4 +88,4 @@ const Controls:React.FC<ITransformData> = observer((data) => {
     }} />);
 })
 
-export default EditorScene
+export default EditorCanvas

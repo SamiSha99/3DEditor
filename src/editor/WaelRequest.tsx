@@ -96,13 +96,13 @@ export function screenshot(group: THREE.Object3D, onComplete: (blob: Blob | null
     
     // for those models that are too small than intended, ehhhh
     if(size.x < 1 && size.x > -1 || size.y < 1 && size.y > -1 || size.z < 1 && size.z > -1) {
-        range = Math.max(size.x + size.y, size.x + size.z, size.y + size.z);
+        range = Math.max(size.x, size.y);
     }
 
     const camera = new THREE.PerspectiveCamera();
-    camera.position.x = range/2;
-    camera.position.y = range/2;
-    camera.position.z = range/2;
+    camera.position.x = 0;
+    camera.position.y = 0;
+    camera.position.z = range/Math.sqrt(2);
     camera.lookAt(bound.getCenter(new THREE.Vector3()));
     
     const ambientLight = new THREE.AmbientLight('white', 1.0);

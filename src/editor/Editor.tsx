@@ -1,6 +1,6 @@
 import {} from '@react-three/fiber'
 import {} from '@react-three/drei'
-import EditorScene from './EditorScene'
+import EditorCanvas from './EditorCanvas'
 import EditorUI from './EditorUI'
 
 export function Editor() {
@@ -8,7 +8,7 @@ export function Editor() {
     return (
         <>
             <EditorUI />
-            <EditorScene />
+            <EditorCanvas />
         </>
     )
 }

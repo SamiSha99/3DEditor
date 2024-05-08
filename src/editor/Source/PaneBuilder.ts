@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { Pane } from 'tweakpane';
-import { AppStore } from '../../store/AppStore';
 
 export function buildPane(pane: Pane, target: THREE.Object3D) {
     const type = String(typeof target)

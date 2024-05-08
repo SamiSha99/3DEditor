@@ -6,7 +6,7 @@ export async function Screenshot(group: THREE.Object3D) {
 
     const width = 1024;
     const height = 1024;
-    const canvas = THREE.createCanvasElement()//(width, height, { alpha: true })
+    const canvas = THREE.createCanvasElement();
     
     canvas.height = height;
     canvas.width = width;

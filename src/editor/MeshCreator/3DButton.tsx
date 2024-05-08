@@ -1,16 +1,12 @@
-import { EditorObject } from "../Source/EditorObject";
 import * as THREE from 'three';
-import { EditorObjectButton } from "../Source/EditorObjectButton";
+import { GenerateSphere } from './Primitives';
 
-export function GenerateButton(pushComponentToScene: (object: EditorObject) => void) {
-    let mesh = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshStandardMaterial());
-    
+export function GenerateButton() {
+    let mesh = GenerateSphere();
     (mesh.material as THREE.MeshStandardMaterial).transparent = true;
-    (mesh.material as THREE.MeshStandardMaterial).wireframe = true;
-    (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ffff);
-
-    
-    const obj = new EditorObjectButton(mesh, "Button3D");
-    pushComponentToScene(obj);
-    return obj;
+    (mesh.material as THREE.MeshStandardMaterial).color.set(0xFFB6C1);
+    (mesh.material as THREE.MeshStandardMaterial).opacity = 0.5;
+    mesh.name = "Button3D";
+    // pushComponentToScene(mesh);
+    return mesh;
 }
