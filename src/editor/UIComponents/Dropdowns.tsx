@@ -1,11 +1,9 @@
 import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
 import { Dropdown, Button, message, Modal, Input, Form, Select, Checkbox } from "antd";
 import { doExportGLTF, doExportUSDZ } from "../Exporters";
-// import { doImport } from "../Importers";
 import { doImport } from "../tools/Importer";
 import { useStores } from "../../App";
 import { GenerateBox, GenerateCapsule, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
-import * as MESH_UTILS from '.././Utils/MeshUtils'
 import { GenerateButton } from "../MeshCreator/3DButton";
 import * as THREE from "three";
 import { useState } from "react";
@@ -66,15 +64,6 @@ export const FileDropDown = () => {
                         }, (err) => {
 
                         })
-                        // doImport((onHandle) => {
-                            // if(onHandle) {
-                                // MESH_UTILS.computeAllVertexNormals(onHandle);
-                                // pushComponentToScene(onHandle);
-                                // message.success("Import successful!");
-                            // }
-                            // else
-                                // message.error("Import failed!");
-                        // });
                     }
                 },
                 {
