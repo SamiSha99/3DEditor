@@ -59,11 +59,7 @@ export const FileDropDown = () => {
                     key: '1',
                     icon: <ImportOutlined />,
                     onClick: () => {
-                        doImport((res) => {
-
-                        }, (err) => {
-
-                        })
+                        doImport();
                     }
                 },
                 {
