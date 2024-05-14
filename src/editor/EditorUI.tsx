@@ -1,10 +1,10 @@
 import { useStores } from '../App';
+import * as TYPES from '../store/type'
+import * as MESH_UTILS from './Utils/MeshUtils';
 import { observer } from 'mobx-react-lite';
 import { CreateDropDown, FileDropDown, AddDropDown } from './UIComponents/Dropdowns';
-import * as TYPES from '../store/type'
 import { convertObject, loadFileData, screenshot } from './WaelRequest';
 import { save } from './Exporters';
-import * as MESH_UTILS from './Utils/MeshUtils';
 import { Checkbox } from 'antd';
 
 let mode = 0;

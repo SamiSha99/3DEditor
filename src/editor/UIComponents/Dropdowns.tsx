@@ -1,6 +1,6 @@
 import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
 import { Dropdown, Button, message, Modal, Input, Form, Select, Checkbox } from "antd";
-import { doExportGLTF, doExportUSDZ } from "../Exporters";
+import { ExportType, doExport } from "../tools/Exporter";
 import { doImport } from "../tools/Importer";
 import { useStores } from "../../App";
 import { GenerateBox, GenerateCapsule, GenerateCylinder, GeneratePlane, GenerateSphere } from "../MeshCreator/Primitives";
@@ -9,7 +9,7 @@ import * as THREE from "three";
 import { useState } from "react";
 
 export const FileDropDown = () => {
-    const {pushComponentToScene, setScene, controlsObject3D, sceneObjects} = useStores();
+    const {setScene, controlsObject3D, sceneObjects} = useStores();
     const [modalExport, toggleModalExport] = useState(false);
     return(
         <>
@@ -27,14 +27,8 @@ export const FileDropDown = () => {
                 }
                 console.log("selecton:", selection)
                 if(!selection) message.error('No selection detected, make sure you are selecting an Object before export.')
-                switch(res.type) {
-                    case '.glb':
-                        doExportGLTF(selection, true, res.name);
-                        break;
-                    case '.usdz':
-                        doExportUSDZ(selection, res.name)
-                        break;
-                }
+                
+                doExport(selection as THREE.Object3D, res.type);
                 toggleModalExport(false);
             }} />
             <Dropdown
@@ -206,10 +200,10 @@ export const AddDropDown = () => {
     )
 }
 
-type ExportFormData = {name: string, type:".glb"|".usdz", exportSelection: boolean};
+type ExportFormData = {name: string, type: ExportType, exportSelection: boolean};
 
 const ExportModal: React.FC<{open: boolean, onCancel: () => void, onSubmit: (res: ExportFormData) => void}>  = ({open, onCancel, onSubmit}) => {
-    const [formData, setFormData] = useState<ExportFormData>({name: "exportName", type: ".glb", exportSelection: false});
+    const [formData, setFormData] = useState<ExportFormData>({name: "exportName", type: "glb", exportSelection: false});
 
     return (
         <Modal 
@@ -219,12 +213,14 @@ const ExportModal: React.FC<{open: boolean, onCancel: () => void, onSubmit: (res
             onCancel={() => onCancel()}>
                 <Form>
                     <Select title="Export as"
-                        defaultValue=".glb"
+                        defaultValue="glb"
                         style={{ width: 120 }}
-                        onChange={(val: ".glb" | ".usdz") => {setFormData({name: formData.name, type: val, exportSelection: formData.exportSelection})}}
+                        onChange={(val: ExportType) => {setFormData({name: formData.name, type: val, exportSelection: formData.exportSelection})}}
                         options={[
-                            { value: '.glb', label: 'GLB' },
-                            { value: '.usdz', label: 'USDZ' }
+                            { value: 'glb', label: 'GLB' },
+                            { value: 'gltf', label: 'GLTF' },
+                            { value: 'usdz', label: 'USDZ' },
+                            { value: 'obj', label: 'OBJ' }
                         ]}
                         />
                     <Checkbox checked={formData.exportSelection} onChange={(e) => setFormData({name: formData.name, type: formData.type, exportSelection: e.target.checked})} />

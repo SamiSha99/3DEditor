@@ -27,7 +27,6 @@ function doExport(result: THREE.Object3D<THREE.Object3DEventMap> | null, to: Con
         case ".glb":    EXPORTER.doExportGLTF(result, true);    break;
         case ".obj":    EXPORTER.doExportOBJ(result);           break;
         case ".usdz":   EXPORTER.doExportUSDZ(result);          break;
-        // case ".fbx":    /* insert fbx here */                   break;
     }
 }
 

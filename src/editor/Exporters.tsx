@@ -1,6 +1,5 @@
 import { GLTFExporter, OBJExporter, USDZExporter } from "three/examples/jsm/Addons.js";
 import { Object3D, Object3DEventMap } from "three";
-import { io } from "./Utils/Compression";
 
 export function doExport() {
    
@@ -79,4 +78,13 @@ export function save(blob: Blob, fileName: string) {
     a.download = fileName;
     a.click();
     document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+}
+
+export function saveArrayBuffer(buffer: ArrayBuffer, filename: string) {
+	save( new Blob([buffer], {type:'application/octet-stream'}), filename);
+}
+
+export function saveString(text: string, filename: string) {
+	save( new Blob([text], {type:'text/plain'} ), filename );
 }

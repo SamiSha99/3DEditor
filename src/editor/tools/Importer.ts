@@ -43,13 +43,10 @@ function handleFiles(files: File[]) {
         	console.log('Loading', url);
         	return URL.createObjectURL(file);
         }
-
         return url;
     });
 
-    files.forEach((file) => {
-        handleFile(file, manager)
-    })
+    files.forEach((file) => handleFile(file, manager));
 }
 
 function handleFile(file: File, manager: THREE.LoadingManager | null = null) {
@@ -63,7 +60,6 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null) {
                 console.log('Loading', url);
                 return URL.createObjectURL(file);
             }
-    
             return url;
         });
     }
