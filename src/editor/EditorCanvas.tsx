@@ -16,7 +16,7 @@ export const EditorCanvas = observer(() => {
         <>
             {/* <button id="requestUpdateEditor" onClick={()=>setReload(!reload)}> test </button> */}
             <Canvas style={{height:"95vh"}} shadows camera={{position:[-2.5,2.5,0]}}>
-                <CameraControls  makeDefault />
+                <CameraControls makeDefault />
                 <EditorScene />
                 <EditorHelpers />
                 {environment && <Environment preset={environment} />}
