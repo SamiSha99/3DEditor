@@ -10,7 +10,7 @@
     "types": ["@types/wicg-file-system-access"],
     
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -22,7 +22,16 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    
+    /* Pathing */
+    "baseUrl": ".",
+    "paths": {
+      "@orb_App": ["./src/App.tsx"],
+      "@orb_AppStore": ["./src/store/AppStore.ts"],
+      "@orb_tools/*": ["./src/editor/tools/*"],
+      "@orb_types" : ["./src/store/type.ts"]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
