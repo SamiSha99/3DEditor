@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { message } from 'antd';
 import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader} from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { AppStore } from '../../store/appStore';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
+import { AppStore } from '@orb_AppStore';
 
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; // Extension of the file with '.'
 
@@ -228,6 +228,6 @@ function createGLTFLoader(manager: THREE.LoadingManager | undefined = undefined)
     return loader;
 }
 
-function pushToScene(object3d: THREE.Object3D) {
+export function pushToScene(object3d: THREE.Object3D) {
     AppStore._instance.pushComponentToScene(object3d);
 }

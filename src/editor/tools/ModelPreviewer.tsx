@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import * as EXPORTER from './Exporters'
+// import * as EXPORTER from './Exporters'
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 
 export async function Screenshot(group: THREE.Object3D) {
@@ -50,7 +50,7 @@ export async function Screenshot(group: THREE.Object3D) {
 
 function save(canvas: HTMLCanvasElement) {
     canvas.toBlob(blob => {
-        if(blob)
-            EXPORTER.save(blob, "preview.png");
+        // if(blob)
+        //     EXPORTER.save(blob, "preview.png");
     }, 'image/png', 1);
 }

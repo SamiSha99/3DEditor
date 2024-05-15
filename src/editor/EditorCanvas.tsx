@@ -1,11 +1,11 @@
-import { Canvas, useStore, useThree } from '@react-three/fiber';
-import { Box, Bvh, CameraControls, CycleRaycast, Environment, Grid, Helper, TransformControls, useHelper } from '@react-three/drei';
-import React, { useEffect, useRef, useState } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
+import { Box, CameraControls, CycleRaycast, Environment, Grid, TransformControls } from '@react-three/drei';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useStores } from '../App';
+import { useStores } from '@orb_App';
 import { ITransformData } from '../store/interface';
 import { AppSettings } from '../store/appSettings';
-import { Box3, BoxHelper, Mesh, Object3D } from 'three';
+import * as THREE from 'three';
 import { TransformControls as TC } from 'three/examples/jsm/Addons.js';
 
 export const EditorCanvas = observer(() => {
@@ -15,7 +15,7 @@ export const EditorCanvas = observer(() => {
     return (
         <>
             {/* <button id="requestUpdateEditor" onClick={()=>setReload(!reload)}> test </button> */}
-            <Canvas shadows camera={{position:[-2.5,2.5,0]}}>
+            <Canvas style={{height:"95vh"}} shadows camera={{position:[-2.5,2.5,0]}}>
                 <CameraControls  makeDefault />
                 <EditorScene />
                 <EditorHelpers />
@@ -58,7 +58,7 @@ const EditorHelpers = observer(() => {
     return (
         <group name={AppSettings.EDITOR_HELPERS_NAME}>
             <CycleRaycast onChanged={(objects): any => {
-                    let res : Object3D[] = [];
+                    let res : THREE.Object3D[] = [];
                     console.log(objects);
                     objects.map(o => {
                         if(o.object)
@@ -83,7 +83,7 @@ const Controls:React.FC<ITransformData> = observer((data) => {
         <TransformControls name='TRANSFORM_HELPER' object={o} mode={data.mode} space={data.space} onMouseUp={(e) => {
         if((e?.target as TC).object) {
             const obj = (e?.target as TC).object;
-            buildPaneObject(obj as Object3D);
+            buildPaneObject(obj as THREE.Object3D);
         }
     }} />);
 })

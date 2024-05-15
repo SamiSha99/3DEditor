@@ -1,14 +1,12 @@
-import { useStores } from '../App';
 import * as TYPES from '../store/type'
-import * as MESH_UTILS from './Utils/MeshUtils';
+import { useStores } from '@orb_App';
 import { observer } from 'mobx-react-lite';
-import { CreateDropDown, FileDropDown, AddDropDown } from './UIComponents/Dropdowns';
-import { convertObject, loadFileData, screenshot } from './WaelRequest';
-import { save } from './Exporters';
 import { Checkbox } from 'antd';
+import { MenuBar } from './ui/Menubar';
+import { ControlsBar } from './ui/ControlsBar';
 
 let mode = 0;
-let space = 0;
+
 let environment = 0;
 
 export const EditorUI = observer(() => {
@@ -31,47 +29,10 @@ export const EditorUI = observer(() => {
     }
 
     return (
-        <>        
-            <div style={{}}>
-                <FileDropDown />
-                <CreateDropDown />
-                <AddDropDown />
-                <button onClick={() => setControlSpace(++space >= TYPES.transformSpaces.length ? (space = 0) : space)}>{controlsSpace.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())}</button>
-                <Checkbox checked={useRootSelection} onChange={(e) => {
-                    setRootSelection(e.target.checked);
-                }}></Checkbox>
-                <button onClick={() => {
-                    const input = document.createElement('input');
-                    input.type = "file";
-                    input.style.display = "none";
-                    input.click();
-                    input.onchange = (e => {
-                        const file = ((e as any as React.ChangeEvent<HTMLInputElement>).target.files as FileList)[0];
-                        file.text().then(value => {
-                            console.log("inside success!");
-                            loadFileData(value,".glb").then(result => {
-                                console.log("result:", result);
-                                if(!result) return;
-                                MESH_UTILS.computeAllVertexNormals(result);
-                                screenshot(result, blob => {
-                                    if(blob)
-                                        save(blob, "screenshot.png");
-                                    setTimeout(() => {
-                                        convertObject(result, ".glb").then(file => {
-                                            if(file)
-                                                save(new Blob([file], {type: 'application/octet-stream'}), "export.obj");
-                                        });
-                                    }, 1000);
-                                });
-                                // const eo =  new EditorObject(result);
-                                pushComponentToScene(result);
-                            });
-                        });
-                    })
-                }}>
-                    Convert Test</button>
-            </div>
-        </>
+        <div style={{zIndex:1}}>        
+            <MenuBar />
+            <ControlsBar />
+        </div>
     )
 })
 

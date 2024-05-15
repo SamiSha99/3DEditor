@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import './App.css'
 import { useContext,createContext } from 'react'
-import { AppStore } from './store/appStore.ts'
+import { AppStore } from './store/AppStore.ts'
 import Editor from './editor/Editor.tsx'
 
 export const StoreContext = createContext<AppStore>({} as any)

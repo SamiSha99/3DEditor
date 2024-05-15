@@ -1,4 +1,3 @@
-import { message } from 'antd';
 import * as THREE from 'three';
 import { GLTFExporter, OBJExporter, USDZExporter } from 'three/examples/jsm/Addons.js';
 
