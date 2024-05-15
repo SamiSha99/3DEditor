@@ -25,6 +25,7 @@
     "mobx-react-lite": "^4.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "styled-components": "^6.1.11",
     "three": "^0.162.0",
     "three-usdz-loader": "^1.0.7",
     "tsc-alias": "^1.8.10",
