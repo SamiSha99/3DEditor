@@ -14,6 +14,19 @@ export const ControlsBarStyle = styled.div`
     background-color: #212121;
 `;
 
-export const ControlsBarButton = styled(Button)`
-
+export const ControlsBarButton = styled(Button)<{pressed:any}>`
+    overflow-y: hidden;
+    background-color: ${(props)=>props.pressed?"white":"red"};
+    border-color: #212121;
+    border-radius: 0px;
+    color: white;
+    ant-btn {
+        background-color: #212121;
+        border-color: #212121;
+        color: white;
+    }
+    &:hover {
+        background-color: #212121 !important;
+        border-color: #212121 !important;
+    }
 `
