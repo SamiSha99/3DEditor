@@ -1,18 +1,19 @@
+import { Button } from "antd";
 import styled from "styled-components";
 
 export const MenuBarStyle = styled.div`
-    background-color: green;
-    width:100%;
+    background-color: #212121;
+    width: 100vw;
     height: 5vh;
 `;
 
 export const ControlsBarStyle = styled.div`
     position: absolute;
-    top: 100px;
-    left: 100px;
-    background-color: red;
+    top: 50px;
+    left: 50px;
+    background-color: #212121;
 `;
 
-export const ControlsBarButton = styled.button`
+export const ControlsBarButton = styled(Button)`
 
 `
