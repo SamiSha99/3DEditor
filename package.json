@@ -31,6 +31,8 @@
     "tsc-alias": "^1.8.10",
     "tweakpane": "^4.0.3",
     "valtio": "^1.13.2",
+    "vite-plugin-top-level-await": "^1.4.1",
+    "vite-plugin-wasm": "^3.3.0",
     "vite-tsconfig-paths": "^4.3.2"
   },
   "devDependencies": {
