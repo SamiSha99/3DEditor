@@ -15,10 +15,12 @@ const StoreProvider:StoreComponent = ({store,children})=>{
     )
 }
 
+let session = new AppStore();
+
 function App() {
     
     return (
-        <StoreProvider store={new AppStore()}>
+        <StoreProvider store={session}>
             <Editor/>
         </StoreProvider>
     )

@@ -7,6 +7,7 @@ import { ITransformData } from '../store/interface';
 import { AppSettings } from '../store/appSettings';
 import * as THREE from 'three';
 import { TransformControls as TC } from 'three/examples/jsm/Addons.js';
+import { color } from 'three/examples/jsm/nodes/shadernode/ShaderNode';
 
 export const EditorCanvas = observer(() => {
     const {environment} = useStores()
@@ -31,6 +32,8 @@ const EditorScene = observer(() => {
 
     return (
         <>
+            <ambientLight intensity={1.0} color={"white"} />
+            {/* <pointLight position={[0,0.5,0]} intensity={3} /> */}
             {
             sceneObjects && sceneObjects.map((child) => 
                 <primitive 
