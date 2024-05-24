@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-// import * as EXPORTER from './Exporters'
+import * as EXPORTER from './Exporter.ts';
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 
-export async function Screenshot(group: THREE.Object3D) {
+export async function Screenshot(object: THREE.Object3D) {
 
     const width = 1024;
     const height = 1024;
@@ -21,12 +21,13 @@ export async function Screenshot(group: THREE.Object3D) {
     scene.background = new THREE.Color(0xE0E0E0);
     scene.environment = texture;
     
-    scene.add(group);
+    scene.add(object);
     const camera = new THREE.PerspectiveCamera();
 
-    console.log(group);
-    if(group instanceof THREE.Group) {
-        const bound = new THREE.Box3().setFromObject(group);
+    console.log(object);
+    if(object instanceof THREE.Object3D) {
+        object.position.set(0,0,0);
+        const bound = new THREE.Box3().setFromObject(object);
         const size = bound.getSize(new THREE.Vector3());
         const size2D = Math.max(size.x * size.y, size.x * size.z, size.z * size.y);
         const range = size2D;
@@ -50,7 +51,7 @@ export async function Screenshot(group: THREE.Object3D) {
 
 function save(canvas: HTMLCanvasElement) {
     canvas.toBlob(blob => {
-        // if(blob)
-        //     EXPORTER.save(blob, "preview.png");
+        if(blob)
+            EXPORTER.save(blob, "preview.png");
     }, 'image/png', 1);
 }
