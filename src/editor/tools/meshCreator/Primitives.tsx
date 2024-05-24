@@ -1,10 +1,4 @@
 import * as THREE from 'three';
-import { 
-    Box as _Box, 
-    Cylinder as _Cylinder, 
-    Plane as _Plane, 
-    Sphere as _Sphere} from '@react-three/drei';
-
 
 export function GenerateBox() {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
