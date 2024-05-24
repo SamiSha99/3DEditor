@@ -3,11 +3,11 @@ import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons"
 import { Dropdown, Button, message, Modal, Input, Form, Select, Checkbox } from "antd";
 import * as THREE from "three";
 import { useStores } from "@orb_App";
-import { doImport, loadOBJLocalTest } from "@orb_tools/Importer";
+import { doImport } from "@orb_tools/Importer";
 import { ExportType, doExport } from "@orb_tools/Exporter";
 
 export const File = () => {
-    const {setScene, controlsObject3D, sceneObjects} = useStores();
+    const {setScene, controlsObject3D, sceneObjects, pushComponentToScene} = useStores();
     const [modalExport, toggleModalExport] = useState(false);
     return(
         <>
@@ -51,15 +51,10 @@ export const File = () => {
                     key: '1',
                     icon: <ImportOutlined />,
                     onClick: () => {
-                        doImport();
-                    }
-                },
-                {
-                    label: 'DO IMPORT TEST',
-                    key: '33',
-                    icon: <ImportOutlined />,
-                    onClick: () => {
-                        loadOBJLocalTest();
+                        doImport((scene) => {
+                            console.log(scene);
+                            pushComponentToScene(scene);
+                        });
                     }
                 },
                 {

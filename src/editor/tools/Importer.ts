@@ -1,15 +1,17 @@
 import * as THREE from 'three';
 import { message } from 'antd';
-import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader, MaterialInfo} from 'three/examples/jsm/Addons.js';
+import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader} from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
-import { AppStore } from '@orb_AppStore';
-import { computeAllVertexNormals } from '../utils/MeshUtils';
+import { computeAllVertexNormals } from '../Utils/MeshUtils';
 import { exportGLB } from './Exporter';
 
-const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; // Extension of the file with '.'
+/** Extension of the file including a dot "." */
+const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; 
 
-export async function doImport() {
+type OnImport = (scene: THREE.Object3D) => void;
+
+export function doImport(onImport: OnImport) {
     const input = document.createElement('input');
     input.type = "file";
     input.style.display = "none";
@@ -24,14 +26,14 @@ export async function doImport() {
             }
             let files: File[] = [];
             for(let i = 0; i < filelist.length; i++) files.push(filelist[i]);
-            handleFiles(files);
+            handleFiles(files, onImport);
         }
         else
             message.error("FileList returned null.");
     });
 }
 
-function handleFiles(files: File[]) {
+function handleFiles(files: File[], onImport: OnImport) {
     const manager = new THREE.LoadingManager();
     const filesMap = createFilesMap(files) as {[name:string]: File};
 
@@ -45,10 +47,10 @@ function handleFiles(files: File[]) {
         return url;
     });
 
-    files.forEach((file) => handleFile(file, manager));
+    files.forEach((file) => handleFile(file, manager, onImport));
 }
 
-async function handleFile(file: File, manager: THREE.LoadingManager | null = null) {
+function handleFile(file: File, manager: THREE.LoadingManager | null = null, onImport: OnImport) {
     const type = file.name.match(EXTENSION_REGEX)?.[0];
     
     if(!manager) {
@@ -76,7 +78,7 @@ async function handleFile(file: File, manager: THREE.LoadingManager | null = nul
                     scene.name = file.name;
                     scene.animations.push( ...result.animations );
                     loader.dracoLoader?.dispose();
-                    pushToScene(scene);
+                    onImport(scene);
                     return scene;
                 },
                 (error) => {
@@ -97,7 +99,8 @@ async function handleFile(file: File, manager: THREE.LoadingManager | null = nul
 
                     scene.animations.push( ...result.animations );
                     loader.dracoLoader?.dispose();
-                    pushToScene(scene);
+                    onImport(scene);
+                    onImport(scene);
                     return scene;
                 });
 
@@ -113,7 +116,7 @@ async function handleFile(file: File, manager: THREE.LoadingManager | null = nul
                 if(group.children.length <= 0)
                     message.error("Failed to load USDZ model.");
                 else
-                    pushToScene(group)
+                    onImport(group)
 
             }, false);
             reader.readAsArrayBuffer(file);
@@ -128,14 +131,14 @@ async function handleFile(file: File, manager: THREE.LoadingManager | null = nul
                 if(group.children.length <= 0) 
                     message.error("Failed to load OBJ model.");
                 else
-                    pushToScene(group)
+                    onImport(group)
 
             }, false);
             reader.readAsText(file);
             break;
         case ".zip":
             reader.addEventListener('load', async function ( event ) {
-                handleZIP(event.target?.result);
+                handleZIP(event.target?.result, onImport);
             }, false);
             reader.readAsArrayBuffer(file);
             break;
@@ -160,47 +163,18 @@ export function loadOBJLocalTest() {
         .setPath("")
         .load("outputResult.obj", (object) => {
             computeAllVertexNormals(object);
-            pushToScene(object);
+            console.log(object);
         })
     });
 }
 
-async function handleZIP(data: string | ArrayBuffer | null | undefined) {
+function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnImport) {
     if(!data) {
         message.error("ZIP data returned " + data);
         return;
     }
+
     const zip = unzipSync(new Uint8Array(data as ArrayBuffer));
-
-    // let's see if its as simple as it gets
-    if(zip["model.obj"] && zip["materials.mtl"]) {
-        let materials = new MTLLoader().parse(strFromU8(zip["materials.mtl"]), "");
-        materials.preload();
-        const loader = new OBJLoader();
-        loader.setMaterials(materials);
-        const object = loader.parse(strFromU8(zip["model.obj"]));
-        computeAllVertexNormals(object);
-        pushToScene(object);
-        // pushToScene(new THREE.AmbientLight("white", Math.PI));
-    }
-    // let's try searching deeper
-    // else
-    // {
-        // let objFile: Uint8Array | null = null, mtlFile: Uint8Array | null = null;
-        // for(const path in zip) {
-            // if(path.match(EXTENSION_REGEX)?.[0].toLowerCase() == ".obj") objFile = zip[path];
-            // if(path.match(EXTENSION_REGEX)?.[0].toLowerCase() == ".mtl") mtlFile = zip[path];
-            // if(!objFile || !mtlFile) continue; 
-            // 
-            // const materials = new MTLLoader().parse(strFromU8(mtlFile), "");
-            // const object = new OBJLoader().setMaterials(materials).parse(strFromU8(objFile));
-            // computeAllVertexNormals(object);
-            // pushToScene(object);
-            // break;
-        // }
-    // }
-
-    
 
     for(const path in zip) {
         const file = zip[path];
@@ -221,7 +195,7 @@ async function handleZIP(data: string | ArrayBuffer | null | undefined) {
             case ".fbx": {
                 const loader = new FBXLoader(manager);
                 const object = loader.parse(file.buffer, path);
-                pushToScene(object);
+                onImport(object);
                 break;
             }
 
@@ -230,7 +204,7 @@ async function handleZIP(data: string | ArrayBuffer | null | undefined) {
                 loader.parse(file.buffer, '', result => {
                     const scene = result.scene;
                     scene.animations.push(...result.animations);
-                    pushToScene(scene);
+                    onImport(scene);
                     loader.dracoLoader?.dispose();
                 });
                 break;
@@ -241,7 +215,7 @@ async function handleZIP(data: string | ArrayBuffer | null | undefined) {
                 loader.parse(strFromU8(file), '', result => {
                     const scene = result.scene;
                     scene.animations.push(...result.animations);
-                    pushToScene(scene);
+                    onImport(scene);
                     loader.dracoLoader?.dispose();
                 });
                 break;
@@ -252,23 +226,19 @@ async function handleZIP(data: string | ArrayBuffer | null | undefined) {
                 for(const path in zip) {
                     if(path.match(EXTENSION_REGEX)?.[0].toLowerCase() == ".mtl") {
                         const mtlLoader = new MTLLoader(manager);
-                        let newMap = strFromU8(zip[path]);
-                        const newMatDtr = replaceMap(newMap);
-                        console.log("newMatDtr", newMatDtr)
-                        const mat = mtlLoader.parse(newMatDtr, "");
-                        console.log(mat);
-                        // console.log(strFromU8(zip[path]));
-                        // mat.materialsInfo.Texture = {kd: [1,1,1]};
-                        // console.log(mat.materialsInfo);
-                        mat.getAsArray().map((mat) => {
-                            console.log(mat);
-                            if(mat as THREE.MeshBasicMaterial)
-                                (mat as THREE.MeshBasicMaterial).color = new THREE.Color("white");
-                        })
+                        // Modify mapping
+                        let map = strFromU8(zip[path]);
+                        map = modifyMap(map, "map_Kd", "baked_mesh_tex0.png");
+                        map = modifyMap(map, "map_ao", "baked_mesh_ao0.png");
+                        map = modifyMap(map, "map_tangentSpaceNormal", "baked_mesh_norm0.png");
+                        map = modifyMap(map, "Kd", "1 1 1");
+                        const mat = mtlLoader.parse(map, "");
                         mat.preload();
                         const loader = new OBJLoader(manager);
                         const object = loader.setMaterials(mat).parse(strFromU8(zip[objPath]));
-                        pushToScene(object);
+                        onImport(object);
+                        setTimeout(() => exportGLB(object), 1000);
+                        break;
                     }
                 }
             }
@@ -276,30 +246,18 @@ async function handleZIP(data: string | ArrayBuffer | null | undefined) {
     }
 }
 
-function replaceMapNew(input:string, key: string, value: string) {
-    
-    const mapRegex = new RegExp(`/(${key}\\s+)([^\\s]+)/`);
-    console.log(mapRegex);
-    const res = input.replace(mapRegex, `$1${value}`);
-    console.log(key,res);
-    return res;
+/** Returns the value related to this key from the input */
+export function matchOnMap(input: string, key: string) {
+    const mapRegex = new RegExp(`\\b${key}\\b\\s+([^\\n]+)`);
+    const res = input.match(mapRegex);
+    return res?.[1];
 }
 
-function replaceMap(input: string, 
-    mapKd: string = "baked_mesh_tex0.png", 
-    mapAo: string = "baked_mesh_ao0.png",
-    mapNormals: string = "baked_mesh_norm0.png"): string {
-    // Regular expression to match 'map_Kd' followed by any non-whitespace characters (the texture file name)
-    const mapKdRegex = /(map_Kd\s+)([^\s]+)/;
-    const mapAoRegex = /(map_ao\s+)([^\s]+)/;
-    const mapNormalsRegex = /(map_tangentSpaceNormal\s+)([^\s]+)/;
-
-    // Replace the matched texture file name with the replacement string
-    let res = input.replace(mapKdRegex, `$1${mapKd}`);
-    res = res.replace(mapAoRegex, `$1${mapAo}`);
-    res = res.replace(mapNormalsRegex, `$1${mapNormals}`);
-
-    return res
+/** Replaces the value of the current key related to this input */
+export function modifyMap(input: string, key: string, value: string) {
+    const mapRegex = new RegExp(`(\\b${key}\\b\\s+)([^\\n]+)`);
+    const res = input.replace(mapRegex, `$1${value}`);
+    return res;
 }
 
 function createFilesMap(files: File[]) {
@@ -324,8 +282,4 @@ function createGLTFLoader(manager: THREE.LoadingManager | undefined = undefined)
     loader.setKTX2Loader(ktx2Loader);
     loader.setMeshoptDecoder(MeshoptDecoder);
     return loader;
-}
-
-export function pushToScene(object3d: THREE.Object3D) {
-    AppStore._instance.pushComponentToScene(object3d);
 }
