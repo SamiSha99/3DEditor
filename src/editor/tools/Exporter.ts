@@ -41,7 +41,7 @@ export function exportGLB(scene: THREE.Object3D) {
     exporter.parse(
         scene,
         (result) => saveArrayBuffer(result as ArrayBuffer, "export.glb"),
-        () => {},
+        (error) => {console.warn(error)},
         {binary: true}
     );
 }
@@ -51,6 +51,7 @@ export function exportOBJ(scene: THREE.Object3D) {
     saveString(exporter.parse(scene), "export.obj")
 }
 
+/** Exported type is always USDA, if we want to support USDC we need to go for a WASM solution which requires implementation that is even way larger than threejs!!! */
 export function exportUSDZ(scene: THREE.Object3D) {
     const exporter = new USDZExporter();
     exporter.parse(scene).then(result => {
