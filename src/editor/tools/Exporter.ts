@@ -31,7 +31,8 @@ export function exportGLTF(scene: THREE.Object3D) {
             const json = JSON.stringify(result as any, null, 2)
             saveString(json, "export.gltf");
         },
-        () => {}
+        (error) => {console.warn(error)},
+        {binary: false, maxTextureSize: 2048}
     );
 }
 
@@ -42,7 +43,7 @@ export function exportGLB(scene: THREE.Object3D) {
         scene,
         (result) => saveArrayBuffer(result as ArrayBuffer, "export.glb"),
         (error) => {console.warn(error)},
-        {binary: true}
+        {binary: true, maxTextureSize: 2048}
     );
 }
 
@@ -54,10 +55,14 @@ export function exportOBJ(scene: THREE.Object3D) {
 /** Exported type is always USDA, if we want to support USDC we need to go for a WASM solution which requires implementation that is even way larger than threejs!!! */
 export function exportUSDZ(scene: THREE.Object3D) {
     const exporter = new USDZExporter();
-    exporter.parse(scene).then(result => {
-        const buffer =  result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
-        saveArrayBuffer(buffer, "export.usdz");
-    })
+    exporter.parse(scene, {quickLookCompatible: true, maxTextureSize: 2048}).then(
+        result => 
+        {
+            const buffer =  result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
+            saveArrayBuffer(buffer, "export.usdz");
+        },
+        ((reason) => {console.warn(reason)})
+    )
 }
 
 export function save(blob: Blob, fileName: string) {
