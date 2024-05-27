@@ -29,3 +29,9 @@ export function GenerateCapsule() {
     mesh.name = "Capsule";
     return mesh;
 }
+
+export function GenerateTorus() {
+    const mesh = new THREE.Mesh(new THREE.TorusGeometry(), new THREE.MeshStandardMaterial());
+    mesh.name = "Torus";
+    return mesh;
+}
