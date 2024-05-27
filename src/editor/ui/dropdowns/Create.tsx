@@ -1,5 +1,5 @@
 import { Dropdown, Button, message } from "antd";
-import { GenerateBox, GenerateCapsule, GenerateCylinder, GeneratePlane, GenerateSphere } from "../../tools/meshCreator/Primitives";
+import { GenerateBox, GenerateCapsule, GenerateCylinder, GeneratePlane, GenerateSphere, GenerateTorus } from "../../tools/meshCreator/Primitives";
 import { GenerateButton } from "@orb_tools/meshCreator/3DButton";
 import { useStores } from "@orb_App";
 
@@ -61,6 +61,14 @@ export const Create = () => {
                             key: '5',
                             onClick: () => {
                                 const res = GenerateCapsule()
+                                pushComponentToScene(res);
+                            }
+                        },
+                        {
+                            label: 'Torus',
+                            key: '6',
+                            onClick: () => {
+                                const res = GenerateTorus()
                                 pushComponentToScene(res);
                             }
                         }],
