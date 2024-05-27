@@ -4,7 +4,6 @@ import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, 
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 import { computeAllVertexNormals } from '../Utils/MeshUtils';
-import { exportGLB } from './Exporter';
 
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; 
@@ -99,7 +98,6 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
 
                     scene.animations.push( ...result.animations );
                     loader.dracoLoader?.dispose();
-                    onImport(scene);
                     onImport(scene);
                     return scene;
                 });
@@ -237,7 +235,6 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
                         const loader = new OBJLoader(manager);
                         const object = loader.setMaterials(mat).parse(strFromU8(zip[objPath]));
                         onImport(object);
-                        setTimeout(() => exportGLB(object), 1000);
                         break;
                     }
                 }
