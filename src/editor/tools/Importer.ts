@@ -32,6 +32,18 @@ export function doImport(onImport: OnImport) {
     });
 }
 
+export function doImportFileList(filelist: FileList, onImport: OnImport) {
+    
+    if(filelist.length <= 0) { 
+        message.error("No files were selected.");
+        return;
+    }
+    
+    let files: File[] = [];
+    for(let i = 0; i < filelist.length; i++) files.push(filelist[i]);
+    handleFiles(files, onImport);
+}
+
 function handleFiles(files: File[], onImport: OnImport) {
     const manager = new THREE.LoadingManager();
     const filesMap = createFilesMap(files) as {[name:string]: File};
@@ -219,25 +231,25 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
                 break;
             }
             case ".obj": {
-                // get the mtl
-                const objPath = path;
-                for(const path in zip) {
-                    if(path.match(EXTENSION_REGEX)?.[0].toLowerCase() == ".mtl") {
-                        const mtlLoader = new MTLLoader(manager);
-                        // Modify mapping
-                        let map = strFromU8(zip[path]);
-                        map = modifyMap(map, "map_Kd", "baked_mesh_tex0.png");
-                        map = modifyMap(map, "map_ao", "baked_mesh_ao0.png");
-                        map = modifyMap(map, "map_tangentSpaceNormal", "baked_mesh_norm0.png");
-                        map = modifyMap(map, "Kd", "1 1 1");
-                        const mat = mtlLoader.parse(map, "");
-                        mat.preload();
-                        const loader = new OBJLoader(manager);
-                        const object = loader.setMaterials(mat).parse(strFromU8(zip[objPath]));
-                        onImport(object);
-                        break;
-                    }
+                // Get MTL via pathing
+                const objMap = strFromU8(zip[path]);
+                const mtlPath = path.includes("/") ? path.replace(/([^\/]+$)/g, matchOnMap(objMap, "mtllib")) : matchOnMap(objMap, "mtllib"); 
+
+                let object: THREE.Object3D;
+                const loader = new OBJLoader(manager);
+
+                if(zip[mtlPath]) {
+                    let map = strFromU8(zip[mtlPath]);
+                    map = modifyMap(map, "Kd", "1 1 1");
+                    const mtlLoader = new MTLLoader(manager);
+                    const mat = mtlLoader.parse(map, "");
+                    mat.preload();
+                    object = loader.setMaterials(mat).parse(strFromU8(zip[path]));
                 }
+                else
+                    object = loader.parse(strFromU8(zip[path]));
+                // i don't like this, we need to call this when textures are loaded for the object
+                onImport(object);            
             }
         }
     }
@@ -247,7 +259,7 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
 export function matchOnMap(input: string, key: string) {
     const mapRegex = new RegExp(`\\b${key}\\b\\s+([^\\n]+)`);
     const res = input.match(mapRegex);
-    return res?.[1];
+    return res?.[1] || "";
 }
 
 /** Replaces the value of the current key related to this input */
@@ -260,7 +272,7 @@ export function modifyMap(input: string, key: string, value: string) {
 function createFilesMap(files: File[]) {
     const map = {};
     for (let i = 0; i < files.length; i++) {
-        const file = files[ i ];
+        const file = files[i];
         Object.assign(map, {[file.name]:file});
     }
     return map;
