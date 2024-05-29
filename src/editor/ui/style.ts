@@ -9,14 +9,14 @@ export const MenuBarStyle = styled.div`
 
 export const ControlsBarStyle = styled.div`
     position: absolute;
-    top: 50px;
-    left: 50px;
+    top: 7.5%;
+    left: 2.5%;
     background-color: #212121;
 `;
 
 export const ControlsBarButton = styled(Button)<{pressed:any}>`
     overflow-y: hidden;
-    background-color: ${(props)=>props.pressed?"white":"red"};
+    background-color: ${(props)=>props.pressed?"#323232":"#212121"};
     border-color: #212121;
     border-radius: 0px;
     color: white;
