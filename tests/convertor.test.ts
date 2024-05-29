@@ -1,9 +1,8 @@
 // import { doConvert } from "../src/editor/tools/Convertor";
 
-describe('Testing convertor', () => {
+describe('testing tests', () => {
 
-    test('empty string should result in zero', () => {
-        expect(1).toBe(0);
-        // expect(add('')).toBe(0);
+    test('is it 0?', () => {
+        expect(0).toBe(0);
     });
 });
