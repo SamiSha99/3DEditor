@@ -23,7 +23,7 @@ export class AppStore {
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
     @observable environment: TYPE.Environments = TYPE.environments[0];
 
-    @observable useRootSelection: boolean = true;
+    @observable useRootSelection: boolean = false;
     constructor(){
         makeObservable(this)
         AppStore._instance = this;
@@ -54,14 +54,14 @@ export class AppStore {
     }
 
     // 0 = translate | 1 = rotate | 2 = scale
-    @action.bound setControlsMode = (mode: number) => {this.controlsMode = TYPE.transformModes[mode] as TYPE.TransformModes}
-    @action.bound setControlsModeByName = (mode: string) => {this.controlsMode = mode as TYPE.TransformModes}
+    @action.bound setControlsMode = (mode: number) => {this.controlsMode = TYPE.transformModes[mode]}
+    @action.bound setControlsModeByName = (mode: TYPE.TransformModes) => {this.controlsMode = mode}
     // 0 = world | 1 = local
-    @action.bound setControlSpace = (mode: number) => {this.controlsSpace = TYPE.transformSpaces[mode] as TYPE.TransformSpaces}
-    @action.bound setControlSpaceByName = (mode: string) => {this.controlsSpace = mode as TYPE.TransformSpaces}
+    @action.bound setControlSpace = (mode: number) => {this.controlsSpace = TYPE.transformSpaces[mode]}
+    @action.bound setControlSpaceByName = (mode: TYPE.TransformSpaces) => {this.controlsSpace = mode}
     // all default environment types
     @action.bound setEnvironment = (index: number) => {this.environment = TYPE.environments[index]}
-    @action.bound setEnvironmentByName = (environment: string) => {this.environment = environment as TYPE.Environments}
+    @action.bound setEnvironmentByName = (environment: TYPE.Environments) => {this.environment = environment}
     // When a new component is made, push it to the scene
     @action.bound pushComponentToScene = (object: Object3D) => {
         this.sceneObjects?.push(object);
