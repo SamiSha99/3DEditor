@@ -3,7 +3,6 @@ import { message } from 'antd';
 import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader} from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
-import { computeAllVertexNormals } from '../Utils/MeshUtils';
 
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; 
