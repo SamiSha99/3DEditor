@@ -3,63 +3,69 @@ import { GLTFExporter, OBJExporter, USDZExporter } from 'three/examples/jsm/Addo
 
 export type ExportType = "gltf" | "glb" | "usdz" | "obj"
 
-export function doExport(scene: THREE.Object3D, as: ExportType) {
+export type ExportOptions = {
+    type: ExportType,
+    name?: string,
+    maxTextureSize?: number
+}
 
-    switch(as) {
+export function doExport(scene: THREE.Object3D, options: ExportOptions) {
+
+    switch(options.type) {
         case "gltf":
-            exportGLTF(scene);
+            exportGLTF(scene, options);
             break;
         case "glb":
-            exportGLB(scene);
+            exportGLB(scene, options);
             break;
         case "usdz":
-            exportUSDZ(scene);
+            exportUSDZ(scene, options);
             break;
         case "obj":
-            exportOBJ(scene);
+            exportOBJ(scene, options);
             break;
     }
 }
 
 // TO-DO: we need to export animations with GLTF/GLB
-export function exportGLTF(scene: THREE.Object3D) {
+export function exportGLTF(scene: THREE.Object3D, options: ExportOptions) {
     const exporter = new GLTFExporter();
 
     exporter.parse(
         scene,
         (result) => {
             const json = JSON.stringify(result as any, null, 2)
-            saveString(json, "export.gltf");
+            saveString(json, (options.name || "export") + ".gltf");
         },
         (error) => {console.warn(error)},
-        {binary: false, maxTextureSize: 2048}
+        {binary: false, maxTextureSize: options.maxTextureSize || Infinity}
     );
 }
 
-export function exportGLB(scene: THREE.Object3D) {
+export function exportGLB(scene: THREE.Object3D, options: ExportOptions) {
     const exporter = new GLTFExporter();
 
     exporter.parse(
         scene,
-        (result) => saveArrayBuffer(result as ArrayBuffer, "export.glb"),
+        (result) => saveArrayBuffer(result as ArrayBuffer, (options.name || "export") + ".glb"),
         (error) => {console.warn(error)},
-        {binary: true, maxTextureSize: 2048}
+        {binary: true, maxTextureSize: options.maxTextureSize || Infinity}
     );
 }
 
-export function exportOBJ(scene: THREE.Object3D) {
+export function exportOBJ(scene: THREE.Object3D, options: ExportOptions) {
     const exporter = new OBJExporter();
-    saveString(exporter.parse(scene), "export.obj")
+    saveString(exporter.parse(scene), (options.name || "export") + ".obj")
 }
 
 /** Exported type is always USDA, if we want to support USDC we need to go for a WASM solution which requires implementation that is even way larger than threejs!!! */
-export function exportUSDZ(scene: THREE.Object3D) {
+export function exportUSDZ(scene: THREE.Object3D, options: ExportOptions) {
     const exporter = new USDZExporter();
-    exporter.parse(scene, {quickLookCompatible: true, maxTextureSize: 1024}).then(
+    exporter.parse(scene, {quickLookCompatible: true, maxTextureSize: options.maxTextureSize || Infinity}).then(
         result => 
         {
             const buffer =  result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
-            saveArrayBuffer(buffer, "export.usdz");
+            saveArrayBuffer(buffer, (options.name || "export") + ".usdz");
         },
         ((reason) => {console.warn(reason)})
     )

@@ -1,6 +1,6 @@
-import { CameraOutlined, FieldBinaryOutlined, InboxOutlined } from "@ant-design/icons";
+import { CameraOutlined, InboxOutlined } from "@ant-design/icons";
 import { useStores } from "@orb_App";
-import { doConvert, doConvertFileList, ConversionTypes } from "@orb_tools/Convertor";
+import { doConvertFileList } from "@orb_tools/Convertor";
 import { ExportType } from "@orb_tools/Exporter";
 import { Screenshot } from "@orb_tools/ModelPreviewer";
 import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile } from "antd"
@@ -12,66 +12,81 @@ export const Tools = () => {
     const [modalConvert, toggleModalConvert] = useState(false);
     return (
         <>
-        <ConvertModal open={modalConvert} onCancel={() => {toggleModalConvert(false)}} onSubmit={(res, fileList) => {
-            console.log(fileList);
-                if(fileList) {
-                   doConvertFileList(fileList, res.type);
+            <ConvertModal open={modalConvert} onCancel={() => { toggleModalConvert(false) }} onSubmit={(res, fileList) => {
+                console.log(fileList);
+                if (fileList) {
+                    doConvertFileList(fileList, { type: res.type, name: res.name, maxTextureSize: res.textureSize });
                 }
                 toggleModalConvert(false);
             }} />
-        <Dropdown
-            children={<Button children={"Tools"} />}
-            menu={{
-                items: [
-                {
-                    label: 'Take a Screenshot',
-                    key: '0',
-                    icon: <CameraOutlined />,
-                    onClick: () => {
-                        if(controlsObject3D) {
-                            const object = (controlsObject3D as THREE.Object3D).clone();
-                            Screenshot(object);
-                            message.success("Snip!");
+            <Dropdown
+                children={<Button children={"Tools"} />}
+                menu={{
+                    items: [
+                        {
+                            label: 'Take a Screenshot',
+                            key: '0',
+                            icon: <CameraOutlined />,
+                            onClick: () => {
+                                if (controlsObject3D) {
+                                    const object = (controlsObject3D as THREE.Object3D).clone();
+                                    Screenshot(object);
+                                    message.success("Snip!");
+                                }
+                                else
+                                    message.warning("Select an object to take a screenshot!");
+                            }
+                        },
+                        {
+                            label: 'Convert...',
+                            key: '1',
+                            icon: <CameraOutlined />,
+                            onClick: () => {
+                                toggleModalConvert(true);
+                                // doConvert(".glb");
+                            }
                         }
-                        else
-                            message.warning("Select an object to take a screenshot!");
-                    }
-                },
-                {
-                    label: 'Convert...',
-                    key: '1',
-                    icon: <CameraOutlined />,
-                    onClick: () => {
-                        toggleModalConvert(true);
-                        // doConvert(".glb");
-                    }
-                }
-                ]
-            }}/>
+                    ]
+                }} />
         </>
     )
 }
 
-type ConvertFormData = {name: string, type: ConversionTypes};
+type ConvertFormData = { name: string, type: ExportType, textureSize: number };
 const exportOptions = [
-    { value: '.glb', label: 'GLB'},
-    { value: '.gltf', label: 'GLTF'},
-    { value: '.usdz', label: 'USDZ'},
-    { value: '.obj', label: 'OBJ'}
+    { value: 'glb', label: 'GLB' },
+    { value: 'gltf', label: 'GLTF' },
+    { value: 'usdz', label: 'USDZ' },
+    { value: 'obj', label: 'OBJ' }
 ]
 
+const textureSizeOptions = [
+    { value: '2048', label: '2048' },
+    { value: '1024', label: '1024' },
+    { value: '512', label: '512' },
+    { value: '256', label: '256' },
+    { value: '128', label: '128' },
+    { value: '64', label: '64' },
+    { value: '32', label: '32' }
+]
 
+type ConvertModalInterface = {
+    open: boolean,
+    onCancel: () => void,
+    onSubmit: (res: ConvertFormData, fileList: FileList) => void
+}
 
-const ConvertModal: React.FC<{open: boolean, onCancel: () => void, onSubmit: (res: ConvertFormData, fileList: FileList) => void}>  = ({open, onCancel, onSubmit}) => {
-    const dataDefault : ConvertFormData = {name: "exportName", type: ".glb"};
-    const [data, setData] = useState<ConvertFormData>(dataDefault);
+const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmit }) => {
+    const [exportName, setExportName] = useState("exportName");
+    const [convertTo, setConvertTo] = useState<ExportType>("glb");
+    const [textureSize, setTextureSize] = useState(2048);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const { Dragger } = Upload;
 
     const props: UploadProps = {
         name: 'file',
         multiple: true,
-        maxCount: 2,
+        maxCount: 32,
         onRemove: (file) => {
             const index = fileList.indexOf(file);
             const newFileList = fileList.slice();
@@ -88,36 +103,50 @@ const ConvertModal: React.FC<{open: boolean, onCancel: () => void, onSubmit: (re
     };
 
     return (
-        <Modal 
-            title={"Convert..."} 
-            open={open} 
+        <Modal
+            title={"Convert..."}
+            open={open}
             onOk={() => {
-                onSubmit(data, fileList as any as FileList);
-                setData(dataDefault)
+                onSubmit({ name: exportName, type: convertTo, textureSize: textureSize }, fileList as any as FileList);
+                setConvertTo("glb");
+                setExportName("exportName")
                 setFileList([]);
-            }} 
+            }}
             onCancel={() => onCancel()}>
-                <Form>
-                    <Select title="Convert into"
-                        defaultValue=".glb"
-                        style={{ width: 120 }}
-                        onChange={(val: ConversionTypes) => {
-                            setData({name: data.name, type: val});
-                        }}
-                        options={exportOptions}
-                        />
-                    <Input defaultValue={"convertName"} title="how is it going?" onInput={(e) => {setData({name:(e.target as any).value, type:data.type})}} />
-                    <Dragger {...props}>
-                        <p className="ant-upload-drag-icon">
-                            <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                        <p className="ant-upload-hint">
-                            Support for a single or bulk upload. Strictly prohibited from uploading company data or other
-                            banned files.
-                        </p>
-                     </Dragger>
-                </Form>
+            <Form
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 14, offset: 4 }}
+                layout={"horizontal"}
+            >
+                <Select
+                    title="Convert Into"
+                    defaultValue={"glb"}
+                    style={{ width: 120 }}
+                    onChange={(val: ExportType) => setConvertTo(val)}
+                    options={exportOptions}
+                />
+                <Select
+                    title="Texture Size"
+                    defaultValue={2048}
+                    onChange={(val) => setTextureSize(val)}
+                    options={textureSizeOptions}
+                />
+                <Input
+                    title="Name of Your File."
+                    defaultValue={"convertName"}
+                    onInput={(e) => { setExportName((e.target as any).value as string) }}
+                />
+                <Dragger {...props}>
+                    <p className="ant-upload-drag-icon">
+                        <InboxOutlined />
+                    </p>
+                    <p className="ant-upload-text">Click or drag file to this area to upload.</p>
+                    <p className="ant-upload-hint">
+                        Support for a single or bulk upload. Strictly prohibited from uploading company data or other
+                        banned files.
+                    </p>
+                </Dragger>
+            </Form>
         </Modal>
     )
 }

@@ -155,29 +155,6 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
     }
 }
 
-export function loadOBJLocalTest() {
-    const manager = new THREE.LoadingManager();
-    manager.setURLModifier((url) => {
-        console.log(url);
-        return url;
-    });
-    const oLoader = new OBJLoader(manager);
-    const mtlLoader = new MTLLoader(manager);
-    mtlLoader
-    .setPath("")
-    .load("outputResult.mtl", (onload) => {
-        const mat = onload;
-        mat.preload();
-        oLoader
-        .setMaterials(mat)
-        .setPath("")
-        .load("outputResult.obj", (object) => {
-            computeAllVertexNormals(object);
-            console.log(object);
-        })
-    });
-}
-
 function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnImport) {
     if(!data) {
         message.error("ZIP data returned " + data);
@@ -244,12 +221,18 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
                     const mtlLoader = new MTLLoader(manager);
                     const mat = mtlLoader.parse(map, "");
                     mat.preload();
-                    object = loader.setMaterials(mat).parse(strFromU8(zip[path]));
+                    manager.onProgress = (url, num, total) => console.log("Loaded", url, "Current Load Amount:", num/total * 100 + "%");
+                    manager.onError = (url) => console.error("Failed to load", url);
+                    manager.onLoad = () => {
+                        console.log("Finished loading Material, parsing Object with the material.");
+                        object = loader.setMaterials(mat).parse(strFromU8(zip[path]));
+                        onImport(object);
+                    }
                 }
-                else
+                else {
                     object = loader.parse(strFromU8(zip[path]));
-                // i don't like this, we need to call this when textures are loaded for the object
-                onImport(object);            
+                    onImport(object);            
+                }
             }
         }
     }

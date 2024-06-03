@@ -10,13 +10,13 @@ import { TransformControls as TC } from 'three/examples/jsm/Addons.js';
 import { color } from 'three/examples/jsm/nodes/shadernode/ShaderNode';
 
 export const EditorCanvas = observer(() => {
-    const {environment} = useStores()
+    const { environment } = useStores()
     // const [reload, setReload] = useState(false);
-    
+
     return (
         <>
             {/* <button id="requestUpdateEditor" onClick={()=>setReload(!reload)}> test </button> */}
-            <Canvas style={{height:"95vh"}} shadows camera={{position:[-2.5,2.5,0]}}>
+            <Canvas style={{ height: "95vh" }} shadows camera={{ position: [-2.5, 2.5, 0] }}>
                 <CameraControls makeDefault />
                 <EditorScene />
                 <EditorHelpers />
@@ -28,67 +28,67 @@ export const EditorCanvas = observer(() => {
 
 // Currently instantiated objects in the scene that can be modified
 const EditorScene = observer(() => {
-    const {sceneObjects} = useStores();
+    const { sceneObjects } = useStores();
 
     return (
         <>
             <ambientLight intensity={1.0} color={"white"} />
             {/* <pointLight position={[0,0.5,0]} intensity={3} /> */}
             {
-            sceneObjects && sceneObjects.map((child) => 
-                <primitive 
-                    onClick={(e: any) => {e.stopPropagation()}}
-                    onPointerMissed={(e: any) => {e.stopPropagation()}}
-                    onPointerOver={(e: any) => (e.stopPropagation())}
-                    onPointerOut={(e: any) => (e.stopPropagation)} 
-                    object={child}
-                />
-            )}
+                sceneObjects && sceneObjects.map((child) =>
+                    <primitive
+                        onClick={(e: any) => { e.stopPropagation() }}
+                        onPointerMissed={(e: any) => { e.stopPropagation() }}
+                        onPointerOver={(e: any) => (e.stopPropagation())}
+                        onPointerOut={(e: any) => (e.stopPropagation)}
+                        object={child}
+                    />
+                )}
         </>
     )
 })
 
 const EditorHelpers = observer(() => {
-    const {controlsTarget, controlsObject3D, controlsMode, controlsSpace, buildPaneObject, setIntersectedTargets} = useStores()
+    const { controlsTarget, controlsObject3D, controlsMode, controlsSpace, buildPaneObject, setIntersectedTargets } = useStores()
     const { scene } = useThree();
-    
-    useEffect(()=>{
+
+    useEffect(() => {
         const o = scene.getObjectById(controlsTarget as number);
-        if(o)
+        if (o)
             buildPaneObject(o);
-    },[controlsTarget])
+    }, [controlsTarget])
 
     return (
         <group name={AppSettings.EDITOR_HELPERS_NAME}>
             <CycleRaycast onChanged={(objects): any => {
-                    let res : THREE.Object3D[] = [];
-                    console.log(objects);
-                    objects.map(o => {
-                        if(o.object)
-                            res.push(o.object);
-                    })
-                    if(res)
-                        setIntersectedTargets(res);
-                }} />
-            <Box name='CENTER_GRID_HELPER' material-color={"red"} scale={[0.25,0.0005,0.25]} position={[0,0,0] } />
-            <Grid name='GRID_HELPER' cellColor={"#2080ff"} infiniteGrid side={2}/>
+                let res: THREE.Object3D[] = [];
+                console.log(objects);
+                objects.map(o => {
+                    if (o.object)
+                        res.push(o.object);
+                })
+                if (res)
+                    setIntersectedTargets(res);
+            }} />
+            <Box name='CENTER_GRID_HELPER' material-color={"red"} scale={[0.25, 0.0005, 0.25]} position={[0, 0, 0]} />
+            <Grid name='GRID_HELPER' cellColor={"#2080ff"} infiniteGrid side={2} />
             {controlsTarget != -1 && <Controls targetID={controlsTarget as number} mode={controlsMode} space={controlsSpace} />}
         </group>
     )
 })
 
-const Controls:React.FC<ITransformData> = observer((data) => {
+const Controls: React.FC<ITransformData> = observer((data) => {
     const { scene } = useThree();
     const { buildPaneObject } = useStores();
     const o = scene.getObjectById(data.targetID);
-    
+
     return (
         <TransformControls name='TRANSFORM_HELPER' object={o} mode={data.mode} space={data.space} onMouseUp={(e) => {
-        if((e?.target as TC).object) {
-            const obj = (e?.target as TC).object;
-            buildPaneObject(obj as THREE.Object3D);
-        }
-    }} />);
+            if ((e?.target as TC).object) {
+                const obj = (e?.target as TC).object;
+                buildPaneObject(obj as THREE.Object3D);
+            }
+        }} />);
 })
 
 export default EditorCanvas
