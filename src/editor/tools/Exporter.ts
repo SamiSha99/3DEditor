@@ -42,6 +42,8 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions) {
     );
 }
 
+// We could probably improve this
+// Make an option that exports mtl serperately with all textures, something simple, nothing big
 export function exportGLB(scene: THREE.Object3D, options: ExportOptions) {
     const exporter = new GLTFExporter();
 
