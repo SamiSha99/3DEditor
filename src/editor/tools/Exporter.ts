@@ -58,8 +58,8 @@ export function exportGLB(scene: THREE.Object3D, options: ExportOptions) {
 export function exportOBJ(scene: THREE.Object3D, options: ExportOptions) {
     const exporter = new OBJExporter();
     saveString(exporter.parse(scene), (options.name || "export") + ".obj");
-    if(scene instanceof THREE.Mesh)
-        saveString(materialToData(scene.material), (options.name || "export") + ".mtl");
+    // if(scene instanceof THREE.Mesh)
+        // saveString(materialToData(scene.material), (options.name || "export") + ".mtl");
 }
 
 /** Exported type is always USDA, if we want to support USDC we need to go for a WASM solution which requires implementation that is even way larger than threejs!!! */
@@ -93,28 +93,28 @@ export function saveString(text: string, filename: string) {
     save(new Blob([text], { type: 'text/plain' }), filename);
 }
 
-export function materialToData(material: THREE.Material) {
-
-    let output = '';
-    if (material instanceof Array) {
-        for (const mtl of material) output += materialToData(mtl);
-    } else {
-        output += `newmtl ${(material.name !== '') ? material.name : `material ${material.id}`}\n`;
-
-        output += 'Ns 10.0000\n';
-        output += 'Ni 1.5000\n';
-        output += 'd 1.0000\n';
-        output += 'Tr 0.0000\n';
-        output += 'Tf 1.0000 1.0000 1.0000\n';
-        output += 'illum 2\n';
-        output += `Ka ${material.color.r} ${material.color.g} ${material.color.b}\n`;
-        output += `Kd ${material.color.r} ${material.color.g} ${material.color.b}\n`;
-        output += 'Ks 0.0000 0.0000 0.0000\n';
-        output += 'Ke 0.0000 0.0000 0.0000\n';
-    }
-
-    return output;
-}
+// export function materialToData(material: THREE.Material) {
+// 
+    // let output = '';
+    // if (material instanceof Array) {
+        // for (const mtl of material) output += materialToData(mtl);
+    // } else {
+        // output += `newmtl ${(material.name !== '') ? material.name : `material ${material.id}`}\n`;
+// 
+        // output += 'Ns 10.0000\n';
+        // output += 'Ni 1.5000\n';
+        // output += 'd 1.0000\n';
+        // output += 'Tr 0.0000\n';
+        // output += 'Tf 1.0000 1.0000 1.0000\n';
+        // output += 'illum 2\n';
+        // output += `Ka ${material.color.r} ${material.color.g} ${material.color.b}\n`;
+        // output += `Kd ${material.color.r} ${material.color.g} ${material.color.b}\n`;
+        // output += 'Ks 0.0000 0.0000 0.0000\n';
+        // output += 'Ke 0.0000 0.0000 0.0000\n';
+    // }
+// 
+    // return output;
+// }
 
 
 // function getAnimations( scene ) {
