@@ -1,8 +1,6 @@
 import { makeObservable, observable, action } from "mobx";
 import { Object3D, Scene } from "three";
 import * as TYPE from "./type";
-import { Pane } from "tweakpane";
-import { buildPane, disposePane } from "../editor/Source/PaneBuilder";
 
 export class AppStore {
 
@@ -16,8 +14,6 @@ export class AppStore {
     @observable scene : Scene = new Scene();
     // Currently selected Objects
     @observable controlsObject3D: Object3D | Object3D[] | null = null;
-    @observable paneObject: Pane | null = null; // right side
-    @observable paneHierarchy: Pane | null = null; // left side 
 
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
@@ -69,26 +65,10 @@ export class AppStore {
 
     @action.bound setScene(objects: Object3D[] = []) {
         this.setControlsTarget(null);
-        this.disposePaneObject();
         this.sceneObjects = objects;
-    }
-
-    @action.bound buildPaneObject(object: Object3D) {
-        if(this.paneObject) {
-            disposePane(this.paneObject);
-            this.paneObject = null;
-        }
-        if(!this.paneObject) 
-            this.paneObject = new Pane({title:"Object Settings"});
-        
-        this.paneObject = buildPane(this.paneObject, object);
     }
     
     @action.bound setRootSelection(b: boolean) {
         this.useRootSelection = b;
-    }
-
-    @action.bound disposePaneObject() {
-        disposePane(this.paneObject);
     }
 }

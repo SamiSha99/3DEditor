@@ -1,22 +1,23 @@
 import { Canvas, useThree } from '@react-three/fiber';
 import { Box, CameraControls, CycleRaycast, Environment, Grid, TransformControls } from '@react-three/drei';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '@orb_App';
 import { ITransformData } from '../store/interface';
 import { AppSettings } from '../store/appSettings';
 import * as THREE from 'three';
 import { TransformControls as TC } from 'three/examples/jsm/Addons.js';
-import { color } from 'three/examples/jsm/nodes/shadernode/ShaderNode';
+import { useControls, useCreateStore } from 'leva'
+import * as LEVATEST from './LevaData.tsx';
 
 export const EditorCanvas = observer(() => {
-    const { environment } = useStores()
+    const { environment, scene } = useStores()
     // const [reload, setReload] = useState(false);
 
     return (
         <>
             {/* <button id="requestUpdateEditor" onClick={()=>setReload(!reload)}> test </button> */}
-            <Canvas style={{ height: "95vh" }} shadows camera={{ position: [-2.5, 2.5, 0] }}>
+            <Canvas scene={scene} style={{ height: "95vh" }} shadows camera={{ position: [-2.5, 2.5, 0] }}>
                 <CameraControls makeDefault />
                 <EditorScene />
                 <EditorHelpers />
@@ -49,13 +50,12 @@ const EditorScene = observer(() => {
 })
 
 const EditorHelpers = observer(() => {
-    const { controlsTarget, controlsObject3D, controlsMode, controlsSpace, buildPaneObject, setIntersectedTargets } = useStores()
+    const { controlsTarget, controlsObject3D, controlsMode, controlsSpace, setIntersectedTargets } = useStores()
     const { scene } = useThree();
 
     useEffect(() => {
         const o = scene.getObjectById(controlsTarget as number);
-        if (o)
-            buildPaneObject(o);
+
     }, [controlsTarget])
 
     return (
@@ -78,16 +78,17 @@ const EditorHelpers = observer(() => {
 })
 
 const Controls: React.FC<ITransformData> = observer((data) => {
+    const {controlsObject3D} = useStores();
     const { scene } = useThree();
-    const { buildPaneObject } = useStores();
     const o = scene.getObjectById(data.targetID);
-
+    
+    // useControls(() => LEVATEST.LevaMesh(controlsObject3D as THREE.Object3D))
+    
     return (
         <TransformControls name='TRANSFORM_HELPER' object={o} mode={data.mode} space={data.space} onMouseUp={(e) => {
-            if ((e?.target as TC).object) {
-                const obj = (e?.target as TC).object;
-                buildPaneObject(obj as THREE.Object3D);
-            }
+            // if ((e?.target as TC).object) {
+            //    
+            // }
         }} />);
 })
 

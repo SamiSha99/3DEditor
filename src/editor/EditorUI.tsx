@@ -3,11 +3,14 @@ import { useStores } from '@orb_App';
 import { observer } from 'mobx-react-lite';
 import { MenuBar } from './ui/Menubar';
 import { ControlsBar } from './ui/ControlsBar';
+import { useControls } from 'leva';
+import { Object3D } from 'three';
 
 let environment = 0;
 
 export const EditorUI = observer(() => {
-    const {setEnvironment, setControlsTarget, intersectedObjects} = useStores()
+    const {setEnvironment, setControlsTarget, intersectedObjects, controlsObject3D} = useStores()
+    const o = controlsObject3D as Object3D;
     
     document.body.onkeyup = function(e) {
         if(e.key.toUpperCase() == "E" || e.code == "KeyE")
