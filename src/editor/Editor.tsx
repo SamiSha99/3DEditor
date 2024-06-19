@@ -2,6 +2,7 @@ import {} from '@react-three/fiber'
 import {} from '@react-three/drei'
 import EditorCanvas from './EditorCanvas'
 import EditorUI from './EditorUI'
+import EditorInspector from './EditorInspector'
 
 export function Editor() {
     
@@ -9,14 +10,13 @@ export function Editor() {
         <div style={{
             display:"flex", 
             flexWrap: "wrap", 
-            height:"100vh", 
+            height:"100%", 
             width:"100%"}}>
             <EditorUI />
             <EditorCanvas />
+            <EditorInspector />
         </div>
     )
 }
-
-
 
 export default Editor

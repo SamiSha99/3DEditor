@@ -12,12 +12,11 @@ import * as LEVATEST from './LevaData.tsx';
 
 export const EditorCanvas = observer(() => {
     const { environment, scene } = useStores()
-    // const [reload, setReload] = useState(false);
 
     return (
         <>
             {/* <button id="requestUpdateEditor" onClick={()=>setReload(!reload)}> test </button> */}
-            <Canvas scene={scene} style={{ height: "95vh" }} shadows camera={{ position: [-2.5, 2.5, 0] }}>
+            <Canvas scene={scene} style={{ height: "95%", flex:"75%" }} shadows camera={{ position: [-2.5, 2.5, 0] }}>
                 <CameraControls makeDefault />
                 <EditorScene />
                 <EditorHelpers />
@@ -34,23 +33,21 @@ const EditorScene = observer(() => {
     return (
         <>
             <ambientLight intensity={1.0} color={"white"} />
-            {/* <pointLight position={[0,0.5,0]} intensity={3} /> */}
-            {
-                sceneObjects && sceneObjects.map((child) =>
-                    <primitive
-                        onClick={(e: any) => { e.stopPropagation() }}
-                        onPointerMissed={(e: any) => { e.stopPropagation() }}
-                        onPointerOver={(e: any) => (e.stopPropagation())}
-                        onPointerOut={(e: any) => (e.stopPropagation)}
-                        object={child}
-                    />
-                )}
+            {sceneObjects && sceneObjects.map((child) =>
+                <primitive
+                    onClick={(e: any) => { e.stopPropagation() }}
+                    onPointerMissed={(e: any) => { e.stopPropagation() }}
+                    onPointerOver={(e: any) => (e.stopPropagation())}
+                    onPointerOut={(e: any) => (e.stopPropagation)}
+                    object={child}
+                />
+            )}
         </>
     )
 })
 
 const EditorHelpers = observer(() => {
-    const { controlsTarget, controlsObject3D, controlsMode, controlsSpace, setIntersectedTargets } = useStores()
+    const { controlsTarget, controlsMode, controlsSpace, setIntersectedTargets } = useStores()
     const { scene } = useThree();
 
     useEffect(() => {
@@ -78,12 +75,12 @@ const EditorHelpers = observer(() => {
 })
 
 const Controls: React.FC<ITransformData> = observer((data) => {
-    const {controlsObject3D} = useStores();
+    const { controlsObject3D } = useStores();
     const { scene } = useThree();
     const o = scene.getObjectById(data.targetID);
-    
+
     // useControls(() => LEVATEST.LevaMesh(controlsObject3D as THREE.Object3D))
-    
+
     return (
         <TransformControls name='TRANSFORM_HELPER' object={o} mode={data.mode} space={data.space} onMouseUp={(e) => {
             // if ((e?.target as TC).object) {

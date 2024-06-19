@@ -9,9 +9,11 @@ export class AppStore {
     @observable intersectedObjects: Object3D[] | null = null;
     // Object3D ID
     @observable controlsTarget: number | number[] = -1;
-    
+    // All instatiated Objects in the scene
     @observable sceneObjects : Object3D[] | null = [] as Object3D[];
     @observable scene : Scene = new Scene();
+    // Last update request time in milliseconds
+    @observable onUpdateInspector = new Date().getUTCMilliseconds();
     // Currently selected Objects
     @observable controlsObject3D: Object3D | Object3D[] | null = null;
 
@@ -62,6 +64,9 @@ export class AppStore {
     @action.bound pushComponentToScene = (object: Object3D) => {
         this.sceneObjects?.push(object);
     }
+
+    // this is NOT ok
+    @action.bound badForceUpdateInspector = () => {this.onUpdateInspector = new Date().getUTCMilliseconds();}
 
     @action.bound setScene(objects: Object3D[] = []) {
         this.setControlsTarget(null);

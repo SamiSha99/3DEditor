@@ -4,7 +4,7 @@ import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "..
 import { GenerateButton } from "@orb_tools/meshCreator/3DButton";
 
 export const Add = () => {
-    const {pushComponentToScene, controlsObject3D} = useStores();
+    const {pushComponentToScene, controlsObject3D, badForceUpdateInspector} = useStores();
     
     return(
         <Dropdown 
@@ -19,6 +19,7 @@ export const Add = () => {
                             if(!controlsObject3D) return;
                             if(!Array.isArray(controlsObject3D) && obj)
                                 controlsObject3D?.add(obj);
+                            badForceUpdateInspector();
                         }
                     },
                     {
