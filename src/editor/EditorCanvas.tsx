@@ -6,9 +6,6 @@ import { useStores } from '@orb_App';
 import { ITransformData } from '../store/interface';
 import { AppSettings } from '../store/appSettings';
 import * as THREE from 'three';
-import { TransformControls as TC } from 'three/examples/jsm/Addons.js';
-import { useControls, useCreateStore } from 'leva'
-import * as LEVATEST from './LevaData.tsx';
 
 export const EditorCanvas = observer(() => {
     const { environment, scene } = useStores()
