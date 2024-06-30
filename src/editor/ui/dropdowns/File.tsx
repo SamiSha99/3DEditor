@@ -26,14 +26,13 @@ export const File = () => {
                 console.log("selecton:", selection)
                 if(!selection) message.warning('No selection detected with "export selection", make sure you are selecting an Object before export.')
                 
-                doExport(selection as THREE.Object3D, {type: res.type});
+                doExport(selection as THREE.Object3D, {type: res.type, name: res.name});
                 toggleModalExport(false);
             }} />
             <Dropdown
             children={<Button children={"File"} />}
             menu={{
                 items: [
-                    // PLEASE FIX! IT BREAKS EXPORTS! -Sami
                 {
                     label: 'New Scene',
                     key: '0',
