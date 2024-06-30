@@ -65,7 +65,7 @@ export function exportOBJ(scene: THREE.Object3D, options: ExportOptions) {
 /** Exported type is always USDA, if we want to support USDC we need to go for a WASM solution which requires implementation that is even way larger than threejs!!! */
 export function exportUSDZ(scene: THREE.Object3D, options: ExportOptions) {
     const exporter = new USDZExporter();
-    exporter.parse(scene, { quickLookCompatible: true, maxTextureSize: options.maxTextureSize || Infinity }).then(
+    exporter.parseAsync(scene, { quickLookCompatible: true, maxTextureSize: options.maxTextureSize || Infinity }).then(
         result => {
             const buffer = result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
             saveArrayBuffer(buffer, (options.name || "export") + ".usdz");
