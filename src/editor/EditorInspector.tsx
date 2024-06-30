@@ -17,7 +17,7 @@ export const EditorInspector = observer(() => {
     }, [sceneObjects, scene.children])
     
     return (
-        <div style={{ backgroundColor: "red", flex: "25%" }}>
+        <div style={{ backgroundColor: "red", flex: "15%" }}>
             <HierarchyContext.Provider value={sceneObjects}>
                 {hierarchy}
             </HierarchyContext.Provider>
