@@ -13,7 +13,7 @@ export const EditorCanvas = observer(() => {
     return (
         <>
             {/* <button id="requestUpdateEditor" onClick={()=>setReload(!reload)}> test </button> */}
-            <Canvas scene={scene} style={{ height: "95%", flex:"85%" }} shadows camera={{ position: [-2.5, 2.5, 0] }}>
+            <Canvas scene={scene} style={{ height: "95%", flex:"80%" }} shadows camera={{ position: [-2.5, 2.5, 0] }}>
                 <CameraControls makeDefault />
                 <EditorScene />
                 <EditorHelpers />
