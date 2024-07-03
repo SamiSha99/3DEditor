@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import { message } from 'antd';
-import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader} from 'three/examples/jsm/Addons.js';
+import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 
 /** Extension of the file including a dot "." */
-const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i; 
+const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 
 type OnImport = (scene: THREE.Object3D) => void;
 
@@ -17,13 +17,13 @@ export function doImport(onImport: OnImport) {
     input.click();
     input.onchange = ((e: Event) => {
         const filelist = (e as any as React.ChangeEvent<HTMLInputElement>).target.files;
-        if(filelist) {
-            if(filelist.length <= 0) { 
+        if (filelist) {
+            if (filelist.length <= 0) {
                 message.error("No files were selected.");
                 return;
             }
             let files: File[] = [];
-            for(let i = 0; i < filelist.length; i++) files.push(filelist[i]);
+            for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
             handleFiles(files, onImport);
         }
         else
@@ -32,27 +32,27 @@ export function doImport(onImport: OnImport) {
 }
 
 export function doImportFileList(filelist: FileList, onImport: OnImport) {
-    
-    if(filelist.length <= 0) { 
+
+    if (filelist.length <= 0) {
         message.error("No files were selected.");
         return;
     }
-    
+
     let files: File[] = [];
-    for(let i = 0; i < filelist.length; i++) files.push(filelist[i]);
+    for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
     handleFiles(files, onImport);
 }
 
 function handleFiles(files: File[], onImport: OnImport) {
     const manager = new THREE.LoadingManager();
-    const filesMap = createFilesMap(files) as {[name:string]: File};
+    const filesMap = createFilesMap(files) as { [name: string]: File };
 
     manager.setURLModifier((url) => {
-        url = url.replace( /^(\.?\/)/, '' );
+        url = url.replace(/^(\.?\/)/, '');
         const file = filesMap[url];
-        if(file) {
-        	console.log('Loading', url);
-        	return URL.createObjectURL(file);
+        if (file) {
+            console.log('Loading', url);
+            return URL.createObjectURL(file);
         }
         return url;
     });
@@ -62,12 +62,12 @@ function handleFiles(files: File[], onImport: OnImport) {
 
 function handleFile(file: File, manager: THREE.LoadingManager | null = null, onImport: OnImport) {
     const type = file.name.match(EXTENSION_REGEX)?.[0];
-    
-    if(!manager) {
+
+    if (!manager) {
         manager = new THREE.LoadingManager();
         manager.setURLModifier((url) => {
-            url = url.replace( /^(\.?\/)/, '' );
-            if(file) {
+            url = url.replace(/^(\.?\/)/, '');
+            if (file) {
                 console.log('Loading', url);
                 return URL.createObjectURL(file);
             }
@@ -77,23 +77,23 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
 
     const reader = new FileReader();
 
-    switch(type) {
+    switch (type) {
         case ".gltf":
             reader.addEventListener('load', async function (event) {
                 const contents = event.target?.result as string | ArrayBuffer;
                 const loader = createGLTFLoader(manager);
                 loader.parse(contents, '',
-                (result) => {
-                    const scene = result.scene;
-                    scene.name = file.name;
-                    scene.animations.push( ...result.animations );
-                    loader.dracoLoader?.dispose();
-                    onImport(scene);
-                    return scene;
-                },
-                (error) => {
-                    message.error("Failed to load .gltf file. [" + error + "]");
-                });
+                    (result) => {
+                        const scene = result.scene;
+                        scene.name = file.name;
+                        scene.animations.push(...result.animations);
+                        loader.dracoLoader?.dispose();
+                        onImport(scene);
+                        return scene;
+                    },
+                    (error) => {
+                        message.error("Failed to load .gltf file. [" + error + "]");
+                    });
 
             }, false);
             reader.readAsArrayBuffer(file);
@@ -107,7 +107,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                     const scene = result.scene;
                     scene.name = file.name;
 
-                    scene.animations.push( ...result.animations );
+                    scene.animations.push(...result.animations);
                     loader.dracoLoader?.dispose();
                     onImport(scene);
                     return scene;
@@ -117,27 +117,29 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
             reader.readAsArrayBuffer(file);
             break;
         case ".usdz":
-            reader.addEventListener('load', async function ( event ) {
+            reader.addEventListener('load', async function (event) {
 
                 const contents = event.target?.result as string | ArrayBuffer;
 
                 const group = new USDZLoader().parse(contents);
-                if(group.children.length <= 0)
+                if (group.children.length <= 0)
                     message.error("Failed to load USDZ model.");
-                else
-                    onImport(group)
+                else {
+                    group.name = file.name;
+                    onImport(group);
+                }
 
             }, false);
             reader.readAsArrayBuffer(file);
             break;
         case ".obj":
-            reader.addEventListener('load', async function ( event ) {
+            reader.addEventListener('load', async function (event) {
 
                 const contents = event.target?.result as string;
 
                 const group = new OBJLoader().parse(contents);
                 group.name = file.name;
-                if(group.children.length <= 0) 
+                if (group.children.length <= 0)
                     message.error("Failed to load OBJ model.");
                 else
                     onImport(group)
@@ -146,7 +148,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
             reader.readAsText(file);
             break;
         case ".zip":
-            reader.addEventListener('load', async function ( event ) {
+            reader.addEventListener('load', async function (event) {
                 handleZIP(event.target?.result, onImport);
             }, false);
             reader.readAsArrayBuffer(file);
@@ -155,20 +157,20 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
 }
 
 function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnImport) {
-    if(!data) {
+    if (!data) {
         message.error("ZIP data returned " + data);
         return;
     }
 
     const zip = unzipSync(new Uint8Array(data as ArrayBuffer));
 
-    for(const path in zip) {
+    for (const path in zip) {
         const file = zip[path];
         const manager = new THREE.LoadingManager();
         manager.setURLModifier((url) => {
             const file = zip[url];
-            if(file) {
-                const blob = new Blob([file.buffer], {type: 'application/octet-stream'});
+            if (file) {
+                const blob = new Blob([file.buffer], { type: 'application/octet-stream' });
                 return URL.createObjectURL(blob);
             }
             return url;
@@ -209,18 +211,18 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
             case ".obj": {
                 // Get MTL via pathing
                 const objMap = strFromU8(zip[path]);
-                const mtlPath = path.includes("/") ? path.replace(/([^\/]+$)/g, matchOnMap(objMap, "mtllib")) : matchOnMap(objMap, "mtllib"); 
+                const mtlPath = path.includes("/") ? path.replace(/([^\/]+$)/g, matchOnMap(objMap, "mtllib")) : matchOnMap(objMap, "mtllib");
 
                 let object: THREE.Object3D;
                 const loader = new OBJLoader(manager);
 
-                if(zip[mtlPath]) {
+                if (zip[mtlPath]) {
                     let map = strFromU8(zip[mtlPath]);
                     map = modifyMap(map, "Kd", "1 1 1");
                     const mtlLoader = new MTLLoader(manager);
                     const mat = mtlLoader.parse(map, "");
                     mat.preload();
-                    manager.onProgress = (url, num, total) => console.log("Loaded", url, "Current Load Amount:", num/total * 100 + "%");
+                    manager.onProgress = (url, num, total) => console.log("Loaded", url, "Current Load Amount:", num / total * 100 + "%");
                     manager.onError = (url) => console.error("Failed to load", url);
                     manager.onLoad = () => {
                         console.log("Finished loading Material, parsing Object with the material.");
@@ -230,7 +232,7 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
                 }
                 else {
                     object = loader.parse(strFromU8(zip[path]));
-                    onImport(object);            
+                    onImport(object);
                 }
             }
         }
@@ -255,7 +257,7 @@ function createFilesMap(files: File[]) {
     const map = {};
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        Object.assign(map, {[file.name]:file});
+        Object.assign(map, { [file.name]: file });
     }
     return map;
 
