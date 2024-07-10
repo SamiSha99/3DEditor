@@ -99,7 +99,7 @@ const ExportModal: React.FC<{ open: boolean, onCancel: () => void, onSubmit: (re
                     }}
                     options={exportOptions}
                 />
-                <Checkbox checked={formData.exportSelection} onChange={(e) => setFormData({ name: formData.name, type: formData.type, exportSelection: e.target.checked })} />
+                <Checkbox children={"Export selected only."} checked={formData.exportSelection} onChange={(e) => setFormData({ name: formData.name, type: formData.type, exportSelection: e.target.checked })} />
                 <Input defaultValue={"exportName"} title="hello" onInput={(e) => { setFormData({ name: (e.target as any).value, type: formData.type, exportSelection: formData.exportSelection }) }} />
             </Form>
         </Modal>
