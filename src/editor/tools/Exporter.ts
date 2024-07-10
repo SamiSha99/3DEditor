@@ -1,41 +1,41 @@
 import * as THREE from 'three';
-import { GLTFExporter, OBJExporter, USDZExporter } from 'three/examples/jsm/Addons.js';
+import { GLTFExporter, OBJExporter, PLYExporter, STLExporter, USDZExporter } from 'three/examples/jsm/Addons.js';
 
-export type ExportType = "gltf" | "glb" | "usdz" | "obj"
+export type OnExport = (result: Blob) => void;
+
+export type USDZExporterAnchoringTypes = "plane" | "image" | "face" | "none"
+
+export type ExportType = "gltf" | "glb" | "usdz" | "obj" | "ply" | "stl"
 
 export type ExportOptions = {
     type: ExportType,
     name?: string,
-    maxTextureSize?: number
+    maxTextureSize?: number, // only GLTF, GLB and USDZ
+    binary?: boolean // only GLTF, GLB, PLY, STL
 }
 
-export function doExport(scene: THREE.Object3D, options: ExportOptions) {
+export function doExport(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
 
     switch (options.type) {
-        case "gltf":
-            exportGLTF(scene, options);
-            break;
-        case "glb":
-            exportGLB(scene, options);
-            break;
-        case "usdz":
-            exportUSDZ(scene, options);
-            break;
-        case "obj":
-            exportOBJ(scene, options);
-            break;
+        case "gltf": exportGLTF(scene, options, onExport); break;
+        case "glb": exportGLB(scene, options, onExport); break;
+        case "usdz": exportUSDZ(scene, options, onExport); break;
+        case "obj": exportOBJ(scene, options, onExport); break;
+        case "stl": exportSTL(scene, options, onExport); break;
+        case "ply": exportPLY(scene, options, onExport); break;
     }
 }
 
 // TO-DO: we need to export animations with GLTF/GLB
-export function exportGLTF(scene: THREE.Object3D, options: ExportOptions) {
+export function exportGLTF(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
     const exporter = new GLTFExporter();
 
     exporter.parse(
         scene,
         (result) => {
             const json = JSON.stringify(result as any, null, 2)
-            saveString(json, (options.name || "export") + ".gltf");
+            const blob = saveString(json, (options.name || "export") + ".gltf");
+            onExport && onExport(blob);
         },
         (error) => { console.warn(error) },
         { binary: false, maxTextureSize: options.maxTextureSize || Infinity }
@@ -44,34 +44,61 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions) {
 
 // We could probably improve this
 // Make an option that exports mtl serperately with all textures, something simple, nothing big
-export function exportGLB(scene: THREE.Object3D, options: ExportOptions) {
+export function exportGLB(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
     const exporter = new GLTFExporter();
 
     exporter.parse(
         scene,
-        (result) => saveArrayBuffer(result as ArrayBuffer, (options.name || "export") + ".glb"),
+        (result) => {
+            const blob = saveArrayBuffer(result as ArrayBuffer, (options.name || "export") + ".glb")
+            onExport && onExport(blob);
+        },
         (error) => { console.warn(error) },
         { binary: true, maxTextureSize: options.maxTextureSize || Infinity }
     );
 }
 
-export function exportOBJ(scene: THREE.Object3D, options: ExportOptions) {
+export function exportOBJ(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
     const exporter = new OBJExporter();
-    saveString(exporter.parse(scene), (options.name || "export") + ".obj");
-    // if(scene instanceof THREE.Mesh)
-        // saveString(materialToData(scene.material), (options.name || "export") + ".mtl");
+    const blob = saveString(exporter.parse(scene), (options.name || "export") + ".obj");
+    onExport && onExport(blob);
 }
 
 /** Exported type is always USDA, if we want to support USDC we need to go for a WASM solution which requires implementation that is even way larger than threejs!!! */
-export function exportUSDZ(scene: THREE.Object3D, options: ExportOptions) {
+export function exportUSDZ(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
     const exporter = new USDZExporter();
+
     exporter.parseAsync(scene, { quickLookCompatible: true, maxTextureSize: options.maxTextureSize || Infinity }).then(
         result => {
             const buffer = result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
-            saveArrayBuffer(buffer, (options.name || "export") + ".usdz");
+            const blob = saveArrayBuffer(buffer, (options.name || "export") + ".usdz");
+            onExport && onExport(blob);
         },
         ((reason) => { console.warn(reason) })
     )
+}
+
+export function exportPLY(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+    const exporter = new PLYExporter();
+    const binary = options.binary || false;
+    exporter.parse(scene,
+        result => {
+            const name = (options.name || "export") + ".ply";
+            const blob = binary ? saveArrayBuffer(result as ArrayBuffer, name) : saveString(result as string, name);
+            onExport && onExport(blob);
+        },
+        { binary: binary }
+    );
+}
+
+export function exportSTL(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+    const exporter = new STLExporter();
+    const binary = options.binary || false;
+
+    const result = exporter.parse(scene, { binary: binary });
+    const name = (options.name || "export") + ".stl";
+    const blob = binary ? saveArrayBuffer(result as any as ArrayBuffer, name) : saveString(result as string, name);
+    onExport && onExport(blob);
 }
 
 export function save(blob: Blob, fileName: string) {
@@ -86,34 +113,38 @@ export function save(blob: Blob, fileName: string) {
 }
 
 export function saveArrayBuffer(buffer: ArrayBuffer, filename: string) {
-    save(new Blob([buffer], { type: 'application/octet-stream' }), filename);
+    const blob = new Blob([buffer], { type: 'application/octet-stream' });
+    save(blob, filename);
+    return blob;
 }
 
 export function saveString(text: string, filename: string) {
-    save(new Blob([text], { type: 'text/plain' }), filename);
+    const blob = new Blob([text], { type: 'text/plain' });
+    save(blob, filename);
+    return blob;
 }
 
 // export function materialToData(material: THREE.Material) {
-// 
-    // let output = '';
-    // if (material instanceof Array) {
-        // for (const mtl of material) output += materialToData(mtl);
-    // } else {
-        // output += `newmtl ${(material.name !== '') ? material.name : `material ${material.id}`}\n`;
-// 
-        // output += 'Ns 10.0000\n';
-        // output += 'Ni 1.5000\n';
-        // output += 'd 1.0000\n';
-        // output += 'Tr 0.0000\n';
-        // output += 'Tf 1.0000 1.0000 1.0000\n';
-        // output += 'illum 2\n';
-        // output += `Ka ${material.color.r} ${material.color.g} ${material.color.b}\n`;
-        // output += `Kd ${material.color.r} ${material.color.g} ${material.color.b}\n`;
-        // output += 'Ks 0.0000 0.0000 0.0000\n';
-        // output += 'Ke 0.0000 0.0000 0.0000\n';
-    // }
-// 
-    // return output;
+//
+// let output = '';
+// if (material instanceof Array) {
+// for (const mtl of material) output += materialToData(mtl);
+// } else {
+// output += `newmtl ${(material.name !== '') ? material.name : `material ${material.id}`}\n`;
+//
+// output += 'Ns 10.0000\n';
+// output += 'Ni 1.5000\n';
+// output += 'd 1.0000\n';
+// output += 'Tr 0.0000\n';
+// output += 'Tf 1.0000 1.0000 1.0000\n';
+// output += 'illum 2\n';
+// output += `Ka ${material.color.r} ${material.color.g} ${material.color.b}\n`;
+// output += `Kd ${material.color.r} ${material.color.g} ${material.color.b}\n`;
+// output += 'Ks 0.0000 0.0000 0.0000\n';
+// output += 'Ke 0.0000 0.0000 0.0000\n';
+// }
+//
+// return output;
 // }
 
 

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { message } from 'antd';
-import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 
@@ -40,6 +40,22 @@ export function doImportFileList(filelist: FileList, onImport: OnImport) {
 
     let files: File[] = [];
     for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
+    handleFiles(files, onImport);
+}
+
+export function doImportFile(file: File, onImport: OnImport) {
+    if (!file) {
+        message.error("No files were selected.");
+        return;
+    }
+    handleFiles([file], onImport);
+}
+
+export function doImportFiles(files: File[], onImport: OnImport) {
+    if (files.length <= 0) {
+        message.error("No files were selected.");
+        return;
+    }
     handleFiles(files, onImport);
 }
 
@@ -117,11 +133,13 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
             reader.readAsArrayBuffer(file);
             break;
         case ".usdz":
+        case ".usda":
+        case ".usd":
             reader.addEventListener('load', async function (event) {
 
                 const contents = event.target?.result as string | ArrayBuffer;
 
-                const group = new USDZLoader().parse(contents);
+                const group = new USDZLoader(manager).parse(contents);
                 if (group.children.length <= 0)
                     message.error("Failed to load USDZ model.");
                 else {
@@ -146,6 +164,40 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
 
             }, false);
             reader.readAsText(file);
+            break;
+        case ".ply":
+            reader.addEventListener('load', async function (event) {
+                const contents = event.target?.result as string | ArrayBuffer;
+                const buffer = new PLYLoader().parse(contents);
+
+                let mesh;
+                if (buffer.index !== null) {
+                    const material = new THREE.MeshStandardMaterial();
+                    mesh = new THREE.Mesh(buffer, material);
+                    mesh.name = file.name;
+                }
+                else {
+                    const material = new THREE.PointsMaterial({ size: 0.01 });
+                    material.vertexColors = buffer.hasAttribute('color');
+                    mesh = new THREE.Points(buffer, material);
+                    mesh.name = file.name;
+                }
+
+                onImport(mesh);
+            }, false);
+            console.log(typeof file);
+            reader.readAsArrayBuffer(file);
+            break;
+        case ".stl":
+            reader.addEventListener('load', async function (event) {
+                const contents = event.target?.result as string | ArrayBuffer;
+                const geometry = new STLLoader().parse(contents);
+                const material = new THREE.MeshStandardMaterial();
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.name = file.name;
+                onImport(mesh);
+            }, false);
+            reader.readAsArrayBuffer(file);
             break;
         case ".zip":
             reader.addEventListener('load', async function (event) {

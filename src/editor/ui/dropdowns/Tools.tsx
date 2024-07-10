@@ -15,7 +15,9 @@ export const Tools = () => {
             <ConvertModal open={modalConvert} onCancel={() => { toggleModalConvert(false) }} onSubmit={(res, fileList) => {
                 console.log(fileList);
                 if (fileList) {
-                    doConvertFileList(fileList, { type: res.type, name: res.name, maxTextureSize: res.textureSize });
+                    doConvertFileList(fileList, { type: res.type, name: res.name, maxTextureSize: res.textureSize }, (blob) => {
+                        console.log("Converted the result to this blob\n\n\n",blob);
+                    });
                 }
                 toggleModalConvert(false);
             }} />
