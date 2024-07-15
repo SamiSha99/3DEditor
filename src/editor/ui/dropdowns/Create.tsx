@@ -2,6 +2,7 @@ import { Dropdown, Button, message } from "antd";
 import { GenerateBox, GenerateCapsule, GenerateCylinder, GeneratePlane, GenerateSphere, GenerateTorus } from "../../tools/meshCreator/Primitives";
 import { GenerateButton } from "@orb_tools/meshCreator/3DButton";
 import { useStores } from "@orb_App";
+import { GenerateAmbientLight } from "@orb_tools/meshCreator/light";
 
 
 export const Create = () => {
@@ -19,6 +20,17 @@ export const Create = () => {
                             onClick: () => {
                                 const button = GenerateButton();
                                 pushComponentToScene(button);
+                            }
+                        },
+                        {
+                            type: "divider"
+                        },
+                        {
+                            label: 'AmbientLight',
+                            key: '-1',
+                            onClick: () => {
+                                const light = GenerateAmbientLight();
+                                pushComponentToScene(light);
                             }
                         },
                         {
