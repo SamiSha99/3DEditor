@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFExporter, OBJExporter, PLYExporter, STLExporter, USDZExporter } from 'three/examples/jsm/Addons.js';
+import { computeVertexNormals } from '../utils/MeshUtils';
 
 export type OnExport = (result: Blob) => void;
 
@@ -34,7 +35,7 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions, onExpo
         scene,
         (result) => {
             const json = JSON.stringify(result as any, null, 2)
-            const blob = saveString(json, (options.name || "export") + ".gltf");
+            const blob = saveString(json);
             onExport && onExport(blob);
         },
         (error) => { console.warn(error) },
@@ -50,7 +51,7 @@ export function exportGLB(scene: THREE.Object3D, options: ExportOptions, onExpor
     exporter.parse(
         scene,
         (result) => {
-            const blob = saveArrayBuffer(result as ArrayBuffer, (options.name || "export") + ".glb")
+            const blob = saveArrayBuffer(result as ArrayBuffer)
             onExport && onExport(blob);
         },
         (error) => { console.warn(error) },
@@ -60,18 +61,34 @@ export function exportGLB(scene: THREE.Object3D, options: ExportOptions, onExpor
 
 export function exportOBJ(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
     const exporter = new OBJExporter();
-    const blob = saveString(exporter.parse(scene), (options.name || "export") + ".obj");
+    const blob = saveString(exporter.parse(scene));
     onExport && onExport(blob);
 }
 
 /** Exported type is always USDA, if we want to support USDC we need to go for a WASM solution which requires implementation that is even way larger than threejs!!! */
-export function exportUSDZ(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+export async function exportUSDZ(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
     const exporter = new USDZExporter();
+    // let computing: boolean = false;
+
+    scene.traverse(obj => {
+        if (obj instanceof THREE.Mesh) {
+            if (!(obj.material instanceof THREE.MeshStandardMaterial)) {
+                const mat = obj.material as THREE.MeshPhongMaterial;
+                const standardMat = new THREE.MeshStandardMaterial();
+                standardMat.copy(mat);
+                standardMat.map = mat.map;
+                standardMat.aoMap = mat.aoMap;
+                standardMat.normalMap = mat.normalMap;
+                obj.material = standardMat;
+                computeVertexNormals(obj);
+            }
+        }
+    })
 
     exporter.parseAsync(scene, { quickLookCompatible: true, maxTextureSize: options.maxTextureSize || Infinity }).then(
         result => {
             const buffer = result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
-            const blob = saveArrayBuffer(buffer, (options.name || "export") + ".usdz");
+            const blob = saveArrayBuffer(buffer);
             onExport && onExport(blob);
         },
         ((reason) => { console.warn(reason) })
@@ -83,8 +100,7 @@ export function exportPLY(scene: THREE.Object3D, options: ExportOptions, onExpor
     const binary = options.binary || false;
     exporter.parse(scene,
         result => {
-            const name = (options.name || "export") + ".ply";
-            const blob = binary ? saveArrayBuffer(result as ArrayBuffer, name) : saveString(result as string, name);
+            const blob = binary ? saveArrayBuffer(result as ArrayBuffer) : saveString(result as string);
             onExport && onExport(blob);
         },
         { binary: binary }
@@ -96,8 +112,7 @@ export function exportSTL(scene: THREE.Object3D, options: ExportOptions, onExpor
     const binary = options.binary || false;
 
     const result = exporter.parse(scene, { binary: binary });
-    const name = (options.name || "export") + ".stl";
-    const blob = binary ? saveArrayBuffer(result as any as ArrayBuffer, name) : saveString(result as string, name);
+    const blob = binary ? saveArrayBuffer(result as any as ArrayBuffer) : saveString(result as string);
     onExport && onExport(blob);
 }
 
@@ -112,17 +127,8 @@ export function save(blob: Blob, fileName: string) {
     URL.revokeObjectURL(a.href);
 }
 
-export function saveArrayBuffer(buffer: ArrayBuffer, filename: string) {
-    const blob = new Blob([buffer], { type: 'application/octet-stream' });
-    save(blob, filename);
-    return blob;
-}
-
-export function saveString(text: string, filename: string) {
-    const blob = new Blob([text], { type: 'text/plain' });
-    save(blob, filename);
-    return blob;
-}
+export function saveArrayBuffer(buffer: ArrayBuffer) { return new Blob([buffer], { type: 'application/octet-stream' }); }
+export function saveString(text: string) { return new Blob([text], { type: 'text/plain' }); }
 
 // export function materialToData(material: THREE.Material) {
 //

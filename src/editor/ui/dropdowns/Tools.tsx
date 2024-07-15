@@ -1,7 +1,7 @@
 import { CameraOutlined, InboxOutlined } from "@ant-design/icons";
 import { useStores } from "@orb_App";
-import { doConvertFileList } from "@orb_tools/Convertor";
-import { ExportType } from "@orb_tools/Exporter";
+import { doConvertFileList} from "@orb_tools/Convertor";
+import { ExportType, save } from "@orb_tools/Exporter";
 import { Screenshot } from "@orb_tools/ModelPreviewer";
 import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile } from "antd"
 import { useState } from "react";
@@ -17,6 +17,7 @@ export const Tools = () => {
                 if (fileList) {
                     doConvertFileList(fileList, { type: res.type, name: res.name, maxTextureSize: res.textureSize }, (blob) => {
                         console.log("Converted the result to this blob\n\n\n",blob);
+                        save(blob, (res.name || "export") + "." + res.type)
                     });
                 }
                 toggleModalConvert(false);

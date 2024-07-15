@@ -199,6 +199,15 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
             }, false);
             reader.readAsArrayBuffer(file);
             break;
+            case ".fbx":
+            reader.addEventListener('load', async function (event) {
+                const contents = event.target?.result as string | ArrayBuffer;
+                const group = new FBXLoader(manager).parse(contents, "");
+                group.name = file.name;
+                onImport(group);
+            }, false);
+            reader.readAsArrayBuffer(file);
+            break;
         case ".zip":
             reader.addEventListener('load', async function (event) {
                 handleZIP(event.target?.result, onImport);
