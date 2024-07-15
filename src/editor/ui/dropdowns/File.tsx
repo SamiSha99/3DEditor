@@ -5,7 +5,6 @@ import * as THREE from "three";
 import { useStores } from "@orb_App";
 import { doImport } from "@orb_tools/Importer";
 import { ExportType, doExport } from "@orb_tools/Exporter";
-import { label } from "three/examples/jsm/nodes/Nodes";
 
 export const File = () => {
     const { setScene, controlsObject3D, sceneObjects, pushComponentToScene } = useStores();
