@@ -101,7 +101,6 @@ export const EditorInspector = observer(() => {
             }
         }
         badForceUpdateInspector();
-        console.log('updating...')
     };
 
     useMemo(() => {
@@ -113,7 +112,6 @@ export const EditorInspector = observer(() => {
             <Tree
                 defaultExpandAll
                 showLine
-                // switcherIcon={<DownOutlined />}
                 draggable
                 onDragEnter={onDragEnter}
                 onDrop={onDrop}
