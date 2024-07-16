@@ -1,17 +1,17 @@
 import { DragOutlined, ExpandAltOutlined, SyncOutlined } from "@ant-design/icons"
-import { ControlsBarButton, ControlsBarStyle } from "./style"
+import { ControlsBarStyle } from "./style"
 import { useStores } from "@orb_App"
 import { observer } from "mobx-react-lite"
-import { Checkbox, Divider, Tooltip } from "antd";
+import { Button, Checkbox, Divider, Radio, RadioChangeEvent, Tooltip } from "antd";
 import { useHotkeys } from 'react-hotkeys-hook';
 
 export const ControlsBar = observer(() => {
     return (
         <ControlsBarStyle>
             <TranslationButton />
-            <Divider style={{ backgroundColor: "white" }} type="vertical" />
+            <Divider type="vertical" />
             <TranslationSpaceButton />
-            <Divider style={{ backgroundColor: "white" }} type="vertical" />
+            <Divider type="vertical" />
             <RootSelectionButton />
         </ControlsBarStyle>
     )
@@ -31,11 +31,15 @@ const TranslationButton = observer(() => {
         setControlsModeByName(newControlsMode);
     })
 
+    const onChange = (e: RadioChangeEvent) => { setControlsModeByName(e.target.value); }
+
     return (
         <Tooltip title="Change between Translation, Rotation and Scale" placement="bottom">
-            <ControlsBarButton pressed={controlsMode == "translate"} onClick={() => setControlsModeByName("translate")} icon={<DragOutlined />} />
-            <ControlsBarButton pressed={controlsMode == "rotate"} onClick={() => setControlsModeByName("rotate")} icon={<SyncOutlined />} />
-            <ControlsBarButton pressed={controlsMode == "scale"} onClick={() => setControlsModeByName("scale")} icon={<ExpandAltOutlined />} />
+            <Radio.Group onChange={onChange} value={controlsMode}>
+                <Radio.Button value={"translate"} children={<DragOutlined />} />
+                <Radio.Button value={"rotate"} children={<SyncOutlined />} />
+                <Radio.Button value={"scale"} children={<ExpandAltOutlined />} />
+            </Radio.Group>
         </Tooltip>
     )
 })
@@ -49,10 +53,10 @@ const TranslationSpaceButton = observer(() => {
 
     return (
         <Tooltip title="Local Position/Rotation" placement="bottom">
-            <ControlsBarButton pressed={false} onClick={() => setControlSpaceByName(controlsSpace == "world" ? "local" : "world")}>
+            <Button onClick={() => setControlSpaceByName(controlsSpace == "world" ? "local" : "world")}>
                 <Checkbox checked={controlsSpace == "local"} onChange={(e) => setControlSpaceByName(controlsSpace == "world" ? "local" : "world")} style={{ paddingRight: "5px" }} />
                 {"Local"}
-            </ControlsBarButton>
+            </Button>
         </Tooltip>
     )
 })
@@ -63,10 +67,10 @@ const RootSelectionButton = observer(() => {
 
     return (
         <Tooltip title="Causes selection to target the root of the model." placement="bottom">
-            <ControlsBarButton onClick={(e) => { setRootSelection(!useRootSelection), e.stopPropagation() }} pressed={false}>
+            <Button onClick={(e) => { setRootSelection(!useRootSelection), e.stopPropagation() }}>
                 <Checkbox checked={useRootSelection} onChange={(e) => setRootSelection(e.target.checked)} style={{ paddingRight: "5px" }} />
                 {"Root Selection"}
-            </ControlsBarButton>
+            </Button>
         </Tooltip>
     )
 })
