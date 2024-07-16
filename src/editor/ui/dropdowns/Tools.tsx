@@ -23,6 +23,7 @@ export const Tools = () => {
                 toggleModalConvert(false);
             }} />
             <Dropdown
+                trigger={["click"]}
                 children={<Button children={"Tools"} />}
                 menu={{
                     items: [

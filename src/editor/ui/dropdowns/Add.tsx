@@ -1,15 +1,15 @@
 import { Dropdown, Button, message } from "antd";
 import { useStores } from "@orb_App";
-import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../../tools/create/primitive";
 import { GenerateButton } from "@orb_tools/create/3DButton";
 import { Object3D } from "three";
 
 export const Add = () => {
-    const {pushComponentToScene, controlsObject3D, badForceUpdateInspector} = useStores();
-    
-    return(
-        <Dropdown 
-            children={<Button children={"Add"} />} 
+    const { pushComponentToScene, controlsObject3D, badForceUpdateInspector } = useStores();
+
+    return (
+        <Dropdown
+            trigger={["click"]}
+            children={<Button children={"Add"} />}
             menu={{
                 items: [
                     {
@@ -17,11 +17,11 @@ export const Add = () => {
                         key: '0',
                         onClick: () => {
                             const obj = GenerateButton()
-                            if(!controlsObject3D){
+                            if (!controlsObject3D) {
                                 message.warning('Select something before attaching!');
-                                return;  
-                            } 
-                            if(!Array.isArray(controlsObject3D) && obj)
+                                return;
+                            }
+                            if (!Array.isArray(controlsObject3D) && obj)
                                 controlsObject3D?.add(obj);
                             badForceUpdateInspector();
                             message.success('Generated a Button and attached to ' + (controlsObject3D as Object3D).name);

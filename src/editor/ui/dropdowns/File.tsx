@@ -30,6 +30,7 @@ export const File = () => {
                 toggleModalExport(false);
             }} />
             <Dropdown
+                trigger={["click"]}
                 children={<Button children={"File"} />}
                 menu={{
                     items: [
