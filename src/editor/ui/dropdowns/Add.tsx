@@ -1,7 +1,7 @@
 import { Dropdown, Button, message } from "antd";
 import { useStores } from "@orb_App";
-import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../../tools/meshCreator/Primitives";
-import { GenerateButton } from "@orb_tools/meshCreator/3DButton";
+import { GenerateBox, GenerateCylinder, GeneratePlane, GenerateSphere } from "../../tools/create/primitive";
+import { GenerateButton } from "@orb_tools/create/3DButton";
 import { Object3D } from "three";
 
 export const Add = () => {

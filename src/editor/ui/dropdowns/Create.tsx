@@ -1,91 +1,52 @@
 import { Dropdown, Button, message } from "antd";
-import { GenerateBox, GenerateCapsule, GenerateCylinder, GeneratePlane, GenerateSphere, GenerateTorus } from "../../tools/meshCreator/Primitives";
-import { GenerateButton } from "@orb_tools/meshCreator/3DButton";
 import { useStores } from "@orb_App";
-import { GenerateAmbientLight } from "@orb_tools/meshCreator/light";
-
+import { GenerateButton } from "@orb_tools/create/3DButton";
+import * as LIGHT from "@orb_tools/create/light"
+import * as GEOMETRY from "@orb_tools/create/primitive"
 
 export const Create = () => {
-    const {pushComponentToScene} = useStores();
+    const { pushComponentToScene } = useStores();
 
-    return(
+    return (
         <>
-            <Dropdown 
-                children={<Button children={"Create"} />} 
+            <Dropdown
+                children={<Button children={'Create'} />}
+                trigger={['click']}
                 menu={{
                     items: [
                         {
                             label: 'Button',
-                            key: '0',
-                            onClick: () => {
-                                const button = GenerateButton();
-                                pushComponentToScene(button);
-                            }
+                            key: 'Button',
+                            onClick: () => pushComponentToScene(GenerateButton()),
                         },
                         {
                             type: "divider"
                         },
                         {
-                            label: 'AmbientLight',
-                            key: '-1',
-                            onClick: () => {
-                                const light = GenerateAmbientLight();
-                                pushComponentToScene(light);
-                            }
+                            label: 'Geomtery',
+                            key: 'Geomtery',
+                            children: [
+                                { label: 'Cube', key: 'Cube', onClick: () => pushComponentToScene(GEOMETRY.GenerateBox()) },
+                                { label: 'Sphere', key: 'Sphere', onClick: () => pushComponentToScene(GEOMETRY.GenerateSphere()) },
+                                { label: 'Cylinder', key: 'Cylinder', onClick: () => pushComponentToScene(GEOMETRY.GenerateCylinder()) },
+                                { label: 'Cone', key: 'Cone', onClick: () => pushComponentToScene(GEOMETRY.GenerateCone()) },
+                                { label: 'Pyramid', key: 'Pyramid', onClick: () => pushComponentToScene(GEOMETRY.GeneratePyramid()) },
+                                { label: 'Plane', key: 'Plane', onClick: () => pushComponentToScene(GEOMETRY.GeneratePlane()) },
+                                { label: 'Capsule', key: 'Capsule', onClick: () => pushComponentToScene(GEOMETRY.GenerateCapsule()) },
+                                { label: 'Torus', key: 'Torus', onClick: () => pushComponentToScene(GEOMETRY.GenerateTorus()) }
+                            ]
                         },
                         {
-                            type: "divider"
+                            label: 'Light',
+                            key: 'Light',
+                            children: [
+                                { label: 'Ambient Light', key: 'AmbientLight', onClick: () => pushComponentToScene(LIGHT.GenerateAmbientLight()) },
+                                { label: 'Point Light', key: 'PointLight', onClick: () => pushComponentToScene(LIGHT.GeneratePointLight()) },
+                            ]
                         },
-                        {
-                            label: 'Cube',
-                            key: '1',
-                            onClick: () => {
-                                const res = GenerateBox()
-                                pushComponentToScene(res);
-                            }
-                        },
-                        {
-                            label: 'Sphere',
-                            key: '2',
-                            onClick: () => {
-                                const res = GenerateSphere()
-                                pushComponentToScene(res);
-                            }
-                        },
-                        {
-                            label: 'Plane',
-                            key: '3',
-                            onClick: () => {
-                                const res = GeneratePlane()
-                                pushComponentToScene(res);
-                            }
-                        },
-                        {
-                            label: 'Cylinder',
-                            key: '4',
-                            onClick: () => {
-                                const res = GenerateCylinder()
-                                pushComponentToScene(res);
-                            }
-                        },
-                        {
-                            label: 'Capsule',
-                            key: '5',
-                            onClick: () => {
-                                const res = GenerateCapsule()
-                                pushComponentToScene(res);
-                            }
-                        },
-                        {
-                            label: 'Torus',
-                            key: '6',
-                            onClick: () => {
-                                const res = GenerateTorus()
-                                pushComponentToScene(res);
-                            }
-                        }],
+                    ],
                     onClick: (e) => {
-                        message.success('Generated ' + (e.domEvent.target as HTMLElement).innerText)
+                        message.success('Created ' + (e.domEvent.target as HTMLElement).innerText)
                     }
                 }}
             />
