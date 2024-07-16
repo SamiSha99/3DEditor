@@ -35,3 +35,15 @@ export function GenerateTorus() {
     mesh.name = "Torus";
     return mesh;
 }
+
+export function GenerateCone() {
+    const mesh = new THREE.Mesh(new THREE.ConeGeometry(), new THREE.MeshStandardMaterial());
+    mesh.name = "Cone";
+    return mesh;
+}
+
+export function GeneratePyramid() {
+    const mesh = new THREE.Mesh(new THREE.ConeGeometry(1,1,4), new THREE.MeshStandardMaterial());
+    mesh.name = "Cone";
+    return mesh;
+}
