@@ -35,7 +35,9 @@ const themeConfig: ThemeConfig = {
             buttonSolidCheckedHoverBg: "none"
         },
         Divider: {
-            colorSplit: "rgb(255, 255, 255, 0.7)",
+            colorSplit: "rgb(255, 255, 255, 0.5)",
+            lineWidth: 2,
+            fontSize: 28
         }
     },
     token: {
