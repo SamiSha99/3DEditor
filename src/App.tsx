@@ -29,10 +29,9 @@ const themeConfig: ThemeConfig = {
         },
         Radio: {
             colorBorderSecondary: "none",
+            colorPrimaryBorder: "none",
             buttonBg: "none",
-            colorBorder: "none",
-            colorBorderBg: "none",
-            buttonSolidCheckedHoverBg: "none"
+            colorBorder: "rgb(0,0,0,0)",
         },
         Divider: {
             colorSplit: "rgb(255, 255, 255, 0.5)",
@@ -45,7 +44,8 @@ const themeConfig: ThemeConfig = {
         borderRadiusSM: 0,
         borderRadiusLG: 0,
         borderRadiusOuter: 0,
-        borderRadiusXS: 0
+        borderRadiusXS: 0,
+        motion: false
     }
 }
 

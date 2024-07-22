@@ -1,7 +1,8 @@
-import { File } from "./dropdowns/File";
-import { Add } from "./dropdowns/Add";
-import { Create } from "./dropdowns/Create"
-import { Tools } from "./dropdowns/Tools";
+import File from "./dropdowns/File";
+import Add from "./dropdowns/Add";
+import Create from "./dropdowns/Create"
+import Tools from "./dropdowns/Tools";
+import Settings from "./dropdowns/Settings"
 import { MenuBarStyle } from "./style";
 
 export const MenuBar = () => {
@@ -11,6 +12,7 @@ export const MenuBar = () => {
             <Create />
             <Add />
             <Tools />
+            <Settings />
         </MenuBarStyle>
     )
 }

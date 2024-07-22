@@ -3,8 +3,8 @@ import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons"
 import { Dropdown, Button, message, Modal, Input, Form, Select, Checkbox } from "antd";
 import * as THREE from "three";
 import { useStores } from "@orb_App";
-import { doImport } from "@orb_tools/Importer";
-import { ExportType, doExport } from "@orb_tools/Exporter";
+import { doImport } from "@orb_tools/importer";
+import { ExportType, doExport } from "@orb_tools/exporter";
 
 export const File = () => {
     const { setScene, controlsObject3D, sceneObjects, pushComponentToScene } = useStores();
@@ -105,3 +105,5 @@ const ExportModal: React.FC<{ open: boolean, onCancel: () => void, onSubmit: (re
         </Modal>
     )
 }
+
+export default File

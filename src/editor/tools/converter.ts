@@ -1,5 +1,5 @@
-import * as IMPORTER from './Importer.ts';
-import * as EXPORTER from './Exporter.ts';
+import * as IMPORTER from './importer.ts';
+import * as EXPORTER from './exporter.ts';
 import * as THREE from 'three';
 
 type OnConvert = EXPORTER.OnExport;

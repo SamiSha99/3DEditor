@@ -44,6 +44,6 @@ export function GenerateCone() {
 
 export function GeneratePyramid() {
     const mesh = new THREE.Mesh(new THREE.ConeGeometry(1,1,4), new THREE.MeshStandardMaterial());
-    mesh.name = "Cone";
+    mesh.name = "Pyramid";
     return mesh;
 }

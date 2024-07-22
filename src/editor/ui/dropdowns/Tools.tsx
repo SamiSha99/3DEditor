@@ -1,11 +1,12 @@
 import { CameraOutlined, InboxOutlined } from "@ant-design/icons";
 import { useStores } from "@orb_App";
-import { doConvertFileList} from "@orb_tools/Convertor";
-import { ExportType, save } from "@orb_tools/Exporter";
-import { Screenshot } from "@orb_tools/ModelPreviewer";
+import { doConvertFileList } from "@orb_tools/converter";
+import { ExportType, save } from "@orb_tools/exporter";
+import { Screenshot } from "@orb_tools/previewer";
 import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
+import * as EXPORTER from '@orb_tools/exporter'
 
 export const Tools = () => {
     const { controlsObject3D } = useStores();
@@ -16,7 +17,6 @@ export const Tools = () => {
                 console.log(fileList);
                 if (fileList) {
                     doConvertFileList(fileList, { type: res.type, name: res.name, maxTextureSize: res.textureSize }, (blob) => {
-                        console.log("Converted the result to this blob\n\n\n",blob);
                         save(blob, (res.name || "export") + "." + res.type)
                     });
                 }
@@ -34,8 +34,12 @@ export const Tools = () => {
                             onClick: () => {
                                 if (controlsObject3D) {
                                     const object = (controlsObject3D as THREE.Object3D).clone();
-                                    Screenshot(object);
-                                    message.success("Snip!");
+                                    Screenshot(object).then(blob => {
+                                        if (blob) {
+                                            EXPORTER.save(blob, "preview.png");
+                                            message.success("Snip!");
+                                        }
+                                    });
                                 }
                                 else
                                     message.warning("Select an object to take a screenshot!");
@@ -155,4 +159,4 @@ const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmi
     )
 }
 
-
+export default Tools

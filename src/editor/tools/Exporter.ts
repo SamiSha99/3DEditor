@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { GLTFExporter, OBJExporter, PLYExporter, STLExporter, USDZExporter } from 'three/examples/jsm/Addons.js';
-import { computeVertexNormals } from '../utils/MeshUtils';
 
 export type OnExport = (result: Blob) => void;
 
@@ -80,7 +79,6 @@ export async function exportUSDZ(scene: THREE.Object3D, options: ExportOptions, 
                 standardMat.aoMap = mat.aoMap;
                 standardMat.normalMap = mat.normalMap;
                 obj.material = standardMat;
-                computeVertexNormals(obj);
             }
         }
     })
