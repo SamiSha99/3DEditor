@@ -63,6 +63,7 @@ export class AppStore {
     // When a new component is made, push it to the scene
     @action.bound pushComponentToScene = (object: Object3D) => {
         this.sceneObjects?.push(object);
+        this.scene.add(object);
     }
 
     // this is NOT ok
@@ -71,6 +72,7 @@ export class AppStore {
     @action.bound setScene(objects: Object3D[] = []) {
         this.setControlsTarget(null);
         this.sceneObjects = objects;
+        this.scene.children = objects;
     }
     
     @action.bound setRootSelection(b: boolean) {

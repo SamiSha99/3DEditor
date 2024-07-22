@@ -1,6 +1,6 @@
 import { DownOutlined } from "@ant-design/icons";
 import { useStores } from "@orb_App";
-import { Tree, TreeDataNode, TreeProps } from "antd";
+import { Divider, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { Children, useMemo } from "react";
 import * as THREE from "three"
@@ -108,17 +108,22 @@ export const EditorInspector = observer(() => {
     }, [sceneObjects, scene.children])
 
     return (
-        <div style={{ backgroundColor: "red", flex: "20%" }}>
-            <Tree
-                defaultExpandAll
-                showLine
-                draggable
-                onDragEnter={onDragEnter}
-                onDrop={onDrop}
-                onSelect={onSelect}
-                onCheck={onCheck}
-                treeData={treeData}
-            />
+        <div style={{ backgroundColor: "#212121", width: "20%" }}>
+            <div style={{ width: "100%", height: "25%"}}>
+                <div style={{ margin: "auto auto", width: "90%", height: "90%", alignContent: "top", overflow: "auto", background: "#696969"}}>
+                    <Tree
+                        defaultExpandAll
+                        showLine
+                        draggable
+                        onDragEnter={onDragEnter}
+                        onDrop={onDrop}
+                        onSelect={onSelect}
+                        onCheck={onCheck}
+                        treeData={treeData}
+                    />
+                </div>
+            </div>
+            <Divider />
         </div>
     )
 })
@@ -144,7 +149,8 @@ function getTreeDataNodes(sceneObjects: THREE.Object3D[]) {
             tree.push(node);
     });
     console.log(tree);
-    return [{ title: "Scene", key: -1, children: tree, selectable: false }] as TreeDataNode[];
+    // return [{ title: "Scene", key: -1, children: tree, selectable: false }] as TreeDataNode[];
+    return tree;
 }
 
 function createTreeDataNode(object: THREE.Object3D) {

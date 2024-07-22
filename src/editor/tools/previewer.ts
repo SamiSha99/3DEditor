@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import * as EXPORTER from './exporter.ts';
+import * as EXPORTER from './Exporter.ts';
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import { message } from 'antd';
 
