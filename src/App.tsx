@@ -19,7 +19,7 @@ const StoreProvider: StoreComponent = ({ store, children }) => {
 const session = new AppStore();
 
 const themeConfig: ThemeConfig = {
-    algorithm: [theme.darkAlgorithm],
+    algorithm: [theme.darkAlgorithm, theme.compactAlgorithm],
     components: {
         Button: {
             defaultBg: "#212121",
@@ -37,6 +37,9 @@ const themeConfig: ThemeConfig = {
             colorSplit: "rgb(255, 255, 255, 0.5)",
             lineWidth: 2,
             fontSize: 28
+        },
+        Tree: {
+
         }
     },
     token: {
@@ -50,7 +53,7 @@ const themeConfig: ThemeConfig = {
 }
 
 function App() {
-
+    
     return (
         <StoreProvider store={session}>
             <ConfigProvider theme={themeConfig}>
