@@ -2,14 +2,16 @@ import { DownOutlined } from "@ant-design/icons";
 import { useStores } from "@orb_App";
 import { Divider, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { Children, useMemo } from "react";
+import { useMemo, useState } from "react";
 import * as THREE from "three"
-
 
 export const EditorInspector = observer(() => {
     // @ts-ignore
-    const { sceneObjects, scene, onUpdateInspector, badForceUpdateInspector, setControlsTarget } = useStores();
+    const { sceneObjects, spliceObject, scene, onUpdateInspector, badForceUpdateInspector, setControlsTarget } = useStores();
+
     let treeData = getTreeDataNodes(sceneObjects as THREE.Object3D[]);
+    // const [treeData, setGData] = useState(getTreeDataNodes(sceneObjects as THREE.Object3D[]))
+
     const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
         console.log('selected', selectedKeys, info);
         const selectedObject = scene.getObjectById(selectedKeys[0] as number);
@@ -27,32 +29,7 @@ export const EditorInspector = observer(() => {
         const dropPos = info.node.pos.split('-');
         const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]); // the drop position relative to the drop node, inside 0, top -1, bottom 1
 
-        console.log("Dropped on:", dropKey, "\nThat dragged item:", dragKey, "\nPosition:", dropPos, "|", dropPosition)
-
-        const draggedObject = scene.getObjectById(dragKey as number);
-        if (!draggedObject) return;
-
-        // The fake scene in this tree is defined as -1, if we drop it on top of it, then we 
-        if (dropKey == -1) {
-            // Already defined, 
-            if (sceneObjects?.includes(draggedObject)) return;
-            draggedObject?.removeFromParent();
-            sceneObjects?.push(draggedObject);
-
-        }
-        else {
-            const otherObject = scene.getObjectById(dropKey as number);
-            console.log(otherObject)
-
-            if (draggedObject) {
-                if (draggedObject.parent instanceof THREE.Scene) {
-                    const indx = sceneObjects?.findIndex(i => i.id == draggedObject.id) || -1;
-                    if (indx != -1)
-                        sceneObjects?.splice(indx, 1);
-                }
-                otherObject?.attach(draggedObject);
-            }
-        }
+        console.log("Dropped on:", dropKey, "\nThat dragged item:", dragKey, "\nPosition:", dropPos, "|", dropPosition);
 
         const loop = (
             data: TreeDataNode[],
@@ -68,7 +45,7 @@ export const EditorInspector = observer(() => {
                 }
             }
         };
-        const data: TreeDataNode[] = [...treeData as TreeDataNode[]];
+        const data = [...treeData];
 
         // Find dragObject
         let dragObj: TreeDataNode;
@@ -83,7 +60,18 @@ export const EditorInspector = observer(() => {
                 item.children = item.children || [];
                 // where to insert. New item was inserted to the start of the array in this example, but can be anywhere
                 item.children.unshift(dragObj);
-                console.log("loop res:", item)
+                const obj3D = scene.getObjectById(item.key as number);
+                const dragObj3D = scene.getObjectById(dragObj.key as number);
+                if (dragObj3D) {
+                    obj3D?.add(dragObj3D);
+                    if (sceneObjects.includes(dragObj3D)) {
+                        const find = sceneObjects.findIndex(o => o.id == dragObj3D.id)
+                        if (find != -1) spliceObject(find, 1);
+                    }
+                    else {
+                        dragObj3D.removeFromParent();
+                    }
+                }
             });
         } else {
             let ar: TreeDataNode[] = [];
@@ -92,29 +80,50 @@ export const EditorInspector = observer(() => {
                 ar = arr;
                 i = index;
             });
+            // dropPosition either 1 OR -1
             if (dropPosition === -1) {
                 // Drop on the top of the drop node
+                console.log("dropkey:",dropKey);
+                const dragObj3D = scene.getObjectById(dragObj!.key as number);
+                if (dragObj3D && sceneObjects.includes(dragObj3D)) {
+                    const find = sceneObjects.findIndex(o => o.id == dragObj3D.id);
+                    if (find != -1) spliceObject(find, 1);
+                    spliceObject(i!, 0, dragObj3D);
+                }
+                else {
+                    // dropped on ID
+                    // const dropObj3D = scene.getObjectById(dropKey as number);
+                    dragObj3D?.parent?.children.splice(i!, 0, dragObj3D!);
+                    
+                }
                 ar.splice(i!, 0, dragObj!);
+                console.log(ar);
             } else {
                 // Drop on the bottom of the drop node
+                const dragObj3D = scene.getObjectById(dragObj!.key as number);
+                if (dragObj3D && sceneObjects.includes(dragObj3D)) {
+                    const find = sceneObjects.findIndex(o => o.id == dragObj3D.id);
+                    if (find != -1) spliceObject(find, 1);
+                    spliceObject(i! + 1, 0, dragObj3D);
+                }
+                else {
+                    dragObj3D?.parent?.children.splice(i! + 1, 0, dragObj3D!);
+                }
                 ar.splice(i! + 1, 0, dragObj!);
             }
         }
         badForceUpdateInspector();
     };
 
-    useMemo(() => {
-
-    }, [sceneObjects, scene.children])
-
     return (
         <div style={{ backgroundColor: "#212121", width: "20%" }}>
-            <div style={{ width: "100%", height: "25%"}}>
-                <div style={{ margin: "auto auto", width: "90%", height: "90%", alignContent: "top", overflow: "auto", background: "#696969"}}>
+            <div style={{ width: "100%", height: "25%" }}>
+                <div style={{ margin: "auto auto", width: "90%", height: "90%", alignContent: "top", overflow: "auto", background: "#696969" }}>
                     <Tree
                         defaultExpandAll
                         showLine
                         draggable
+                        blockNode
                         onDragEnter={onDragEnter}
                         onDrop={onDrop}
                         onSelect={onSelect}
@@ -140,7 +149,7 @@ export const ObjectElement: React.FC<{ object: THREE.Object3D }> = ({ object }) 
     )
 }
 
-// Want to avoid showing the "Scene" node, so the first function is jus iterating the root objects before going deeper on each one.
+// Want to avoid showing the "Scene" node, so the first function is just iterating the root objects before going deeper on each one.
 function getTreeDataNodes(sceneObjects: THREE.Object3D[]) {
     let tree: TreeDataNode[] = [];
     sceneObjects.forEach(o => {
@@ -148,8 +157,6 @@ function getTreeDataNodes(sceneObjects: THREE.Object3D[]) {
         if (node)
             tree.push(node);
     });
-    console.log(tree);
-    // return [{ title: "Scene", key: -1, children: tree, selectable: false }] as TreeDataNode[];
     return tree;
 }
 

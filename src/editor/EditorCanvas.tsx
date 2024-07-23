@@ -1,11 +1,12 @@
 import { Canvas, useThree } from '@react-three/fiber';
 import { Box, CameraControls, CycleRaycast, Environment, Grid, TransformControls } from '@react-three/drei';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '@orb_App';
 import { ITransformData } from '../store/interface';
-import { AppSettings } from '../store/appSettings';
+import { AppSettings } from '../store/AppSettings';
 import * as THREE from 'three';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 export const EditorCanvas = observer(() => {
     const { environment, scene } = useStores()
@@ -13,7 +14,7 @@ export const EditorCanvas = observer(() => {
     return (
         <>
             {/* <button id="requestUpdateEditor" onClick={()=>setReload(!reload)}> test </button> */}
-            <Canvas scene={scene} style={{ height: "95%", flex:"80%" }} shadows camera={{ position: [-2.5, 2.5, 0] }}>
+            <Canvas scene={scene} style={{ height: "95%", flex: "80%" }} shadows camera={{ position: [-2.5, 2.5, 0] }}>
                 <CameraControls makeDefault />
                 <EditorScene />
                 <EditorHelpers />
@@ -25,13 +26,17 @@ export const EditorCanvas = observer(() => {
 
 // Currently instantiated objects in the scene that can be modified
 const EditorScene = observer(() => {
-    const { sceneObjects } = useStores();
+    const { sceneObjects, removeObject, controlsObject3D } = useStores();
+    useHotkeys("delete", () => {
+        if(controlsObject3D instanceof THREE.Object3D)
+            removeObject(controlsObject3D);
+    })
 
     return (
         <>
-            <ambientLight intensity={1.0} color={"white"} />
             {sceneObjects && sceneObjects.map((child) =>
                 <primitive
+                    key={child.uuid}
                     onClick={(e: any) => { e.stopPropagation() }}
                     onPointerMissed={(e: any) => { e.stopPropagation() }}
                     onPointerOver={(e: any) => (e.stopPropagation())}
@@ -46,17 +51,16 @@ const EditorScene = observer(() => {
 const EditorHelpers = observer(() => {
     const { controlsTarget, controlsMode, controlsSpace, setIntersectedTargets } = useStores()
     const { scene } = useThree();
+    const ref = useRef(null!);
 
     useEffect(() => {
-        const o = scene.getObjectById(controlsTarget as number);
-
+        // sceneHelpers.push(ref.current);
     }, [controlsTarget])
 
     return (
-        <group name={AppSettings.EDITOR_HELPERS_NAME}>
+        <group ref={ref} name={AppSettings.EDITOR_HELPERS_NAME}>
             <CycleRaycast onChanged={(objects): any => {
                 let res: THREE.Object3D[] = [];
-                console.log(objects);
                 objects.map(o => {
                     if (o.object)
                         res.push(o.object);
@@ -75,8 +79,6 @@ const Controls: React.FC<ITransformData> = observer((data) => {
     const { controlsObject3D } = useStores();
     const { scene } = useThree();
     const o = scene.getObjectById(data.targetID);
-
-    // useControls(() => LEVATEST.LevaMesh(controlsObject3D as THREE.Object3D))
 
     return (
         <TransformControls name='TRANSFORM_HELPER' object={o} mode={data.mode} space={data.space} onMouseUp={(e) => {

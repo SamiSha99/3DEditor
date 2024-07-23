@@ -28,7 +28,7 @@
     "baseUrl": ".",
     "paths": {
       "@orb_App": ["./src/App.tsx"],
-      "@orb_AppStore": ["./src/store/AppStore.ts"],
+      "@orb_AppStore": ["src/store/AppStore.ts"],
       "@orb_tools/*": ["./src/editor/tools/*"],
       "@orb_types" : ["./src/store/type.ts"]
     }

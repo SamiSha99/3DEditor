@@ -5,7 +5,7 @@ import * as LIGHT from "@orb_tools/create/light"
 import * as GEOMETRY from "@orb_tools/create/primitive"
 
 export const Create = () => {
-    const { pushComponentToScene } = useStores();
+    const { addObject } = useStores();
 
     return (
         <>
@@ -17,7 +17,7 @@ export const Create = () => {
                         {
                             label: 'Button',
                             key: 'Button',
-                            onClick: () => pushComponentToScene(GenerateButton()),
+                            onClick: () => addObject(GenerateButton()),
                         },
                         {
                             type: "divider"
@@ -26,22 +26,22 @@ export const Create = () => {
                             label: 'Geomtery',
                             key: 'Geomtery',
                             children: [
-                                { label: 'Cube', key: 'Cube', onClick: () => pushComponentToScene(GEOMETRY.GenerateBox()) },
-                                { label: 'Sphere', key: 'Sphere', onClick: () => pushComponentToScene(GEOMETRY.GenerateSphere()) },
-                                { label: 'Cylinder', key: 'Cylinder', onClick: () => pushComponentToScene(GEOMETRY.GenerateCylinder()) },
-                                { label: 'Cone', key: 'Cone', onClick: () => pushComponentToScene(GEOMETRY.GenerateCone()) },
-                                { label: 'Pyramid', key: 'Pyramid', onClick: () => pushComponentToScene(GEOMETRY.GeneratePyramid()) },
-                                { label: 'Plane', key: 'Plane', onClick: () => pushComponentToScene(GEOMETRY.GeneratePlane()) },
-                                { label: 'Capsule', key: 'Capsule', onClick: () => pushComponentToScene(GEOMETRY.GenerateCapsule()) },
-                                { label: 'Torus', key: 'Torus', onClick: () => pushComponentToScene(GEOMETRY.GenerateTorus()) }
+                                { label: 'Cube', key: 'Cube', onClick: () => addObject(GEOMETRY.GenerateBox()) },
+                                { label: 'Sphere', key: 'Sphere', onClick: () => addObject(GEOMETRY.GenerateSphere()) },
+                                { label: 'Cylinder', key: 'Cylinder', onClick: () => addObject(GEOMETRY.GenerateCylinder()) },
+                                { label: 'Cone', key: 'Cone', onClick: () => addObject(GEOMETRY.GenerateCone()) },
+                                { label: 'Pyramid', key: 'Pyramid', onClick: () => addObject(GEOMETRY.GeneratePyramid()) },
+                                { label: 'Plane', key: 'Plane', onClick: () => addObject(GEOMETRY.GeneratePlane()) },
+                                { label: 'Capsule', key: 'Capsule', onClick: () => addObject(GEOMETRY.GenerateCapsule()) },
+                                { label: 'Torus', key: 'Torus', onClick: () => addObject(GEOMETRY.GenerateTorus()) }
                             ]
                         },
                         {
                             label: 'Light',
                             key: 'Light',
                             children: [
-                                { label: 'Ambient Light', key: 'AmbientLight', onClick: () => pushComponentToScene(LIGHT.GenerateAmbientLight()) },
-                                { label: 'Point Light', key: 'PointLight', onClick: () => pushComponentToScene(LIGHT.GeneratePointLight()) },
+                                { label: 'Ambient Light', key: 'AmbientLight', onClick: () => addObject(LIGHT.GenerateAmbientLight()) },
+                                { label: 'Point Light', key: 'PointLight', onClick: () => addObject(LIGHT.GeneratePointLight()) },
                             ]
                         },
                     ],

@@ -7,7 +7,7 @@ import { doImport } from "@orb_tools/Importer";
 import { ExportType, doExport } from "@orb_tools/Exporter";
 
 export const File = () => {
-    const { setScene, controlsObject3D, sceneObjects, pushComponentToScene } = useStores();
+    const { setScene, controlsObject3D, sceneObjects, addObject } = useStores();
     const [modalExport, toggleModalExport] = useState(false);
     return (
         <>
@@ -53,7 +53,7 @@ export const File = () => {
                             onClick: () => {
                                 doImport((scene) => {
                                     console.log(scene);
-                                    pushComponentToScene(scene);
+                                    addObject(scene);
                                 });
                             }
                         },

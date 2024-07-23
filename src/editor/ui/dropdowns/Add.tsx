@@ -4,7 +4,7 @@ import { GenerateButton } from "@orb_tools/create/3DButton";
 import { Object3D } from "three";
 
 export const Add = () => {
-    const { pushComponentToScene, controlsObject3D, badForceUpdateInspector } = useStores();
+    const { addObject, controlsObject3D, badForceUpdateInspector } = useStores();
 
     return (
         <Dropdown
