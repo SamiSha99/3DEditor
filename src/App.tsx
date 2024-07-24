@@ -19,7 +19,7 @@ const StoreProvider: StoreComponent = ({ store, children }) => {
 const session = new AppStore();
 
 const themeConfig: ThemeConfig = {
-    algorithm: [theme.darkAlgorithm, theme.compactAlgorithm],
+    algorithm: [theme.darkAlgorithm,],
     components: {
         Button: {
             defaultBg: "#212121",

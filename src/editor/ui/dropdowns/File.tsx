@@ -4,7 +4,7 @@ import { Dropdown, Button, message, Modal, Input, Form, Select, Checkbox } from 
 import * as THREE from "three";
 import { useStores } from "@orb_App";
 import { doImport } from "@orb_tools/Importer";
-import { ExportType, doExport } from "@orb_tools/Exporter";
+import { ExportType, doExport, save } from "@orb_tools/Exporter";
 
 export const File = () => {
     const { setScene, controlsObject3D, sceneObjects, addObject } = useStores();
@@ -26,7 +26,7 @@ export const File = () => {
                 console.log("selecton:", selection)
                 if (!selection) message.warning('No selection detected with "export selection", make sure you are selecting an Object before export.')
 
-                doExport(selection as THREE.Object3D, { type: res.type, name: res.name });
+                doExport(selection as THREE.Object3D, { type: res.type, name: res.name }, (blob) => save(blob, res.name + "." + res.type));
                 toggleModalExport(false);
             }} />
             <Dropdown

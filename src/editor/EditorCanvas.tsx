@@ -1,5 +1,5 @@
 import { Canvas, useThree } from '@react-three/fiber';
-import { Box, CameraControls, CycleRaycast, Environment, Grid, TransformControls } from '@react-three/drei';
+import { Box, CameraControls, CycleRaycast, Environment, Grid, TransformControls, useAnimations } from '@react-three/drei';
 import React, { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from '@orb_App';
@@ -28,38 +28,46 @@ export const EditorCanvas = observer(() => {
 const EditorScene = observer(() => {
     const { sceneObjects, removeObject, controlsObject3D } = useStores();
     useHotkeys("delete", () => {
-        if(controlsObject3D instanceof THREE.Object3D)
+        if (controlsObject3D instanceof THREE.Object3D)
             removeObject(controlsObject3D);
     })
 
     return (
         <>
             {sceneObjects && sceneObjects.map((child) =>
-                <primitive
-                    key={child.uuid}
-                    onClick={(e: any) => { e.stopPropagation() }}
-                    onPointerMissed={(e: any) => { e.stopPropagation() }}
-                    onPointerOver={(e: any) => (e.stopPropagation())}
-                    onPointerOut={(e: any) => (e.stopPropagation)}
-                    object={child}
-                />
+                <EditorObject3D object={child} />
             )}
         </>
     )
 })
 
-const EditorHelpers = observer(() => {
-    const { controlsTarget, controlsMode, controlsSpace, setIntersectedTargets } = useStores()
-    const { scene } = useThree();
-    const ref = useRef(null!);
+const EditorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
+    const { actions } = useAnimations(object.animations, object);
 
     useEffect(() => {
-        // sceneHelpers.push(ref.current);
-    }, [controlsTarget])
+        if(actions)
+            actions[Object.keys(actions)[0]]?.play();
+    }, [object.animations]);
+    
+    return (
+        <primitive
+            key={object.uuid}
+            onClick={(e: any) => { e.stopPropagation() }}
+            onPointerMissed={(e: any) => { e.stopPropagation() }}
+            onPointerOver={(e: any) => { e.stopPropagation() }}
+            onPointerOut={(e: any) => { e.stopPropagation() }}
+            object={object}
+        />
+    )
+})
+
+const EditorHelpers = observer(() => {
+    const { controlsTarget, controlsMode, controlsSpace, setIntersectedTargets } = useStores()
+    const ref = useRef(null!);
 
     return (
-        <group ref={ref} name={AppSettings.EDITOR_HELPERS_NAME}>
-            <CycleRaycast onChanged={(objects): any => {
+        <group ref={ref} name={AppSettings.EDITOR_HELPERS_NAME} userData={{ "sceneHelpers": true }}>
+            <CycleRaycast scroll={false} preventDefault onChanged={(objects): any => {
                 let res: THREE.Object3D[] = [];
                 objects.map(o => {
                     if (o.object)
@@ -69,14 +77,13 @@ const EditorHelpers = observer(() => {
                     setIntersectedTargets(res);
             }} />
             <Box name='CENTER_GRID_HELPER' material-color={"red"} scale={[0.25, 0.0005, 0.25]} position={[0, 0, 0]} />
-            <Grid name='GRID_HELPER' cellColor={"#2080ff"} infiniteGrid side={2} />
+            <Grid name='GRID_HELPER' cellColor={"#2080ff"} infiniteGrid side={THREE.DoubleSide} />
             {controlsTarget != -1 && <Controls targetID={controlsTarget as number} mode={controlsMode} space={controlsSpace} />}
         </group>
     )
 })
 
 const Controls: React.FC<ITransformData> = observer((data) => {
-    const { controlsObject3D } = useStores();
     const { scene } = useThree();
     const o = scene.getObjectById(data.targetID);
 

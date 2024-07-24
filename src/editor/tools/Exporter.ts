@@ -10,6 +10,7 @@ export type ExportType = "gltf" | "glb" | "usdz" | "obj" | "ply" | "stl"
 export type ExportOptions = {
     type: ExportType,
     name?: string,
+    animations?: boolean, // only GLTF, GLB and (maybe?) USDZ
     maxTextureSize?: number, // only GLTF, GLB and USDZ
     binary?: boolean // only GLTF, GLB, PLY, STL
 }
@@ -26,9 +27,11 @@ export function doExport(scene: THREE.Object3D, options: ExportOptions, onExport
     }
 }
 
-// TO-DO: we need to export animations with GLTF/GLB
 export function exportGLTF(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
     const exporter = new GLTFExporter();
+
+    const animations = getAnimations(scene);
+    const optimizedAnims = optimizeAnimations(animations);
 
     exporter.parse(
         scene,
@@ -38,14 +41,14 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions, onExpo
             onExport && onExport(blob);
         },
         (error) => { console.warn(error) },
-        { binary: false, maxTextureSize: options.maxTextureSize || Infinity }
+        { binary: false, maxTextureSize: options.maxTextureSize || Infinity, animations: optimizedAnims }
     );
 }
 
-// We could probably improve this
-// Make an option that exports mtl serperately with all textures, something simple, nothing big
 export function exportGLB(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
     const exporter = new GLTFExporter();
+    const animations = getAnimations(scene);
+    const optimizedAnims = optimizeAnimations(animations);
 
     exporter.parse(
         scene,
@@ -54,7 +57,7 @@ export function exportGLB(scene: THREE.Object3D, options: ExportOptions, onExpor
             onExport && onExport(blob);
         },
         (error) => { console.warn(error) },
-        { binary: true, maxTextureSize: options.maxTextureSize || Infinity }
+        { binary: true, maxTextureSize: options.maxTextureSize || Infinity, animations: optimizedAnims }
     );
 }
 
@@ -152,10 +155,17 @@ export function saveString(text: string) { return new Blob([text], { type: 'text
 // }
 
 
-// function getAnimations( scene ) {
-//     const animations = [];
-//     scene.traverse( function ( object ) {
-//         animations.push( ... object.animations );
-//     } );
-//     return animations;
-// }
+function getAnimations(scene: THREE.Object3D) {
+    const animations: THREE.AnimationClip[] = [];
+    scene.traverse(function (object) {
+        animations.push(...object.animations);
+    });
+    return animations;
+}
+
+function optimizeAnimations(animations: THREE.AnimationClip[]) {
+    const optimized: THREE.AnimationClip[] = [];
+    for (const animation of animations)
+        optimized.push(animation.clone().optimize());
+    return optimized;
+}

@@ -1,5 +1,5 @@
 import { makeObservable, observable, action } from "mobx";
-import { BufferGeometry, Material, Mesh, MeshBasicMaterial, Object3D, Scene } from "three";
+import { Object3D, Scene } from "three";
 import * as TYPE from "./type";
 
 export class AppStore {

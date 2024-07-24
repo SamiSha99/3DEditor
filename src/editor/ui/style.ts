@@ -3,6 +3,8 @@ import styled from "styled-components";
 export const MenuBarStyle = styled.div`
     background-color: #212121;
     width: 100vw;
+    padding: 0;
+    margin: 0;
 `
 
 export const ControlsBarStyle = styled.div`
