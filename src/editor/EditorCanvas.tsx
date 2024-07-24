@@ -26,7 +26,7 @@ export const EditorCanvas = observer(() => {
 
 // Currently instantiated objects in the scene that can be modified
 const EditorScene = observer(() => {
-    const { sceneObjects, removeObject, controlsObject3D } = useStores();
+    const { sceneObjects, sceneHelpers, removeObject, controlsObject3D } = useStores();
     useHotkeys("delete", () => {
         if (controlsObject3D instanceof THREE.Object3D)
             removeObject(controlsObject3D);
@@ -37,6 +37,16 @@ const EditorScene = observer(() => {
             {sceneObjects && sceneObjects.map((child) =>
                 <EditorObject3D object={child} />
             )}
+            {sceneHelpers && sceneHelpers.map((helper) => 
+                <primitive 
+                    key={helper.uuid}
+                    onClick={(e: any) => { e.stopPropagation() }}
+                    onPointerMissed={(e: any) => { e.stopPropagation() }}
+                    onPointerOver={(e: any) => { e.stopPropagation() }}
+                    onPointerOut={(e: any) => { e.stopPropagation() }}
+                    object={helper}
+                />
+            )}
         </>
     )
 })
@@ -45,10 +55,10 @@ const EditorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object 
     const { actions } = useAnimations(object.animations, object);
 
     useEffect(() => {
-        if(actions)
+        if (actions)
             actions[Object.keys(actions)[0]]?.play();
     }, [object.animations]);
-    
+
     return (
         <primitive
             key={object.uuid}

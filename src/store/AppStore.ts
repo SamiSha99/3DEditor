@@ -12,6 +12,7 @@ export class AppStore {
     // All instatiated Objects in the scene
     @observable scene: Scene = new Scene();
     @observable sceneObjects: Object3D[] = [] as Object3D[];
+    // These need to be a child of the scene!
     @observable sceneHelpers: Object3D[] = [] as Object3D[];
     // Last update request time in milliseconds
     @observable onUpdateInspector = new Date().getUTCMilliseconds();
