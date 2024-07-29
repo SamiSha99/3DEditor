@@ -122,7 +122,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
 
                     const scene = result.scene;
                     scene.name = file.name;
-
+                    scene.userData = result.userData;
                     scene.animations.push(...result.animations);
                     loader.dracoLoader?.dispose();
                     onImport(scene);
@@ -199,7 +199,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
             }, false);
             reader.readAsArrayBuffer(file);
             break;
-            case ".fbx":
+        case ".fbx":
             reader.addEventListener('load', async function (event) {
                 const contents = event.target?.result as string | ArrayBuffer;
                 const group = new FBXLoader(manager).parse(contents, "");
