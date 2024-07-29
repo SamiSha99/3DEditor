@@ -4,26 +4,23 @@ import { observer } from 'mobx-react-lite';
 import { MenuBar } from './ui/Menubar';
 import { ControlsBar } from './ui/ControlsBar';
 import { Object3D } from 'three';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 let environment = 0;
 
 export const EditorUI = observer(() => {
-    const {setEnvironment, setControlsTarget, intersectedObjects, controlsObject3D} = useStores()
-    const o = controlsObject3D as Object3D;
+    const { setEnvironment, setControlsTarget, intersectedObjects, controlsObject3D } = useStores()
+
+    useHotkeys("e", () => { setEnvironment(++environment >= TYPES.environments.length ? (environment = 0) : environment); })
     
-    document.body.onkeyup = function(e) {
-        if(e.key.toUpperCase() == "E" || e.code == "KeyE")
-            setEnvironment(++environment >= TYPES.environments.length ? (environment = 0) : environment);
-    }
-    
-    document.body.onmouseup = function(e) {
-        if(intersectedObjects?.length) {
+    document.body.onmouseup = function (e) {
+        if (intersectedObjects?.length) {
             setControlsTarget(intersectedObjects[0]);
         }
     }
 
     return (
-        <div style={{zIndex:1}}>        
+        <div style={{ zIndex: 1 }}>
             <MenuBar />
             <ControlsBar />
         </div>
