@@ -1,4 +1,4 @@
-import { CameraOutlined, InboxOutlined } from "@ant-design/icons";
+import * as ICONS from "@ant-design/icons";
 import { useStores } from "@orb_App";
 import { doConvertFileList } from "@orb_tools/converter";
 import { ExportType, save } from "@orb_tools/Exporter";
@@ -30,7 +30,7 @@ export const Tools = () => {
                         {
                             label: 'Take a Screenshot',
                             key: '0',
-                            icon: <CameraOutlined />,
+                            icon: <ICONS.CameraOutlined />,
                             onClick: () => {
                                 if (controlsObject3D) {
                                     const object = (controlsObject3D as THREE.Object3D).clone();
@@ -48,10 +48,33 @@ export const Tools = () => {
                         {
                             label: 'Convert...',
                             key: '1',
-                            icon: <CameraOutlined />,
+                            icon: <ICONS.CameraOutlined />,
                             onClick: () => {
                                 toggleModalConvert(true);
                                 // doConvert(".glb");
+                            }
+                        },
+                        {
+                            label: 'Export Animations',
+                            key: '2',
+                            icon: <ICONS.VideoCameraOutlined />,
+                            onClick: () => {
+                                if (controlsObject3D) {
+                                    const animations = (controlsObject3D as THREE.Object3D).animations;
+                                    if (!animations || animations.length <= 0) {
+                                        message.warning("The selected model has no animations!");
+                                        return;
+                                    }
+                                    animations.map((animation, index) => {
+                                        const fileName = "animation_" + index + ".json";
+                                        const optimized = animation.clone().optimize();
+                                        const json = EXPORTER.saveJSON(THREE.AnimationClip.toJSON(optimized));
+                                        if(json)
+                                            EXPORTER.save(json, fileName); 
+                                    })
+                                }
+                                else
+                                    message.warning("Select an object that has animations to export!");
                             }
                         }
                     ]
@@ -146,7 +169,7 @@ const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmi
                 />
                 <Dragger {...props}>
                     <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
+                        <ICONS.InboxOutlined />
                     </p>
                     <p className="ant-upload-text">Click or drag file to this area to upload.</p>
                     <p className="ant-upload-hint">

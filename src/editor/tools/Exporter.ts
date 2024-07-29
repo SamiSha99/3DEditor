@@ -130,6 +130,7 @@ export function save(blob: Blob, fileName: string) {
 
 export function saveArrayBuffer(buffer: ArrayBuffer) { return new Blob([buffer], { type: 'application/octet-stream' }); }
 export function saveString(text: string) { return new Blob([text], { type: 'text/plain' }); }
+export function saveJSON(text: string) { return new Blob([JSON.stringify(text, null, "\t")], { type: 'application/json' }) }
 
 // export function materialToData(material: THREE.Material) {
 //
