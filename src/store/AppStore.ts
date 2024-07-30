@@ -59,7 +59,7 @@ export class AppStore {
     @action.bound setEnvironment = (index: number) => { this.environment = TYPE.environments[index] }
     @action.bound setEnvironmentByName = (environment: TYPE.Environments) => { this.environment = environment }
 
-    // this is NOT ok
+    // this is NOT ok!!!
     @action.bound badForceUpdateInspector = () => { this.onUpdateInspector = new Date().getUTCMilliseconds(); }
 
     @action.bound setScene(objects: Object3D[] = []) {
