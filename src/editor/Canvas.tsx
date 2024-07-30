@@ -60,6 +60,7 @@ const Scene: React.FC<{ canvas: HTMLCanvasElement }> = observer(({ canvas }) => 
             {sceneObjects && sceneObjects.map((child) =>
                 <EditorObject3D object={child} />
             )}
+            {/* NOTE: sceneHelpers such as PointLight must be at the root of the scene or bugs will happen!*/}
             {sceneHelpers && sceneHelpers.map((helper) =>
                 <primitive
                     key={helper.uuid}
@@ -98,10 +99,6 @@ const EditorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object 
     return (
         <primitive
             key={object.uuid}
-            onClick={(e: any) => { e.stopPropagation() }}
-            onPointerMissed={(e: any) => { e.stopPropagation() }}
-            onPointerOver={(e: any) => { e.stopPropagation() }}
-            onPointerOut={(e: any) => { e.stopPropagation() }}
             object={object}
         />
     )
