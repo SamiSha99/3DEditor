@@ -6,7 +6,6 @@ export class AppStore {
 
     static _instance: AppStore;
 
-    @observable intersectedObjects: Object3D[] | null = null;
     // Object3D ID
     @observable controlsTarget: number | number[] = -1;
     // All instatiated Objects in the scene
@@ -31,10 +30,6 @@ export class AppStore {
 
     public static get Instance() {
         return this._instance || (this._instance = new this());
-    }
-
-    @action.bound setIntersectedTargets = (result: Object3D[] | null) => {
-        this.intersectedObjects = result;
     }
 
     @action.bound setControlsTarget = (object: Object3D | null) => {

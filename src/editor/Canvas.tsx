@@ -108,7 +108,7 @@ const EditorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object 
 })
 
 const EditorHelpers = observer(() => {
-    const { controlsTarget, controlsMode, controlsSpace, setIntersectedTargets } = useStores()
+    const { controlsTarget, controlsMode, controlsSpace } = useStores()
     const ref = useRef(null!);
 
     return (
