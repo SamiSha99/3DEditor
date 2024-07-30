@@ -1,8 +1,6 @@
-import {} from '@react-three/fiber'
-import {} from '@react-three/drei'
-import EditorCanvas from './EditorCanvas'
 import EditorUI from './EditorUI'
 import EditorInspector from './EditorInspector'
+import Canvas from './Canvas'
 
 export function Editor() {
     
@@ -13,7 +11,7 @@ export function Editor() {
             height:"100%", 
             width:"100%"}}>
             <EditorUI />
-            <EditorCanvas />
+            <Canvas />
             <EditorInspector />
         </div>
     )

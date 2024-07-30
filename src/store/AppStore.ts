@@ -39,6 +39,7 @@ export class AppStore {
 
     @action.bound setControlsTarget = (object: Object3D | null) => {
 
+        if (this.controlsObject3D == object) return;
         // Selects the highest in the hierachy regardless of which one clicked for now
         while (object && this.useRootSelection && object.parent && !(object.parent instanceof Scene)) {
             object = object.parent;
