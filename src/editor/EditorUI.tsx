@@ -3,7 +3,6 @@ import { useStores } from '@orb_App';
 import { observer } from 'mobx-react-lite';
 import { MenuBar } from './ui/Menubar';
 import { ControlsBar } from './ui/ControlsBar';
-import { Object3D } from 'three';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 let environment = 0;
