@@ -1,12 +1,11 @@
 import * as ICONS from "@ant-design/icons";
-import { useStores } from "@orb_App";
-import { doConvertFileList } from "@orb_tools/converter";
-import { ExportType, save } from "@orb_tools/Exporter";
-import { Screenshot } from "@orb_tools/Previewer";
+import { useStores } from "@orb_App";import { Screenshot } from "@orb_tools/Previewer";
 import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
+import * as IMPORTER from '@orb_tools/Importer'
 import * as EXPORTER from '@orb_tools/Exporter'
+import * as CONVERTER from '@orb_tools/converter'
 
 export const Tools = () => {
     const { controlsObject3D } = useStores();
@@ -16,8 +15,8 @@ export const Tools = () => {
             <ConvertModal open={modalConvert} onCancel={() => { toggleModalConvert(false) }} onSubmit={(res, fileList) => {
                 console.log(fileList);
                 if (fileList) {
-                    doConvertFileList(fileList, { type: res.type, name: res.name, maxTextureSize: res.textureSize }, (blob) => {
-                        save(blob, (res.name || "export") + "." + res.type)
+                    CONVERTER.doConvertFileList(fileList, { type: res.type, name: res.name, maxTextureSize: res.textureSize }, (blob) => {
+                        EXPORTER.save(blob, (res.name || "export") + "." + res.type)
                     });
                 }
                 toggleModalConvert(false);
@@ -55,27 +54,39 @@ export const Tools = () => {
                             }
                         },
                         {
-                            label: 'Export Animations',
+                            label: 'Animations...',
                             key: '2',
                             icon: <ICONS.VideoCameraOutlined />,
-                            onClick: () => {
-                                if (controlsObject3D) {
-                                    const animations = (controlsObject3D as THREE.Object3D).animations;
-                                    if (!animations || animations.length <= 0) {
-                                        message.warning("The selected model has no animations!");
-                                        return;
+                            children: [
+                                {
+                                    label: 'Export from Selected Object',
+                                    key: '2.1',
+                                    onClick: () => {
+                                        if (controlsObject3D) {
+                                            const animations = (controlsObject3D as THREE.Object3D).animations;
+                                            if (!animations || animations.length <= 0) {
+                                                message.warning("The selected model has no animations!");
+                                                return;
+                                            }
+                                            animations.map((ac) => EXPORTER.exportAnimationClip(ac, true, (blob) => EXPORTER.save(blob, ac.name + ".ac")));
+                                        }
+                                        else
+                                            message.warning("Select an object that has animations to export!");
                                     }
-                                    animations.map((animation, index) => {
-                                        const fileName = "animation_" + index + ".json";
-                                        const optimized = animation.clone().optimize();
-                                        const json = EXPORTER.saveJSON(THREE.AnimationClip.toJSON(optimized));
-                                        if(json)
-                                            EXPORTER.save(json, fileName); 
-                                    })
-                                }
-                                else
-                                    message.warning("Select an object that has animations to export!");
-                            }
+                                },
+                                {
+                                    label: 'Import into Selected Object',
+                                    key: '2.2',
+                                    onClick: () => {
+                                        if(controlsObject3D) {
+                                            IMPORTER.doImportAnimationClip((clip) => {
+                                                (controlsObject3D as THREE.Object3D).animations.push(clip);
+                                            })
+                                        }
+                                        else
+                                            message.warning("Select an object to import an animation!");
+                                    }
+                                }]
                         }
                     ]
                 }} />
@@ -83,7 +94,7 @@ export const Tools = () => {
     )
 }
 
-type ConvertFormData = { name: string, type: ExportType, textureSize: number };
+type ConvertFormData = { name: string, type: EXPORTER.ExportType, textureSize: number };
 const exportOptions = [
     { value: 'glb', label: 'GLB' },
     { value: 'gltf', label: 'GLTF' },
@@ -109,7 +120,7 @@ type ConvertModalInterface = {
 
 const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmit }) => {
     const [exportName, setExportName] = useState("exportName");
-    const [convertTo, setConvertTo] = useState<ExportType>("glb");
+    const [convertTo, setConvertTo] = useState<EXPORTER.ExportType>("glb");
     const [textureSize, setTextureSize] = useState(2048);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const { Dragger } = Upload;
@@ -153,7 +164,7 @@ const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmi
                     title="Convert Into"
                     defaultValue={"glb"}
                     style={{ width: 120 }}
-                    onChange={(val: ExportType) => setConvertTo(val)}
+                    onChange={(val: EXPORTER.ExportType) => setConvertTo(val)}
                     options={exportOptions}
                 />
                 <Select

@@ -8,6 +8,7 @@ import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 
 type OnImport = (scene: THREE.Object3D) => void;
+type OnImportAnimationClip = (animationClip: THREE.AnimationClip) => void;
 
 export function doImport(onImport: OnImport) {
     const input = document.createElement('input');
@@ -29,6 +30,38 @@ export function doImport(onImport: OnImport) {
         else
             message.error("FileList returned null.");
     });
+}
+
+export function doImportAnimationClip(onImport: OnImportAnimationClip) {
+    const input = document.createElement('input');
+    input.type = "file";
+    input.style.display = "none";
+    input.multiple = true;
+    input.accept = ".ac";
+    input.click();
+    input.onchange = ((e: Event) => {
+        const filelist = (e as any as React.ChangeEvent<HTMLInputElement>).target.files;
+        if (filelist) {
+            if (filelist.length <= 0) {
+                message.error("No files were selected.");
+                return;
+            }
+            let files: File[] = [];
+            for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
+            files.map((file) => {
+                const reader = new FileReader();
+                reader.addEventListener('load', async function (event) {
+                    const contents = event.target?.result as string;
+                    const object = JSON.parse(contents);
+                    const animationClip: THREE.AnimationClip = THREE.AnimationClip.parse(object);
+                    onImport(animationClip);
+                });
+                reader.readAsText(file)
+            })
+        }
+        else
+            message.error("FileList returned null.")
+    })
 }
 
 export function doImportFileList(filelist: FileList, onImport: OnImport) {

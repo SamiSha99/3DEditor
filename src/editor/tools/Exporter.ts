@@ -117,6 +117,12 @@ export function exportSTL(scene: THREE.Object3D, options: ExportOptions, onExpor
     onExport && onExport(blob);
 }
 
+export function exportAnimationClip(ac: THREE.AnimationClip, optimize: boolean = false, onExport?: OnExport) {
+    const json = THREE.AnimationClip.toJSON(ac);
+    const blob = saveJSON(json);
+    onExport && onExport(blob);
+}
+
 export function save(blob: Blob, fileName: string) {
     const a = document.createElement('a');
     a.style.display = 'none';
