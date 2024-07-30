@@ -2,7 +2,7 @@ import * as ICONS from "@ant-design/icons";
 import { useStores } from "@orb_App";
 import { doConvertFileList } from "@orb_tools/converter";
 import { ExportType, save } from "@orb_tools/Exporter";
-import { Screenshot } from "@orb_tools/previewer";
+import { Screenshot } from "@orb_tools/Previewer";
 import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
