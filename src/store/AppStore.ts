@@ -23,6 +23,9 @@ export class AppStore {
     @observable environment: TYPE.Environments = TYPE.environments[0];
 
     @observable useRootSelection: boolean = false;
+
+    @observable isTransforming: boolean = false;
+
     constructor() {
         makeObservable(this)
         AppStore._instance = this;
@@ -55,9 +58,11 @@ export class AppStore {
     // 0 = world | 1 = local
     @action.bound setControlSpace = (mode: number) => { this.controlsSpace = TYPE.transformSpaces[mode] }
     @action.bound setControlSpaceByName = (mode: TYPE.TransformSpaces) => { this.controlsSpace = mode }
-    // all default environment types
+    // all default environment types from drei
     @action.bound setEnvironment = (index: number) => { this.environment = TYPE.environments[index] }
     @action.bound setEnvironmentByName = (environment: TYPE.Environments) => { this.environment = environment }
+
+    @action.bound setIsTransforming = (b: boolean) => { this.isTransforming = b }
 
     // this is NOT ok!!!
     @action.bound badForceUpdateInspector = () => { this.onUpdateInspector = new Date().getUTCMilliseconds(); }
