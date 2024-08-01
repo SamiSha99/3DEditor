@@ -1,27 +1,37 @@
 import { AppStore } from '@orb_AppStore';
 import * as THREE from 'three';
-import { PointLightHelper } from 'three';
+import { CreateHelper } from './Helpers';
 
-export function GenerateAmbientLight() {
-    let light = new THREE.AmbientLight();
-    light.name = "AmbientLight";
-    return light;
+type GenerateInfo = {
+    object: THREE.Object3D,
+    helper?: THREE.Object3D
 }
 
-export function GeneratePointLight() {
+export function AmbientLight() {
+    const light = new THREE.AmbientLight();
+    light.name = "AmbientLight";
+    return { object: light } as GenerateInfo;
+}
+
+export function PointLight() {
     const light = new THREE.PointLight();
     light.name = "PointLight";
+    const helper = CreateHelper(THREE.PointLightHelper, light);
+    return { object: light, helper: helper } as GenerateInfo;
+}
 
-    const helper = new THREE.PointLightHelper(light, 1);
-    helper.userData = { "object": light as THREE.Object3D };
+export function HemisphereLight() {
+    const light = new THREE.HemisphereLight(0x0088ff, 0xFFA500);
+    light.name = "HemisphereLight";
+    const helper = CreateHelper(THREE.HemisphereLightHelper, light);
+    return { object: light, helper: helper } as GenerateInfo;
+}
 
-    const geometry = new THREE.SphereGeometry(2, 4, 2);
-    const material = new THREE.MeshBasicMaterial({ color: 0xff0000, visible: false });
-    const picker = new THREE.Mesh(geometry, material);
-    picker.name = 'picker';
-    picker.userData = { "object": light as THREE.Object3D };
-    helper.add(picker);
-    AppStore.Instance.sceneHelpers.push(helper);
-    // light.add(helper);
-    return light;
+export function SpotLight() {
+    const light = new THREE.SpotLight();
+    light.name = "SpotLight";
+    const helper = CreateHelper(THREE.SpotLightHelper, light);
+    console.log(helper);
+    helper?.update();
+    return { object: light, helper: helper } as GenerateInfo;
 }

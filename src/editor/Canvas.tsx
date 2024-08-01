@@ -4,9 +4,11 @@ import { useStores } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
 import { Box, CameraControls, Environment, Grid, TransformControls as TransformControlsDrei } from "@react-three/drei";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { ITransformData } from "src/store/interface";
 import { TransformControls } from "three/examples/jsm/Addons";
+import { HelperUserData } from "@orb_tools/create/Helpers";
+import React from "react";
 
 
 const Canvas = observer(() => {
@@ -27,32 +29,32 @@ const Canvas = observer(() => {
     )
 })
 
-const Scene: React.FC<{ canvas: HTMLCanvasElement }> = observer(({ canvas }) => {
+interface CanvasInfo {
+    canvas: HTMLCanvasElement,
+    bounds?: DOMRect
+}
+
+const Scene: React.FC<CanvasInfo> = observer(({ canvas, bounds }) => {
     const { environment, sceneObjects, sceneHelpers, controlsObject3D, isTransforming,
         removeObject, setControlsTarget } = useStores();
     const { scene, camera, raycaster } = useThree();
 
-    const selectObject = (event: MouseEvent) => {
+    const selectObject = (e: MouseEvent) => {
         // Left Click only
-        if (event.button != 0) return;
+        if (e.button != 0) return;
         if (isTransforming) return;
-        // Bounds are used to calculate an offseted, resized canvas that doesn't take the entire screen due to inspector.
-        // Also getBoundingClientRect is apparently an expensive call, to-do: optimize?
-        let canvasBounds = canvas.getBoundingClientRect();
-        const pointer = new THREE.Vector2(
-            ((event.clientX - canvasBounds.left) / (canvasBounds.right - canvasBounds.left)) * 2 - 1,
-            -((event.clientY - canvasBounds.top) / (canvasBounds.bottom - canvasBounds.top)) * 2 + 1
-        );
-        raycaster.setFromCamera(pointer, camera)
-        const DEBUG_SHOW_RAYCASTER_HELPER = true;
-        if (DEBUG_SHOW_RAYCASTER_HELPER)
-            scene.add(new THREE.ArrowHelper(raycaster.ray.direction, raycaster.ray.origin, 10, 0xff0000))
-        const intersects = raycaster.intersectObjects(sceneObjects, true);
+        // Bounds are used to calculate an offseted AND/OR resized canvas that doesn't take the entire screen due to inspector.
+        if (!bounds) bounds = canvas.getBoundingClientRect();
+        const pointer = new THREE.Vector2(((e.clientX - bounds.left) / (bounds.right - bounds.left)) * 2 - 1, -((e.clientY - bounds.top) / (bounds.bottom - bounds.top)) * 2 + 1);
+        raycaster.setFromCamera(pointer, camera);
+        const intersects = raycaster.intersectObjects([...sceneObjects, ...sceneHelpers], true);
 
-        for (let i = 0; i < intersects.length; i++) {
-            setControlsTarget(intersects[i].object);
-            break;
-        }
+        if (intersects.length <= 0) return;
+
+        let hit = intersects[0].object;
+        if ('object' in hit.userData) hit = hit.userData.object;
+        setControlsTarget(hit);
+
     }
     canvas.onmouseup = selectObject;
 
@@ -63,53 +65,26 @@ const Scene: React.FC<{ canvas: HTMLCanvasElement }> = observer(({ canvas }) => 
 
     return (
         <>
-
-            {sceneObjects && sceneObjects.map((child) =>
-                <EditorObject3D object={child} />
-            )}
-            {/* NOTE: sceneHelpers such as PointLight must be at the root of the scene or bugs will happen!*/}
-            {sceneHelpers && sceneHelpers.map((helper) =>
-                <primitive
-                    key={helper.uuid}
-                    object={helper}
-                />
-            )}
-            {environment && <Environment preset={environment} />}
+            {sceneObjects && sceneObjects.map((child) => <EditorObject3D object={child} />)}
+            {sceneHelpers && sceneHelpers.map((helper) => <EditorSceneHelpers helper={helper} />)}
+            {environment && <Environment key={"environment"} preset={environment} />}
         </>
     )
 })
 
 const EditorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
-    let mixer: THREE.AnimationMixer | null;
+    return <primitive key={object.uuid} object={object} />
+})
 
-    useEffect(() => {
-        if (object.animations.length) {
-            mixer = new THREE.AnimationMixer(object);
-            object.animations.forEach((animation) => {
-                const action = mixer?.clipAction(animation);
-                action?.play();
-            })
-        }
-        else
-            mixer = null;
-    }, [object.animations]);
-
-    useFrame((state, delta) => {
-        if (mixer) {
-            mixer?.update(delta);
-        }
+const EditorSceneHelpers: React.FC<{ helper: THREE.Object3D }> = observer(({ helper }) => {
+    useFrame(() => {
+        if (helper instanceof THREE.SpotLightHelper) helper.update();
     })
-
-    return (
-        <primitive
-            key={object.uuid}
-            object={object}
-        />
-    )
+    return (<primitive key={helper.uuid} object={helper} />)
 })
 
 const EditorHelpers = () => {
-    const ref = useRef(null!);
+    const ref = useRef<THREE.Group>(null!);
 
     return (
         <group ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ "sceneHelpers": true }}>
@@ -126,23 +101,22 @@ const EditorControls = observer(() => {
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const o = scene.getObjectById(controlsTarget as number);
 
+    const onStart = () => {
+        !cameraStartDrag && setCameraStartDrag(true);
+    }
+    const onEnd = () => {
+        setCameraStartDrag(false);
+        isTransforming && setIsTransforming(false);
+    }
+    // rather of a hack for onChange running after onEnd multiple times due to dragging smoothness from draggingSmoothTime
+    const onChange = () => {
+        cameraStartDrag && !isTransforming && setIsTransforming(true);
+        !cameraStartDrag && isTransforming && setIsTransforming(false);
+    }
+
     return (
         <>
-            <CameraControls
-                makeDefault
-                onStart={() => {
-                    !cameraStartDrag && setCameraStartDrag(true);
-                }}
-                onEnd={() => {
-                    setCameraStartDrag(false);
-                    isTransforming && setIsTransforming(false);
-                }}
-                // rather of a hack for onChange running after onEnd multiple times due to dragging smoothness from draggingSmoothTime
-                onChange={() => {
-                    cameraStartDrag && !isTransforming && setIsTransforming(true);
-                    !cameraStartDrag && isTransforming && setIsTransforming(false)
-                }}
-            />
+            <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} />
             {
                 controlsTarget != -1 &&
                 <TransformControlsDrei

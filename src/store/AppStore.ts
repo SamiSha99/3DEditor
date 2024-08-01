@@ -10,13 +10,17 @@ export class AppStore {
     @observable controlsTarget: number | number[] = -1;
     // All instatiated Objects in the scene
     @observable scene: Scene = new Scene();
-    @observable sceneObjects: Object3D[] = [] as Object3D[];
-    // These need to be a child of the scene!
-    @observable sceneHelpers: Object3D[] = [] as Object3D[];
+    // All objects that can be modified
+    @observable sceneObjects: Object3D[] = [];
+    /*
+    * These need to be in the root of the scene else they will cause a lot of bugs
+    * When intersected their userData returns the reference for the object from sceneObjects
+    */
+    @observable sceneHelpers: Object3D[] = [];
     // Last update request time in milliseconds
     @observable onUpdateInspector = new Date().getUTCMilliseconds();
     // Currently selected Objects
-    @observable controlsObject3D: Object3D | Object3D[] | null = null;
+    @observable controlsObject3D: Object3D | null = null;
 
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
@@ -42,9 +46,8 @@ export class AppStore {
         while (object && this.useRootSelection && object.parent && !(object.parent instanceof Scene)) {
             object = object.parent;
         }
-        console.log(object);
-
         this.controlsObject3D = object;
+        console.log(this.controlsObject3D);
         if (object)
             this.controlsTarget = object.id
         else
@@ -77,17 +80,21 @@ export class AppStore {
         this.sceneObjects.push(object);
     }
 
+    @action.bound addHelper = (helper: Object3D) => {
+        this.sceneHelpers.push(helper);
+    }
+
     @action.bound removeObject = (object: Object3D) => {
         this.setControlsTarget(null);
         const indx = this.sceneObjects.findIndex(obj => obj.uuid == object.uuid);
         if (indx != -1) {
+            if("helper" in this.sceneObjects[indx].userData) {
+                const helper = this.sceneObjects[indx].userData.helper as Object3D;
+                const helperIndx = this.sceneHelpers.findIndex(hlp => hlp.uuid == helper.uuid);
+                this.sceneHelpers.splice(helperIndx, 1);
+            }
             this.sceneObjects.splice(indx, 1);
             console.log(this.sceneObjects);
-            // object.traverse(o => {
-            // if (o instanceof Mesh) {
-            // (o.geometry as BufferGeometry).dispose();
-            // }
-            // });
         }
     }
 

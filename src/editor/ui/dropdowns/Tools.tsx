@@ -1,13 +1,15 @@
 import * as ICONS from "@ant-design/icons";
-import { useStores } from "@orb_App";import { Screenshot } from "@orb_tools/Previewer";
+import { useStores } from "@orb_App";
+import { Screenshot } from "@orb_tools/Previewer";
 import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
 import * as IMPORTER from '@orb_tools/Importer'
 import * as EXPORTER from '@orb_tools/Exporter'
 import * as CONVERTER from '@orb_tools/converter'
+import { observer } from "mobx-react-lite";
 
-export const Tools = () => {
+export const Tools = observer(() => {
     const { controlsObject3D } = useStores();
     const [modalConvert, toggleModalConvert] = useState(false);
     return (
@@ -78,7 +80,7 @@ export const Tools = () => {
                                     label: 'Import into Selected Object',
                                     key: '2.2',
                                     onClick: () => {
-                                        if(controlsObject3D) {
+                                        if (controlsObject3D) {
                                             IMPORTER.doImportAnimationClip((clip) => {
                                                 (controlsObject3D as THREE.Object3D).animations.push(clip);
                                             })
@@ -92,7 +94,7 @@ export const Tools = () => {
                 }} />
         </>
     )
-}
+})
 
 type ConvertFormData = { name: string, type: EXPORTER.ExportType, textureSize: number };
 const exportOptions = [

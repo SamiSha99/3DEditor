@@ -1,13 +1,14 @@
 import { DownOutlined } from "@ant-design/icons";
 import { useStores } from "@orb_App";
-import { Divider, Tree, TreeDataNode, TreeProps } from "antd";
+import { Environments, environments } from "@orb_types";
+import { Divider, Form, Select, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import * as THREE from "three"
 
 export const EditorInspector = observer(() => {
     // @ts-ignore
-    const { sceneObjects, spliceObject, scene, onUpdateInspector, badForceUpdateInspector, setControlsTarget } = useStores();
+    const { sceneObjects, environment, spliceObject, scene, onUpdateInspector, badForceUpdateInspector, setControlsTarget, setEnvironmentByName } = useStores();
 
     let treeData = getTreeDataNodes(sceneObjects as THREE.Object3D[]);
     // const [treeData, setGData] = useState(getTreeDataNodes(sceneObjects as THREE.Object3D[]))
@@ -83,7 +84,7 @@ export const EditorInspector = observer(() => {
             // dropPosition either 1 OR -1
             if (dropPosition === -1) {
                 // Drop on the top of the drop node
-                console.log("dropkey:",dropKey);
+                console.log("dropkey:", dropKey);
                 const dragObj3D = scene.getObjectById(dragObj!.key as number);
                 if (dragObj3D && sceneObjects.includes(dragObj3D)) {
                     const find = sceneObjects.findIndex(o => o.id == dragObj3D.id);
@@ -94,7 +95,7 @@ export const EditorInspector = observer(() => {
                     // dropped on ID
                     // const dropObj3D = scene.getObjectById(dropKey as number);
                     dragObj3D?.parent?.children.splice(i!, 0, dragObj3D!);
-                    
+
                 }
                 ar.splice(i!, 0, dragObj!);
                 console.log(ar);
@@ -131,11 +132,37 @@ export const EditorInspector = observer(() => {
                         treeData={treeData}
                     />
                 </div>
+                <Divider />
+                <div style={{ margin: "auto", width: "90%", alignContent: "top" }}>
+                    <Form>
+                        <Form.Item label="Environment" name="Environment">
+                            <Select
+                                defaultValue={environment}
+                                style={{ width: 120 }}
+                                onChange={(value, options) => {
+                                    let v = undefined;
+                                    if (value != "undefined") v = value as Environments
+                                    setEnvironmentByName(v)
+                                }}
+                                options={createEnvironmentList()}
+                            />
+                        </Form.Item>
+                    </Form>
+                </div>
+                <Divider />
             </div>
-            <Divider />
         </div>
     )
 })
+
+function createEnvironmentList() {
+    let options: { value: string, label: string }[] = [];
+    environments.map((e) => {
+        const obj = { value: e ? e : "undefined", label: e ? e.replace(/^./, e[0].toUpperCase()) : "Custom" }
+        options.push(obj);
+    })
+    return options;
+}
 
 export const ObjectElement: React.FC<{ object: THREE.Object3D }> = ({ object }) => {
     let hierarchy = object.children?.map((child) => <ObjectElement object={child} />);

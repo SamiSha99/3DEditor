@@ -1,11 +1,17 @@
 import { Dropdown, Button, message } from "antd";
 import { useStores } from "@orb_App";
-import { GenerateButton } from "@orb_tools/create/3DButton";
-import * as LIGHT from "@orb_tools/create/light"
-import * as GEOMETRY from "@orb_tools/create/primitive"
+import { Button3D } from "@orb_tools/create/Button3D";
+import * as LIGHT from "@orb_tools/create/Light"
+import * as GEOMETRY from "@orb_tools/create/Primitive"
+import { Object3D } from "three";
 
 export const Create = () => {
-    const { addObject } = useStores();
+    const { addObject, addHelper } = useStores();
+
+    const onCreate = (object: Object3D, helper?: Object3D) => {
+        object && addObject(object);
+        helper && addHelper(helper);
+    }
 
     return (
         <>
@@ -17,7 +23,7 @@ export const Create = () => {
                         {
                             label: 'Button',
                             key: 'Button',
-                            onClick: () => addObject(GenerateButton()),
+                            onClick: () => onCreate(Button3D()),
                         },
                         {
                             type: "divider"
@@ -26,22 +32,24 @@ export const Create = () => {
                             label: 'Geomtery',
                             key: 'Geomtery',
                             children: [
-                                { label: 'Cube', key: 'Cube', onClick: () => addObject(GEOMETRY.GenerateBox()) },
-                                { label: 'Sphere', key: 'Sphere', onClick: () => addObject(GEOMETRY.GenerateSphere()) },
-                                { label: 'Cylinder', key: 'Cylinder', onClick: () => addObject(GEOMETRY.GenerateCylinder()) },
-                                { label: 'Cone', key: 'Cone', onClick: () => addObject(GEOMETRY.GenerateCone()) },
-                                { label: 'Pyramid', key: 'Pyramid', onClick: () => addObject(GEOMETRY.GeneratePyramid()) },
-                                { label: 'Plane', key: 'Plane', onClick: () => addObject(GEOMETRY.GeneratePlane()) },
-                                { label: 'Capsule', key: 'Capsule', onClick: () => addObject(GEOMETRY.GenerateCapsule()) },
-                                { label: 'Torus', key: 'Torus', onClick: () => addObject(GEOMETRY.GenerateTorus()) }
+                                { label: 'Cube', key: 'Cube', onClick: () => onCreate(GEOMETRY.Box()) },
+                                { label: 'Sphere', key: 'Sphere', onClick: () => onCreate(GEOMETRY.Sphere()) },
+                                { label: 'Cylinder', key: 'Cylinder', onClick: () => onCreate(GEOMETRY.Cylinder()) },
+                                { label: 'Cone', key: 'Cone', onClick: () => onCreate(GEOMETRY.Cone()) },
+                                { label: 'Pyramid', key: 'Pyramid', onClick: () => onCreate(GEOMETRY.Pyramid()) },
+                                { label: 'Plane', key: 'Plane', onClick: () => onCreate(GEOMETRY.Plane()) },
+                                { label: 'Capsule', key: 'Capsule', onClick: () => onCreate(GEOMETRY.Capsule()) },
+                                { label: 'Torus', key: 'Torus', onClick: () => onCreate(GEOMETRY.Torus()) }
                             ]
                         },
                         {
                             label: 'Light',
                             key: 'Light',
                             children: [
-                                { label: 'Ambient Light', key: 'AmbientLight', onClick: () => addObject(LIGHT.GenerateAmbientLight()) },
-                                { label: 'Point Light', key: 'PointLight', onClick: () => addObject(LIGHT.GeneratePointLight()) },
+                                { label: 'Ambient Light', key: 'AmbientLight', onClick: () => { const o = LIGHT.AmbientLight(); onCreate(o.object, o.helper) } },
+                                { label: 'Point Light', key: 'PointLight', onClick: () => { const o = LIGHT.PointLight(); onCreate(o.object, o.helper) } },
+                                { label: 'Hemisphere Light', key: 'HemisphereLight', onClick: () => { const o = LIGHT.HemisphereLight(); onCreate(o.object, o.helper) } },
+                                { label: 'Spot Light', key: 'SpotLight', onClick: () => { const o = LIGHT.SpotLight(); onCreate(o.object, o.helper) } },
                             ]
                         },
                     ],
