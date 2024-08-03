@@ -30,7 +30,6 @@ export async function Screenshot(object: THREE.Object3D) {
 
     scene.add(object);
     
-    
     object.position.set(0, 0, 0);
     const bound = new THREE.Box3().setFromObject(object);
     const size = bound.getSize(new THREE.Vector3());

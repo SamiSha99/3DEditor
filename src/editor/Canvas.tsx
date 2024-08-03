@@ -35,9 +35,11 @@ interface CanvasInfo {
 }
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas, bounds }) => {
-    const { environment, sceneObjects, sceneHelpers, controlsObject3D, isTransforming,
+    const { environment, sceneObjects, sceneHelpers, controlsObject3D, isTransforming, backgroundColor,
         removeObject, setControlsTarget } = useStores();
     const { scene, camera, raycaster } = useThree();
+
+    scene.background = backgroundColor;
 
     const selectObject = (e: MouseEvent) => {
         // Left Click only

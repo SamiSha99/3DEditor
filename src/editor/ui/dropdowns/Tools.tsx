@@ -6,7 +6,7 @@ import { useState } from "react";
 import * as THREE from 'three';
 import * as IMPORTER from '@orb_tools/Importer'
 import * as EXPORTER from '@orb_tools/Exporter'
-import * as CONVERTER from '@orb_tools/converter'
+import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
 
 export const Tools = observer(() => {

@@ -1,5 +1,5 @@
 import { makeObservable, observable, action } from "mobx";
-import { Object3D, Scene } from "three";
+import { Object3D, Scene, Color } from "three";
 import * as TYPE from "./type";
 
 export class AppStore {
@@ -25,6 +25,7 @@ export class AppStore {
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
     @observable environment: TYPE.Environments = TYPE.environments[0];
+    @observable backgroundColor: Color | null = null;
 
     @observable useRootSelection: boolean = false;
 
@@ -64,6 +65,8 @@ export class AppStore {
     // all default environment types from drei
     @action.bound setEnvironment = (index: number) => { this.environment = TYPE.environments[index] }
     @action.bound setEnvironmentByName = (environment: TYPE.Environments) => { this.environment = environment }
+
+    @action.bound setBackgroundColor = (value: null | Color) => {this.backgroundColor = value}
 
     @action.bound setIsTransforming = (b: boolean) => { this.isTransforming = b }
 

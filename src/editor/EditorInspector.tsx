@@ -1,12 +1,24 @@
 import { DownOutlined } from "@ant-design/icons";
 import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
-import { Divider, Form, Select, Tree, TreeDataNode, TreeProps } from "antd";
+import { Checkbox, ColorPicker, Divider, Form, Input, Select, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import * as THREE from "three"
 
 export const EditorInspector = observer(() => {
+    return (
+        <div style={{ backgroundColor: "#212121", width: "20%" }}>
+            <div style={{ width: "100%", height: "25%" }}>
+                <HierarchyTree />
+                <Divider />
+                <SceneConfigs />
+                <Divider />
+            </div>
+        </div>);
+})
+
+export const HierarchyTree = observer(() => {
     // @ts-ignore
     const { sceneObjects, environment, spliceObject, scene, onUpdateInspector, badForceUpdateInspector, setControlsTarget, setEnvironmentByName } = useStores();
 
@@ -117,52 +129,70 @@ export const EditorInspector = observer(() => {
     };
 
     return (
-        <div style={{ backgroundColor: "#212121", width: "20%" }}>
-            <div style={{ width: "100%", height: "25%" }}>
-                <div style={{ margin: "auto auto", width: "90%", height: "90%", alignContent: "top", overflow: "auto", background: "#696969" }}>
-                    <Tree
-                        defaultExpandAll
-                        showLine
-                        draggable
-                        blockNode
-                        onDragEnter={onDragEnter}
-                        onDrop={onDrop}
-                        onSelect={onSelect}
-                        onCheck={onCheck}
-                        treeData={treeData}
-                    />
-                </div>
-                <Divider />
-                <div style={{ margin: "auto", width: "90%", alignContent: "top" }}>
-                    <Form>
-                        <Form.Item label="Environment" name="Environment">
-                            <Select
-                                defaultValue={environment}
-                                style={{ width: 120 }}
-                                onChange={(value, options) => {
-                                    let v = undefined;
-                                    if (value != "undefined") v = value as Environments
-                                    setEnvironmentByName(v)
-                                }}
-                                options={createEnvironmentList()}
-                            />
-                        </Form.Item>
-                    </Form>
-                </div>
-                <Divider />
-            </div>
+
+        <div style={{ margin: "auto auto", width: "90%", height: "90%", alignContent: "top", overflow: "auto", background: "#696969" }}>
+            <Tree
+                defaultExpandAll
+                showLine
+                draggable
+                blockNode
+                onDragEnter={onDragEnter}
+                onDrop={onDrop}
+                onSelect={onSelect}
+                onCheck={onCheck}
+                treeData={treeData}
+            />
         </div>
     )
 })
 
-function createEnvironmentList() {
-    let options: { value: string, label: string }[] = [];
-    environments.map((e) => {
-        const obj = { value: e ? e : "undefined", label: e ? e.replace(/^./, e[0].toUpperCase()) : "Custom" }
-        options.push(obj);
-    })
-    return options;
-}
+export const SceneConfigs = observer(() => {
+    const { environment, setEnvironmentByName, backgroundColor, setBackgroundColor } = useStores();
+
+    const environmentList = () => {
+        let options: { value: string, label: string }[] = [];
+        environments.map((e) => {
+            const obj = { value: e ? e : "undefined", label: e ? e.replace(/^./, e[0].toUpperCase()) : "Custom" };
+            if (e)
+                options.push(obj);
+            else
+                options.unshift(obj)
+        })
+        return options;
+    }
+
+    return (
+        <div style={{ margin: "auto", width: "90%", alignContent: "top" }}>
+            <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+                <Form.Item label={"Environment"}>
+                    <Select
+                        defaultValue={environment as string}
+                        labelInValue={true}
+                        onChange={(select: { value: string, label: string }) => {
+                            let v = undefined;
+                            console.log(select.value);
+                            if (select.value != "undefined") v = select.value as Environments
+                            setEnvironmentByName(v)
+                        }}
+                        options={environmentList()}
+                    />
+                </Form.Item>
+                <Form.Item label={"Background"}>
+                    <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
+                        <Checkbox
+                            onChange={(e) => {
+                                if(!e.target.checked)
+                                    setBackgroundColor(null)
+                            }} />
+                    </Form.Item>
+                    <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
+                        <ColorPicker disabled={true} allowClear={true} onChange={(value: Color, hex: string) => setBackgroundColor(new THREE.Color(hex))} />
+                    </Form.Item>
+                </Form.Item>
+            </Form>
+        </div>
+    )
+})
 
 export const ObjectElement: React.FC<{ object: THREE.Object3D }> = ({ object }) => {
     let hierarchy = object.children?.map((child) => <ObjectElement object={child} />);
