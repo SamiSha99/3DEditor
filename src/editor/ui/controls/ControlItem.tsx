@@ -1,7 +1,8 @@
-import { Checkbox, Form, ColorPicker, Select, Input, InputNumber, Tooltip } from "antd"
+import { Checkbox, Form, ColorPicker, Select, InputNumber, Tooltip } from "antd"
 import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { Color } from "antd/es/color-picker"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
+import { useDeltaTime } from "src/store/Hooks"
 
 type SelectItemInterface = {
     label: string
@@ -69,23 +70,35 @@ type Input3Interface = {
     x: number,
     y: number,
     z: number,
+    listenerVariable?: THREE.Vector3,
     onChangeX?: (v: number | null) => void,
     onChangeY?: (v: number | null) => void,
     onChangeZ?: (v: number | null) => void,
 }
 
 export const Input3Item: React.FC<Input3Interface> = (
-    { label, lableX, lableY, lableZ, x, y, z, onChangeX, onChangeY, onChangeZ }
+    { label, lableX, lableY, lableZ, x, y, z, onChangeX, onChangeY, onChangeZ, listenerVariable }
 ) => {
     const [_x, setX] = useState(x);
     const [_y, setY] = useState(y);
     const [_z, setZ] = useState(z);
+
+    if (listenerVariable) {
+        const [loopStop, loopStart, isActive] = useDeltaTime((delta) => {
+            if (_x != listenerVariable?.x) setX(listenerVariable.x)
+            if (_y != listenerVariable?.y) setY(listenerVariable.y)
+            if (_z != listenerVariable?.z) setZ(listenerVariable.z)
+        });
+    }
+
+
     return (
         <Form.Item label={label ? label : "Vector3"} style={{ marginBottom: '0px' }}>
             <Tooltip title={_x ? _x : "0"} mouseEnterDelay={1}>
                 <Form.Item style={{ display: 'inline-block', width: 'calc(33% - 8px)' }}>
                     <InputNumber
-                        defaultValue={_x ? _x : 0}
+                        defaultValue={x ? x : 0}
+                        value={_x ? _x : 0}
                         addonBefore={lableX ? lableX : "X"}
                         controls={false}
                         onChange={(v: number | null) => {
@@ -97,7 +110,8 @@ export const Input3Item: React.FC<Input3Interface> = (
             <Tooltip title={_y ? _y : "0"} mouseEnterDelay={1}>
                 <Form.Item style={{ display: 'inline-block', width: 'calc(33% - 8px)' }}>
                     <InputNumber
-                        defaultValue={_y ? _y : 0}
+                        defaultValue={y ? y : 0}
+                        value={_y ? _y : 0}
                         addonBefore={lableY ? lableY : "Y"}
                         controls={false}
                         onChange={(v: number | null) => {
@@ -109,7 +123,8 @@ export const Input3Item: React.FC<Input3Interface> = (
             <Tooltip title={_z ? _z : "0"} mouseEnterDelay={1}>
                 <Form.Item style={{ display: 'inline-block', width: 'calc(33% - 8px)' }}>
                     <InputNumber
-                        defaultValue={_z ? _z : 0}
+                        defaultValue={z ? z : 0}
+                        value={_z ? _z : 0}
                         addonBefore={lableZ ? lableZ : "Z"}
                         controls={false}
                         onChange={(v: number | null) => {

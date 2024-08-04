@@ -2,7 +2,7 @@ import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
 import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three"
 import { ColorPickerItem, Input3Item, SelectItem } from "./ui/controls/ControlItem";
 import { Color } from "antd/es/color-picker";
@@ -163,6 +163,11 @@ export const SceneConfigs = observer(() => {
         return options;
     }
 
+    useEffect(() => {
+        console.log("position updated?")
+    }, [controlsObject3D, controlsObject3D?.position])
+
+
     return (
         <div style={{ margin: "auto", width: "90%", alignContent: "top" }}>
             <Form>
@@ -193,7 +198,11 @@ export const SceneConfigs = observer(() => {
                         const hex = c.toHexString().replace("#", "");
                         setbackground(new THREE.Color(parseInt(hex, 16)));
                     }} />
-                {controlsObject3D && <Input3Item x={controlsObject3D?.position.x} y={controlsObject3D?.position.y} z={controlsObject3D?.position.z}
+                {controlsObject3D && <Input3Item
+                    listenerVariable={controlsObject3D.position}
+                    x={controlsObject3D?.position.x}
+                    y={controlsObject3D?.position.y}
+                    z={controlsObject3D?.position.z}
                     onChangeX={(v) => {
                         if (v != null) controlsObject3D?.position.setX(v);
                     }}
