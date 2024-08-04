@@ -1,8 +1,9 @@
-import { Checkbox, Form, ColorPicker, Select, InputNumber, Tooltip } from "antd"
-import { CheckboxChangeEvent } from "antd/es/checkbox"
-import { Color } from "antd/es/color-picker"
-import React, { useState } from "react"
-import { useDeltaTime } from "src/store/Hooks"
+import { Checkbox, Form, ColorPicker, Select, InputNumber, Tooltip } from "antd";
+import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { Color } from "antd/es/color-picker";
+import React, { useState } from "react";
+import { useDeltaTime } from "src/store/Hooks";
+import * as THREE from "three";
 
 type SelectItemInterface = {
     label: string
@@ -62,74 +63,73 @@ export const ColorPickerItem: React.FC<ColorPickerInterface> = (
     )
 }
 
-type Input3Interface = {
+type Vector3Interface = {
     label?: string,
-    lableX?: string,
-    lableY?: string,
-    lableZ?: string,
-    x: number,
-    y: number,
-    z: number,
-    listenerVariable?: THREE.Vector3,
-    onChangeX?: (v: number | null) => void,
-    onChangeY?: (v: number | null) => void,
-    onChangeZ?: (v: number | null) => void,
+    variable: THREE.Vector3
+    labelVector?: { x?: string, y?: string, z?: string },
+    onChange: (value: { x: number, y: number, z: number } | null) => void
 }
 
-export const Input3Item: React.FC<Input3Interface> = (
-    { label, lableX, lableY, lableZ, x, y, z, onChangeX, onChangeY, onChangeZ, listenerVariable }
+export const Vector3Item: React.FC<Vector3Interface> = (
+    { label, variable, labelVector, onChange }
 ) => {
-    const [_x, setX] = useState(x);
-    const [_y, setY] = useState(y);
-    const [_z, setZ] = useState(z);
-
-    if (listenerVariable) {
+    const defaultX = variable.x;
+    const defaultY = variable.y;
+    const defaultZ = variable.z;
+    const [x, setX] = useState(variable.x);
+    const [y, setY] = useState(variable.y);
+    const [z, setZ] = useState(variable.z);
+    
+    if (variable) {
         const [loopStop, loopStart, isActive] = useDeltaTime((delta) => {
-            if (_x != listenerVariable?.x) setX(listenerVariable.x)
-            if (_y != listenerVariable?.y) setY(listenerVariable.y)
-            if (_z != listenerVariable?.z) setZ(listenerVariable.z)
+            if (x != variable.x) setX(variable.x);
+            if (y != variable.y) setY(variable.y);
+            if (z != variable.z) setZ(variable.z);
         });
     }
 
-
     return (
         <Form.Item label={label ? label : "Vector3"} style={{ marginBottom: '0px' }}>
-            <Tooltip title={_x ? _x : "0"} mouseEnterDelay={1}>
+            <Tooltip title={x} mouseEnterDelay={0.5}>
                 <Form.Item style={{ display: 'inline-block', width: 'calc(33% - 8px)' }}>
                     <InputNumber
-                        defaultValue={x ? x : 0}
-                        value={_x ? _x : 0}
-                        addonBefore={lableX ? lableX : "X"}
+                        defaultValue={defaultX}
+                        value={x}
+                        addonBefore={labelVector?.x ? labelVector.x : "X"}
                         controls={false}
                         onChange={(v: number | null) => {
-                            if (v != null) setX(v);
-                            onChangeX && onChangeX(v);
+                            if (v == null) return;
+                            setX(v);
+                            onChange && onChange({ x: v, y: y, z: z });
                         }} />
                 </Form.Item>
             </Tooltip>
-            <Tooltip title={_y ? _y : "0"} mouseEnterDelay={1}>
+            <Tooltip title={y} mouseEnterDelay={0.5}>
                 <Form.Item style={{ display: 'inline-block', width: 'calc(33% - 8px)' }}>
                     <InputNumber
-                        defaultValue={y ? y : 0}
-                        value={_y ? _y : 0}
-                        addonBefore={lableY ? lableY : "Y"}
+                        defaultValue={defaultY}
+                        value={y}
+                        addonBefore={labelVector?.y ? labelVector.y : "Y"}
                         controls={false}
+                        onInput={() => console.log("init?")}
                         onChange={(v: number | null) => {
-                            if (v != null) setY(v);
-                            onChangeY && onChangeY(v);
+                            if (v == null) return;
+                            setY(v);
+                            onChange && onChange({ x: x, y: v, z: z });
                         }} />
                 </Form.Item>
             </Tooltip>
-            <Tooltip title={_z ? _z : "0"} mouseEnterDelay={1}>
+            <Tooltip title={z} mouseEnterDelay={0.5}>
                 <Form.Item style={{ display: 'inline-block', width: 'calc(33% - 8px)' }}>
                     <InputNumber
-                        defaultValue={z ? z : 0}
-                        value={_z ? _z : 0}
-                        addonBefore={lableZ ? lableZ : "Z"}
+                        defaultValue={defaultZ}
+                        value={z}
+                        addonBefore={labelVector?.z ? labelVector.z : "Z"}
                         controls={false}
                         onChange={(v: number | null) => {
-                            if (v != null) setZ(v);
-                            onChangeZ && onChangeZ(v);
+                            if (v == null) return;
+                            setZ(v);
+                            onChange && onChange({ x: x, y: y, z: v });
                         }} />
                 </Form.Item>
             </Tooltip>

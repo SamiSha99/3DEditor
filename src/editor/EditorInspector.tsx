@@ -4,7 +4,7 @@ import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three"
-import { ColorPickerItem, Input3Item, SelectItem } from "./ui/controls/ControlItem";
+import { ColorPickerItem, SelectItem, Vector3Item } from "./ui/controls/ControlItem";
 import { Color } from "antd/es/color-picker";
 
 export const EditorInspector = observer(() => {
@@ -198,20 +198,14 @@ export const SceneConfigs = observer(() => {
                         const hex = c.toHexString().replace("#", "");
                         setbackground(new THREE.Color(parseInt(hex, 16)));
                     }} />
-                {controlsObject3D && <Input3Item
-                    listenerVariable={controlsObject3D.position}
-                    x={controlsObject3D?.position.x}
-                    y={controlsObject3D?.position.y}
-                    z={controlsObject3D?.position.z}
-                    onChangeX={(v) => {
-                        if (v != null) controlsObject3D?.position.setX(v);
-                    }}
-                    onChangeY={(v) => {
-                        if (v != null) controlsObject3D?.position.setY(v)
-                    }}
-                    onChangeZ={(v) => {
-                        if (v != null) controlsObject3D?.position.setZ(v);
-                    }} />}
+                {
+                    controlsObject3D && <Vector3Item
+                        variable={controlsObject3D.position}
+                        onChange={(v) => {
+                            if (v) controlsObject3D?.position.set(v.x, v.y, v.z);
+                        }}
+                    />
+                }
             </Form>
         </div>
     )
