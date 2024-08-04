@@ -53,7 +53,7 @@ const themeConfig: ThemeConfig = {
 }
 
 function App() {
-    
+
     return (
         <StoreProvider store={session}>
             <ConfigProvider theme={themeConfig}>

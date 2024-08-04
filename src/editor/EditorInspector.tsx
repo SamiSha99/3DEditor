@@ -1,10 +1,11 @@
-import { DownOutlined } from "@ant-design/icons";
 import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
-import { Checkbox, ColorPicker, Divider, Form, Input, Select, Tree, TreeDataNode, TreeProps } from "antd";
+import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import * as THREE from "three"
+import { ColorPickerItem, Input3Item, SelectItem } from "./ui/controls/ControlItem";
+import { Color } from "antd/es/color-picker";
 
 export const EditorInspector = observer(() => {
     return (
@@ -15,7 +16,8 @@ export const EditorInspector = observer(() => {
                 <SceneConfigs />
                 <Divider />
             </div>
-        </div>);
+        </div>
+    )
 })
 
 export const HierarchyTree = observer(() => {
@@ -129,7 +131,6 @@ export const HierarchyTree = observer(() => {
     };
 
     return (
-
         <div style={{ margin: "auto auto", width: "90%", height: "90%", alignContent: "top", overflow: "auto", background: "#696969" }}>
             <Tree
                 defaultExpandAll
@@ -147,7 +148,8 @@ export const HierarchyTree = observer(() => {
 })
 
 export const SceneConfigs = observer(() => {
-    const { environment, setEnvironmentByName, backgroundColor, setBackgroundColor } = useStores();
+    const { environment, setEnvironmentByName, background, setbackground, scene, controlsObject3D } = useStores();
+    const [backgroundEnabled, setBackgroundEnabled] = useState(false);
 
     const environmentList = () => {
         let options: { value: string, label: string }[] = [];
@@ -163,32 +165,44 @@ export const SceneConfigs = observer(() => {
 
     return (
         <div style={{ margin: "auto", width: "90%", alignContent: "top" }}>
-            <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-                <Form.Item label={"Environment"}>
-                    <Select
-                        defaultValue={environment as string}
-                        labelInValue={true}
-                        onChange={(select: { value: string, label: string }) => {
-                            let v = undefined;
-                            console.log(select.value);
-                            if (select.value != "undefined") v = select.value as Environments
-                            setEnvironmentByName(v)
-                        }}
-                        options={environmentList()}
-                    />
-                </Form.Item>
-                <Form.Item label={"Background"}>
-                    <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
-                        <Checkbox
-                            onChange={(e) => {
-                                if(!e.target.checked)
-                                    setBackgroundColor(null)
-                            }} />
-                    </Form.Item>
-                    <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
-                        <ColorPicker disabled={true} allowClear={true} onChange={(value: Color, hex: string) => setBackgroundColor(new THREE.Color(hex))} />
-                    </Form.Item>
-                </Form.Item>
+            <Form>
+                <SelectItem
+                    label="Environment"
+                    enabled={true}
+                    defaultValue={environment}
+                    labelInValue={true}
+                    onChangeSelect={(select: { value: string, label: string }) => {
+                        let v = undefined;
+                        if (select.value != "undefined") v = select.value as Environments
+                        setEnvironmentByName(v)
+                    }}
+                    options={environmentList()} />
+                <ColorPickerItem
+                    label="Background"
+                    enabled={backgroundEnabled}
+                    allowAlpha={false}
+                    defaultValue={"001029"}
+                    onChangeCheckbox={(e) => {
+                        setBackgroundEnabled(e.target.checked);
+                        setbackground(background[0], e.target.checked)
+                    }}
+                    onChangeColorPicker={(value: Color, hex: string) => {
+                        scene.background = new THREE.Color(hex);
+                    }}
+                    onChangeCompleteColorPicker={(c) => {
+                        const hex = c.toHexString().replace("#", "");
+                        setbackground(new THREE.Color(parseInt(hex, 16)));
+                    }} />
+                {controlsObject3D && <Input3Item x={controlsObject3D?.position.x} y={controlsObject3D?.position.y} z={controlsObject3D?.position.z}
+                    onChangeX={(v) => {
+                        if (v != null) controlsObject3D?.position.setX(v);
+                    }}
+                    onChangeY={(v) => {
+                        if (v != null) controlsObject3D?.position.setY(v)
+                    }}
+                    onChangeZ={(v) => {
+                        if (v != null) controlsObject3D?.position.setZ(v);
+                    }} />}
             </Form>
         </div>
     )

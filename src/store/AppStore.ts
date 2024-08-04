@@ -25,7 +25,7 @@ export class AppStore {
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
     @observable environment: TYPE.Environments = TYPE.environments[0];
-    @observable backgroundColor: Color | null = null;
+    @observable background: [Color | null, boolean] = [new Color(0x001029), false];
 
     @observable useRootSelection: boolean = false;
 
@@ -44,7 +44,7 @@ export class AppStore {
 
         if (this.controlsObject3D == object) return;
         // Selects the highest in the hierachy regardless of which one clicked for now
-        while (object && this.useRootSelection && object.parent && !(object.parent instanceof Scene)) {
+        while (this.useRootSelection && object?.parent && !(object.parent instanceof Scene)) {
             object = object.parent;
         }
         this.controlsObject3D = object;
@@ -66,7 +66,7 @@ export class AppStore {
     @action.bound setEnvironment = (index: number) => { this.environment = TYPE.environments[index] }
     @action.bound setEnvironmentByName = (environment: TYPE.Environments) => { this.environment = environment }
 
-    @action.bound setBackgroundColor = (value: null | Color) => {this.backgroundColor = value}
+    @action.bound setbackground = (value: Color | null, enabled?: boolean) => {this.background = [value, enabled !== undefined ? enabled : this.background[1]]}
 
     @action.bound setIsTransforming = (b: boolean) => { this.isTransforming = b }
 

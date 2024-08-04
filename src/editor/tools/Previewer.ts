@@ -4,7 +4,7 @@ import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import { message } from 'antd';
 
 export async function Screenshot(object: THREE.Object3D) {
-    
+
     if (!(object instanceof THREE.Object3D)) {
         console.warn("Invalid object selected!");
         message.error("Invalid object selected!");
@@ -29,7 +29,7 @@ export async function Screenshot(object: THREE.Object3D) {
     scene.environment = texture;
 
     scene.add(object);
-    
+
     object.position.set(0, 0, 0);
     const bound = new THREE.Box3().setFromObject(object);
     const size = bound.getSize(new THREE.Vector3());
@@ -40,7 +40,6 @@ export async function Screenshot(object: THREE.Object3D) {
     camera.position.y = range / 2;
     camera.position.z = range / 2;
     camera.lookAt(bound.getCenter(new THREE.Vector3()));
-    console.log("Position offset is", camera.position.z, "SIZE:", size, "bound:", bound, "size2D (best):", size2D);
 
     const ambientLight = new THREE.AmbientLight('white', 1.0);
     scene.add(ambientLight);
