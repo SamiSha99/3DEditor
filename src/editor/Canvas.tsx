@@ -20,7 +20,7 @@ const Canvas = observer(() => {
             ref={canvasRef}
             scene={scene}
             shadows
-            style={{ height: "95%", flex: "80%" }}
+            style={{ height: "95%", flex: "75%" }}
             camera={{ position: [-2.5, 2.5, 0] }}
         >
             <Scene canvas={canvasRef.current!} />

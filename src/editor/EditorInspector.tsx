@@ -4,17 +4,18 @@ import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three"
-import { ColorPickerItem, SelectItem, Vector3Item } from "./ui/controls/ControlItem";
+import { ColorPickerItem, InputItem, InputNumberItem, SelectItem, Vector3Item } from "./ui/controls/ControlItem";
 import { Color } from "antd/es/color-picker";
 
 export const EditorInspector = observer(() => {
     return (
-        <div style={{ backgroundColor: "#212121", width: "20%" }}>
+        <div style={{ backgroundColor: "#212121", width: "25%" }}>
             <div style={{ width: "100%", height: "25%" }}>
                 <HierarchyTree />
                 <Divider />
                 <SceneConfigs />
                 <Divider />
+                <SelectedObject />
             </div>
         </div>
     )
@@ -148,7 +149,7 @@ export const HierarchyTree = observer(() => {
 })
 
 export const SceneConfigs = observer(() => {
-    const { environment, setEnvironmentByName, background, setbackground, scene, controlsObject3D } = useStores();
+    const { environment, setEnvironmentByName, background, setbackground, scene } = useStores();
     const [backgroundEnabled, setBackgroundEnabled] = useState(false);
 
     const environmentList = () => {
@@ -163,13 +164,9 @@ export const SceneConfigs = observer(() => {
         return options;
     }
 
-    useEffect(() => {
-        console.log("position updated?")
-    }, [controlsObject3D, controlsObject3D?.position])
-
 
     return (
-        <div style={{ margin: "auto", width: "90%", alignContent: "top" }}>
+        <div style={{ margin: "auto", width: "95%", alignContent: "top" }}>
             <Form>
                 <SelectItem
                     label="Environment"
@@ -198,17 +195,51 @@ export const SceneConfigs = observer(() => {
                         const hex = c.toHexString().replace("#", "");
                         setbackground(new THREE.Color(parseInt(hex, 16)));
                     }} />
-                {
-                    controlsObject3D && <Vector3Item
+            </Form>
+        </div>
+    )
+})
+
+export const SelectedObject = observer(() => {
+    const { controlsObject3D } = useStores();
+    return (
+        <div style={{ margin: "auto", width: "95%", alignContent: "top" }}>
+            {
+                controlsObject3D &&
+                <Form>
+                    <InputItem
+                        variable={controlsObject3D.name}
+                        label="Name"
+                        onChange={(value) => {
+                            if(value)
+                                controlsObject3D.name = value;
+                        }}
+                    />
+                    <Vector3Item
                         variable={controlsObject3D.position}
+                        label="Position"
                         onChange={(v) => {
                             if (v) controlsObject3D?.position.set(v.x, v.y, v.z);
                         }}
                     />
-                }
-            </Form>
-        </div>
-    )
+                    <Vector3Item
+                        variable={controlsObject3D.rotation}
+                        label="Rotation"
+                        labelVector={{ x: "R", y: "Y", z: "P" }}
+                        onChange={(v) => {
+                            if (v) controlsObject3D?.rotation.set(v.x, v.y, v.z);
+                        }}
+                    />
+                    <Vector3Item
+                        variable={controlsObject3D.scale}
+                        label="Scale"
+                        onChange={(v) => {
+                            if (v) controlsObject3D?.scale.set(v.x, v.y, v.z);
+                        }}
+                    />
+                </Form>
+            }
+        </div>)
 })
 
 export const ObjectElement: React.FC<{ object: THREE.Object3D }> = ({ object }) => {
