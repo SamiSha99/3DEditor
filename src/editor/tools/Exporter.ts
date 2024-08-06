@@ -57,7 +57,7 @@ export function exportGLB(scene: THREE.Object3D, options: ExportOptions, onExpor
             onExport && onExport(blob);
         },
         (error) => { console.warn(error) },
-        { binary: true, maxTextureSize: options.maxTextureSize || Infinity, animations: optimizedAnims }
+        { binary: true, maxTextureSize: options.maxTextureSize || Infinity, animations: optimizedAnims,  }
     );
 }
 

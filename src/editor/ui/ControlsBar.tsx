@@ -66,7 +66,7 @@ const RootSelectionButton = observer(() => {
     useHotkeys("r", () => setRootSelection(!useRootSelection));
 
     return (
-        <Tooltip title="Causes selection to target the root of the model." placement="bottom">
+        <Tooltip title="Causes selection to target the root of the model instead of its children." placement="bottom">
             <Button onClick={(e) => { setRootSelection(!useRootSelection), e.stopPropagation() }}>
                 <Checkbox checked={useRootSelection} onChange={(e) => setRootSelection(e.target.checked)} style={{ paddingRight: "5px" }} />
                 {"Root Selection"}
