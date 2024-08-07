@@ -65,6 +65,10 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas, bounds }) => {
             removeObject(controlsObject3D);
     })
 
+    useHotkeys("esc", () => {
+        if(controlsObject3D) setControlsTarget(null);
+    })
+
     return (
         <>
             {sceneObjects && sceneObjects.map((child) => <EditorObject3D object={child} />)}
