@@ -32,7 +32,7 @@ export const InputItem: React.FC<InputInterface<{ [key: string]: any }>> = (
                 <Input
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ display: 'inline-block', width: '99%' }}
+                    style={{ display: 'inline-block', width: '100%' }}
                     value={v}
                     onChange={(v) => {
                         if(v == null) return;

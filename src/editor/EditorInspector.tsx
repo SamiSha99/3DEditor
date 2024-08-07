@@ -167,8 +167,7 @@ export const SceneConfigs = observer(() => {
 
 
     return (
-        <div style={{ margin: "auto", width: "95%", alignContent: "top" }}>
-            <Form labelWrap>
+            <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} labelWrap>
                 <SelectItem
                     label="Environment"
                     enabled={true}
@@ -197,36 +196,39 @@ export const SceneConfigs = observer(() => {
                         setbackground(new THREE.Color(parseInt(hex, 16)));
                     }} />
             </Form>
-        </div>
+        
     )
 })
 
 export const SelectedObject = observer(() => {
     const { controlsObject3D } = useStores();
+    const [object, setObject] = useState(controlsObject3D);
+    if(object != controlsObject3D) setObject(controlsObject3D);
+
     return (
         <div style={{ margin: "auto", width: "100%", alignContent: "top" }}>
             {
-                controlsObject3D &&
+                object &&
                 <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
                     <InputItem
-                        object={controlsObject3D}
+                        object={object}
                         variable="name"
                         label="Name"
-                        onChange={(value) => controlsObject3D.name = value}
+                        onChange={(value) => object.name = value}
                     />
                     <InputNumberItem
-                        object={controlsObject3D}
+                        object={object}
                         variable="renderOrder"
                         label="Render Order"
-                        onChange={(value) => controlsObject3D.renderOrder = value}
+                        onChange={(value) => object.renderOrder = value}
                     />
                     <Vector3Item
-                        variable={controlsObject3D.position}
+                        variable={object.position}
                         label="Position"
-                        onChange={(v) => controlsObject3D.position.set(v.x, v.y, v.z)}
+                        onChange={(v) => object.position.set(v.x, v.y, v.z)}
                     />
                     <EulerItem
-                        variable={controlsObject3D.rotation}
+                        variable={object.rotation}
                         label="Rotation"
                         showOrder
                         isDegree
@@ -239,7 +241,7 @@ export const SelectedObject = observer(() => {
                         }}
                     />
                     <Vector3Item
-                        variable={controlsObject3D.scale}
+                        variable={object.scale}
                         label="Scale"
                         onChange={(v) => controlsObject3D?.scale.set(v.x, v.y, v.z)}
                     />

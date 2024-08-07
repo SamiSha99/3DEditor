@@ -13,7 +13,7 @@ export const SelectItem: React.FC<SelectItemInterface> = (
     { label, enabled, defaultValue, labelInValue, options, onChangeSelect }
 ) => {
     return (
-        <Form.Item label={label}>
+        <Form.Item label={label} style={{marginBottom: '0px', display: 'inline-block', width: '100%'}}>
             <Select
                 disabled={!enabled}
                 defaultValue={defaultValue ? { "value": defaultValue, "label": defaultValue } : undefined}

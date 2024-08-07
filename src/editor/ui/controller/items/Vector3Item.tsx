@@ -13,9 +13,8 @@ type Vector3Interface = {
 }
 
 export const Vector3Item: React.FC<Vector3Interface> = (
-    { label, variable, labelVector, onChange, ...prop }
+    { label, variable, labelVector, onChange }
 ) => {
-    const defaultVector = { x: variable.x, y: variable.y, z: variable.z }
     const [x, setX] = useState(variable.x);
     const [y, setY] = useState(variable.y);
     const [z, setZ] = useState(variable.z);
@@ -34,12 +33,11 @@ export const Vector3Item: React.FC<Vector3Interface> = (
                     onBlur={() => loopStart()}
                     style={{ width: '33%' }}
                     size="small"
-                    defaultValue={defaultVector.x}
-                    value={x}
                     precision={3}
-                    addonBefore={labelVector?.x ? labelVector.x : "X"}
-                    controls={false}
+                    controls={true}
                     changeOnWheel
+                    value={x}
+                    addonBefore={labelVector?.x ? labelVector.x : "X"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
                         setX(v);
@@ -48,16 +46,15 @@ export const Vector3Item: React.FC<Vector3Interface> = (
             </Tooltip>
             <Tooltip title={`Y: ${toFixedStripped(y, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
-                    onFocus={() => loopStop()}
-                    onBlur={() => loopStart()}
-                    style={{ width: '33%' }}
-                    size="small"
-                    defaultValue={defaultVector.y}
-                    value={y}
-                    precision={3}
-                    addonBefore={labelVector?.y ? labelVector.y : "Y"}
-                    controls={false}
-                    changeOnWheel
+                     onFocus={() => loopStop()}
+                     onBlur={() => loopStart()}
+                     style={{ width: '33%' }}
+                     size="small"
+                     precision={3}
+                     controls={true}
+                     changeOnWheel
+                     value={y}
+                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
                         setY(v);
@@ -70,12 +67,11 @@ export const Vector3Item: React.FC<Vector3Interface> = (
                     onBlur={() => loopStart()}
                     style={{ width: '33%' }}
                     size="small"
-                    defaultValue={defaultVector.z}
-                    value={z}
                     precision={3}
-                    addonBefore={labelVector?.z ? labelVector.z : "Z"}
-                    controls={false}
+                    controls={true}
                     changeOnWheel
+                    value={z}
+                    addonBefore={labelVector?.z ? labelVector.z : "Z"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
                         setZ(v);
