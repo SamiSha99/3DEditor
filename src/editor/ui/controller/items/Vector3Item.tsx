@@ -9,7 +9,7 @@ type Vector3Interface = {
     label?: string,
     variable: THREE.Vector3
     labelVector?: { x?: string, y?: string, z?: string },
-    onChange: (value: { x: number, y: number, z: number } | null) => void
+    onChange: (value: { x: number, y: number, z: number }) => void
 }
 
 export const Vector3Item: React.FC<Vector3Interface> = (
@@ -30,6 +30,8 @@ export const Vector3Item: React.FC<Vector3Interface> = (
         <Form.Item label={label ? label : "Vector3"} style={{ marginBottom: '0px', display: 'inline-block' }}>
             <Tooltip title={`X: ${toFixedStripped(x, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
                     style={{ width: '33%' }}
                     size="small"
                     defaultValue={defaultVector.x}
@@ -46,6 +48,8 @@ export const Vector3Item: React.FC<Vector3Interface> = (
             </Tooltip>
             <Tooltip title={`Y: ${toFixedStripped(y, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
                     style={{ width: '33%' }}
                     size="small"
                     defaultValue={defaultVector.y}
@@ -62,6 +66,8 @@ export const Vector3Item: React.FC<Vector3Interface> = (
             </Tooltip>
             <Tooltip title={`Z: ${toFixedStripped(z, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
                     style={{ width: '33%' }}
                     size="small"
                     defaultValue={defaultVector.z}

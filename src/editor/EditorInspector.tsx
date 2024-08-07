@@ -4,7 +4,7 @@ import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import * as THREE from "three"
-import { ColorPickerItem, EulerItem, InputItem, SelectItem, Vector3Item } from "./ui/controller/ControllerItems";
+import { ColorPickerItem, EulerItem, InputItem, InputNumberItem, SelectItem, Vector3Item } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
 import { degToRad } from "three/src/math/MathUtils";
 
@@ -209,19 +209,21 @@ export const SelectedObject = observer(() => {
                 controlsObject3D &&
                 <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
                     <InputItem
-                        variable={controlsObject3D.name}
+                        object={controlsObject3D}
+                        variable="name"
                         label="Name"
-                        onChange={(value) => {
-                            if (value)
-                                controlsObject3D.name = value;
-                        }}
+                        onChange={(value) => controlsObject3D.name = value}
+                    />
+                    <InputNumberItem
+                        object={controlsObject3D}
+                        variable="renderOrder"
+                        label="Render Order"
+                        onChange={(value) => controlsObject3D.renderOrder = value}
                     />
                     <Vector3Item
                         variable={controlsObject3D.position}
                         label="Position"
-                        onChange={(v) => {
-                            if (v) controlsObject3D?.position.set(v.x, v.y, v.z);
-                        }}
+                        onChange={(v) => controlsObject3D.position.set(v.x, v.y, v.z)}
                     />
                     <EulerItem
                         variable={controlsObject3D.rotation}
@@ -230,20 +232,16 @@ export const SelectedObject = observer(() => {
                         isDegree
                         labelEuler={{ x: "R", y: "Y", z: "P" }}
                         onChange={(v) => {
-                            if (v) {
-                                if(v.isDegree)
-                                    controlsObject3D?.rotation.set(degToRad(v.x), degToRad(v.y), degToRad(v.z), v.order);
-                                else
-                                    controlsObject3D?.rotation.set(v.x, v.y, v.z, v.order);
-                            }
+                            if (v.isDegree)
+                                controlsObject3D?.rotation.set(degToRad(v.x), degToRad(v.y), degToRad(v.z), v.order);
+                            else
+                                controlsObject3D?.rotation.set(v.x, v.y, v.z, v.order);
                         }}
                     />
                     <Vector3Item
                         variable={controlsObject3D.scale}
                         label="Scale"
-                        onChange={(v) => {
-                            if (v) controlsObject3D?.scale.set(v.x, v.y, v.z);
-                        }}
+                        onChange={(v) => controlsObject3D?.scale.set(v.x, v.y, v.z)}
                     />
                 </Form>
             }

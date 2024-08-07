@@ -1,6 +1,8 @@
 import useRafLoop from "react-use/lib/useRafLoop";
 
-///<summary> every frame runs and passes a delta of time from each frame.</summary>
+/**
+ * Every frame runs and passes a delta of time that passed between each update.
+*/
 export function useDeltaTime(callback: FrameRequestCallback, initiallyActive?: boolean) {
     let oldTime = 0;
     return useRafLoop((time) => {

@@ -2,6 +2,7 @@ import { Form, InputNumber, Tooltip } from "antd";
 import React, { useState } from "react";
 import * as THREE from "three";
 import { MOUSE_ENTER_DELAY } from "./SharedItemOptions";
+import { useDeltaTime } from "src/store/Hooks";
 
 type Vector2Interface = {
     label?: string,
@@ -17,10 +18,17 @@ export const Vector2Item: React.FC<Vector2Interface> = (
     const [x, setX] = useState(variable.x);
     const [y, setY] = useState(variable.y);
 
+    const [loopStop, loopStart, isActive] = useDeltaTime(() => {
+        if (x != variable.x) setX(variable.x);
+        if (y != variable.y) setY(variable.y);
+    });
+
     return (
         <Form.Item label={label ? label : "Vector2"} style={{ marginBottom: '0px', display: 'inline-block' }}>
             <Tooltip title={x} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
                     style={{ width: '50%' }}
                     defaultValue={defaultVector2.x}
                     value={x}
@@ -35,6 +43,8 @@ export const Vector2Item: React.FC<Vector2Interface> = (
             </Tooltip>
             <Tooltip title={y} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
                     style={{ width: '50%' }}
                     defaultValue={defaultVector2.y}
                     value={y}

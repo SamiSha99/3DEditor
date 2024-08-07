@@ -13,7 +13,7 @@ type EulerInterface = {
     // If true, numbers are visualized in degree but the inner code is always radiant regardless.
     isDegree?: boolean
     labelEuler?: { x?: string, y?: string, z?: string, order?: string },
-    onChange: (value: { x: number, y: number, z: number, order: THREE.EulerOrder, isDegree?: boolean } | null) => void
+    onChange: (value: { x: number, y: number, z: number, order: THREE.EulerOrder, isDegree?: boolean }) => void
 }
 
 // to-do: labels MAYBE as the labels specifiers?
@@ -35,7 +35,7 @@ export const EulerItem: React.FC<EulerInterface> = (
     const [z, setZ] = useState(variable.z);
     const [order, setOrder] = useState(variable.order);
 
-    const [loopStop, loopStart, isActive] = useDeltaTime((delta) => {
+    const [loopStop, loopStart, isActive] = useDeltaTime(() => {
         if (x != variable.x) setX(variable.x);
         if (y != variable.y) setY(variable.y);
         if (z != variable.z) setZ(variable.z);
@@ -46,6 +46,8 @@ export const EulerItem: React.FC<EulerInterface> = (
         <Form.Item label={label ? label : "Vector3"} style={{ marginBottom: '0px', display: 'inline-block' }}>
             <Tooltip title={`Roll: ${toFixedStripped(isDegree ? radToDeg(x) : x, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
                     style={{ width: '33%' }}
                     size="small"
                     defaultValue={isDegree ? radToDeg(defaultEuler.x) : defaultEuler.x}
@@ -71,6 +73,8 @@ export const EulerItem: React.FC<EulerInterface> = (
             </Tooltip>
             <Tooltip title={`Yaw: ${toFixedStripped(isDegree ? radToDeg(y) : y, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
                     style={{ width: '33%' }}
                     size="small"
                     defaultValue={isDegree ? radToDeg(defaultEuler.y) : defaultEuler.y}
@@ -96,6 +100,8 @@ export const EulerItem: React.FC<EulerInterface> = (
             </Tooltip>
             <Tooltip title={`Pitch: ${toFixedStripped(isDegree ? radToDeg(z) : z, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
                     style={{ width: '33%' }}
                     size="small"
                     defaultValue={isDegree ? radToDeg(defaultEuler.z) : defaultEuler.z}
