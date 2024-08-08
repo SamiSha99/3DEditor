@@ -9,8 +9,8 @@ export const MenuBar = () => {
     return (
         <MenuBarStyle>
             <File />
-            <Create />
             <Add />
+            <Create />
             <Tools />
             <Settings />
         </MenuBarStyle>

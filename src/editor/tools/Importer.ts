@@ -7,10 +7,9 @@ import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 
-type OnImport = (scene: THREE.Object3D) => void;
-type OnImportAnimationClip = (animationClip: THREE.AnimationClip) => void;
+type OnImport<T> = (result: T) => void;
 
-export function doImport(onImport: OnImport) {
+export function doImport(onImport: OnImport<THREE.Object3D>) {
     const input = document.createElement('input');
     input.type = "file";
     input.style.display = "none";
@@ -32,7 +31,49 @@ export function doImport(onImport: OnImport) {
     });
 }
 
-export function doImportAnimationClip(onImport: OnImportAnimationClip) {
+export function doImportTexture(onImport: OnImport<THREE.Texture>) {
+    const input = document.createElement('input');
+    input.type = "file";
+    input.style.display = "none";
+    input.multiple = true;
+    input.accept = ".png, .svg, .jpg, .jpeg, .tga, .bmp, .webp";
+    input.click();
+    input.onchange = ((e: Event) => {
+        const filelist = (e as any as React.ChangeEvent<HTMLInputElement>).target.files;
+        if (filelist) {
+            if (filelist.length <= 0) {
+                message.error("No files were selected.");
+                return;
+            }
+            let files: File[] = [];
+            for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
+            files.map((file) => {
+                const url = URL.createObjectURL(file);
+                const loader = new THREE.TextureLoader();
+                loader.load(
+                    url,
+                    (res) => {
+                        // important to maintain texture quality else will look off from the original image
+                        res.colorSpace = THREE.SRGBColorSpace;
+                        // res.flipY = true
+                        res.flipY = true;
+                        res.needsUpdate = true;
+                        onImport(res);
+                        URL.revokeObjectURL(url);
+                    },
+                    undefined,
+                    (res) => {
+                        console.error("FAILED!", res)
+                        URL.revokeObjectURL(url);
+                    })
+            })
+        }
+        else
+            message.error("FileList returned null.")
+    })
+}
+
+export function doImportAnimationClip(onImport: OnImport<THREE.AnimationClip>) {
     const input = document.createElement('input');
     input.type = "file";
     input.style.display = "none";
@@ -64,7 +105,7 @@ export function doImportAnimationClip(onImport: OnImportAnimationClip) {
     })
 }
 
-export function doImportFileList(filelist: FileList, onImport: OnImport) {
+export function doImportFileList(filelist: FileList, onImport: OnImport<THREE.Object3D>) {
 
     if (filelist.length <= 0) {
         message.error("No files were selected.");
@@ -76,7 +117,7 @@ export function doImportFileList(filelist: FileList, onImport: OnImport) {
     handleFiles(files, onImport);
 }
 
-export function doImportFile(file: File, onImport: OnImport) {
+export function doImportFile(file: File, onImport: OnImport<THREE.Object3D>) {
     if (!file) {
         message.error("No files were selected.");
         return;
@@ -84,7 +125,7 @@ export function doImportFile(file: File, onImport: OnImport) {
     handleFiles([file], onImport);
 }
 
-export function doImportFiles(files: File[], onImport: OnImport) {
+export function doImportFiles(files: File[], onImport: OnImport<THREE.Object3D>) {
     if (files.length <= 0) {
         message.error("No files were selected.");
         return;
@@ -92,7 +133,7 @@ export function doImportFiles(files: File[], onImport: OnImport) {
     handleFiles(files, onImport);
 }
 
-function handleFiles(files: File[], onImport: OnImport) {
+function handleFiles(files: File[], onImport: OnImport<THREE.Object3D>) {
     const manager = new THREE.LoadingManager();
     const filesMap = createFilesMap(files) as { [name: string]: File };
 
@@ -109,7 +150,7 @@ function handleFiles(files: File[], onImport: OnImport) {
     files.forEach((file) => handleFile(file, manager, onImport));
 }
 
-function handleFile(file: File, manager: THREE.LoadingManager | null = null, onImport: OnImport) {
+function handleFile(file: File, manager: THREE.LoadingManager | null = null, onImport: OnImport<THREE.Object3D>) {
     const type = file.name.match(EXTENSION_REGEX)?.[0];
 
     if (!manager) {
@@ -250,7 +291,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
     }
 }
 
-function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnImport) {
+function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnImport<THREE.Object3D>) {
     if (!data) {
         message.error("ZIP data returned " + data);
         return;

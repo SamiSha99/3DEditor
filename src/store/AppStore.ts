@@ -8,11 +8,11 @@ export class AppStore {
 
     // Object3D ID
     @observable controlsTarget: number | number[] = -1;
-    // All instatiated Objects in the scene
+    /** All instatiated Objects in the scene */
     @observable scene: Scene = new Scene();
-    // All objects that can be modified
+    /** All objects that can be modified */
     @observable sceneObjects: Object3D[] = [];
-    /*
+    /**
     * These need to be in the root of the scene else they will cause a lot of bugs
     * When intersected their userData returns the reference for the object from sceneObjects
     */
@@ -73,9 +73,10 @@ export class AppStore {
     // this is NOT ok!!!
     @action.bound badForceUpdateInspector = () => { this.onUpdateInspector = new Date().getUTCMilliseconds(); }
 
-    @action.bound setScene(objects: Object3D[] = []) {
+    @action.bound setScene(objects: Object3D[] = [], helpers: Object3D[] = []) {
         this.setControlsTarget(null);
         this.sceneObjects = objects;
+        this.sceneHelpers = helpers;
     }
 
     // When a new component is made, push it to the scene
@@ -91,13 +92,23 @@ export class AppStore {
         this.setControlsTarget(null);
         const indx = this.sceneObjects.findIndex(obj => obj.uuid == object.uuid);
         if (indx != -1) {
-            if("helper" in this.sceneObjects[indx].userData) {
-                const helper = this.sceneObjects[indx].userData.helper as Object3D;
+            if("helper" in object.userData) {
+                const helper = object.userData.helper as Object3D;
                 const helperIndx = this.sceneHelpers.findIndex(hlp => hlp.uuid == helper.uuid);
                 this.sceneHelpers.splice(helperIndx, 1);
             }
             this.sceneObjects.splice(indx, 1);
             console.log(this.sceneObjects);
+        }
+        else {
+            object.removeFromParent();
+        }
+
+        // Cleanup helpers
+        if("helper" in object.userData) {
+            const helper = object.userData.helper as Object3D;
+            const helperIndx = this.sceneHelpers.findIndex(hlp => hlp.uuid == helper.uuid);
+            this.sceneHelpers.splice(helperIndx, 1);
         }
     }
 

@@ -60,14 +60,8 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas, bounds }) => {
     }
     canvas.onmouseup = selectObject;
 
-    useHotkeys("delete", () => {
-        if (controlsObject3D instanceof THREE.Object3D)
-            removeObject(controlsObject3D);
-    })
-
-    useHotkeys("esc", () => {
-        if(controlsObject3D) setControlsTarget(null);
-    })
+    useHotkeys("delete", () => controlsObject3D instanceof THREE.Object3D && removeObject(controlsObject3D))
+    useHotkeys("esc", () => controlsObject3D && setControlsTarget(null))
 
     return (
         <>
@@ -102,10 +96,10 @@ const EditorHelpers = () => {
 }
 
 const EditorControls = observer(() => {
-    const { isTransforming, controlsTarget, controlsMode, controlsSpace, setIsTransforming } = useStores();
-    const { scene, camera } = useThree();
+    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming } = useStores();
+    const { camera } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
-    const o = scene.getObjectById(controlsTarget as number);
+    // const o = scene.getObjectById(controlsTarget as number);
 
     const onStart = () => {
         !cameraStartDrag && setCameraStartDrag(true);
@@ -124,10 +118,10 @@ const EditorControls = observer(() => {
         <>
             <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} />
             {
-                controlsTarget != -1 &&
+                controlsObject3D &&
                 <TransformControlsDrei
                     name='TRANSFORM_HELPER'
-                    object={o}
+                    object={controlsObject3D}
                     mode={controlsMode}
                     space={controlsSpace}
                     camera={camera}

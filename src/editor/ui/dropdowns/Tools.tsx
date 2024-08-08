@@ -8,9 +8,11 @@ import * as IMPORTER from '@orb_tools/Importer'
 import * as EXPORTER from '@orb_tools/Exporter'
 import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
+import { Cylinder, Sphere } from "@orb_tools/create/Primitive";
+import { handleInvertedGeometry } from "src/editor/utils/MeshUtils";
 
 export const Tools = observer(() => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D, addObject } = useStores();
     const [modalConvert, toggleModalConvert] = useState(false);
     return (
         <>
@@ -59,36 +61,64 @@ export const Tools = observer(() => {
                             label: 'Animations...',
                             key: '2',
                             icon: <ICONS.VideoCameraOutlined />,
-                            children: [
-                                {
-                                    label: 'Export from Selected Object',
-                                    key: '2.1',
-                                    onClick: () => {
-                                        if (controlsObject3D) {
-                                            const animations = (controlsObject3D as THREE.Object3D).animations;
-                                            if (!animations || animations.length <= 0) {
-                                                message.warning("The selected model has no animations!");
-                                                return;
-                                            }
-                                            animations.map((ac) => EXPORTER.exportAnimationClip(ac, true, (blob) => EXPORTER.save(blob, ac.name + ".ac")));
+                            children: [{
+                                label: 'Export from Selected Object',
+                                key: '2.1',
+                                onClick: () => {
+                                    if (controlsObject3D) {
+                                        const animations = (controlsObject3D as THREE.Object3D).animations;
+                                        if (!animations || animations.length <= 0) {
+                                            message.warning("The selected model has no animations!");
+                                            return;
                                         }
-                                        else
-                                            message.warning("Select an object that has animations to export!");
+                                        animations.map((ac) => EXPORTER.exportAnimationClip(ac, true, (blob) => EXPORTER.save(blob, ac.name + ".ac")));
                                     }
-                                },
-                                {
-                                    label: 'Import into Selected Object',
-                                    key: '2.2',
-                                    onClick: () => {
-                                        if (controlsObject3D) {
-                                            IMPORTER.doImportAnimationClip((clip) => {
-                                                (controlsObject3D as THREE.Object3D).animations.push(clip);
-                                            })
-                                        }
-                                        else
-                                            message.warning("Select an object to import an animation!");
+                                    else
+                                        message.warning("Select an object that has animations to export!");
+                                }
+                            },
+                            {
+                                label: 'Import into Selected Object',
+                                key: '2.2',
+                                onClick: () => {
+                                    if (controlsObject3D) {
+                                        IMPORTER.doImportAnimationClip((clip) => {
+                                            (controlsObject3D as THREE.Object3D).animations.push(clip);
+                                        })
                                     }
-                                }]
+                                    else
+                                        message.warning("Select an object to import an animation!");
+                                }
+                            }]
+                        },
+                        {
+                            label: 'Create a Skydome',
+                            key: '3',
+                            icon: <ICONS.CloudOutlined />,
+                            onClick: () => {
+                                IMPORTER.doImportTexture((res) => {
+
+                                    const mat = new THREE.MeshStandardMaterial({ map: res });
+                                    const sphere = Sphere({ heightSegments: 32 }, mat);
+                                    sphere.name = "Back"
+                                    handleInvertedGeometry(sphere.geometry)
+                                    
+                                    sphere.renderOrder = 1
+
+                                    // https://woodenraft.games/blog/how-to-hide-water-plane-inside-hollow-boat-threejs
+                                    const hider = new THREE.MeshStandardMaterial({ side: THREE.FrontSide, colorWrite: false });
+                                    const sphereFront = Sphere({ heightSegments: 32, thetaStart: Math.PI / 8 }, hider);
+                                    sphereFront.name = "Front"
+                                    sphereFront.rotation.set(Math.PI / 2, 0, 0);
+                                    sphereFront.scale.setScalar(1.005);
+                                    const group = new THREE.Group();
+                                    group.name = "Skydome"
+                                    group.add(sphereFront);
+                                    group.add(sphere);
+
+                                    addObject(group);
+                                })
+                            }
                         }
                     ]
                 }} />

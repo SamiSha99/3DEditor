@@ -1,49 +1,63 @@
 import * as THREE from 'three';
 
-export function Box() {
-    const mesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
+export function Box(material: THREE.Material = new THREE.MeshStandardMaterial()) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
     mesh.name = "Box";
     return mesh;
 }
 
-export function Sphere() {
-    const mesh = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshStandardMaterial());
+type SphereConstructorInterface = {
+    radius?: number,
+    widthSegments?: number,
+    heightSegments?: number,
+    phiStart?: number,
+    phiLength?: number,
+    thetaStart?: number,
+    thetaLength?: number,
+}
+
+export function Sphere(
+    { radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength }: SphereConstructorInterface = {},
+    material: THREE.Material = new THREE.MeshStandardMaterial()
+) {
+    const geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
+    const mesh = new THREE.Mesh(geometry, material);
     mesh.name = "Sphere";
     return mesh;
 }
 
-export function Cylinder() {
-    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(), new THREE.MeshStandardMaterial());
+export function Cylinder(material: THREE.Material = new THREE.MeshStandardMaterial()) {
+    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(), material);
     mesh.name = "Cylinder";
     return mesh;
 }
 
-export function Plane() {
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), new THREE.MeshStandardMaterial());
+export function Plane(material: THREE.Material = new THREE.MeshStandardMaterial()) {
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), material);
     mesh.name = "Plane";
     return mesh;
 }
 
-export function Capsule() {
-    const mesh = new THREE.Mesh(new THREE.CapsuleGeometry(), new THREE.MeshStandardMaterial());
+export function Capsule(material: THREE.Material = new THREE.MeshStandardMaterial()) {
+    const mesh = new THREE.Mesh(new THREE.CapsuleGeometry(), material);
     mesh.name = "Capsule";
     return mesh;
 }
 
-export function Torus() {
-    const mesh = new THREE.Mesh(new THREE.TorusGeometry(), new THREE.MeshStandardMaterial());
+export function Torus(material: THREE.Material = new THREE.MeshStandardMaterial()) {
+    const mesh = new THREE.Mesh(new THREE.TorusGeometry(), material);
     mesh.name = "Torus";
     return mesh;
 }
 
-export function Cone() {
-    const mesh = new THREE.Mesh(new THREE.ConeGeometry(), new THREE.MeshStandardMaterial());
+export function Cone(material: THREE.Material = new THREE.MeshStandardMaterial()) {
+    const mesh = new THREE.Mesh(new THREE.ConeGeometry(), material);
     mesh.name = "Cone";
     return mesh;
 }
 
-export function Pyramid() {
-    const mesh = new THREE.Mesh(new THREE.ConeGeometry(1,1,4), new THREE.MeshStandardMaterial());
+export function Pyramid(material: THREE.Material = new THREE.MeshStandardMaterial()) {
+    const mesh = new THREE.Mesh(new THREE.ConeGeometry(1, 1, 4), material);
     mesh.name = "Pyramid";
     return mesh;
 }
