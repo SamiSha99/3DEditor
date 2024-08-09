@@ -28,7 +28,7 @@ export const InputItem: React.FC<InputInterface<{ [key: string]: any }>> = (
     });
 
     return (
-        <Form.Item label={label ? label : "Input"} style={{ marginBottom: '0px' }}>
+        <Form.Item label={label ? label : "Input"}>
             <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <Input
                     onFocus={() => loopStop()}

@@ -21,13 +21,27 @@ const session = new AppStore();
 const themeConfig: ThemeConfig = {
     algorithm: [theme.darkAlgorithm,],
     components: {
+        Form: {
+            itemMarginBottom: 0
+        },
         InputNumber: {
             size: 10,
-            controlWidth: 75,
             inputFontSizeSM: 12,
             inputFontSize: 12,
             inputFontSizeLG: 12,
             paddingBlock: 2,
+            colorBorder: "rgba(0, 0, 0, 0.02)"
+        },
+        Input: {
+            size: 10,
+            inputFontSizeSM: 12,
+            inputFontSize: 12,
+            inputFontSizeLG: 12,
+            paddingBlock: 2,
+            colorBorder: "rgba(0, 0, 0, 0.02)"
+        },
+        Select: {
+            colorBorder: "rgba(0, 0, 0, 0.02)"
         },
         Button: {
             defaultBg: "#212121",

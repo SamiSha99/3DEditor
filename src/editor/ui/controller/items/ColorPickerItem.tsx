@@ -16,11 +16,11 @@ export const ColorPickerItem: React.FC<ColorPickerInterface> = (
     { label, enabled, defaultValue, allowAlpha, allowClear, onChangeCheckbox, onChangeColorPicker, onChangeCompleteColorPicker }
 ) => {
     return (
-        <Form.Item label={label} style={{ marginBottom: '0px' }}>
-            <Form.Item style={{ marginBottom: '0px', display: 'inline-block', width: 'calc(50% - 8px)' }}>
+        <Form.Item label={label}>
+            <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
                 <Checkbox onChange={(e) => { onChangeCheckbox && onChangeCheckbox(e) }} />
             </Form.Item>
-            <Form.Item style={{ marginBottom: '0px', display: 'inline-block', width: 'calc(50% - 8px)' }}>
+            <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
                 <ColorPicker
                     defaultValue={defaultValue}
                     disabled={!enabled}

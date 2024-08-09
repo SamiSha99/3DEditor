@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { toFixedStripped } from "src/editor/utils/Utils";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
-import { MOUSE_ENTER_DELAY } from "./SharedItemOptions";
+import { MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 
 type Vector3Interface = {
     label?: string,
@@ -26,7 +26,7 @@ export const Vector3Item: React.FC<Vector3Interface> = (
     });
 
     return (
-        <Form.Item label={label ? label : "Vector3"} style={{ marginBottom: '0px', display: 'inline-block' }}>
+        <Form.Item label={label ? label : "Vector3"}>
             <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     onFocus={() => loopStop()}
@@ -46,15 +46,15 @@ export const Vector3Item: React.FC<Vector3Interface> = (
             </Tooltip>
             <Tooltip title={toFixedStripped(y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
-                     onFocus={() => loopStop()}
-                     onBlur={() => loopStart()}
-                     style={{ width: 'calc(100%/3)' }}
-                     size="small"
-                     precision={3}
-                     controls={true}
-                     changeOnWheel
-                     value={y}
-                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
+                    style={{ width: 'calc(100%/3)' }}
+                    size="small"
+                    precision={PRECISION_AMOUNT}
+                    controls={true}
+                    changeOnWheel
+                    value={y}
+                    addonBefore={labelVector?.y ? labelVector.y : "Y"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
                         setY(v);
@@ -67,7 +67,7 @@ export const Vector3Item: React.FC<Vector3Interface> = (
                     onBlur={() => loopStart()}
                     style={{ width: 'calc(100%/3)' }}
                     size="small"
-                    precision={3}
+                    precision={PRECISION_AMOUNT}
                     controls={true}
                     changeOnWheel
                     value={z}

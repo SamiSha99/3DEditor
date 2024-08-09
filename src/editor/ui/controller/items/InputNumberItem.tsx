@@ -1,6 +1,6 @@
 import { Form, InputNumber, Tooltip } from "antd";
 import React, { useState } from "react";
-import { MOUSE_ENTER_DELAY } from "./SharedItemOptions";
+import { MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 import { useDeltaTime } from "src/store/Hooks";
 
 type InputNumberInterface<T> = {
@@ -25,13 +25,14 @@ export const InputNumberItem: React.FC<InputNumberInterface<{ [key: string]: any
     });
 
     return (
-        <Form.Item label={label ? label : "InputNumber"} style={{ marginBottom: '0px' }}>
+        <Form.Item label={label ? label : "InputNumber"}>
             <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
                     style={{ display: 'inline-block', width: '100%' }}
                     value={v}
+                    precision={PRECISION_AMOUNT}
                     controls={false}
                     changeOnWheel
                     onChange={(v: number | null) => {

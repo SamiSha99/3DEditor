@@ -1,6 +1,7 @@
 import { makeObservable, observable, action } from "mobx";
 import { Object3D, Scene, Color } from "three";
 import * as TYPE from "./type";
+import { Box } from "@orb_tools/create/Primitive";
 
 export class AppStore {
 
@@ -24,7 +25,7 @@ export class AppStore {
 
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
-    @observable environment: TYPE.Environments = TYPE.environments[0];
+    @observable environment: TYPE.Environments = TYPE.environments[1]; //TYPE.environments[0];
     @observable background: Color | null = null;
 
     @observable useRootSelection: boolean = false;
@@ -34,6 +35,8 @@ export class AppStore {
     constructor() {
         makeObservable(this)
         AppStore._instance = this;
+        this.addObject(Box())
+        this.setControlsTarget(this.sceneObjects[0])
     }
 
     public static get Instance() {
@@ -66,7 +69,7 @@ export class AppStore {
     @action.bound setEnvironment = (index: number) => { this.environment = TYPE.environments[index] }
     @action.bound setEnvironmentByName = (environment: TYPE.Environments) => { this.environment = environment }
 
-    @action.bound setbackground = (value: Color | null, enabled?: boolean) => {this.background = enabled ? value : null} //[value, enabled !== undefined ? enabled : this.background[1]]}
+    @action.bound setbackground = (value: Color | null, enabled?: boolean) => { this.background = enabled ? value : null } //[value, enabled !== undefined ? enabled : this.background[1]]}
 
     @action.bound setIsTransforming = (b: boolean) => { this.isTransforming = b }
 
@@ -92,7 +95,7 @@ export class AppStore {
         this.setControlsTarget(null);
         const indx = this.sceneObjects.findIndex(obj => obj.uuid == object.uuid);
         if (indx != -1) {
-            if("helper" in object.userData) {
+            if ("helper" in object.userData) {
                 const helper = object.userData.helper as Object3D;
                 const helperIndx = this.sceneHelpers.findIndex(hlp => hlp.uuid == helper.uuid);
                 this.sceneHelpers.splice(helperIndx, 1);
@@ -105,7 +108,7 @@ export class AppStore {
         }
 
         // Cleanup helpers
-        if("helper" in object.userData) {
+        if ("helper" in object.userData) {
             const helper = object.userData.helper as Object3D;
             const helperIndx = this.sceneHelpers.findIndex(hlp => hlp.uuid == helper.uuid);
             this.sceneHelpers.splice(helperIndx, 1);

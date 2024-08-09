@@ -247,7 +247,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                         key={object.uuid + "-scale"}
                         variable={object.scale}
                         label="Scale"
-                        onChange={(v) => controlsObject3D?.scale.set(v.x, v.y, v.z)}
+                        onChange={(v) => object.scale.set(v.x, v.y, v.z)}
                     />
                 </Form>
             }

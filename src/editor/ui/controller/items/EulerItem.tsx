@@ -29,7 +29,6 @@ const OrderOptions: SelectProps['options'] = [
 export const EulerItem: React.FC<EulerInterface> = (
     { label, variable, showOrder, isDegree, labelEuler, onChange }
 ) => {
-    const defaultEuler = { x: variable.x, y: variable.y, z: variable.z, order: variable.order }
     const [x, setX] = useState(variable.x);
     const [y, setY] = useState(variable.y);
     const [z, setZ] = useState(variable.z);
@@ -50,7 +49,6 @@ export const EulerItem: React.FC<EulerInterface> = (
                     onBlur={() => loopStart()}
                     style={{ width: 'calc(100%/3)' }}
                     size="small"
-                    defaultValue={isDegree ? radToDeg(defaultEuler.x) : defaultEuler.x}
                     value={isDegree ? radToDeg(x) : x}
                     precision={isDegree ? 2 : 3}
                     addonBefore={labelEuler?.x ? labelEuler.x : "X"}
@@ -77,7 +75,6 @@ export const EulerItem: React.FC<EulerInterface> = (
                     onBlur={() => loopStart()}
                     style={{ width: 'calc(100%/3)' }}
                     size="small"
-                    defaultValue={isDegree ? radToDeg(defaultEuler.y) : defaultEuler.y}
                     value={isDegree ? radToDeg(y) : y}
                     precision={isDegree ? 2 : 3}
                     addonBefore={labelEuler?.y ? labelEuler.y : "Y"}
@@ -104,7 +101,6 @@ export const EulerItem: React.FC<EulerInterface> = (
                     onBlur={() => loopStart()}
                     style={{ width: 'calc(100%/3)' }}
                     size="small"
-                    defaultValue={isDegree ? radToDeg(defaultEuler.z) : defaultEuler.z}
                     value={isDegree ? radToDeg(z) : z}
                     precision={isDegree ? 2 : 3}
                     addonBefore={labelEuler?.z ? labelEuler.z : "Z"}
@@ -131,8 +127,6 @@ export const EulerItem: React.FC<EulerInterface> = (
                         <Select
                             style={{ width: "100%" }}
                             size="small"
-                            suffixIcon={false}
-                            defaultValue={defaultEuler.order}
                             value={order}
                             options={OrderOptions}
                             onChange={(value) => {
@@ -141,7 +135,7 @@ export const EulerItem: React.FC<EulerInterface> = (
                                     x: isDegree ? radToDeg(x) : x,
                                     y: isDegree ? radToDeg(y) : y,
                                     z: isDegree ? radToDeg(z) : z,
-                                    order: order,
+                                    order: value,
                                     isDegree: isDegree
                                 });
                             }}
