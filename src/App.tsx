@@ -21,6 +21,14 @@ const session = new AppStore();
 const themeConfig: ThemeConfig = {
     algorithm: [theme.darkAlgorithm,],
     components: {
+        InputNumber: {
+            size: 10,
+            controlWidth: 75,
+            inputFontSizeSM: 12,
+            inputFontSize: 12,
+            inputFontSizeLG: 12,
+            paddingBlock: 2,
+        },
         Button: {
             defaultBg: "#212121",
             defaultHoverBg: "#323232",
