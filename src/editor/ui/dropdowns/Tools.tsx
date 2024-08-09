@@ -100,23 +100,23 @@ export const Tools = observer(() => {
 
                                     const mat = new THREE.MeshStandardMaterial({ map: res });
                                     const sphere = Sphere({ heightSegments: 32 }, mat);
-                                    sphere.name = "Back"
-                                    handleInvertedGeometry(sphere.geometry)
+                                    sphere.name = "Skydome"
+                                    handleInvertedGeometry(sphere.geometry);
                                     
-                                    sphere.renderOrder = 1
+                                    // sphere.renderOrder = 1
 
                                     // https://woodenraft.games/blog/how-to-hide-water-plane-inside-hollow-boat-threejs
-                                    const hider = new THREE.MeshStandardMaterial({ side: THREE.FrontSide, colorWrite: false });
-                                    const sphereFront = Sphere({ heightSegments: 32, thetaStart: Math.PI / 8 }, hider);
-                                    sphereFront.name = "Front"
-                                    sphereFront.rotation.set(Math.PI / 2, 0, 0);
-                                    sphereFront.scale.setScalar(1.005);
-                                    const group = new THREE.Group();
-                                    group.name = "Skydome"
-                                    group.add(sphereFront);
-                                    group.add(sphere);
+                                    // const hider = new THREE.MeshStandardMaterial({ side: THREE.FrontSide, colorWrite: false });
+                                    // const sphereFront = Sphere({ heightSegments: 32, thetaStart: Math.PI / 8 }, hider);
+                                    // sphereFront.name = "Front"
+                                    // sphereFront.rotation.set(Math.PI / 2, 0, 0);
+                                    // sphereFront.scale.setScalar(1.005);
+                                    // const group = new THREE.Group();
+                                    // group.name = "Skydome"
+                                    // group.add(sphereFront);
+                                    // group.add(sphere);
 
-                                    addObject(group);
+                                    addObject(sphere);
                                 })
                             }
                         }

@@ -27,11 +27,11 @@ export const Vector3Item: React.FC<Vector3Interface> = (
 
     return (
         <Form.Item label={label ? label : "Vector3"} style={{ marginBottom: '0px', display: 'inline-block' }}>
-            <Tooltip title={`X: ${toFixedStripped(x, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+            <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: '33%' }}
+                    style={{ width: 'calc(100%/3)' }}
                     size="small"
                     precision={3}
                     controls={true}
@@ -44,11 +44,11 @@ export const Vector3Item: React.FC<Vector3Interface> = (
                         onChange && onChange({ x: v, y: y, z: z });
                     }} />
             </Tooltip>
-            <Tooltip title={`Y: ${toFixedStripped(y, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+            <Tooltip title={toFixedStripped(y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                      onFocus={() => loopStop()}
                      onBlur={() => loopStart()}
-                     style={{ width: '33%' }}
+                     style={{ width: 'calc(100%/3)' }}
                      size="small"
                      precision={3}
                      controls={true}
@@ -61,11 +61,11 @@ export const Vector3Item: React.FC<Vector3Interface> = (
                         onChange && onChange({ x: x, y: v, z: z });
                     }} />
             </Tooltip>
-            <Tooltip title={`Z: ${toFixedStripped(z, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+            <Tooltip title={toFixedStripped(z, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: '33%' }}
+                    style={{ width: 'calc(100%/3)' }}
                     size="small"
                     precision={3}
                     controls={true}

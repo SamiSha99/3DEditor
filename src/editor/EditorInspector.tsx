@@ -2,21 +2,23 @@ import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
 import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three"
 import { ColorPickerItem, EulerItem, InputItem, InputNumberItem, SelectItem, Vector3Item } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
 import { degToRad } from "three/src/math/MathUtils";
 
 export const EditorInspector = observer(() => {
+    const { controlsObject3D } = useStores();
+
     return (
-        <div style={{ backgroundColor: "#212121", width: "25%" }}>
-            <div style={{ width: "100%", height: "25%" }}>
+        <div style={{ backgroundColor: "#212121", width: "20%" }}>
+            <div style={{ width: "100%", height: "20%" }}>
                 <HierarchyTree />
                 <Divider />
                 <SceneConfigs />
                 <Divider />
-                <SelectedObject />
+                <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
             </div>
         </div>
     )
@@ -167,43 +169,40 @@ export const SceneConfigs = observer(() => {
 
 
     return (
-            <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} labelWrap>
-                <SelectItem
-                    label="Environment"
-                    enabled={true}
-                    defaultValue={!environment ? "Custom" : environment}
-                    labelInValue={true}
-                    onChangeSelect={(select: { value: string, label: string }) => {
-                        let v = undefined;
-                        if (select.value != "undefined") v = select.value as Environments
-                        setEnvironmentByName(v)
-                    }}
-                    options={environmentList()} />
-                <ColorPickerItem
-                    label="Background"
-                    enabled={backgroundEnabled}
-                    allowAlpha={false}
-                    defaultValue={"001029"}
-                    onChangeCheckbox={(e) => {
-                        setBackgroundEnabled(e.target.checked);
-                        setbackground(background[0], e.target.checked)
-                    }}
-                    onChangeColorPicker={(value: Color, hex: string) => {
-                        scene.background = new THREE.Color(hex);
-                    }}
-                    onChangeCompleteColorPicker={(c) => {
-                        const hex = c.toHexString().replace("#", "");
-                        setbackground(new THREE.Color(parseInt(hex, 16)));
-                    }} />
-            </Form>
-        
+        <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} labelWrap>
+            <SelectItem
+                label="Environment"
+                enabled={true}
+                defaultValue={!environment ? "Custom" : environment}
+                labelInValue={true}
+                onChangeSelect={(select: { value: string, label: string }) => {
+                    let v = undefined;
+                    if (select.value != "undefined") v = select.value as Environments
+                    setEnvironmentByName(v)
+                }}
+                options={environmentList()} />
+            <ColorPickerItem
+                label="Background"
+                enabled={backgroundEnabled}
+                allowAlpha={false}
+                defaultValue={"001029"}
+                onChangeCheckbox={(e) => {
+                    setBackgroundEnabled(e.target.checked);
+                    setbackground(background, e.target.checked)
+                }}
+                onChangeColorPicker={(value: Color, hex: string) => {
+                    scene.background = new THREE.Color(hex);
+                }}
+                onChangeCompleteColorPicker={(c) => {
+                    const hex = c.toHexString().replace("#", "");
+                    setbackground(new THREE.Color(parseInt(hex, 16)));
+                }} />
+        </Form>
+
     )
 })
 
-export const SelectedObject = observer(() => {
-    const { controlsObject3D } = useStores();
-    const [object, setObject] = useState(controlsObject3D);
-    if(object != controlsObject3D) setObject(controlsObject3D);
+export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
 
     return (
         <div style={{ margin: "auto", width: "100%", alignContent: "top" }}>
@@ -211,23 +210,27 @@ export const SelectedObject = observer(() => {
                 object &&
                 <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
                     <InputItem
+                        key={object.uuid + "-name"}
                         object={object}
                         variable="name"
                         label="Name"
                         onChange={(value) => object.name = value}
                     />
                     <InputNumberItem
+                        key={object.uuid + "-renderOrder"}
                         object={object}
                         variable="renderOrder"
                         label="Render Order"
                         onChange={(value) => object.renderOrder = value}
                     />
                     <Vector3Item
+                        key={object.uuid + "-position"}
                         variable={object.position}
                         label="Position"
                         onChange={(v) => object.position.set(v.x, v.y, v.z)}
                     />
                     <EulerItem
+                        key={object.uuid + "-rotation"}
                         variable={object.rotation}
                         label="Rotation"
                         showOrder
@@ -235,20 +238,22 @@ export const SelectedObject = observer(() => {
                         labelEuler={{ x: "R", y: "Y", z: "P" }}
                         onChange={(v) => {
                             if (v.isDegree)
-                                controlsObject3D?.rotation.set(degToRad(v.x), degToRad(v.y), degToRad(v.z), v.order);
+                                object.rotation.set(degToRad(v.x), degToRad(v.y), degToRad(v.z), v.order);
                             else
-                                controlsObject3D?.rotation.set(v.x, v.y, v.z, v.order);
+                                object.rotation.set(v.x, v.y, v.z, v.order);
                         }}
                     />
                     <Vector3Item
+                        key={object.uuid + "-scale"}
                         variable={object.scale}
                         label="Scale"
                         onChange={(v) => controlsObject3D?.scale.set(v.x, v.y, v.z)}
                     />
                 </Form>
             }
+
         </div>)
-})
+},)
 
 export const ObjectElement: React.FC<{ object: THREE.Object3D }> = ({ object }) => {
     let hierarchy = object.children?.map((child) => <ObjectElement object={child} />);

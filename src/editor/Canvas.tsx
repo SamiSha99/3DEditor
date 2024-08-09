@@ -4,10 +4,7 @@ import { useStores } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
 import { Box, CameraControls, Environment, Grid, TransformControls as TransformControlsDrei } from "@react-three/drei";
-import { Suspense, useEffect, useRef, useState } from "react";
-import { ITransformData } from "src/store/interface";
-import { TransformControls } from "three/examples/jsm/Addons";
-import { HelperUserData } from "@orb_tools/create/Helpers";
+import { useRef, useState } from "react";
 import React from "react";
 
 
@@ -20,7 +17,7 @@ const Canvas = observer(() => {
             ref={canvasRef}
             scene={scene}
             shadows
-            style={{ height: "95%", flex: "75%" }}
+            style={{ height: "95%", flex: "80%" }}
             camera={{ position: [-2.5, 2.5, 0] }}
         >
             <Scene canvas={canvasRef.current!} />
@@ -30,23 +27,25 @@ const Canvas = observer(() => {
 })
 
 interface CanvasInfo {
-    canvas: HTMLCanvasElement,
-    bounds?: DOMRect
+    canvas: HTMLCanvasElement
 }
 
-const Scene: React.FC<CanvasInfo> = observer(({ canvas, bounds }) => {
+const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
     const { environment, sceneObjects, sceneHelpers, controlsObject3D, isTransforming, background,
         removeObject, setControlsTarget } = useStores();
     const { scene, camera, raycaster } = useThree();
 
-    scene.background = background[1] ? background[0] : null;
+    // the passed ref is null at load time! 
+    if(!canvas) canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+    
+    scene.background = background;
 
     const selectObject = (e: MouseEvent) => {
         // Left Click only
         if (e.button != 0) return;
         if (isTransforming) return;
         // Bounds are used to calculate an offseted AND/OR resized canvas that doesn't take the entire screen due to inspector.
-        if (!bounds) bounds = canvas.getBoundingClientRect();
+        const bounds = canvas.getBoundingClientRect();
         const pointer = new THREE.Vector2(((e.clientX - bounds.left) / (bounds.right - bounds.left)) * 2 - 1, -((e.clientY - bounds.top) / (bounds.bottom - bounds.top)) * 2 + 1);
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects([...sceneObjects, ...sceneHelpers], true);

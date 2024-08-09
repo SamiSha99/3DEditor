@@ -13,6 +13,7 @@ type InputInterface<T> = {
 export const InputItem: React.FC<InputInterface<{ [key: string]: any }>> = (
     { label, object, variable, onChange }
 ) => {
+    
     if (!Object.keys(object).find(key => key == variable)) {
         console.error("Failed to get the key from variable! variable =>", variable, "\nObject:\n", object);
         return (<></>)

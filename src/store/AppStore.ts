@@ -25,7 +25,7 @@ export class AppStore {
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
     @observable environment: TYPE.Environments = TYPE.environments[0];
-    @observable background: [Color | null, boolean] = [new Color(0x001029), false];
+    @observable background: Color | null = null;
 
     @observable useRootSelection: boolean = false;
 
@@ -66,7 +66,7 @@ export class AppStore {
     @action.bound setEnvironment = (index: number) => { this.environment = TYPE.environments[index] }
     @action.bound setEnvironmentByName = (environment: TYPE.Environments) => { this.environment = environment }
 
-    @action.bound setbackground = (value: Color | null, enabled?: boolean) => {this.background = [value, enabled !== undefined ? enabled : this.background[1]]}
+    @action.bound setbackground = (value: Color | null, enabled?: boolean) => {this.background = enabled ? value : null} //[value, enabled !== undefined ? enabled : this.background[1]]}
 
     @action.bound setIsTransforming = (b: boolean) => { this.isTransforming = b }
 

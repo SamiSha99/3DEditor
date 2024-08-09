@@ -44,11 +44,11 @@ export const EulerItem: React.FC<EulerInterface> = (
 
     return (
         <Form.Item label={label ? label : "Vector3"} style={{ marginBottom: '0px', display: 'inline-block' }}>
-            <Tooltip title={`Roll: ${toFixedStripped(isDegree ? radToDeg(x) : x, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+            <Tooltip title={toFixedStripped(isDegree ? radToDeg(x) : x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: '33%' }}
+                    style={{ width: 'calc(100%/3)' }}
                     size="small"
                     defaultValue={isDegree ? radToDeg(defaultEuler.x) : defaultEuler.x}
                     value={isDegree ? radToDeg(x) : x}
@@ -71,11 +71,11 @@ export const EulerItem: React.FC<EulerInterface> = (
                         });
                     }} />
             </Tooltip>
-            <Tooltip title={`Yaw: ${toFixedStripped(isDegree ? radToDeg(y) : y, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+            <Tooltip title={toFixedStripped(isDegree ? radToDeg(y) : y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: '33%' }}
+                    style={{ width: 'calc(100%/3)' }}
                     size="small"
                     defaultValue={isDegree ? radToDeg(defaultEuler.y) : defaultEuler.y}
                     value={isDegree ? radToDeg(y) : y}
@@ -98,11 +98,11 @@ export const EulerItem: React.FC<EulerInterface> = (
                         });
                     }} />
             </Tooltip>
-            <Tooltip title={`Pitch: ${toFixedStripped(isDegree ? radToDeg(z) : z, 3)}`} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+            <Tooltip title={toFixedStripped(isDegree ? radToDeg(z) : z, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: '33%' }}
+                    style={{ width: 'calc(100%/3)' }}
                     size="small"
                     defaultValue={isDegree ? radToDeg(defaultEuler.z) : defaultEuler.z}
                     value={isDegree ? radToDeg(z) : z}
