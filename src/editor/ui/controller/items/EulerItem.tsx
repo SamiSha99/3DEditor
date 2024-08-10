@@ -77,7 +77,7 @@ export const EulerItem: React.FC<EulerInterface> = (
                     ref={yRef}
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: 'calc(100%/3 - 3px)' }}
+                    style={{ width: 'calc(100%/3)' }}
                     size="small"
                     value={isDegree ? radToDeg(y) : y}
                     precision={isDegree ? 2 : 3}
@@ -98,7 +98,7 @@ export const EulerItem: React.FC<EulerInterface> = (
                             isDegree: isDegree
                         });
                     }} />
-                <DraggableButtonController
+                {/* <DraggableButtonController
                     step={isDegree ? 60 : 1}
                     onStep={(v, rate) => {
                         console.log("WHY IS:", y)
@@ -113,7 +113,7 @@ export const EulerItem: React.FC<EulerInterface> = (
                         })
                         setY(isDegree ? degToRad(newvalue) : newvalue);
                     }}
-                />
+                /> */}
             </Tooltip>
             <Tooltip title={toFixedStripped(isDegree ? radToDeg(z) : z, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
