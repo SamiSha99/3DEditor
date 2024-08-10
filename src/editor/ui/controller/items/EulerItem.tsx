@@ -11,7 +11,7 @@ type EulerInterface = {
     label?: string,
     variable: THREE.Euler
     showOrder?: boolean
-    // If true, numbers are visualized in degree but the inner code is always radiant regardless.
+    // If true, numbers are visualized in degree but the inner code is always radian regardless.
     isDegree?: boolean
     labelEuler?: { x?: string, y?: string, z?: string, order?: string },
     onChange: (value: { x: number, y: number, z: number, order: THREE.EulerOrder, isDegree?: boolean }) => void
@@ -30,6 +30,7 @@ const OrderOptions: SelectProps['options'] = [
 export const EulerItem: React.FC<EulerInterface> = (
     { label, variable, showOrder, isDegree, labelEuler, onChange }
 ) => {
+    const yRef = useRef<HTMLInputElement>(null);
     const [x, setX] = useState(variable.x);
     const [y, setY] = useState(variable.y);
     const [z, setZ] = useState(variable.z);
@@ -43,7 +44,7 @@ export const EulerItem: React.FC<EulerInterface> = (
     });
 
     return (
-        <Form.Item label={label ? label : "Vector3"} style={{ marginBottom: '0px', display: 'inline-block' }}>
+        <Form.Item label={label ? label : "vector3"} style={{ marginBottom: '0px', display: 'inline-block' }}>
             <Tooltip title={toFixedStripped(isDegree ? radToDeg(x) : x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
 
                 <InputNumber
@@ -70,26 +71,13 @@ export const EulerItem: React.FC<EulerInterface> = (
                             isDegree: isDegree
                         });
                     }} />
-                {/* <DraggableButtonController
-                    onStep={(v) => {
-                        console.log(y, v * (isDegree ? 60 : 1))
-                        v = clamp(y + v * (isDegree ? 60 : 1), isDegree ? -180 : -Math.PI, isDegree ? 180 : Math.PI);
-                        setY(v);
-                        onChange && onChange({
-                            x: isDegree ? radToDeg(x) : x,
-                            y: v,
-                            z: isDegree ? radToDeg(z) : z,
-                            order: order,
-                            isDegree: isDegree
-                        })
-                    }}
-                /> */}
             </Tooltip>
             <Tooltip title={toFixedStripped(isDegree ? radToDeg(y) : y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    ref={yRef}
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: 'calc(100%/3)' }}
+                    style={{ width: 'calc(100%/3 - 3px)' }}
                     size="small"
                     value={isDegree ? radToDeg(y) : y}
                     precision={isDegree ? 2 : 3}
@@ -110,6 +98,22 @@ export const EulerItem: React.FC<EulerInterface> = (
                             isDegree: isDegree
                         });
                     }} />
+                <DraggableButtonController
+                    step={isDegree ? 60 : 1}
+                    onStep={(v, rate) => {
+                        console.log("WHY IS:", y)
+                        v = (isDegree ? radToDeg(y) : y) + v;
+                        const newvalue = clamp((isDegree ? radToDeg(y) : y) + v, isDegree ? -180 : -Math.PI, isDegree ? 180 : Math.PI);
+                        onChange && onChange({
+                            x: isDegree ? radToDeg(x) : x,
+                            y: newvalue,
+                            z: isDegree ? radToDeg(z) : z,
+                            order: order,
+                            isDegree: isDegree
+                        })
+                        setY(isDegree ? degToRad(newvalue) : newvalue);
+                    }}
+                />
             </Tooltip>
             <Tooltip title={toFixedStripped(isDegree ? radToDeg(z) : z, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber

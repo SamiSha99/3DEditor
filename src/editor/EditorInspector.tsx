@@ -237,6 +237,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                         isDegree
                         labelEuler={{ x: "R", y: "Y", z: "P" }}
                         onChange={(v) => {
+                            console.log(v);
                             if (v.isDegree)
                                 object.rotation.set(degToRad(v.x), degToRad(v.y), degToRad(v.z), v.order);
                             else
