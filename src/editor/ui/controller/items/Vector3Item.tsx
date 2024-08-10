@@ -5,6 +5,8 @@ import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 
+
+// to-do refactors to be the object that holds a variable we want to modify
 type Vector3Interface = {
     label?: string,
     variable: THREE.Vector3

@@ -210,27 +210,23 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                 object &&
                 <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
                     <InputItem
-                        key={object.uuid + "-name"}
                         object={object}
                         variable="name"
                         label="Name"
                         onChange={(value) => object.name = value}
                     />
                     <InputNumberItem
-                        key={object.uuid + "-renderOrder"}
                         object={object}
                         variable="renderOrder"
                         label="Render Order"
                         onChange={(value) => object.renderOrder = value}
                     />
                     <Vector3Item
-                        key={object.uuid + "-position"}
                         variable={object.position}
                         label="Position"
                         onChange={(v) => object.position.set(v.x, v.y, v.z)}
                     />
                     <EulerItem
-                        key={object.uuid + "-rotation"}
                         variable={object.rotation}
                         label="Rotation"
                         showOrder
@@ -245,7 +241,6 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                         }}
                     />
                     <Vector3Item
-                        key={object.uuid + "-scale"}
                         variable={object.scale}
                         label="Scale"
                         onChange={(v) => object.scale.set(v.x, v.y, v.z)}
