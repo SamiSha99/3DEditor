@@ -7,14 +7,13 @@ type DraggableButtonControllerInterface = {
     onStep?: (stepMultiplier: number, amount?: number) => void
 }
 
-let stepPosition = -1;
-let stepRate = 0;
-
 export const DraggableButtonController: React.FC<DraggableButtonControllerInterface> = (
     { onStep, step }
 ) => {
     const buttonRef = useRef<HTMLButtonElement>(null);
-
+    let stepPosition = -1;
+    let stepRate = 0;
+    
     const handleMouseMove = (ev: MouseEvent) => {
         if (!onStep) return;
         if (stepPosition == -1) return;
