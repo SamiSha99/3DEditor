@@ -1,10 +1,11 @@
-import { Form, Select, InputNumber, Tooltip, SelectProps } from "antd";
-import React, { useState } from "react";
+import { Form, Select, InputNumber, Tooltip, SelectProps, Slider, Button } from "antd";
+import React, { useCallback, useRef, useState } from "react";
 import { toFixedStripped } from "src/editor/utils/Utils";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
-import { degToRad, radToDeg } from "three/src/math/MathUtils";
+import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
 import { MOUSE_ENTER_DELAY } from "./SharedItemOptions";
+import { DraggableButtonController } from "../../antd/DraggableButtonController";
 
 type EulerInterface = {
     label?: string,
@@ -44,6 +45,7 @@ export const EulerItem: React.FC<EulerInterface> = (
     return (
         <Form.Item label={label ? label : "Vector3"} style={{ marginBottom: '0px', display: 'inline-block' }}>
             <Tooltip title={toFixedStripped(isDegree ? radToDeg(x) : x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
@@ -68,6 +70,20 @@ export const EulerItem: React.FC<EulerInterface> = (
                             isDegree: isDegree
                         });
                     }} />
+                {/* <DraggableButtonController
+                    onStep={(v) => {
+                        console.log(y, v * (isDegree ? 60 : 1))
+                        v = clamp(y + v * (isDegree ? 60 : 1), isDegree ? -180 : -Math.PI, isDegree ? 180 : Math.PI);
+                        setY(v);
+                        onChange && onChange({
+                            x: isDegree ? radToDeg(x) : x,
+                            y: v,
+                            z: isDegree ? radToDeg(z) : z,
+                            order: order,
+                            isDegree: isDegree
+                        })
+                    }}
+                /> */}
             </Tooltip>
             <Tooltip title={toFixedStripped(isDegree ? radToDeg(y) : y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
