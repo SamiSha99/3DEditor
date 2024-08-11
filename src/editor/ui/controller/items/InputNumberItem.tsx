@@ -1,36 +1,33 @@
 import { Form, InputNumber, Tooltip } from "antd";
 import React, { useState } from "react";
-import { MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
+import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 import { useDeltaTime } from "src/store/Hooks";
-import ItemAlert, { invalidKey } from "../ItemAlert";
+import { invalidVariable, ItemInvalidAlert } from "../ItemAlert";
 
 type InputNumberInterface<T> = {
     label?: string,
     object: T,
     variable: string,
     addonBefore?: string,
-    onChange: (value: number) => void
+    onChange?: (value: number) => void
 }
 
-export const InputNumberItem: React.FC<InputNumberInterface<{ [key: string]: any }>> = (
+export const ItemNumber: React.FC<InputNumberInterface<{ [key: string]: any }>> = (
     { label, object, variable, onChange }
 ) => {
-    if (!Object.keys(object).find(key => key == variable)) {
-        console.error("Failed to get the key from variable! variable =>", variable, "\nObject:\n", object);
-        return (<ItemAlert variable={variable} object={object} />)
-    }
+    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
 
     const [loopStop, loopStart, isActive] = useDeltaTime(() => {
-        if (v != undefined && object[variable] != undefined && v != object[variable]) setValue(object[variable]);
+        v != object[variable] && setValue(object[variable]);
     });
 
     return (
-        <Form.Item label={label ? label : "InputNumber"}>
+        <Form.Item label={label ? label : labelFromVariable(variable)}>
             <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
-                    onFocus={() => loopStop()}
-                    onBlur={() => loopStart()}
+                    onFocus={loopStop}
+                    onBlur={loopStart}
                     style={{ display: 'inline-block', width: '100%' }}
                     value={v}
                     precision={PRECISION_AMOUNT}
@@ -39,6 +36,7 @@ export const InputNumberItem: React.FC<InputNumberInterface<{ [key: string]: any
                     onChange={(v: number | null) => {
                         if (v == null) return;
                         setValue(v)
+                        object[variable] = v;
                         onChange && onChange(v);
                     }} />
             </Tooltip>
@@ -46,4 +44,4 @@ export const InputNumberItem: React.FC<InputNumberInterface<{ [key: string]: any
     )
 }
 
-export default InputNumberItem;
+export default ItemNumber;

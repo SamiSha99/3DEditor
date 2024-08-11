@@ -1,5 +1,5 @@
 import { Form, Tooltip, Input } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { labelFromVariable, MOUSE_ENTER_DELAY } from "./SharedItemOptions";
 import ItemInvalidAlert, { invalidVariable } from "../ItemAlert";
 import { useDeltaTime } from "src/store/Hooks";
@@ -18,9 +18,7 @@ export const ItemInput: React.FC<InputInterface<{ [key: string]: any }>> = (
     const [v, setValue] = useState<string>(object[variable]);
 
     const [loopStop, loopStart, isActive] = useDeltaTime(() => {
-        // if (v != object[variable]) {
-            // setValue(object[variable]);
-        // }
+        v != object[variable] && setValue(object[variable])
     });
 
     return (
@@ -34,7 +32,7 @@ export const ItemInput: React.FC<InputInterface<{ [key: string]: any }>> = (
                     onChange={(v) => {
                         if (v == null) return;
                         setValue(v.target.value);
-                        object[variable] = v;
+                        object[variable] = v.target.value;
                         onChange && onChange(v.target.value);
                     }} />
             </Tooltip>

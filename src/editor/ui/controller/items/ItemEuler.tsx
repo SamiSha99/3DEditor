@@ -1,11 +1,11 @@
-import { Form, Select, InputNumber, Tooltip, SelectProps, Slider, Button } from "antd";
-import React, { useCallback, useRef, useState } from "react";
+import { Form, Select, InputNumber, Tooltip, SelectProps } from "antd";
+import React, { useRef, useState } from "react";
 import { toFixedStripped } from "src/editor/utils/Utils";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
-import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
+import { degToRad, radToDeg } from "three/src/math/MathUtils";
 import { MOUSE_ENTER_DELAY } from "./SharedItemOptions";
-import { DraggableButtonController } from "../../antd/DraggableButtonController";
+import ItemInvalidAlert, { invalidVariable } from "../ItemAlert";
 
 type EulerInterface = {
     label?: string,
@@ -26,6 +26,125 @@ const OrderOptions: SelectProps['options'] = [
     { value: "YZX", label: "YZX" },
     { value: "XZY", label: "XZY" }
 ];
+
+type newEulerInterface<T> = {
+    variable: string,
+    object: T,
+    label?: string,
+    labelEuler?: { x?: string, y?: string, z?: string },
+    showOrder?: boolean
+    isDegree?: boolean
+}
+
+export const ItemEuler: React.FC<newEulerInterface<{ [key: string]: any }>> = (
+    { variable, object, label, labelEuler, showOrder, isDegree }
+) => {
+
+    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+
+    const [x, setX] = useState<number>(object[variable].x);
+    const [y, setY] = useState<number>(object[variable].y);
+    const [z, setZ] = useState<number>(object[variable].z);
+
+
+    const [loopStop, loopStart, _isActive] = useDeltaTime(() => {
+        x != object[variable].x && setX(object[variable].x)
+        y != object[variable].y && setY(object[variable].y)
+        z != object[variable].z && setZ(object[variable].z)
+    });
+
+    return (
+        <Form.Item label={label ? label : "vector3"} style={{ marginBottom: '0px', display: 'inline-block' }}>
+            <Tooltip title={toFixedStripped(isDegree ? radToDeg(x) : x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+
+                <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
+                    style={{ width: 'calc(100%/3)' }}
+                    size="small"
+                    value={isDegree ? radToDeg(x) : x}
+                    precision={isDegree ? 2 : 3}
+                    addonBefore={labelEuler?.x ? labelEuler.x : "X"}
+                    controls={false}
+                    min={isDegree ? -180 : -Math.PI}
+                    max={isDegree ? 180 : Math.PI}
+                    step={isDegree ? 60 : 1}
+                    changeOnWheel
+                    onChange={(v: number | null) => {
+                        if (v == null) return;
+                        v = isDegree ? degToRad(v) : v;
+                        setX(isDegree ? degToRad(v) : v);
+                        (object[variable] as THREE.Euler).x = v;
+                        // onChange && onChange(object[variable]);
+                    }} />
+            </Tooltip>
+            <Tooltip title={toFixedStripped(isDegree ? radToDeg(y) : y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+                <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
+                    style={{ width: 'calc(100%/3)' }}
+                    size="small"
+                    value={isDegree ? radToDeg(y) : y}
+                    precision={isDegree ? 2 : 3}
+                    addonBefore={labelEuler?.y ? labelEuler.y : "Y"}
+                    controls={false}
+                    min={isDegree ? -180 : -Math.PI}
+                    max={isDegree ? 180 : Math.PI}
+                    step={isDegree ? 60 : 1}
+                    changeOnWheel
+                    onChange={(v: number | null) => {
+                        if (v == null) return;
+                        v = isDegree ? degToRad(v) : v;
+                        setY(isDegree ? degToRad(v) : v);
+                        (object[variable] as THREE.Euler).y = v;
+                    }} />
+            </Tooltip>
+            <Tooltip title={toFixedStripped(isDegree ? radToDeg(z) : z, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+                <InputNumber
+                    onFocus={() => loopStop()}
+                    onBlur={() => loopStart()}
+                    style={{ width: 'calc(100%/3)' }}
+                    size="small"
+                    value={isDegree ? radToDeg(z) : z}
+                    precision={isDegree ? 2 : 3}
+                    addonBefore={labelEuler?.z ? labelEuler.z : "Z"}
+                    controls={false}
+                    min={isDegree ? -180 : -Math.PI}
+                    max={isDegree ? 180 : Math.PI}
+                    step={isDegree ? 60 : 1}
+                    changeOnWheel
+                    onChange={(v: number | null) => {
+                        if (v == null) return;
+                        v = isDegree ? degToRad(v) : v;
+                        setZ(isDegree ? degToRad(v) : v);
+                        (object[variable] as THREE.Euler).z = v;
+                    }} />
+            </Tooltip>
+            {showOrder &&
+                <Form.Item labelCol={{ span: 4 }} wrapperCol={{ span: 6 }} label={"Order"} style={{ marginBottom: '0px', alignItems: 'center', alignContent: 'center' }}>
+                    <Tooltip title={"Order: " + order} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+                        <Select
+                            style={{ width: "100%" }}
+                            size="small"
+                            value={order}
+                            options={OrderOptions}
+                            onChange={(value) => {
+                                setOrder(value);
+                                onChange && onChange({
+                                    x: isDegree ? radToDeg(x) : x,
+                                    y: isDegree ? radToDeg(y) : y,
+                                    z: isDegree ? radToDeg(z) : z,
+                                    order: value,
+                                    isDegree: isDegree
+                                });
+                            }}
+                        />
+                    </Tooltip>
+                </Form.Item>
+            }
+        </Form.Item>
+    )
+}
 
 export const EulerItem: React.FC<EulerInterface> = (
     { label, variable, showOrder, isDegree, labelEuler, onChange }

@@ -1,41 +1,37 @@
 import Icon from "@ant-design/icons";
-import { Button, Form } from "antd";
-import { useCallback, useRef } from "react";
+import { Button } from "antd";
+import { useRef } from "react";
+
+const DEFAULT_TRIGGER_SIZE = 10;
 
 type DraggableButtonControllerInterface = {
     step: number,
-    onStep?: (stepMultiplier: number, amount?: number) => void
+    triggerSize?: number
+    onStep?: (value: number, rate: number, direction: number) => void
 }
 
 export const DraggableButtonController: React.FC<DraggableButtonControllerInterface> = (
-    { onStep, step }
+    { step, triggerSize, onStep }
 ) => {
+    if (!triggerSize) triggerSize = DEFAULT_TRIGGER_SIZE
     const buttonRef = useRef<HTMLButtonElement>(null);
     let stepPosition = -1;
     let stepRate = 0;
-    
+
     const handleMouseMove = (ev: MouseEvent) => {
         if (!onStep) return;
         if (stepPosition == -1) return;
-        if (stepPosition - ev.clientX >= 10) {
+        if (stepPosition - ev.clientX >= triggerSize) {
             stepRate--;
-            onStep(stepRate * step, stepRate);
+            onStep(step, stepRate, -1);
             stepPosition = (ev.clientX - ev.clientX % 5)
         }
-        if (stepPosition - ev.clientX <= -10) {
+        if (stepPosition - ev.clientX <= -triggerSize) {
             stepRate++;
-            onStep(stepRate * step, stepRate);
+            onStep(step, stepRate, 1);
             stepPosition = (ev.clientX - ev.clientX % 5)
         }
     }
-
-    const handleMouseDown = useCallback(() => {
-        document.addEventListener("mousemove", handleMouseMove);
-        document.addEventListener("mouseup", () => {
-            document.removeEventListener("mousemove", handleMouseMove);
-            stepRate = 0;
-        }, { once: true });
-    }, []);
 
     return (
 
@@ -46,9 +42,13 @@ export const DraggableButtonController: React.FC<DraggableButtonControllerInterf
             style={{ left: 0, background: "grey", width: "3px", cursor: "ew-resize" }}
             block
             onMouseDown={(e) => {
+                document.addEventListener("mousemove", handleMouseMove);
+                document.addEventListener("mouseup", () => {
+                    document.removeEventListener("mousemove", handleMouseMove);
+                    stepRate = 0;
+                }, { once: true });
                 e.preventDefault();
                 stepPosition = (e.clientX);
-                handleMouseDown();
             }}
         />
 
