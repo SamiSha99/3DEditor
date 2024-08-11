@@ -37,7 +37,7 @@ export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
                     style={{ width: 'calc(50%/3 - 3px)' }}
                     size="small"
                     precision={3}
-                    controls={true}
+                    controls={false}
                     changeOnWheel
                     value={x}
                     addonBefore={labelVector?.x ? labelVector.x : "X"}
@@ -48,7 +48,6 @@ export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={1}
                     onStep={(value, _rate, direction) => {
                         const newVal = (object[variable] as THREE.Vector2).x + value * direction;
                         const res = (object[variable] as THREE.Vector2).setX(newVal).x;
@@ -64,7 +63,7 @@ export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
                     style={{ width: 'calc(50%/3 - 3px)' }}
                     size="small"
                     precision={PRECISION_AMOUNT}
-                    controls={true}
+                    controls={false}
                     changeOnWheel
                     value={y}
                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
@@ -75,7 +74,6 @@ export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={1}
                     onStep={(value, _rate, direction) => {
                         const newVal = (object[variable] as THREE.Vector2).y + value * direction;
                         const res = (object[variable] as THREE.Vector2).setY(newVal).y;
@@ -121,7 +119,7 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                     style={{ width: 'calc(100%/3 - 3px)' }}
                     size="small"
                     precision={3}
-                    controls={true}
+                    controls={false}
                     changeOnWheel
                     value={x}
                     addonBefore={labelVector?.x ? labelVector.x : "X"}
@@ -132,7 +130,6 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={1}
                     onStep={(value, _rate, direction) => {
                         const newVal = (object[variable] as THREE.Vector3).x + value * direction;
                         const res = (object[variable] as THREE.Vector3).setX(newVal).x;
@@ -148,7 +145,7 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                     style={{ width: 'calc(100%/3 - 3px)' }}
                     size="small"
                     precision={PRECISION_AMOUNT}
-                    controls={true}
+                    controls={false}
                     changeOnWheel
                     value={y}
                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
@@ -159,7 +156,6 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={1}
                     onStep={(value, _rate, direction) => {
                         const newVal = (object[variable] as THREE.Vector3).y + value * direction;
                         const res = (object[variable] as THREE.Vector3).setY(newVal).y;
@@ -175,7 +171,7 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                     style={{ width: 'calc(100%/3 - 3px)' }}
                     size="small"
                     precision={PRECISION_AMOUNT}
-                    controls={true}
+                    controls={false}
                     changeOnWheel
                     value={z}
                     addonBefore={labelVector?.z ? labelVector.z : "Z"}
@@ -186,7 +182,6 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={1}
                     onStep={(value, _rate, direction) => {
                         const newVal = (object[variable] as THREE.Vector3).z + value * direction;
                         const res = (object[variable] as THREE.Vector3).setZ(newVal).z;

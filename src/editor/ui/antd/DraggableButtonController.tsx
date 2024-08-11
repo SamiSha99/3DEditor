@@ -3,9 +3,10 @@ import { Button } from "antd";
 import { useRef } from "react";
 
 const DEFAULT_TRIGGER_SIZE = 10;
+const DEFAULT_STEP = 1;
 
 type DraggableButtonControllerInterface = {
-    step: number,
+    step?: number,
     triggerSize?: number
     onStep?: (value: number, rate: number, direction: number) => void
 }
@@ -14,6 +15,7 @@ export const DraggableButtonController: React.FC<DraggableButtonControllerInterf
     { step, triggerSize, onStep }
 ) => {
     if (!triggerSize) triggerSize = DEFAULT_TRIGGER_SIZE
+    if (!step) step = DEFAULT_STEP;
     const buttonRef = useRef<HTMLButtonElement>(null);
     let stepPosition = -1;
     let stepRate = 0;
@@ -24,12 +26,12 @@ export const DraggableButtonController: React.FC<DraggableButtonControllerInterf
         if (stepPosition - ev.clientX >= triggerSize) {
             stepRate--;
             onStep(step, stepRate, -1);
-            stepPosition = (ev.clientX - ev.clientX % 5)
+            stepPosition = (ev.clientX - ev.clientX % triggerSize)
         }
         if (stepPosition - ev.clientX <= -triggerSize) {
             stepRate++;
             onStep(step, stepRate, 1);
-            stepPosition = (ev.clientX - ev.clientX % 5)
+            stepPosition = (ev.clientX - ev.clientX % triggerSize)
         }
     }
 
