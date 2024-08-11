@@ -211,28 +211,8 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                     <ItemInput object={object} variable="name" />
                     <ItemNumber object={object} variable="renderOrder" />
                     <ItemVector3 object={object} variable="position" />
-                    <ItemEuler object={object} variable="rotation" />
+                    <ItemEuler object={object} variable="rotation" isDegree />
                     <ItemVector3 object={object} variable="scale" />
-                    {/*
-                    <EulerItem
-                        variable={object.rotation}
-                        label="Rotation"
-                        showOrder
-                        isDegree
-                        labelEuler={{ x: "R", y: "Y", z: "P" }}
-                        onChange={(v) => {
-                            console.log(v);
-                            if (v.isDegree)
-                                object.rotation.set(degToRad(v.x), degToRad(v.y), degToRad(v.z), v.order);
-                            else
-                                object.rotation.set(v.x, v.y, v.z, v.order);
-                        }}
-                    />
-                    <Vector3Item
-                        variable={object.scale}
-                        label="Scale"
-                        onChange={(v) => object.scale.set(v.x, v.y, v.z)}
-                    /> */}
                 </Form>
             }
 

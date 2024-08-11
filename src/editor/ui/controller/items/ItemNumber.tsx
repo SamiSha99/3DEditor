@@ -8,7 +8,6 @@ type InputNumberInterface<T> = {
     label?: string,
     object: T,
     variable: string,
-    addonBefore?: string,
     onChange?: (value: number) => void
 }
 
