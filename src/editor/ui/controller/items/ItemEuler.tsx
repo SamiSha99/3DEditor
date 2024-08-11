@@ -1,22 +1,12 @@
 import { Form, Select, InputNumber, Tooltip, SelectProps } from "antd";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { toFixedStripped } from "src/editor/utils/Utils";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
-import { labelFromVariable, MOUSE_ENTER_DELAY } from "./SharedItemOptions";
+import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 import ItemInvalidAlert, { invalidVariable } from "../ItemAlert";
 import { DraggableButtonController } from "../../antd/DraggableButtonController";
-
-type EulerInterface = {
-    label?: string,
-    variable: THREE.Euler
-    showOrder?: boolean
-    // If true, numbers are visualized in degree but the inner code is always radian regardless.
-    isDegree?: boolean
-    labelEuler?: { x?: string, y?: string, z?: string, order?: string },
-    onChange: (value: { x: number, y: number, z: number, order: THREE.EulerOrder, isDegree?: boolean }) => void
-}
 
 // to-do: labels MAYBE as the labels specifiers?
 const OrderOptions: SelectProps['options'] = [
@@ -28,7 +18,7 @@ const OrderOptions: SelectProps['options'] = [
     { value: "XZY", label: "XZY" }
 ];
 
-type newEulerInterface<T> = {
+type EulerInterface<T> = {
     variable: string,
     object: T,
     label?: string,
@@ -38,7 +28,7 @@ type newEulerInterface<T> = {
     onChange?: (value: THREE.Euler) => void
 }
 
-export const ItemEuler: React.FC<newEulerInterface<{ [key: string]: any }>> = (
+export const ItemEuler: React.FC<EulerInterface<{ [key: string]: any }>> = (
     { variable, object, label, labelEuler, showOrder, isDegree, onChange }
 ) => {
 
@@ -64,12 +54,12 @@ export const ItemEuler: React.FC<newEulerInterface<{ [key: string]: any }>> = (
                     style={{ width: 'calc(100%/3 - 3px)' }}
                     size="small"
                     value={isDegree ? radToDeg(x) : x}
-                    precision={isDegree ? 2 : 3}
+                    precision={PRECISION_AMOUNT}
                     addonBefore={labelEuler?.x ? labelEuler.x : "X"}
                     controls={false}
                     min={isDegree ? -180 : -Math.PI}
                     max={isDegree ? 180 : Math.PI}
-                    step={isDegree ? 60 : 1}
+                    step={isDegree ? 30 : Math.PI * 0.1667}
                     changeOnWheel
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -79,7 +69,7 @@ export const ItemEuler: React.FC<newEulerInterface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={isDegree ? 60 : 1}
+                    step={isDegree ? 30 : Math.PI * 0.1667}
                     onStep={(value, _rate, direction) => {
                         let clamped = 0;
                         if (isDegree)
@@ -99,12 +89,12 @@ export const ItemEuler: React.FC<newEulerInterface<{ [key: string]: any }>> = (
                     style={{ width: 'calc(100%/3 - 3px)' }}
                     size="small"
                     value={isDegree ? radToDeg(y) : y}
-                    precision={isDegree ? 2 : 3}
+                    precision={PRECISION_AMOUNT}
                     addonBefore={labelEuler?.y ? labelEuler.y : "Y"}
                     controls={false}
                     min={isDegree ? -180 : -Math.PI}
                     max={isDegree ? 180 : Math.PI}
-                    step={isDegree ? 60 : 1}
+                    step={isDegree ? 30 : Math.PI * 0.1667}
                     changeOnWheel
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -114,7 +104,7 @@ export const ItemEuler: React.FC<newEulerInterface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={isDegree ? 60 : 1}
+                    step={isDegree ? 30 : Math.PI * 0.1667}
                     onStep={(value, _rate, direction) => {
                         let clamped = 0;
                         if (isDegree)
@@ -134,12 +124,12 @@ export const ItemEuler: React.FC<newEulerInterface<{ [key: string]: any }>> = (
                     style={{ width: 'calc(100%/3 - 3px)' }}
                     size="small"
                     value={isDegree ? radToDeg(z) : z}
-                    precision={isDegree ? 2 : 3}
+                    precision={PRECISION_AMOUNT}
                     addonBefore={labelEuler?.z ? labelEuler.z : "Z"}
                     controls={false}
                     min={isDegree ? -180 : -Math.PI}
                     max={isDegree ? 180 : Math.PI}
-                    step={isDegree ? 60 : 1}
+                    step={isDegree ? 30 : Math.PI * 0.1667}
                     changeOnWheel
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -149,7 +139,7 @@ export const ItemEuler: React.FC<newEulerInterface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={isDegree ? 60 : 1}
+                    step={isDegree ? 30 : Math.PI * 0.1667}
                     onStep={(value, _rate, direction) => {
                         let clamped = 0;
                         if (isDegree)
