@@ -2,6 +2,7 @@ import { Form, InputNumber, Tooltip } from "antd";
 import React, { useState } from "react";
 import { MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 import { useDeltaTime } from "src/store/Hooks";
+import ItemAlert, { invalidKey } from "../ItemAlert";
 
 type InputNumberInterface<T> = {
     label?: string,
@@ -16,7 +17,7 @@ export const InputNumberItem: React.FC<InputNumberInterface<{ [key: string]: any
 ) => {
     if (!Object.keys(object).find(key => key == variable)) {
         console.error("Failed to get the key from variable! variable =>", variable, "\nObject:\n", object);
-        return (<></>)
+        return (<ItemAlert variable={variable} object={object} />)
     }
     const [v, setValue] = useState<number>(object[variable]);
 

@@ -4,9 +4,8 @@ import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three"
-import { ColorPickerItem, EulerItem, InputItem, InputNumberItem, SelectItem, Vector3Item } from "./ui/controller/ControllerItems";
+import { ColorPickerItem, ItemNumber, ItemInput, ItemVector3, ItemEuler, SelectItem } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
-import { degToRad } from "three/src/math/MathUtils";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -209,23 +208,12 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
             {
                 object &&
                 <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
-                    <InputItem
-                        object={object}
-                        variable="name"
-                        label="Name"
-                        onChange={(value) => object.name = value}
-                    />
-                    <InputNumberItem
-                        object={object}
-                        variable="renderOrder"
-                        label="Render Order"
-                        onChange={(value) => object.renderOrder = value}
-                    />
-                    <Vector3Item
-                        variable={object.position}
-                        label="Position"
-                        onChange={(v) => object.position.set(v.x, v.y, v.z)}
-                    />
+                    <ItemInput object={object} variable="name" />
+                    <ItemNumber object={object} variable="renderOrder" />
+                    <ItemVector3 object={object} variable="position" />
+                    <ItemEuler object={object} variable="rotation" />
+                    <ItemVector3 object={object} variable="scale" />
+                    {/*
                     <EulerItem
                         variable={object.rotation}
                         label="Rotation"
@@ -244,7 +232,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                         variable={object.scale}
                         label="Scale"
                         onChange={(v) => object.scale.set(v.x, v.y, v.z)}
-                    />
+                    /> */}
                 </Form>
             }
 

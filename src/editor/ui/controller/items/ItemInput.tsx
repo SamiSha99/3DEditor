@@ -1,0 +1,45 @@
+import { Form, Tooltip, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import { labelFromVariable, MOUSE_ENTER_DELAY } from "./SharedItemOptions";
+import ItemInvalidAlert, { invalidVariable } from "../ItemAlert";
+import { useDeltaTime } from "src/store/Hooks";
+
+type InputInterface<T> = {
+    object: T,
+    variable: string,
+    label?: string,
+    onChange?: (value: string) => void
+}
+
+export const ItemInput: React.FC<InputInterface<{ [key: string]: any }>> = (
+    { label, object, variable, onChange }
+) => {
+    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+    const [v, setValue] = useState<string>(object[variable]);
+
+    const [loopStop, loopStart, isActive] = useDeltaTime(() => {
+        // if (v != object[variable]) {
+            // setValue(object[variable]);
+        // }
+    });
+
+    return (
+        <Form.Item label={label ? label : labelFromVariable(variable)}>
+            <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+                <Input
+                    onFocus={loopStop}
+                    onBlur={loopStart}
+                    style={{ display: 'inline-block', width: '100%' }}
+                    value={v}
+                    onChange={(v) => {
+                        if (v == null) return;
+                        setValue(v.target.value);
+                        object[variable] = v;
+                        onChange && onChange(v.target.value);
+                    }} />
+            </Tooltip>
+        </Form.Item>
+    )
+}
+
+export default ItemInput;
