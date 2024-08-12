@@ -9,6 +9,7 @@ export const ControlsBar = observer(() => {
     return (
         <ControlsBarStyle>
             <TranslationButton />
+            <GeometryButton />
             <Divider type="vertical" />
             <TranslationSpaceButton />
             <Divider type="vertical" />
@@ -40,6 +41,19 @@ const TranslationButton = observer(() => {
                 <Radio.Button value={"rotate"} children={<SyncOutlined />} />
                 <Radio.Button value={"scale"} children={<ExpandAltOutlined />} />
             </Radio.Group>
+        </Tooltip>
+    )
+})
+
+const GeometryButton = observer(() => {
+    const { isGeometryMode, setIsGeometryMode } = useStores();
+    useHotkeys("g", () => setIsGeometryMode());
+    return (
+        <Tooltip title="Transform will affect the geometry of this object." placement="bottom">
+            <Button onClick={() => setIsGeometryMode()}>
+                <Checkbox checked={isGeometryMode} onChange={(e) => setIsGeometryMode()} style={{ paddingRight: "5px" }} />
+                {"Geometry"}
+            </Button>
         </Tooltip>
     )
 })

@@ -203,6 +203,12 @@ export const SceneConfigs = observer(() => {
 
 export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
 
+    const translate = () => {
+        (object as THREE.Mesh).geometry.translate(0, 0.1, 0);
+        // setTimeout(translate, (1000));
+    }
+    // setTimeout(translate, (1000));
+
     return (
         <div style={{ margin: "auto", width: "100%", alignContent: "top" }}>
             {

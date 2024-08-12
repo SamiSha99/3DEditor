@@ -3,7 +3,7 @@ import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-thre
 import { useStores } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { Box, CameraControls, Environment, Grid, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { Box, CameraControls, Environment, Grid, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useRef, useState } from "react";
 import React from "react";
 
@@ -36,8 +36,8 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
     const { scene, camera, raycaster } = useThree();
 
     // the passed ref is null at load time! 
-    if(!canvas) canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
-    
+    if (!canvas) canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+
     scene.background = background;
 
     const selectObject = (e: MouseEvent) => {
@@ -95,9 +95,11 @@ const EditorHelpers = () => {
 }
 
 const EditorControls = observer(() => {
-    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming } = useStores();
-    const { camera } = useThree();
+    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming, isGeometryMode } = useStores();
+    const { camera, scene } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
+    const originDraggerRef = useRef<THREE.Group>(null);
+    const originRef = useRef<THREE.Group>(null);
     // const o = scene.getObjectById(controlsTarget as number);
 
     const onStart = () => {
@@ -113,19 +115,54 @@ const EditorControls = observer(() => {
         !cameraStartDrag && isTransforming && setIsTransforming(false);
     }
 
+    // reset references position if we change selected target
+    originDraggerRef.current && originDraggerRef.current.position.set(0, 0, 0);
+    originRef.current && controlsObject3D && originRef.current.position.copy(controlsObject3D.position)
+
     return (
         <>
             <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} />
             {
+                controlsObject3D && isGeometryMode &&
+                <group visible={isGeometryMode} name="TRANSFORM_ORIGIN_GROUP" position={controlsObject3D?.position} renderOrder={-50}>
+                    <group ref={originDraggerRef} name="TRANSFORM_ORIGIN_DRAGGER">
+                        <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
+                        <Line color={"red"} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
+                        <Line color={0x93E459} points={[[0, 0, 0], [0, 10, 0]]} lineWidth={5} />
+                        <Line color={"blue"} points={[[0, 0, 0], [0, 0, 10]]} lineWidth={5} />
+                    </group>
+                </group>
+            }
+            {
                 controlsObject3D &&
                 <TransformControlsDrei
                     name='TRANSFORM_HELPER'
-                    object={controlsObject3D}
+                    object={isGeometryMode ? originDraggerRef : controlsObject3D}
                     mode={controlsMode}
                     space={controlsSpace}
                     camera={camera}
-                    onMouseUp={() => { isTransforming && setIsTransforming(false) }}
-                    onMouseDown={() => { !isTransforming && setIsTransforming(true) }}
+                    onMouseUp={() => {
+                        if (!isTransforming) return;
+                        setIsTransforming(false);
+                        if (isGeometryMode) {
+                            if (!originDraggerRef.current) {
+                                return;
+                            }
+                            if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
+                                const o = controlsObject3D;
+                                const offset = originDraggerRef.current.position.clone();
+                                originDraggerRef.current.position.set(0, 0, 0);
+                                o.geometry.translate(-offset.x, -offset.y, -offset.z);
+                                o.position.add(offset);
+                                const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
+                                origin?.position.copy(o.position);
+                            }
+                        }
+                    }}
+                    onMouseDown={(e) => {
+                        if (isTransforming) return;
+                        setIsTransforming(true);
+                    }}
                 />
             }
         </>

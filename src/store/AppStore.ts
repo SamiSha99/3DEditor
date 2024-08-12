@@ -30,6 +30,7 @@ export class AppStore {
 
     @observable useRootSelection: boolean = false;
 
+    @observable isGeometryMode: boolean = false;
     @observable isTransforming: boolean = false;
 
     constructor() {
@@ -71,7 +72,8 @@ export class AppStore {
 
     @action.bound setbackground = (value: Color | null, enabled?: boolean) => { this.background = enabled ? value : null } //[value, enabled !== undefined ? enabled : this.background[1]]}
 
-    @action.bound setIsTransforming = (b: boolean) => { this.isTransforming = b }
+    @action.bound setIsTransforming = (b?: boolean) => { this.isTransforming = b != undefined ? b : !this.isTransforming }
+    @action.bound setIsGeometryMode = (b?: boolean) => { this.isGeometryMode = b != undefined ? b : !this.isGeometryMode }
 
     // this is NOT ok!!!
     @action.bound badForceUpdateInspector = () => { this.onUpdateInspector = new Date().getUTCMilliseconds(); }
