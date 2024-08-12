@@ -4,8 +4,8 @@ import { toFixedStripped } from "src/editor/utils/Utils";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
-import ItemInvalidAlert, { invalidVariable } from "../ItemAlert";
-import { DraggableButtonController } from "../../antd/DraggableButtonController";
+import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
+import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
 type Vector2Interface<T> = {
     label?: string,

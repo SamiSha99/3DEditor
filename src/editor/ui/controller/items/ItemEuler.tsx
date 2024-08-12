@@ -5,8 +5,8 @@ import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
 import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
-import ItemInvalidAlert, { invalidVariable } from "../ItemAlert";
-import { DraggableButtonController } from "../../antd/DraggableButtonController";
+import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
+import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
 // to-do: labels MAYBE as the labels specifiers?
 const OrderOptions: SelectProps['options'] = [

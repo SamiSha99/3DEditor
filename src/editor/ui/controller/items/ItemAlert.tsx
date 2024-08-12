@@ -2,12 +2,12 @@
 import { Alert, Form } from "antd";
 import React from "react";
 
-type AlertInterface<T> = {
+type InvalidAlertInterface<T> = {
     variable: string,
     object?: T
 }
 
-export const ItemInvalidAlert: React.FC<AlertInterface<{ [key: string]: any }>> = (
+export const ItemInvalidAlert: React.FC<InvalidAlertInterface<{ [key: string]: any }>> = (
     { variable, object }
 ) => {
 
@@ -22,5 +22,3 @@ export const ItemInvalidAlert: React.FC<AlertInterface<{ [key: string]: any }>> 
 export const invalidVariable = (object: { [key: string]: any; }, variable: string) => {
     return !Object.keys(object).find(key => key == variable);
 }
-
-export default ItemInvalidAlert;

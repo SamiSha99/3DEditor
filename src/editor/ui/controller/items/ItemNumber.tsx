@@ -2,7 +2,7 @@ import { Form, InputNumber, Tooltip } from "antd";
 import React, { useState } from "react";
 import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 import { useDeltaTime } from "src/store/Hooks";
-import { invalidVariable, ItemInvalidAlert } from "../ItemAlert";
+import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 
 type InputNumberInterface<T> = {
     label?: string,

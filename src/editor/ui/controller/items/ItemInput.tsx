@@ -1,7 +1,7 @@
-import { Form, Tooltip, Input } from "antd";
+import { Form, Tooltip, Input, Tabs } from "antd";
 import React, { useState } from "react";
 import { labelFromVariable, MOUSE_ENTER_DELAY } from "./SharedItemOptions";
-import ItemInvalidAlert, { invalidVariable } from "../ItemAlert";
+import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { useDeltaTime } from "src/store/Hooks";
 
 type InputInterface<T> = {
@@ -17,7 +17,7 @@ export const ItemInput: React.FC<InputInterface<{ [key: string]: any }>> = (
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<string>(object[variable]);
 
-    const [loopStop, loopStart, isActive] = useDeltaTime(() => {
+    const [loopStop, loopStart, _] = useDeltaTime(() => {
         v != object[variable] && setValue(object[variable])
     });
 
