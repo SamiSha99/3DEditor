@@ -100,7 +100,6 @@ const EditorControls = observer(() => {
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const originDraggerRef = useRef<THREE.Group>(null);
     const originRef = useRef<THREE.Group>(null);
-    // const o = scene.getObjectById(controlsTarget as number);
 
     const onStart = () => {
         !cameraStartDrag && setCameraStartDrag(true);
@@ -127,9 +126,12 @@ const EditorControls = observer(() => {
                 <group visible={isGeometryMode} name="TRANSFORM_ORIGIN_GROUP" position={controlsObject3D?.position} renderOrder={-50}>
                     <group ref={originDraggerRef} name="TRANSFORM_ORIGIN_DRAGGER">
                         <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
-                        <Line color={"red"} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
+                        <Line color={0xFA8072} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
                         <Line color={0x93E459} points={[[0, 0, 0], [0, 10, 0]]} lineWidth={5} />
-                        <Line color={"blue"} points={[[0, 0, 0], [0, 0, 10]]} lineWidth={5} />
+                        <Line color={0x0080FF} points={[[0, 0, 0], [0, 0, 10]]} lineWidth={5} />
+                        <Line dashed dashScale={10} color={0xFA8072} points={[[0, 0, 0], [-10, 0, 0]]} lineWidth={5} />
+                        <Line dashed dashScale={10} color={0x93E459} points={[[0, 0, 0], [0, -10, 0]]} lineWidth={5} />
+                        <Line dashed dashScale={10} color={0x0080FF} points={[[0, 0, 0], [0, 0, -10]]} lineWidth={5} />
                     </group>
                 </group>
             }

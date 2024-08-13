@@ -4,24 +4,28 @@ import { useStores } from "@orb_App"
 import { observer } from "mobx-react-lite"
 import { Button, Checkbox, Divider, Radio, RadioChangeEvent, Tooltip } from "antd";
 import { useHotkeys } from 'react-hotkeys-hook';
+import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 export const ControlsBar = observer(() => {
     return (
-        <ControlsBarStyle>
-            <TranslationButton />
-            <GeometryButton />
-            <Divider type="vertical" />
-            <TranslationSpaceButton />
-            <Divider type="vertical" />
-            <RootSelectionButton />
-        </ControlsBarStyle>
+        <>
+            <ControlsBarStyle>
+                <TranslationButton />
+                <GeometryButton />
+                <Divider type="vertical" />
+                <TranslationSpaceButton />
+                <Divider type="vertical" />
+                <RootSelectionButton />
+            </ControlsBarStyle>
+        </>
     )
 })
 
 const TranslationButton = observer(() => {
-    const { controlsMode, setControlsModeByName } = useStores();
+    const { controlsMode, setControlsModeByName, isGeometryMode } = useStores();
 
     useHotkeys("space", () => {
+        if (isGeometryMode) return;
         const newControlsMode = (() => {
             switch (controlsMode) {
                 case "translate": return "rotate";
@@ -36,22 +40,28 @@ const TranslationButton = observer(() => {
 
     return (
         <Tooltip title="Change between Translation, Rotation and Scale" placement="bottom">
-            <Radio.Group onChange={onChange} value={controlsMode}>
+            <Radio.Group onChange={onChange} value={isGeometryMode ? "translate" : controlsMode}>
                 <Radio.Button value={"translate"} children={<DragOutlined />} />
-                <Radio.Button value={"rotate"} children={<SyncOutlined />} />
-                <Radio.Button value={"scale"} children={<ExpandAltOutlined />} />
+                <Radio.Button disabled={isGeometryMode} value={"rotate"} children={<SyncOutlined />} />
+                <Radio.Button disabled={isGeometryMode} value={"scale"} children={<ExpandAltOutlined />} />
             </Radio.Group>
         </Tooltip>
     )
 })
 
 const GeometryButton = observer(() => {
-    const { isGeometryMode, setIsGeometryMode } = useStores();
-    useHotkeys("g", () => setIsGeometryMode());
+    const { isGeometryMode, setIsGeometryMode, setControlsModeByName } = useStores();
+
+    const onClick = (e?: CheckboxChangeEvent) => {
+        setIsGeometryMode(e?.target.checked);
+        if (!isGeometryMode) setControlsModeByName("translate");
+    };
+    useHotkeys("g", () => onClick());
+
     return (
         <Tooltip title="Transform will affect the geometry of this object." placement="bottom">
-            <Button onClick={() => setIsGeometryMode()}>
-                <Checkbox checked={isGeometryMode} onChange={(e) => setIsGeometryMode()} style={{ paddingRight: "5px" }} />
+            <Button onClick={() => onClick()}>
+                <Checkbox checked={isGeometryMode} onChange={onClick} style={{ paddingRight: "5px" }} />
                 {"Geometry"}
             </Button>
         </Tooltip>
