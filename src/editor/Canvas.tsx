@@ -4,13 +4,19 @@ import { useStores } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
 import { Box, CameraControls, Environment, Grid, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from "react";
 
 
 const Canvas = observer(() => {
     const { scene } = useStores()
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [loaded, setLoaded] = useState<boolean>();
+    
+    useEffect(() => {
+        console.log(canvasRef.current);
+        setLoaded(canvasRef.current != undefined);
+    }, [canvasRef]);
 
     return (
         <ReactThreeFiberCanvas
@@ -20,8 +26,16 @@ const Canvas = observer(() => {
             style={{ height: "96.5%", flex: "80%" }}
             camera={{ position: [2.5, 1.5, 2.5] }}
         >
-            <Scene canvas={canvasRef.current!} />
-            <EditorHelpers />
+            {
+                loaded &&
+                canvasRef.current &&
+                <>
+                    <Scene canvas={canvasRef.current} />
+                    <EditorHelpers />
+                </>
+            }
+
+
         </ReactThreeFiberCanvas>
     )
 })
@@ -31,6 +45,7 @@ interface CanvasInfo {
 }
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
+    console.log("canvas in scene comp", canvas)
     const { environment, sceneObjects, sceneHelpers, controlsObject3D, isTransforming, background,
         removeObject, setControlsTarget } = useStores();
     const { scene, camera, raycaster } = useThree();
@@ -95,7 +110,7 @@ const EditorHelpers = () => {
 }
 
 const EditorControls = observer(() => {
-    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming, isGeometryMode } = useStores();
+    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming, isOriginPointMode } = useStores();
     const { camera, scene } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const originDraggerRef = useRef<THREE.Group>(null);
@@ -122,8 +137,8 @@ const EditorControls = observer(() => {
         <>
             <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} />
             {
-                controlsObject3D && isGeometryMode &&
-                <group visible={isGeometryMode} name="TRANSFORM_ORIGIN_GROUP" position={controlsObject3D?.position} renderOrder={-50}>
+                controlsObject3D && isOriginPointMode &&
+                <group visible={isOriginPointMode} name="TRANSFORM_ORIGIN_GROUP" position={controlsObject3D?.position} renderOrder={-50}>
                     <group ref={originDraggerRef} name="TRANSFORM_ORIGIN_DRAGGER">
                         <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
                         <Line color={0xFA8072} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
@@ -139,14 +154,14 @@ const EditorControls = observer(() => {
                 controlsObject3D &&
                 <TransformControlsDrei
                     name='TRANSFORM_HELPER'
-                    object={isGeometryMode ? originDraggerRef : controlsObject3D}
+                    object={isOriginPointMode ? originDraggerRef : controlsObject3D}
                     mode={controlsMode}
                     space={controlsSpace}
                     camera={camera}
                     onMouseUp={() => {
                         if (!isTransforming) return;
                         setIsTransforming(false);
-                        if (isGeometryMode) {
+                        if (isOriginPointMode) {
                             if (!originDraggerRef.current) {
                                 return;
                             }

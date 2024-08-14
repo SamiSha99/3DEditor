@@ -10,7 +10,6 @@ export const EditorUI = observer(() => {
         <div style={{ zIndex: 1 }}>
             <MenuBar />
             <ControlsBar />
-            <ActivePanels />
         </div>
     )
 })

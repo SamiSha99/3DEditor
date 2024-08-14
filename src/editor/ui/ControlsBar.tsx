@@ -22,10 +22,10 @@ export const ControlsBar = observer(() => {
 })
 
 const TranslationButton = observer(() => {
-    const { controlsMode, setControlsModeByName, isGeometryMode } = useStores();
+    const { controlsMode, setControlsModeByName, isOriginPointMode } = useStores();
 
     useHotkeys("space", () => {
-        if (isGeometryMode) return;
+        if (isOriginPointMode) return;
         const newControlsMode = (() => {
             switch (controlsMode) {
                 case "translate": return "rotate";
@@ -40,29 +40,29 @@ const TranslationButton = observer(() => {
 
     return (
         <Tooltip title="Change between Translation, Rotation and Scale" placement="bottom">
-            <Radio.Group onChange={onChange} value={isGeometryMode ? "translate" : controlsMode}>
+            <Radio.Group onChange={onChange} value={isOriginPointMode ? "translate" : controlsMode}>
                 <Radio.Button value={"translate"} children={<DragOutlined />} />
-                <Radio.Button disabled={isGeometryMode} value={"rotate"} children={<SyncOutlined />} />
-                <Radio.Button disabled={isGeometryMode} value={"scale"} children={<ExpandAltOutlined />} />
+                <Radio.Button disabled={isOriginPointMode} value={"rotate"} children={<SyncOutlined />} />
+                <Radio.Button disabled={isOriginPointMode} value={"scale"} children={<ExpandAltOutlined />} />
             </Radio.Group>
         </Tooltip>
     )
 })
 
 const GeometryButton = observer(() => {
-    const { isGeometryMode, setIsGeometryMode, setControlsModeByName } = useStores();
+    const { isOriginPointMode, setIsOriginPointMode, setControlsModeByName } = useStores();
 
     const onClick = (e?: CheckboxChangeEvent) => {
-        setIsGeometryMode(e?.target.checked);
-        if (!isGeometryMode) setControlsModeByName("translate");
+        setIsOriginPointMode(e?.target.checked);
+        if (!isOriginPointMode) setControlsModeByName("translate");
     };
     useHotkeys("g", () => onClick());
 
     return (
         <Tooltip title="Transform will affect the geometry of this object." placement="bottom">
             <Button onClick={() => onClick()}>
-                <Checkbox checked={isGeometryMode} onChange={onClick} style={{ paddingRight: "5px" }} />
-                {"Geometry"}
+                <Checkbox checked={isOriginPointMode} onChange={onClick} style={{ paddingRight: "5px" }} />
+                {"Origin Point"}
             </Button>
         </Tooltip>
     )
