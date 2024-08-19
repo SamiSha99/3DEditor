@@ -11,7 +11,6 @@ export const ControlsBar = observer(() => {
         <>
             <ControlsBarStyle>
                 <TranslationButton />
-                <GeometryButton />
                 <Divider type="vertical" />
                 <TranslationSpaceButton />
                 <Divider type="vertical" />
@@ -45,25 +44,6 @@ const TranslationButton = observer(() => {
                 <Radio.Button disabled={isOriginPointMode} value={"rotate"} children={<SyncOutlined />} />
                 <Radio.Button disabled={isOriginPointMode} value={"scale"} children={<ExpandAltOutlined />} />
             </Radio.Group>
-        </Tooltip>
-    )
-})
-
-const GeometryButton = observer(() => {
-    const { isOriginPointMode, setIsOriginPointMode, setControlsModeByName } = useStores();
-
-    const onClick = (e?: CheckboxChangeEvent) => {
-        setIsOriginPointMode(e?.target.checked);
-        if (!isOriginPointMode) setControlsModeByName("translate");
-    };
-    useHotkeys("g", () => onClick());
-
-    return (
-        <Tooltip title="Transform will affect the geometry of this object." placement="bottom">
-            <Button onClick={() => onClick()}>
-                <Checkbox checked={isOriginPointMode} onChange={onClick} style={{ paddingRight: "5px" }} />
-                {"Origin Point"}
-            </Button>
         </Tooltip>
     )
 })

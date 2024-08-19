@@ -16,3 +16,9 @@ export const ActivePanels = observer(() => {
     )
 })
 
+export const DraggablePanel: React.FC<any> = () => {
+    return (
+        <>
+        </>
+    )
+}

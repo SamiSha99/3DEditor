@@ -62,8 +62,10 @@ export const PanelsThemeConfig: ThemeConfig = {
             margin: 0,
         },
         Button: {
-            defaultBg: "#4d4d4d",
-            dangerColor: "red"
+            defaultBg: "#3d3d3d"
+        },
+        Card: {
+            headerFontSize: "1vw"
         }
     },
     token: {

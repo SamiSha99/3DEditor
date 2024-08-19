@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import * as THREE from "three";
 import Draggable from "react-draggable";
 import { useState } from "react";
+import { CloseOutlined } from "@ant-design/icons";
 
 
 export const OriginPointPanel = observer(() => {
@@ -65,9 +66,9 @@ export const OriginPointPanel = observer(() => {
         controlsObject3D &&
         <div style={{ position: "absolute" }}>
             <Draggable bounds={bounds} handle=".handle" defaultPosition={{ x: (bounds.right - bounds.left) * 0.1, y: (bounds.bottom - bounds.top) * 0.7 }}>
-                <Card title={<div style={{height: "100%", width: "100%"}} className="handle">Origin Point Tools</div>}
+                <Card style={{width: 200}} title={<div className="handle" style={{cursor: "all-scroll"}}>Origin Point</div>}
                     extra={
-                        <Button danger onClick={() => setIsOriginPointMode(false)} children={"X"} />}>
+                        <Button style={{margin: "auto"}} icon={<CloseOutlined />} danger type="text" onClick={() => setIsOriginPointMode(false)} />}>
                     <Row align="middle" justify="center">
                         <Space>
                             <Space.Compact block direction="vertical">

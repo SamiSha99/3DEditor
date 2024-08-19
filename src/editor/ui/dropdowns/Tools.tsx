@@ -12,7 +12,7 @@ import { Cylinder, Sphere } from "@orb_tools/create/Primitive";
 import { handleInvertedGeometry } from "src/editor/utils/MeshUtils";
 
 export const Tools = observer(() => {
-    const { controlsObject3D, addObject } = useStores();
+    const { controlsObject3D, isOriginPointMode, addObject, setIsOriginPointMode, setControlsModeByName } = useStores();
     const [modalConvert, toggleModalConvert] = useState(false);
     return (
         <>
@@ -118,6 +118,15 @@ export const Tools = observer(() => {
 
                                     addObject(sphere);
                                 })
+                            }
+                        },
+                        {
+                            label: 'Adjust Origin Point',
+                            key: '4',
+                            icon: null,
+                            onClick: () => {
+                                setIsOriginPointMode(true);
+                                if (!isOriginPointMode) setControlsModeByName("translate");
                             }
                         }
                     ]
