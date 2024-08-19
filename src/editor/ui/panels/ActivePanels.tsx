@@ -1,28 +1,16 @@
 import { useStores } from "@orb_App";
-import { ConfigProvider, ThemeConfig } from "antd";
 import { observer } from "mobx-react-lite";
 import { OriginPointPanel } from "./OriginPointPanel";
+import { ConfigProvider } from "antd";
+import { PanelsThemeConfig } from "@orb_UI/antd/ThemeConfigs";
 
-const themeConfig: ThemeConfig = {
-    components: {
-        Divider: {
-            margin: 0,
-        },
-        Button: {
-            defaultBg: "#4d4d4d",
-            dangerColor: "red"
-        }
-    },
-    token: {
-        motion: false
-    }
-}
+
 
 export const ActivePanels = observer(() => {
     const { isOriginPointMode } = useStores();
 
     return (
-        <ConfigProvider theme={themeConfig}>
+        <ConfigProvider theme={PanelsThemeConfig}>
             {isOriginPointMode && <OriginPointPanel />}
         </ConfigProvider>
     )
