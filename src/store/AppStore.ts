@@ -2,6 +2,8 @@ import { makeObservable, observable, action } from "mobx";
 import { Object3D, Scene, Color } from "three";
 import * as TYPE from "./type";
 import { Box } from "@orb_tools/create/Primitive";
+import { ReactNode } from "react";
+import { ActivePanelType } from "@orb_UI/panels/Panels";
 
 export class AppStore {
 
@@ -30,8 +32,9 @@ export class AppStore {
 
     @observable useRootSelection: boolean = false;
 
-    @observable isOriginPointMode: boolean = false;
     @observable isTransforming: boolean = false;
+
+    @observable activePanels: ActivePanelType[] = []
 
     constructor() {
         makeObservable(this)
@@ -73,7 +76,22 @@ export class AppStore {
     @action.bound setbackground = (value: Color | null, enabled?: boolean) => { this.background = enabled ? value : null } //[value, enabled !== undefined ? enabled : this.background[1]]}
 
     @action.bound setIsTransforming = (b?: boolean) => { this.isTransforming = b != undefined ? b : !this.isTransforming }
-    @action.bound setIsOriginPointMode = (b?: boolean) => { this.isOriginPointMode = b != undefined ? b : !this.isOriginPointMode }
+
+
+    @action.bound addActivePanel = (value: ActivePanelType) => {
+        if (this.activePanels.find(x => x.id == value.id))
+            console.warn("Panel is already active, ignoring... ID:", value.id)
+        else
+            this.activePanels.push(value);
+    }
+
+    @action.bound removeActivePanel = (id: string) => {
+        const index = this.activePanels.findIndex(x => x.id == id);
+        if (index == -1)
+            console.warn("No panel found for", id, "index returned -1")
+        else
+            this.activePanels.splice(index, 1);
+    }
 
     // this is NOT ok!!!
     @action.bound badForceUpdateInspector = () => { this.onUpdateInspector = new Date().getUTCMilliseconds(); }

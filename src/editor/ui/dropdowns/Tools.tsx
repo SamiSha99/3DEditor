@@ -8,11 +8,12 @@ import * as IMPORTER from '@orb_tools/Importer'
 import * as EXPORTER from '@orb_tools/Exporter'
 import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
-import { Cylinder, Sphere } from "@orb_tools/create/Primitive";
+import { Sphere } from "@orb_tools/create/Primitive";
 import { handleInvertedGeometry } from "src/editor/utils/MeshUtils";
+import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
 
 export const Tools = observer(() => {
-    const { controlsObject3D, isOriginPointMode, addObject, setIsOriginPointMode, setControlsModeByName } = useStores();
+    const { controlsObject3D, addObject, setControlsModeByName, addActivePanel } = useStores();
     const [modalConvert, toggleModalConvert] = useState(false);
     return (
         <>
@@ -125,8 +126,8 @@ export const Tools = observer(() => {
                             key: '4',
                             icon: null,
                             onClick: () => {
-                                setIsOriginPointMode(true);
-                                if (!isOriginPointMode) setControlsModeByName("translate");
+                                addActivePanel(PANEL_ORIGIN_POINT)
+                                setControlsModeByName("translate");
                             }
                         }
                     ]

@@ -1,14 +1,13 @@
 import { useStores } from "@orb_App";
-import { Card, Row, Space, Button, Segmented, Checkbox, Tooltip } from "antd";
+import { Row, Space, Button, Checkbox, Tooltip } from "antd";
 import { observer } from "mobx-react-lite";
 import * as THREE from "three";
-import Draggable from "react-draggable";
 import { useState } from "react";
-import { CloseOutlined } from "@ant-design/icons";
+import { DraggablePanel } from "@orb_UI/ActivePanels";
 
 
 export const OriginPointPanel = observer(() => {
-    const { controlsObject3D, scene, setIsOriginPointMode } = useStores();
+    const { controlsObject3D, scene } = useStores();
     const [onConstraintObject, setOnConstraintObject] = useState(false);
     const c = document.getElementsByTagName("canvas")[0];
     console.log(c);
@@ -64,42 +63,38 @@ export const OriginPointPanel = observer(() => {
 
     return (
         controlsObject3D &&
-        <div style={{ position: "absolute" }}>
-            <Draggable bounds={bounds} handle=".handle" defaultPosition={{ x: (bounds.right - bounds.left) * 0.1, y: (bounds.bottom - bounds.top) * 0.7 }}>
-                <Card style={{width: 200}} title={<div className="handle" style={{cursor: "all-scroll"}}>Origin Point</div>}
-                    extra={
-                        <Button style={{margin: "auto"}} icon={<CloseOutlined />} danger type="text" onClick={() => setIsOriginPointMode(false)} />}>
-                    <Row align="middle" justify="center">
-                        <Space>
-                            <Space.Compact block direction="vertical">
-                                <Space.Compact style={{ marginBottom: "5px" }} block>
-                                    <Tooltip title="Offsets the object to keep the model in place.">
-                                        <Checkbox children={"Constraint Object"} onChange={(e) => setOnConstraintObject(e.target.checked)} />
-                                    </Tooltip>
-                                </Space.Compact>
-                                <Space.Compact style={{ marginBottom: "5px" }} block>
-                                    <Button style={{ margin: "auto", width: "33.3%" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
-                                </Space.Compact>
-                                <Space.Compact block>
-                                    <Button style={{ width: "33.3%", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
-                                    <Button style={{ width: "33.3%" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
-                                    <Button style={{ width: "33.3%", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
-                                </Space.Compact>
-                                <Space.Compact block>
-                                    <Button style={{ width: "33.3%" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
-                                    <Button style={{ width: "33.3%" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
-                                    <Button style={{ width: "33.3%" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
-                                </Space.Compact>
-                                <Space.Compact block>
-                                    <Button style={{ width: "33.3%", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
-                                    <Button style={{ width: "33.3%" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
-                                    <Button style={{ width: "33.3%", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
-                                </Space.Compact>
-                            </Space.Compact>
-                        </Space>
-                    </Row>
-                </Card>
-            </Draggable>
-        </div>
+        <DraggablePanel name="Origin Point" identifier="origin_point">
+            <Row align="middle" justify="center">
+                <Space>
+                    <Space.Compact block direction="vertical">
+                        <Space.Compact style={{ marginBottom: "5px" }} block>
+                            <Tooltip title="Offsets the object to keep the model in place.">
+                                <Checkbox children={"Constraint Object"} onChange={(e) => setOnConstraintObject(e.target.checked)} />
+                            </Tooltip>
+                        </Space.Compact>
+                        <Space.Compact style={{ marginBottom: "5px" }} block>
+                            <Button style={{ margin: "auto", width: "33.3%" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
+                        </Space.Compact>
+                        <Space.Compact block>
+                            <Button style={{ width: "33.3%", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
+                            <Button style={{ width: "33.3%" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
+                            <Button style={{ width: "33.3%", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
+                        </Space.Compact>
+                        <Space.Compact block>
+                            <Button style={{ width: "33.3%" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
+                            <Button style={{ width: "33.3%" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
+                            <Button style={{ width: "33.3%" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
+                        </Space.Compact>
+                        <Space.Compact block>
+                            <Button style={{ width: "33.3%", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
+                            <Button style={{ width: "33.3%" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
+                            <Button style={{ width: "33.3%", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
+                        </Space.Compact>
+                    </Space.Compact>
+                </Space>
+            </Row>
+        </DraggablePanel>
     )
 })
+
+export default OriginPointPanel;

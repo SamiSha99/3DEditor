@@ -6,13 +6,14 @@ import * as THREE from "three";
 import { Box, CameraControls, Environment, Grid, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
+import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
 
 
 const Canvas = observer(() => {
     const { scene } = useStores()
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [loaded, setLoaded] = useState<boolean>();
-    
+
     useEffect(() => {
         console.log(canvasRef.current);
         setLoaded(canvasRef.current != undefined);
@@ -45,7 +46,7 @@ interface CanvasInfo {
 }
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
-    console.log("canvas in scene comp", canvas)
+
     const { environment, sceneObjects, sceneHelpers, controlsObject3D, isTransforming, background,
         removeObject, setControlsTarget } = useStores();
     const { scene, camera, raycaster } = useThree();
@@ -110,7 +111,7 @@ const EditorHelpers = () => {
 }
 
 const EditorControls = observer(() => {
-    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming, isOriginPointMode } = useStores();
+    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming, activePanels } = useStores();
     const { camera, scene } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const originDraggerRef = useRef<THREE.Group>(null);
@@ -128,6 +129,8 @@ const EditorControls = observer(() => {
         cameraStartDrag && !isTransforming && setIsTransforming(true);
         !cameraStartDrag && isTransforming && setIsTransforming(false);
     }
+
+    const isOriginPointMode = !!activePanels.find(x => x.id == PANEL_ORIGIN_POINT.id);
 
     // reset references position if we change selected target
     originDraggerRef.current && originDraggerRef.current.position.set(0, 0, 0);

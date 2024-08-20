@@ -1,7 +1,7 @@
 import EditorUI from './EditorUI'
 import EditorInspector from './EditorInspector'
 import Canvas from './Canvas'
-import { ActivePanels } from '@orb_UI/panels/ActivePanels'
+import { ActivePanels } from '@orb_UI/ActivePanels'
 
 export function Editor() {
     
