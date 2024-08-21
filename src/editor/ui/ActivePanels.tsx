@@ -36,35 +36,30 @@ const getCanvasBounds = (width?: number, height?: number) => {
 
 export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ name, identifier, width, height, startingPositionNormalized, children }) => {
     const { removeActivePanel } = useStores();
-    const ref = useRef<HTMLDivElement>(null); 
+    const ref = useRef<HTMLDivElement>(null);
     const w = width ? width : ref.current?.offsetWidth;
     const h = height ? height : ref.current?.offsetHeight;
 
     const [bounds, setBounds] = useState<DraggableBounds>(getCanvasBounds(w, h));
 
+    const close = () => removeActivePanel(identifier);
+    onresize = () => setBounds(getCanvasBounds(w, h));
+    useEffect(() => setBounds(getCanvasBounds(w, h)), [ref.current]);
 
-    useEffect(() => {
-        setBounds(getCanvasBounds(w, h));
-    }, [ref.current]);
-
-    window.onresize = () => {
-        setBounds(getCanvasBounds(w, h));
-    }
 
     const startPos = startingPositionNormalized ? startingPositionNormalized : { x: 0.05, y: 0.2 };
+    const boundsWidth = (bounds.right ? bounds.right : window.screen.width) - (bounds.left ? bounds.left : 0);
+    const boundsHeight = (bounds.bottom ? bounds.bottom : window.screen.height) - (bounds.top ? bounds.top : 0);
+    const defaultPosition = { x: boundsWidth * startPos.x, y: boundsHeight * startPos.y };
 
     return (
         <div ref={ref} style={{ position: "absolute", width: width, height: height }}>
-             <Draggable bounds={bounds} handle=".handle" defaultPosition={{ x: (bounds.right - bounds.left) * startPos.x, y: (bounds.bottom - bounds.top) * startPos.y }}>
+            <Draggable bounds={bounds} handle=".handle" cancel=".noHandle" defaultPosition={defaultPosition}>
                 <Card
-                    title={
-                        <div className="handle" style={{ cursor: "all-scroll" }}>{name}</div>
-                    }
-                    extra={
-                        <Button style={{ margin: "auto" }} icon={<CloseOutlined />} danger type="text" onClick={() => {
-                            removeActivePanel(identifier);
-                        }} />
-                    }
+                    classNames={{ header: "handle" }}
+                    styles={{ header: { cursor: "all-scroll" }, title: { marginRight: 20 } }}
+                    title={name}
+                    extra={<Button className="noHandle" icon={<CloseOutlined />} danger type="text" onClick={close} />}
                     children={children}
                 />
             </Draggable>

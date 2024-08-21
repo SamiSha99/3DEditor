@@ -65,7 +65,7 @@ export const PanelsThemeConfig: ThemeConfig = {
             defaultBg: "#3d3d3d"
         },
         Card: {
-            headerFontSize: "1vw"
+            // headerFontSize: "1vw"
         }
     },
     token: {
