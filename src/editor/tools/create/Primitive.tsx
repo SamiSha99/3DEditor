@@ -61,3 +61,9 @@ export function Pyramid(material: THREE.Material = new THREE.MeshStandardMateria
     mesh.name = "Pyramid";
     return mesh;
 }
+
+export function Icosahedron(material: THREE.Material = new THREE.MeshStandardMaterial()) {
+    const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(), material);
+    mesh.name = "Icosahedron";
+    return mesh;
+}
