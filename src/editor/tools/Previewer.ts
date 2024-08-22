@@ -49,6 +49,15 @@ export async function Screenshot(object: THREE.Object3D) {
     return blob as Blob;
 }
 
+export async function screenshotCanvas(canvas: HTMLCanvasElement, renderer: THREE.WebGLRenderer, width: number, height: number) {
+    canvas.width = width;
+    canvas.height = height;
+    renderer.setSize(width, height);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1));
+
+    return blob as Blob;
+}
+
 function save(canvas: HTMLCanvasElement) {
     canvas.toBlob(blob => {
         if (blob)

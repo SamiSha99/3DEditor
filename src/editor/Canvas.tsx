@@ -21,6 +21,7 @@ const Canvas = observer(() => {
 
     return (
         <ReactThreeFiberCanvas
+            id="main"
             ref={canvasRef}
             scene={scene}
             shadows

@@ -10,7 +10,7 @@ import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
 import { Sphere } from "@orb_tools/create/Primitive";
 import { handleInvertedGeometry } from "src/editor/utils/MeshUtils";
-import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
+import { PANEL_ORIGIN_POINT, PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 
 export const Tools = observer(() => {
     const { controlsObject3D, addObject, setControlsModeByName, addActivePanel } = useStores();
@@ -36,6 +36,8 @@ export const Tools = observer(() => {
                             key: '0',
                             icon: <ICONS.CameraOutlined />,
                             onClick: () => {
+                                addActivePanel(PANEL_SCREENSHOT);
+                                return;
                                 if (controlsObject3D) {
                                     const object = (controlsObject3D as THREE.Object3D).clone();
                                     Screenshot(object).then(blob => {

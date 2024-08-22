@@ -4,8 +4,9 @@ import { observer } from "mobx-react-lite";
 import * as THREE from "three";
 import { useState } from "react";
 import { DraggablePanel } from "@orb_UI/ActivePanels";
+import { PANEL_ORIGIN_POINT } from "./Panels";
 
-export const OriginPointPanel = observer(() => {
+export const PanelOriginPoint = observer(() => {
     const { controlsObject3D, scene } = useStores();
     const [onConstraintObject, setOnConstraintObject] = useState(false);
     const c = document.getElementsByTagName("canvas")[0];
@@ -61,7 +62,7 @@ export const OriginPointPanel = observer(() => {
     }
 
     return (
-        <DraggablePanel name="Origin Point" identifier="origin_point">
+        <DraggablePanel key={PANEL_ORIGIN_POINT.id} name="Origin Point" identifier={PANEL_ORIGIN_POINT.id}>
             <Row align="middle" justify="center">
                 {
                     controlsObject3D &&
@@ -101,4 +102,4 @@ export const OriginPointPanel = observer(() => {
     )
 })
 
-export default OriginPointPanel;
+export default PanelOriginPoint;
