@@ -210,7 +210,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
     // setTimeout(translate, (1000));
 
     return (
-        <div style={{ margin: "auto", width: "100%", alignContent: "top" }}>
+        <div style={{ margin: "auto", alignContent: "top" }}>
             {
                 object &&
                 <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>

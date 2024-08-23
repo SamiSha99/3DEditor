@@ -1,6 +1,6 @@
 import { Form, InputNumber, Tooltip } from "antd";
 import React, { useState } from "react";
-import { toFixedStripped } from "src/editor/utils/Utils";
+import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
@@ -8,15 +8,16 @@ import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
 type Vector2Interface<T> = {
-    label?: string,
+    label?: string | false,
+    precision?: number | false,
     object: T,
     variable: string,
-    labelVector?: { x?: string, y?: string, z?: string },
+    labelVector?: { x?: string, y?: string },
     onChange?: (value: THREE.Vector2) => void
 }
 
 export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
-    { label, object, variable, labelVector, onChange }
+    { label, precision, object, variable, labelVector, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
@@ -29,14 +30,14 @@ export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
     });
 
     return (
-        <Form.Item label={label ? label : labelFromVariable(variable)}>
+        <Form.Item label={label ? label : label != false && labelFromVariable(variable)}>
             <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(50%/3 - 3px)' }}
+                    style={{ width: 'calc(50% - 3px)' }}
                     size="small"
-                    precision={3}
+                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     controls={false}
                     changeOnWheel
                     value={x}
@@ -60,9 +61,9 @@ export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
                 <InputNumber
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(50%/3 - 3px)' }}
+                    style={{ width: 'calc(50% - 3px)' }}
                     size="small"
-                    precision={PRECISION_AMOUNT}
+                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     controls={false}
                     changeOnWheel
                     value={y}
@@ -195,4 +196,4 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
     )
 }
 
-export default {ItemVector2, ItemVector3};
+export default { ItemVector2, ItemVector3 };

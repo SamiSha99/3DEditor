@@ -1,6 +1,6 @@
 import { Form, Select, InputNumber, Tooltip, SelectProps } from "antd";
 import React, { useState } from "react";
-import { toFixedStripped } from "src/editor/utils/Utils";
+import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
