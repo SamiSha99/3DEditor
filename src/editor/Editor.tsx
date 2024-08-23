@@ -1,5 +1,5 @@
-import EditorUI from './EditorUI'
-import EditorInspector from './EditorInspector'
+import EditorUI from './UI'
+import EditorInspector from './Inspector'
 import Canvas from './Canvas'
 import { ActivePanels } from '@orb_UI/ActivePanels'
 
