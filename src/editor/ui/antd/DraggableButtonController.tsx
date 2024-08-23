@@ -38,6 +38,7 @@ export const DraggableButtonController: React.FC<DraggableButtonControllerInterf
     return (
 
         <Button
+            tabIndex={-1}
             size="small"
             ref={buttonRef}
             icon={<Icon component={undefined} />}
