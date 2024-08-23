@@ -31,7 +31,8 @@
       "@orb_AppStore": ["src/store/AppStore.ts"],
       "@orb_tools/*": ["./src/editor/tools/*"],
       "@orb_types" : ["./src/store/type.ts"],
-      "@orb_UI/*": ["./src/editor/ui/*"]
+      "@orb_UI/*": ["./src/editor/ui/*"],
+      "@orb_utils/*": ["./src/editor/utils/*"]
     }
   },
   "include": ["src"],
