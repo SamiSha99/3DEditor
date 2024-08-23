@@ -2,8 +2,9 @@ import * as THREE from 'three';
 import * as EXPORTER from './Exporter.ts';
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import { message } from 'antd';
+import { sleep } from '../utils/Main.ts';
 
-export async function Screenshot(object: THREE.Object3D) {
+export async function Screenshot(object: THREE.Object3D, width: number = 1024, height: number = 1024) {
 
     if (!(object instanceof THREE.Object3D)) {
         console.warn("Invalid object selected!");
@@ -11,8 +12,6 @@ export async function Screenshot(object: THREE.Object3D) {
         return null;
     }
 
-    const width = 1024;
-    const height = 1024;
     const canvas = THREE.createCanvasElement();
 
     canvas.height = height;
@@ -50,10 +49,19 @@ export async function Screenshot(object: THREE.Object3D) {
 }
 
 export async function screenshotCanvas(canvas: HTMLCanvasElement, renderer: THREE.WebGLRenderer, width: number, height: number) {
+
+    const defaults = { width: canvas.width, height: canvas.height };
+
     canvas.width = width;
     canvas.height = height;
     renderer.setSize(width, height);
+
+    await sleep(1);
+
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1));
+    canvas.width = defaults.width;
+    canvas.height = defaults.height;
+    renderer.setSize(defaults.width, defaults.height);
 
     return blob as Blob;
 }
