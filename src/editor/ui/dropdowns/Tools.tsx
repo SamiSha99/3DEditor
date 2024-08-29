@@ -9,7 +9,7 @@ import * as EXPORTER from '@orb_tools/Exporter'
 import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
 import { Sphere } from "@orb_tools/create/Primitive";
-import { handleInvertedGeometry } from "src/editor/utils/MeshUtils";
+import { invertGeometry } from "src/editor/utils/MeshUtils";
 import { PANEL_ORIGIN_POINT, PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 
 export const Tools = observer(() => {
@@ -32,32 +32,11 @@ export const Tools = observer(() => {
                 menu={{
                     items: [
                         {
-                            label: 'Take a Screenshot',
-                            key: '0',
-                            icon: <ICONS.CameraOutlined />,
-                            onClick: () => {
-                                addActivePanel(PANEL_SCREENSHOT);
-                                return;
-                                if (controlsObject3D) {
-                                    const object = (controlsObject3D as THREE.Object3D).clone();
-                                    Screenshot(object).then(blob => {
-                                        if (blob) {
-                                            EXPORTER.save(blob, "preview.png");
-                                            message.success("Snip!");
-                                        }
-                                    });
-                                }
-                                else
-                                    message.warning("Select an object to take a screenshot!");
-                            }
-                        },
-                        {
                             label: 'Convert...',
                             key: '1',
-                            icon: <ICONS.CameraOutlined />,
+                            icon: <ICONS.EditOutlined />,
                             onClick: () => {
                                 toggleModalConvert(true);
-                                // doConvert(".glb");
                             }
                         },
                         {
@@ -95,6 +74,9 @@ export const Tools = observer(() => {
                             }]
                         },
                         {
+                            type: 'divider'
+                        },
+                        {
                             label: 'Create a Skydome',
                             key: '3',
                             icon: <ICONS.CloudOutlined />,
@@ -104,8 +86,8 @@ export const Tools = observer(() => {
                                     const mat = new THREE.MeshStandardMaterial({ map: res });
                                     const sphere = Sphere({ heightSegments: 32 }, mat);
                                     sphere.name = "Skydome"
-                                    handleInvertedGeometry(sphere.geometry);
-                                    
+                                    invertGeometry(sphere.geometry);
+
                                     // sphere.renderOrder = 1
 
                                     // https://woodenraft.games/blog/how-to-hide-water-plane-inside-hollow-boat-threejs
@@ -126,10 +108,18 @@ export const Tools = observer(() => {
                         {
                             label: 'Adjust Origin Point',
                             key: '4',
-                            icon: null,
+                            icon: <ICONS.DotChartOutlined />,
                             onClick: () => {
                                 addActivePanel(PANEL_ORIGIN_POINT)
                                 setControlsModeByName("translate");
+                            }
+                        },
+                        {
+                            label: 'Take a Screenshot',
+                            key: '0',
+                            icon: <ICONS.CameraOutlined />,
+                            onClick: () => {
+                                addActivePanel(PANEL_SCREENSHOT);
                             }
                         }
                     ]

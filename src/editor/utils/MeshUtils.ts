@@ -16,7 +16,8 @@ export function computeAllVertexNormals(o: THREE.Object3D) {
     o.children.forEach(child => { computeAllVertexNormals(child); });
 }
 
-export function handleInvertedGeometry(geometry: THREE.BufferGeometry) {
+/** Inverts BufferGeometry normals inside out and vice versa. */
+export function invertGeometry(geometry: THREE.BufferGeometry) {
     if (!geometry.index) return;
     const index = geometry.index.array
     
