@@ -11,7 +11,7 @@ export const ActivePanels = observer(() => {
 
     return (
         <ConfigProvider theme={PanelsThemeConfig}>
-            {activePanels.map(child => child.panel)}
+            {activePanels.length > 0 && activePanels.map(child => child.panel)}
         </ConfigProvider>
     )
 })
@@ -22,7 +22,8 @@ type DraggablePanelInterface = {
     width?: number,
     height?: number,
     startingPositionNormalized?: { x: number, y: number }, // value is clamped between 0 - 1 for top/left - bottom/right
-    children?: React.ReactNode
+    children?: React.ReactNode,
+    onClose?: () => void
 }
 
 const getCanvasBounds = (width?: number, height?: number) => {
@@ -34,7 +35,7 @@ const getCanvasBounds = (width?: number, height?: number) => {
     return draggableBounds;
 }
 
-export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ name, identifier, width, height, startingPositionNormalized, children }) => {
+export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ name, identifier, width, height, startingPositionNormalized, children, onClose }) => {
     const { removeActivePanel } = useStores();
     const ref = useRef<HTMLDivElement>(null);
     const w = width ? width : ref.current?.offsetWidth;
@@ -42,7 +43,10 @@ export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ nam
 
     const [bounds, setBounds] = useState<DraggableBounds>(getCanvasBounds(w, h));
 
-    const close = () => removeActivePanel(identifier);
+    const close = () => {
+        removeActivePanel(identifier);
+        onClose && onClose()
+    }
     onresize = () => setBounds(getCanvasBounds(w, h));
     useEffect(() => setBounds(getCanvasBounds(w, h)), [ref.current]);
 

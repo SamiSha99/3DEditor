@@ -53,7 +53,7 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
     const { scene, camera, raycaster } = useThree();
 
     // the passed ref is null at load time! 
-    if (!canvas) canvas = document.getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+    if (!canvas) canvas = document.getElementById('main') as HTMLCanvasElement;
 
     scene.background = background;
 
