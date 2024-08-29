@@ -118,6 +118,7 @@ const EditorControls = observer(() => {
     const originDraggerRef = useRef<THREE.Group>(null);
     const originRef = useRef<THREE.Group>(null);
 
+
     const onStart = () => {
         !cameraStartDrag && setCameraStartDrag(true);
     }
@@ -132,7 +133,10 @@ const EditorControls = observer(() => {
     }
 
     const isOriginPointMode = !!activePanels.find(x => x.id == PANEL_ORIGIN_POINT.id);
-
+    let helper: THREE.BoxHelper | null = null;
+    if (controlsObject3D) {
+        helper = new THREE.BoxHelper(controlsObject3D, 0xFFFF00)
+    }
     // reset references position if we change selected target
     originDraggerRef.current && originDraggerRef.current.position.set(0, 0, 0);
     originRef.current && controlsObject3D && originRef.current.position.copy(controlsObject3D.position)
@@ -141,21 +145,24 @@ const EditorControls = observer(() => {
         <>
             <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} />
             {
-                controlsObject3D && isOriginPointMode &&
-                <group visible={isOriginPointMode} name="TRANSFORM_ORIGIN_GROUP" position={controlsObject3D?.position} renderOrder={-50}>
-                    <group ref={originDraggerRef} name="TRANSFORM_ORIGIN_DRAGGER">
-                        <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
-                        <Line color={0xFA8072} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
-                        <Line color={0x93E459} points={[[0, 0, 0], [0, 10, 0]]} lineWidth={5} />
-                        <Line color={0x0080FF} points={[[0, 0, 0], [0, 0, 10]]} lineWidth={5} />
-                        <Line dashed dashScale={10} color={0xFA8072} points={[[0, 0, 0], [-10, 0, 0]]} lineWidth={5} />
-                        <Line dashed dashScale={10} color={0x93E459} points={[[0, 0, 0], [0, -10, 0]]} lineWidth={5} />
-                        <Line dashed dashScale={10} color={0x0080FF} points={[[0, 0, 0], [0, 0, -10]]} lineWidth={5} />
+                controlsObject3D &&
+                <group visible={isOriginPointMode} name="TRANSFORM_ORIGIN_WORLD_CENTER" renderOrder={-50}>
+                    {helper && <primitive object={helper} />}
+                    <group name="TRANSFORM_ORIGIN_GROUP" position={controlsObject3D?.position}>
+                        <group ref={originDraggerRef} name="TRANSFORM_ORIGIN_DRAGGER">
+                            <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
+                            <Line color={0xFF0000} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
+                            <Line color={0x00FF00} points={[[0, 0, 0], [0, 10, 0]]} lineWidth={5} />
+                            <Line color={0x0000FF} points={[[0, 0, 0], [0, 0, 10]]} lineWidth={5} />
+                            <Line dashed dashScale={10} color={0xFF0000} points={[[0, 0, 0], [-10, 0, 0]]} lineWidth={5} />
+                            <Line dashed dashScale={10} color={0x00FF00} points={[[0, 0, 0], [0, -10, 0]]} lineWidth={5} />
+                            <Line dashed dashScale={10} color={0x0000FF} points={[[0, 0, 0], [0, 0, -10]]} lineWidth={5} />
+                        </group>
                     </group>
                 </group>
             }
             {
-                controlsObject3D &&
+
                 <TransformControlsDrei
                     name='TRANSFORM_HELPER'
                     object={isOriginPointMode ? originDraggerRef : controlsObject3D}
@@ -172,15 +179,20 @@ const EditorControls = observer(() => {
                             if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsObject3D;
                                 const offset = originDraggerRef.current.position.clone();
+                                console.log(offset, o.scale);
+                                offset.divide(o.scale);
+                                console.log(offset);
                                 originDraggerRef.current.position.set(0, 0, 0);
                                 o.geometry.translate(-offset.x, -offset.y, -offset.z);
-                                o.position.add(offset);
+                                o.position.add(offset.multiply(o.scale));
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
                                 origin?.position.copy(o.position);
+                                helper?.update(o);
+                                helper?.position.copy(o.position)
                             }
                         }
                     }}
-                    onMouseDown={(e) => {
+                    onMouseDown={() => {
                         if (isTransforming) return;
                         setIsTransforming(true);
                     }}

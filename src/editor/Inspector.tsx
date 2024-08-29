@@ -2,7 +2,7 @@ import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
 import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import * as THREE from "three"
 import { ColorPickerItem, ItemNumber, ItemInput, ItemVector3, ItemEuler, SelectItem } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
@@ -138,7 +138,7 @@ export const HierarchyTree = observer(() => {
             <Tree
                 defaultExpandAll
                 showLine
-                draggable
+                // draggable
                 blockNode
                 onDragEnter={onDragEnter}
                 onDrop={onDrop}
@@ -189,7 +189,7 @@ export const SceneConfigs = observer(() => {
                     setBackgroundEnabled(e.target.checked);
                     setbackground(background, e.target.checked)
                 }}
-                onChangeColorPicker={(value: Color, hex: string) => {
+                onChangeColorPicker={(_value: Color, hex: string) => {
                     scene.background = new THREE.Color(hex);
                 }}
                 onChangeCompleteColorPicker={(c) => {
@@ -202,13 +202,6 @@ export const SceneConfigs = observer(() => {
 })
 
 export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
-
-    const translate = () => {
-        (object as THREE.Mesh).geometry.translate(0, 0.1, 0);
-        // setTimeout(translate, (1000));
-    }
-    // setTimeout(translate, (1000));
-
     return (
         <div style={{ margin: "auto", alignContent: "top" }}>
             {
@@ -221,7 +214,6 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                     <ItemVector3 object={object} variable="scale" />
                 </Form>
             }
-
         </div>)
 },)
 

@@ -2,7 +2,6 @@ import { makeObservable, observable, action } from "mobx";
 import { Object3D, Scene, Color } from "three";
 import * as TYPE from "./type";
 import { Box } from "@orb_tools/create/Primitive";
-import { ReactNode } from "react";
 import { ActivePanelType } from "@orb_UI/panels/Panels";
 
 export class AppStore {
