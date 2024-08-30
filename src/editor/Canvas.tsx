@@ -116,7 +116,6 @@ const EditorControls = observer(() => {
     const { camera, scene } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const originDraggerRef = useRef<THREE.Group>(null);
-    const originRef = useRef<THREE.Group>(null);
 
 
     const onStart = () => {
@@ -139,7 +138,7 @@ const EditorControls = observer(() => {
     }
     // reset references position if we change selected target
     originDraggerRef.current && originDraggerRef.current.position.set(0, 0, 0);
-    originRef.current && controlsObject3D && originRef.current.position.copy(controlsObject3D.position)
+    originDraggerRef.current && controlsObject3D && originDraggerRef.current.rotation.copy(controlsObject3D.rotation);
 
     return (
         <>
@@ -176,18 +175,17 @@ const EditorControls = observer(() => {
                             if (!originDraggerRef.current) {
                                 return;
                             }
+
                             if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsObject3D;
                                 const offset = originDraggerRef.current.position.clone();
-                                console.log(offset, o.scale);
                                 offset.divide(o.scale);
-                                console.log(offset);
                                 originDraggerRef.current.position.set(0, 0, 0);
                                 o.geometry.translate(-offset.x, -offset.y, -offset.z);
                                 o.position.add(offset.multiply(o.scale));
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
                                 origin?.position.copy(o.position);
-                                helper?.update(o);
+                                helper?.update();
                                 helper?.position.copy(o.position)
                             }
                         }

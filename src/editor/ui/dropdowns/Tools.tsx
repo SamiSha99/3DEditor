@@ -13,7 +13,7 @@ import { invertGeometry } from "src/editor/utils/MeshUtils";
 import { PANEL_ORIGIN_POINT, PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 
 export const Tools = observer(() => {
-    const { controlsObject3D, addObject, setControlsModeByName, addActivePanel } = useStores();
+    const { controlsObject3D, addObject, setControlsModeByName, setControlSpaceByName, addActivePanel } = useStores();
     const [modalConvert, toggleModalConvert] = useState(false);
     return (
         <>
@@ -112,6 +112,7 @@ export const Tools = observer(() => {
                             onClick: () => {
                                 addActivePanel(PANEL_ORIGIN_POINT)
                                 setControlsModeByName("translate");
+                                setControlSpaceByName("local");
                             }
                         },
                         {

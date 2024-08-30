@@ -4,7 +4,7 @@ import { useStores } from "@orb_App"
 import { observer } from "mobx-react-lite"
 import { Button, Checkbox, Divider, Radio, RadioChangeEvent, Tooltip } from "antd";
 import { useHotkeys } from 'react-hotkeys-hook';
-import { PANEL_ORIGIN_POINT } from "./panels/Panels";
+import { isPanelActive, PANEL_ORIGIN_POINT } from "./panels/Panels";
 
 export const ControlsBar = observer(() => {
     return (
@@ -21,8 +21,8 @@ export const ControlsBar = observer(() => {
 })
 
 const TranslationButton = observer(() => {
-    const { controlsMode, setControlsModeByName, activePanels } = useStores();
-    const isOriginPointMode = !!activePanels.find(x => x.id == PANEL_ORIGIN_POINT.id);
+    const { controlsMode, setControlsModeByName } = useStores();
+    const isOriginPointMode = isPanelActive(PANEL_ORIGIN_POINT);
 
     useHotkeys("space", () => {
         if (isOriginPointMode) return;
