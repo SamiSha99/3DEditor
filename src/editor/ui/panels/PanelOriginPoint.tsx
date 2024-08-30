@@ -10,9 +10,6 @@ export const PanelOriginPoint = observer(() => {
     const { controlsObject3D, scene } = useStores();
     const [onConstraintObject, setOnConstraintObject] = useState(false);
     const c = document.getElementsByTagName("canvas")[0];
-    console.log(c);
-    const bounds = c?.getBoundingClientRect();
-    console.log(bounds, bounds?.left, bounds?.right, bounds?.top, bounds?.bottom);
 
     const setOriginPoint = (pos?: { x?: number, y?: number, z?: number }, center?: boolean) => {
         if (!controlsObject3D) return;
