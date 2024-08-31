@@ -179,25 +179,21 @@ const EditorControls = observer(() => {
                             if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsObject3D;
                                 const offset = originDraggerRef.current.position.clone();
-                                
+
                                 // Rotation offset
                                 const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
                                 // to-do VERY CLOSE just some math mismatch
-                                const dir = new THREE.Euler().setFromVector3(offset.normalize(), o.rotation.order);
-                                dir.x -= o.rotation.x;
-                                dir.y -= o.rotation.y;
-                                dir.z -= o.rotation.z;
-                                const dirV = offset.normalize().applyEuler(dir);
-                                console.log(dir, dirV)
+                                const quat = new THREE.Quaternion().setFromEuler(o.rotation);
+                                const dir = offset.normalize().applyQuaternion(quat);
                                 
-                                offset.copy(dirV.multiplyScalar(distance));
-                                offset.divide(o.scale);
+                                const translate = dir.multiplyScalar(distance);
+                                translate.divide(o.scale);
                                 originDraggerRef.current.position.set(0, 0, 0);
-                                
+
                                 // Adjust translation and position of obj
-                                o.geometry.translate(-offset.x, -offset.y, -offset.z);
-                                o.position.add(offset.multiply(o.scale));
-                                
+                                o.geometry.translate(-translate.x, -translate.y, -translate.z);
+                                o.position.add(translate.multiply(o.scale));
+
                                 // Reset helpers
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
                                 origin?.position.copy(o.position);
