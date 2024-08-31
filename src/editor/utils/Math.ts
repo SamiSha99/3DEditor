@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 /** Returns a normalized vector in Quaternion form, good for direction vectors. */
-export const quaternionFromNormal = (normal: THREE.Vector3) => {
+export const quaternionFromNormal = (normal: THREE.Vector3Like) => {
     const quaternion = new THREE.Quaternion();
     if (normal.y > 0.9999) {
         quaternion.set(0, 0, 0, 1);
@@ -18,8 +18,8 @@ export const quaternionFromNormal = (normal: THREE.Vector3) => {
 }
 
 type QuatToVector3Direction = "forward" | "up" | "left";
-/** Returns the vector of the passed quaternion */ // incorrect?
-export const quaternionToVector3 = (q: THREE.Quaternion, direction: QuatToVector3Direction = "forward") => {
+/** Returns the vector of the passed quaternion */
+export const quaternionToVector3 = (q: THREE.Quaternion, direction: QuatToVector3Direction = "up") => {
     const v = new THREE.Vector3();
 
     switch (direction) {

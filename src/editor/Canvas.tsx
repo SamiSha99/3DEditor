@@ -186,19 +186,19 @@ const EditorControls = observer(() => {
 
                                 // Rotation offset
                                 const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
-                                // const dir = offset.normalize().applyQuaternion(quat);
                                 const dir = quaternionFromNormal(offset.normalize());
                                 const newQuatDir = new THREE.Quaternion().multiplyQuaternions(dir, quat);
-                                console.log("dir", dir, "quat", quat, "newQuatDir", newQuatDir, "angle", quat.angleTo(dir))
-                                const dirNew = quaternionToVector3(newQuatDir, "forward");
-                                console.log("dirnew:", dirNew, offset.normalize())
+                                const dirNew = quaternionToVector3(newQuatDir);
                                 const translate = dirNew.multiplyScalar(distance);
                                 translate.divide(o.scale);
                                 originDraggerRef.current.position.set(0, 0, 0);
 
                                 // Adjust translation and position of obj
                                 o.geometry.translate(-translate.x, -translate.y, -translate.z);
-                                o.position.add(translate.multiply(o.scale));
+                                const rotationDirectionQuat = new THREE.Quaternion().multiplyQuaternions(new THREE.Quaternion().setFromEuler(o.rotation), dir);
+                                const rotationDirection = quaternionToVector3(rotationDirectionQuat);
+                                console.log(rotationDirection)
+                                o.position.add(rotationDirection.multiplyScalar(distance).multiply(o.scale));
 
                                 // Reset helpers
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
