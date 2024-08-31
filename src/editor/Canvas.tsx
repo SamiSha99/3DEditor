@@ -7,6 +7,7 @@ import { Box, CameraControls, Environment, Grid, Line, Sphere, TransformControls
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
+import { quaternionFromNormal, quaternionToVector3 } from "@orb_utils/Math";
 
 
 const Canvas = observer(() => {
@@ -180,13 +181,18 @@ const EditorControls = observer(() => {
                                 const o = controlsObject3D;
                                 const offset = originDraggerRef.current.position.clone();
 
-                                // Rotation offset
-                                const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
                                 // to-do VERY CLOSE just some math mismatch
                                 const quat = new THREE.Quaternion().setFromEuler(o.rotation);
-                                const dir = offset.normalize().applyQuaternion(quat);
-                                
-                                const translate = dir.multiplyScalar(distance);
+
+                                // Rotation offset
+                                const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
+                                // const dir = offset.normalize().applyQuaternion(quat);
+                                const dir = quaternionFromNormal(offset.normalize());
+                                const newQuatDir = new THREE.Quaternion().multiplyQuaternions(dir, quat);
+                                console.log("dir", dir, "quat", quat, "newQuatDir", newQuatDir, "angle", quat.angleTo(dir))
+                                const dirNew = quaternionToVector3(newQuatDir, "forward");
+                                console.log("dirnew:", dirNew, offset.normalize())
+                                const translate = dirNew.multiplyScalar(distance);
                                 translate.divide(o.scale);
                                 originDraggerRef.current.position.set(0, 0, 0);
 
