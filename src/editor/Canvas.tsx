@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
 import { quaternionFromNormal, quaternionToVector3 } from "@orb_utils/Math";
+import { message } from "antd";
 
 
 const Canvas = observer(() => {
@@ -190,6 +191,19 @@ const EditorControls = observer(() => {
                                 // Rotation offset
                                 const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
                                 const dir = quaternionFromNormal(offset.normalize());
+                                const draggerWorldPos = originDraggerRef.current.getWorldPosition(new THREE.Vector3());
+                                const dirLocal = o.worldToLocal(draggerWorldPos).normalize();
+                                // TO-DO: this can be much simplier!!! We need to look at ALL of this in world space, so we change everything to world space!!!
+                                console.log("worldpos:", draggerWorldPos, "local direciton:", dirLocal);
+                                // world to local arrow used to HOPEFULLY do the offset correctly!
+                                if (DEBUGGING) {
+                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_WORLD_DRAG");
+                                    ah && scene.remove(ah);
+                                    const a1 = new THREE.ArrowHelper(dirLocal, o.position, 4, 0xFFFFFF);
+                                    a1.name = "DEBUGGING_ARROW_HELPER_WORLD_DRAG";
+                                    scene.add(a1);
+                                }
+
                                 const newQuatDir = new THREE.Quaternion().multiplyQuaternions(quat, dir);
                                 const dirNew = quaternionToVector3(newQuatDir);
                                 // dragging direction yellow
@@ -207,7 +221,7 @@ const EditorControls = observer(() => {
                                 o.geometry.translate(-translate.x, -translate.y, -translate.z);
 
                                 // Geomtery translation direction cyan
-                                if(DEBUGGING) {
+                                if (DEBUGGING) {
                                     const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_2");
                                     ah && scene.remove(ah);
                                     const a1 = new THREE.ArrowHelper(translate.normalize().negate(), o.position, 2, 0x00FFFF);
@@ -217,7 +231,7 @@ const EditorControls = observer(() => {
 
                                 const rotationDirectionQuat = new THREE.Quaternion().multiplyQuaternions(dir, new THREE.Quaternion().setFromEuler(o.rotation));
                                 const rotationDirection = quaternionToVector3(rotationDirectionQuat);
-                                
+
                                 // moving direction offset purple
                                 if (DEBUGGING) {
                                     const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_3");
