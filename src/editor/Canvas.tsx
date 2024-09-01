@@ -192,18 +192,40 @@ const EditorControls = observer(() => {
                                 const dir = quaternionFromNormal(offset.normalize());
                                 const newQuatDir = new THREE.Quaternion().multiplyQuaternions(quat, dir);
                                 const dirNew = quaternionToVector3(newQuatDir);
-
-                                DEBUGGING && scene.add(new THREE.ArrowHelper(dirNew, o.position, 2, 0xFFFF00));
-
+                                // dragging direction yellow
+                                if (DEBUGGING) {
+                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_1");
+                                    ah && scene.remove(ah);
+                                    const a1 = new THREE.ArrowHelper(dirNew, o.position, 2, 0xFFFF00);
+                                    a1.name = "DEBUGGING_ARROW_HELPER_1";
+                                    scene.add(a1);
+                                }
                                 const translate = dirNew.multiplyScalar(distance);
                                 translate.divide(o.scale);
 
                                 // Adjust translation and position of obj
                                 o.geometry.translate(-translate.x, -translate.y, -translate.z);
+
+                                // Geomtery translation direction cyan
+                                if(DEBUGGING) {
+                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_2");
+                                    ah && scene.remove(ah);
+                                    const a1 = new THREE.ArrowHelper(translate.normalize().negate(), o.position, 2, 0x00FFFF);
+                                    a1.name = "DEBUGGING_ARROW_HELPER_2";
+                                    scene.add(a1);
+                                }
+
                                 const rotationDirectionQuat = new THREE.Quaternion().multiplyQuaternions(dir, new THREE.Quaternion().setFromEuler(o.rotation));
                                 const rotationDirection = quaternionToVector3(rotationDirectionQuat);
-                                console.log(rotationDirection)
-                                DEBUGGING && scene.add(new THREE.ArrowHelper(rotationDirection, o.position, 2.5, 0xFF0000));
+                                
+                                // moving direction offset purple
+                                if (DEBUGGING) {
+                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_3");
+                                    ah && scene.remove(ah);
+                                    const a1 = new THREE.ArrowHelper(rotationDirection, o.position, 2.5, 0xFF00FF);
+                                    a1.name = "DEBUGGING_ARROW_HELPER_3";
+                                    scene.add(a1);
+                                }
                                 o.position.add(rotationDirection.multiplyScalar(distance).multiply(o.scale));
                                 // Reset helpers
                                 originDraggerRef.current.position.set(0, 0, 0);
