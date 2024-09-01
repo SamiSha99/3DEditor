@@ -204,17 +204,17 @@ const EditorControls = observer(() => {
                                     scene.add(a1);
                                 }
 
-                                const newQuatDir = new THREE.Quaternion().multiplyQuaternions(quat, dir);
-                                const dirNew = quaternionToVector3(newQuatDir);
+                                // const newQuatDir = new THREE.Quaternion().multiplyQuaternions(quat, dir);
+                                // const dirNew = quaternionToVector3(newQuatDir);
                                 // dragging direction yellow
-                                if (DEBUGGING) {
-                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_1");
-                                    ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(dirNew, o.position, 2, 0xFFFF00);
-                                    a1.name = "DEBUGGING_ARROW_HELPER_1";
-                                    scene.add(a1);
-                                }
-                                const translate = dirNew.multiplyScalar(distance);
+                                // if (DEBUGGING) {
+                                    // const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_1");
+                                    // ah && scene.remove(ah);
+                                    // const a1 = new THREE.ArrowHelper(dirNew, o.position, 2, 0xFFFF00);
+                                    // a1.name = "DEBUGGING_ARROW_HELPER_1";
+                                    // scene.add(a1);
+                                // }
+                                const translate = dirLocal.multiplyScalar(distance); //dirNew.multiplyScalar(distance);
                                 translate.divide(o.scale);
 
                                 // Adjust translation and position of obj
@@ -224,7 +224,7 @@ const EditorControls = observer(() => {
                                 if (DEBUGGING) {
                                     const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_2");
                                     ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(translate.normalize().negate(), o.position, 2, 0x00FFFF);
+                                    const a1 = new THREE.ArrowHelper(translate.clone().normalize().negate(), o.position, 2, 0x00FFFF);
                                     a1.name = "DEBUGGING_ARROW_HELPER_2";
                                     scene.add(a1);
                                 }
@@ -240,7 +240,9 @@ const EditorControls = observer(() => {
                                     a1.name = "DEBUGGING_ARROW_HELPER_3";
                                     scene.add(a1);
                                 }
-                                o.position.add(rotationDirection.multiplyScalar(distance).multiply(o.scale));
+                                // o.position.add(rotationDirection.multiplyScalar(distance).multiply(o.scale));
+                                console.log(translate);
+                                o.position.add(translate.multiply(o.scale));
                                 // Reset helpers
                                 originDraggerRef.current.position.set(0, 0, 0);
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
