@@ -3,7 +3,7 @@ import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-thre
 import { useStores } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { Box, CameraControls, Environment, Grid, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { Box, CameraControls, Environment, Grid, Helper, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
@@ -141,6 +141,9 @@ const EditorControls = observer(() => {
     originDraggerRef.current && originDraggerRef.current.position.set(0, 0, 0);
     // originDraggerRef.current && controlsObject3D && originDraggerRef.current.rotation.copy(controlsObject3D.rotation);
 
+    const DEBUGGING = true;
+
+
     return (
         <>
             <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} />
@@ -189,16 +192,19 @@ const EditorControls = observer(() => {
                                 const dir = quaternionFromNormal(offset.normalize());
                                 const newQuatDir = new THREE.Quaternion().multiplyQuaternions(quat, dir);
                                 const dirNew = quaternionToVector3(newQuatDir);
+
+                                DEBUGGING && scene.add(new THREE.ArrowHelper(dirNew, o.position, 2, 0xFFFF00));
+
                                 const translate = dirNew.multiplyScalar(distance);
                                 translate.divide(o.scale);
-                                
+
                                 // Adjust translation and position of obj
                                 o.geometry.translate(-translate.x, -translate.y, -translate.z);
                                 const rotationDirectionQuat = new THREE.Quaternion().multiplyQuaternions(dir, new THREE.Quaternion().setFromEuler(o.rotation));
                                 const rotationDirection = quaternionToVector3(rotationDirectionQuat);
                                 console.log(rotationDirection)
+                                DEBUGGING && scene.add(new THREE.ArrowHelper(rotationDirection, o.position, 2.5, 0xFF0000));
                                 o.position.add(rotationDirection.multiplyScalar(distance).multiply(o.scale));
-                                
                                 // Reset helpers
                                 originDraggerRef.current.position.set(0, 0, 0);
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
