@@ -18,7 +18,6 @@ const Canvas = observer(() => {
     const [loaded, setLoaded] = useState<boolean>();
 
     useEffect(() => {
-        console.log(canvasRef.current);
         setLoaded(canvasRef.current != undefined);
     }, [canvasRef]);
 
@@ -187,37 +186,41 @@ const EditorControls = observer(() => {
                                 const offset = originDraggerRef.current.position.clone();
 
                                 const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
-                                const draggerWorldPos = originDraggerRef.current.getWorldPosition(new THREE.Vector3());
-                                const dirWorld = o.worldToLocal(draggerWorldPos.clone()).transformDirection(o.matrixWorld).normalize();
+                                const dirWorld = o.worldToLocal(originDraggerRef.current.getWorldPosition(new THREE.Vector3())).transformDirection(o.matrixWorld).normalize();
 
+                                const quatRotation = new THREE.Quaternion().setFromEuler(o.rotation);
+
+                                const geometryQuatPosition = quaternionFromNormal(dirWorld.clone());
+                                const offsetDirGeometry = quaternionToVector3(new THREE.Quaternion().multiplyQuaternions(quatRotation.clone(), geometryQuatPosition));
+
+                                // Geometry translation yellow
                                 if (DEBUGGING) {
                                     const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_1");
                                     ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(dirWorld, o.position, 4, 0xFFFF00);
+                                    const a1 = new THREE.ArrowHelper(offsetDirGeometry, o.position, 4, 0xFFFF00);
                                     a1.name = "DEBUGGING_ARROW_HELPER_1";
                                     scene.add(a1);
                                 }
 
-                                const translate = dirWorld.multiplyScalar(distance);
-                                translate.divide(o.scale);
+                                // Adjust translation of geometry
+                                const translate = offsetDirGeometry.clone().multiplyScalar(distance).divide(o.scale).negate();
+                                (o.geometry as THREE.BufferGeometry).translate(translate.x, translate.y, translate.z);
 
                                 // to-do maybe do the same with the one at the top
-                                const quat1 = quaternionFromNormal(dirWorld.clone().normalize().negate());
-                                const adjustedQuat = new THREE.Quaternion().multiplyQuaternions( new THREE.Quaternion().setFromEuler(o.rotation), quat1)
-                                const positionOffsetDir = quaternionToVector3(adjustedQuat);
-                                // Adjust translation and position of obj
-                                o.geometry.translate(-translate.x, -translate.y, -translate.z);
-
-                                // Geomtery translation direction cyan
+                                const worldQuatPosition = quaternionFromNormal(dirWorld.clone().negate());
+                                // TO-DO this should rotated in reverse
+                                console.log(quatRotation);
+                                const offsetDirPosition = quaternionToVector3(new THREE.Quaternion().multiplyQuaternions(worldQuatPosition, quatRotation.clone()));
+                                // object position translation direction cyan
                                 if (DEBUGGING) {
                                     const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_2");
                                     ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(positionOffsetDir, o.position, 4, 0x00FFFF);
+                                    const a1 = new THREE.ArrowHelper(offsetDirPosition.clone(), o.position, 4, 0x00FFFF);
                                     a1.name = "DEBUGGING_ARROW_HELPER_2";
                                     scene.add(a1);
                                 }
+                                o.position.add(offsetDirPosition.clone().multiplyScalar(-distance));
 
-                                o.position.add(positionOffsetDir.clone().normalize().multiplyScalar(-distance));
                                 // Reset helpers
                                 originDraggerRef.current.position.set(0, 0, 0);
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");

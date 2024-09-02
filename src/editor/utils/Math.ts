@@ -39,9 +39,9 @@ export const quaternionToVector3 = (q: THREE.Quaternion, direction: QuatToVector
             break;
         case "left":
             v.set(
-                q.x = 1 - 2 * (q.y * q.y + q.z * q.z),
-                q.y = 2 * (q.x * q.y + q.w * q.z),
-                q.z = 2 * (q.x * q.z - q.w * q.y)
+                1 - 2 * (q.y * q.y + q.z * q.z),
+                2 * (q.x * q.y + q.w * q.z),
+                2 * (q.x * q.z - q.w * q.y)
             );
             break;
     }
