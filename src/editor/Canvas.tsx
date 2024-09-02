@@ -9,6 +9,7 @@ import React from "react";
 import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
 import { quaternionFromNormal, quaternionToVector3 } from "@orb_utils/Math";
 import { message } from "antd";
+import { getWorldDirectionByAxis } from "@orb_utils/Object3D";
 
 
 const Canvas = observer(() => {
@@ -185,38 +186,25 @@ const EditorControls = observer(() => {
                                 const o = controlsObject3D;
                                 const offset = originDraggerRef.current.position.clone();
 
-                                // to-do VERY CLOSE just some math mismatch
-                                const quat = new THREE.Quaternion().setFromEuler(o.rotation);
-
-                                // Rotation offset
                                 const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
-                                const dir = quaternionFromNormal(offset.normalize());
                                 const draggerWorldPos = originDraggerRef.current.getWorldPosition(new THREE.Vector3());
-                                const dirLocal = o.worldToLocal(draggerWorldPos).normalize();
-                                // TO-DO: this can be much simplier!!! We need to look at ALL of this in world space, so we change everything to world space!!!
-                                console.log("worldpos:", draggerWorldPos, "local direciton:", dirLocal);
-                                // world to local arrow used to HOPEFULLY do the offset correctly!
+                                const dirWorld = o.worldToLocal(draggerWorldPos.clone()).transformDirection(o.matrixWorld).normalize();
+
                                 if (DEBUGGING) {
-                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_WORLD_DRAG");
+                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_1");
                                     ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(dirLocal, o.position, 4, 0xFFFFFF);
-                                    a1.name = "DEBUGGING_ARROW_HELPER_WORLD_DRAG";
+                                    const a1 = new THREE.ArrowHelper(dirWorld, o.position, 4, 0xFFFF00);
+                                    a1.name = "DEBUGGING_ARROW_HELPER_1";
                                     scene.add(a1);
                                 }
 
-                                // const newQuatDir = new THREE.Quaternion().multiplyQuaternions(quat, dir);
-                                // const dirNew = quaternionToVector3(newQuatDir);
-                                // dragging direction yellow
-                                // if (DEBUGGING) {
-                                    // const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_1");
-                                    // ah && scene.remove(ah);
-                                    // const a1 = new THREE.ArrowHelper(dirNew, o.position, 2, 0xFFFF00);
-                                    // a1.name = "DEBUGGING_ARROW_HELPER_1";
-                                    // scene.add(a1);
-                                // }
-                                const translate = dirLocal.multiplyScalar(distance); //dirNew.multiplyScalar(distance);
+                                const translate = dirWorld.multiplyScalar(distance);
                                 translate.divide(o.scale);
 
+                                // to-do maybe do the same with the one at the top
+                                const quat1 = quaternionFromNormal(dirWorld.clone().normalize().negate());
+                                const adjustedQuat = new THREE.Quaternion().multiplyQuaternions( new THREE.Quaternion().setFromEuler(o.rotation), quat1)
+                                const positionOffsetDir = quaternionToVector3(adjustedQuat);
                                 // Adjust translation and position of obj
                                 o.geometry.translate(-translate.x, -translate.y, -translate.z);
 
@@ -224,25 +212,12 @@ const EditorControls = observer(() => {
                                 if (DEBUGGING) {
                                     const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_2");
                                     ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(translate.clone().normalize().negate(), o.position, 2, 0x00FFFF);
+                                    const a1 = new THREE.ArrowHelper(positionOffsetDir, o.position, 4, 0x00FFFF);
                                     a1.name = "DEBUGGING_ARROW_HELPER_2";
                                     scene.add(a1);
                                 }
 
-                                const rotationDirectionQuat = new THREE.Quaternion().multiplyQuaternions(dir, new THREE.Quaternion().setFromEuler(o.rotation));
-                                const rotationDirection = quaternionToVector3(rotationDirectionQuat);
-
-                                // moving direction offset purple
-                                if (DEBUGGING) {
-                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_3");
-                                    ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(rotationDirection, o.position, 2.5, 0xFF00FF);
-                                    a1.name = "DEBUGGING_ARROW_HELPER_3";
-                                    scene.add(a1);
-                                }
-                                // o.position.add(rotationDirection.multiplyScalar(distance).multiply(o.scale));
-                                console.log(translate);
-                                o.position.add(translate.multiply(o.scale));
+                                o.position.add(positionOffsetDir.clone().normalize().multiplyScalar(-distance));
                                 // Reset helpers
                                 originDraggerRef.current.position.set(0, 0, 0);
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
