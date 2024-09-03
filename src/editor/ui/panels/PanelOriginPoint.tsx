@@ -8,12 +8,12 @@ import { PANEL_ORIGIN_POINT } from "./Panels";
 
 export const PanelOriginPoint = observer(() => {
     const { controlsObject3D, scene } = useStores();
+    const o = controlsObject3D;
     const [onConstraintObject, setOnConstraintObject] = useState(false);
     const c = document.getElementsByTagName("canvas")[0];
 
     const setOriginPoint = (pos?: { x?: number, y?: number, z?: number }, center?: boolean) => {
-        if (!controlsObject3D) return;
-        const o = controlsObject3D;
+        if (!o) return;
         if (o instanceof THREE.Mesh && o.geometry instanceof THREE.BufferGeometry) {
             o.geometry.computeBoundingBox();
             if (o.geometry.boundingBox) {
@@ -62,7 +62,18 @@ export const PanelOriginPoint = observer(() => {
         <DraggablePanel key={PANEL_ORIGIN_POINT.id} name="Origin Point" identifier={PANEL_ORIGIN_POINT.id}>
             <Row align="middle" justify="center">
                 {
-                    controlsObject3D &&
+                    !o && <Alert message="Select an object with a Mesh." type="info" showIcon />
+                }
+                {
+                    o && !(o instanceof THREE.Mesh) &&
+                    <Alert message="Selected Object is not a Mesh!" type="warning" showIcon />
+                }
+                {
+                    o && o instanceof THREE.Mesh && !(o.geometry instanceof THREE.BufferGeometry) &&
+                    <Alert message="Mesh has no geometry" type="warning" showIcon />
+                }
+                {
+                    o && o instanceof THREE.Mesh && o.geometry instanceof THREE.BufferGeometry &&
                     <Space>
                         <Space.Compact block direction="vertical">
                             <Space.Compact style={{ marginBottom: "5px" }} block>
@@ -90,9 +101,6 @@ export const PanelOriginPoint = observer(() => {
                             </Space.Compact>
                         </Space.Compact>
                     </Space>
-                }
-                {
-                    !controlsObject3D && <Alert message="Select an object." type="info" showIcon />
                 }
             </Row>
         </DraggablePanel>
