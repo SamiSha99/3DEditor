@@ -184,16 +184,10 @@ const EditorControls = observer(() => {
 
                             if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsObject3D;
-                                const offset = originDraggerRef.current.position.clone();
-
-                                const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
+                                const distance = originDraggerRef.current.position.distanceTo({ x: 0, y: 0, z: 0 });
                                 const dragDirWorld = o.worldToLocal(o.localToWorld(originDraggerRef.current.position)).transformDirection(o.matrixWorld).normalize();
-                                const quatRotation = new THREE.Quaternion().copy(o.quaternion);
-                                const quatDirWorld = quaternionFromNormal(dragDirWorld.normalize());
-                                const newQuaternion = new THREE.Quaternion().multiplyQuaternions(quatDirWorld, quatRotation.clone().invert());
+                                const newQuaternion = new THREE.Quaternion().multiplyQuaternions(quaternionFromNormal(dragDirWorld), o.quaternion.clone().invert());
 
-                                // console.log(dragDirWorld, quatDirWorld, quaternionToVector3(quatDirWorld), quaternionToVector3(newQuaternion));
-                                
                                 if (DEBUGGING) {
                                     const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_0");
                                     ah && scene.remove(ah);
@@ -204,6 +198,7 @@ const EditorControls = observer(() => {
 
                                 const t = quaternionToVector3(newQuaternion).negate().multiplyScalar(distance);
                                 const p = t.clone();
+                                // to-do result is good as the object remains in place but the point is incorrectly set.
                                 o.geometry.translate(t.x, t.y, t.z)
                                 o.position.add(p.transformDirection(o.matrixWorld).normalize().multiplyScalar(distance).negate());
 
