@@ -167,13 +167,72 @@ const EditorControls = observer(() => {
             }
             {
 
-                controlsObject3D && 
+                controlsObject3D &&
                 <TransformControlsDrei
                     name='TRANSFORM_HELPER'
                     object={isOriginPointMode ? originDraggerRef : controlsObject3D}
                     mode={controlsMode}
                     space={controlsSpace}
                     camera={camera}
+                    onMouseUp={() => {
+                        if (!isTransforming) return;
+                        setIsTransforming(false);
+                        if (isOriginPointMode) {
+                            if (!originDraggerRef.current) {
+                                return;
+                            }
+
+                            if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
+                                const o = controlsObject3D;
+                                const offset = originDraggerRef.current.position.clone();
+
+                                const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
+                                const dragDirWorld = o.worldToLocal(o.localToWorld(originDraggerRef.current.position)).transformDirection(o.matrixWorld).normalize();
+                                const quatRotation = new THREE.Quaternion().copy(o.quaternion);
+                                const quatDirWorld = quaternionFromNormal(dragDirWorld.normalize());
+                                const newQuaternion = new THREE.Quaternion().multiplyQuaternions(quatDirWorld, quatRotation.clone().invert());
+
+                                // console.log(dragDirWorld, quatDirWorld, quaternionToVector3(quatDirWorld), quaternionToVector3(newQuaternion));
+                                
+                                if (DEBUGGING) {
+                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_0");
+                                    ah && scene.remove(ah);
+                                    const a1 = new THREE.ArrowHelper(quaternionToVector3(newQuaternion), o.position, 2, 0xFF00FF, 0.5);
+                                    a1.name = "DEBUGGING_ARROW_HELPER_0";
+                                    scene.add(a1);
+                                }
+
+                                const t = quaternionToVector3(newQuaternion).negate().multiplyScalar(distance);
+                                const p = t.clone();
+                                o.geometry.translate(t.x, t.y, t.z)
+                                o.position.add(p.transformDirection(o.matrixWorld).normalize().multiplyScalar(distance).negate());
+
+                                if (DEBUGGING) {
+                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_1");
+                                    ah && scene.remove(ah);
+                                    const a1 = new THREE.ArrowHelper(t, o.position, 2.5, 0xFFFF00, 0.5);
+                                    a1.name = "DEBUGGING_ARROW_HELPER_1";
+                                    scene.add(a1);
+                                }
+
+                                if (DEBUGGING) {
+                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_2");
+                                    ah && scene.remove(ah);
+                                    const a1 = new THREE.ArrowHelper(p, o.position, 3, 0x00FFFF, 0.5);
+                                    a1.name = "DEBUGGING_ARROW_HELPER_2";
+                                    scene.add(a1);
+                                }
+
+                                // Reset helpers
+                                originDraggerRef.current.position.set(0, 0, 0);
+                                const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
+                                origin?.position.copy(o.position);
+                                helper?.update();
+                                helper?.position.copy(o.position)
+                            }
+                        }
+                    }}
+                    /*
                     onMouseUp={() => {
                         if (!isTransforming) return;
                         setIsTransforming(false);
@@ -201,6 +260,7 @@ const EditorControls = observer(() => {
                                 }
 
                                 const geometryQuatPosition = quaternionFromNormal(dirWorld.clone());
+                                
                                 if (DEBUGGING) {
                                     const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_9");
                                     ah && scene.remove(ah);
@@ -251,6 +311,7 @@ const EditorControls = observer(() => {
                             }
                         }
                     }}
+                        */
                     onMouseDown={() => {
                         if (isTransforming) return;
                         setIsTransforming(true);
