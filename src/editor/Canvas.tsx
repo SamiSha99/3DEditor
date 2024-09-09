@@ -10,6 +10,7 @@ import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
 import { quaternionFromNormal, quaternionToVector3 } from "@orb_utils/Math";
 import { message } from "antd";
 import { getWorldDirectionByAxis } from "@orb_utils/Object3D";
+import { getTranslationAmount } from "@orb_utils/MeshUtils";
 
 
 const Canvas = observer(() => {
@@ -186,15 +187,10 @@ const EditorControls = observer(() => {
                             if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsObject3D;
                                 const dragger = originDraggerRef.current;
-                                const distance = dragger.position.distanceTo({ x: 0, y: 0, z: 0 });
-                                const dragDirWorld = o.worldToLocal(o.localToWorld(dragger.position));
-                                dragDirWorld.transformDirection(o.matrixWorld.clone().invert()).normalize();
-                                // division isn't perfect to-do fix with multi axis dragging
-                                const t = dragDirWorld.clone().negate().multiplyScalar(distance).divide(o.scale);
-                                const p = dragDirWorld.clone().transformDirection(o.matrixWorld).normalize().multiplyScalar(distance);
-                                
+                                const [t, p] = getTranslationAmount(o, dragger.position);
                                 // Apply
-                                o.geometry.translate(t.x, t.y, t.z)
+                                const geometry = (o.geometry as THREE.BufferGeometry);
+                                geometry.translate(t.x, t.y, t.z);
                                 o.position.add(p);
 
                                 // Reset helpers
@@ -206,86 +202,6 @@ const EditorControls = observer(() => {
                             }
                         }
                     }}
-                    /*
-                    onMouseUp={() => {
-                        if (!isTransforming) return;
-                        setIsTransforming(false);
-                        if (isOriginPointMode) {
-                            if (!originDraggerRef.current) {
-                                return;
-                            }
-
-                            if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
-                                const o = controlsObject3D;
-                                const offset = originDraggerRef.current.position.clone();
-
-                                const distance = offset.distanceTo({ x: 0, y: 0, z: 0 });
-                                const dirWorld = o.worldToLocal(originDraggerRef.current.getWorldPosition(new THREE.Vector3())).transformDirection(o.matrixWorld).normalize();
-                                console.log(dirWorld);
-                                const quatRotationReverse = new THREE.Quaternion().setFromEuler(new THREE.Euler(-o.rotation.x, -o.rotation.y, -o.rotation.z));
-
-                                // Direction of rotation from quat to vector | PURPLE
-                                if (DEBUGGING) {
-                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_0");
-                                    ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(dirWorld, o.position, 2, 0xFF00FF, 0.5);
-                                    a1.name = "DEBUGGING_ARROW_HELPER_0";
-                                    scene.add(a1);
-                                }
-
-                                const geometryQuatPosition = quaternionFromNormal(dirWorld.clone());
-                                
-                                if (DEBUGGING) {
-                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_9");
-                                    ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(quaternionToVector3(quatRotationReverse).normalize(), o.position, 5, 0xFFFFFF);
-                                    a1.name = "DEBUGGING_ARROW_HELPER_9";
-                                    scene.add(a1);
-                                }
-                                const offsetDirGeometry = quaternionToVector3(new THREE.Quaternion().multiplyQuaternions(quatRotationReverse.clone(), geometryQuatPosition));
-
-                                // Geometry translation yellow
-                                if (DEBUGGING) {
-                                    const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_1");
-                                    ah && scene.remove(ah);
-                                    const a1 = new THREE.ArrowHelper(offsetDirGeometry, o.position, 3, 0xFFFF00);
-                                    a1.name = "DEBUGGING_ARROW_HELPER_1";
-                                    scene.add(a1);
-                                }
-
-                                // Adjust translation of geometry
-                                const translate = offsetDirGeometry.clone().multiplyScalar(distance).divide(o.scale).negate();
-                                (o.geometry as THREE.BufferGeometry).translate(translate.x, translate.y, translate.z);
-
-                                if (true) {
-
-                                    // to-do maybe do the same with the one at the top
-                                    const worldQuatPosition = quaternionFromNormal(dirWorld.clone().negate());
-                                    // TO-DO this should rotated in reverse
-                                    // console.log(quatRotation);
-                                    // const quatReverseRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-o.rotation.x, -o.rotation.y, -o.rotation.z));
-                                    const offsetDirPosition = quaternionToVector3(new THREE.Quaternion().multiplyQuaternions(worldQuatPosition, quatRotationReverse.clone()));
-                                    // object position translation direction cyan
-                                    if (DEBUGGING) {
-                                        const ah = scene.getObjectByName("DEBUGGING_ARROW_HELPER_2");
-                                        ah && scene.remove(ah);
-                                        const a1 = new THREE.ArrowHelper(offsetDirPosition.clone(), o.position, 4, 0x00FFFF);
-                                        a1.name = "DEBUGGING_ARROW_HELPER_2";
-                                        scene.add(a1);
-                                    }
-                                    o.position.add(offsetDirPosition.clone().multiplyScalar(-distance));
-
-                                }
-                                // Reset helpers
-                                originDraggerRef.current.position.set(0, 0, 0);
-                                const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
-                                origin?.position.copy(o.position);
-                                helper?.update();
-                                helper?.position.copy(o.position)
-                            }
-                        }
-                    }}
-                        */
                     onMouseDown={() => {
                         if (isTransforming) return;
                         setIsTransforming(true);

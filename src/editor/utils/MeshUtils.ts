@@ -20,11 +20,22 @@ export function computeAllVertexNormals(o: THREE.Object3D) {
 export function invertGeometry(geometry: THREE.BufferGeometry) {
     if (!geometry.index) return;
     const index = geometry.index.array
-    
+
     for (let i = 0, il = index.length / 3; i < il; i++) {
         let x = index[i * 3]
         index[i * 3] = index[i * 3 + 2]
         index[i * 3 + 2] = x
     }
     geometry.index.needsUpdate = true
+}
+
+/** Returns an additive value for Translate Geometry function and position.Add() */
+export function getTranslationAmount(o: THREE.Object3D, amount: THREE.Vector3) {
+    const distance = amount.distanceTo({ x: 0, y: 0, z: 0 });
+    const dragDirWorld = o.worldToLocal(o.localToWorld(amount));
+    dragDirWorld.transformDirection(o.matrixWorld.clone().invert()).normalize();
+    // division isn't perfect to-do fix with multi axis dragging
+    const t = dragDirWorld.clone().negate().multiplyScalar(distance).divide(o.scale);
+    const p = dragDirWorld.clone().transformDirection(o.matrixWorld).normalize().multiplyScalar(distance);
+    return [t, p];
 }
