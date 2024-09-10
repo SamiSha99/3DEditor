@@ -32,11 +32,12 @@ export function invertGeometry(geometry: THREE.BufferGeometry) {
 /** Returns an additive value to Translate Geometry and its Object3D, Values are [Geometry, Position] */
 export function getTranslationAmount(o: THREE.Object3D, amount: THREE.Vector3) {
     const distance = amount.distanceTo({ x: 0, y: 0, z: 0 });
-    const dragDirWorld = o.worldToLocal(o.localToWorld(amount));
-    dragDirWorld.transformDirection(o.matrixWorld.clone().invert()).normalize();
+    const dragDirWorld = o.worldToLocal(o.localToWorld(amount)).normalize();
+    // turn this local direction to the world direction
+    dragDirWorld.transformDirection(o.matrixWorld.clone().invert());
     // division isn't perfect to-do fix with multi axis dragging
     const t = dragDirWorld.clone().negate().multiplyScalar(distance).divide(o.scale);
-    const p = dragDirWorld.clone().transformDirection(o.matrixWorld).normalize().multiplyScalar(distance);
+    const p = dragDirWorld.clone().transformDirection(o.matrixWorld).multiplyScalar(distance);
     return [t, p] as [THREE.Vector3, THREE.Vector3];
 }
 
