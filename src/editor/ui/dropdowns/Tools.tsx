@@ -1,6 +1,5 @@
 import * as ICONS from "@ant-design/icons";
 import { useStores } from "@orb_App";
-import { Screenshot } from "@orb_tools/Previewer";
 import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
@@ -9,7 +8,7 @@ import * as EXPORTER from '@orb_tools/Exporter'
 import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
 import { Sphere } from "@orb_tools/create/Primitive";
-import { invertGeometry } from "src/editor/utils/MeshUtils";
+import { invertGeometry } from "src/editor/utils/Mesh";
 import { PANEL_ORIGIN_POINT, PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 
 export const Tools = observer(() => {

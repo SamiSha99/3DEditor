@@ -3,14 +3,11 @@ import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-thre
 import { useStores } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { Box, CameraControls, Environment, Grid, Helper, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { Box, CameraControls, Environment, Grid, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
-import { quaternionFromNormal, quaternionToVector3 } from "@orb_utils/Math";
-import { message } from "antd";
-import { getWorldDirectionByAxis } from "@orb_utils/Object3D";
-import { getTranslationAmount } from "@orb_utils/MeshUtils";
+import { translateOriginPoint } from "@orb_utils/Mesh";
 
 
 const Canvas = observer(() => {
@@ -120,7 +117,6 @@ const EditorControls = observer(() => {
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const originDraggerRef = useRef<THREE.Group>(null);
 
-
     const onStart = () => {
         !cameraStartDrag && setCameraStartDrag(true);
     }
@@ -144,7 +140,12 @@ const EditorControls = observer(() => {
     controlsSpace == "local" && originDraggerRef.current && controlsObject3D && originDraggerRef.current.rotation.copy(controlsObject3D.rotation);
     controlsSpace == "world" && originDraggerRef.current && controlsObject3D && originDraggerRef.current.rotation.set(0, 0, 0);
 
-    const DEBUGGING = true;
+    if(originDraggerRef.current) {
+        originDraggerRef.current.position.set(0, 0, 0);
+        if(controlsObject3D) {
+            controlsSpace == "local" ? originDraggerRef.current.rotation.copy(controlsObject3D.rotation) : controlsObject3D && originDraggerRef.current.rotation.set(0, 0, 0);
+        }
+    }
 
     //to-do when launching origin point reset position of the origin point
     return (
@@ -187,11 +188,8 @@ const EditorControls = observer(() => {
                             if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsObject3D;
                                 const dragger = originDraggerRef.current;
-                                const [t, p] = getTranslationAmount(o, dragger.position);
-                                // Apply
-                                const geometry = (o.geometry as THREE.BufferGeometry);
-                                geometry.translate(t.x, t.y, t.z);
-                                o.position.add(p);
+                                
+                                translateOriginPoint(o, dragger.position);
 
                                 // Reset helpers
                                 dragger.position.set(0, 0, 0);
