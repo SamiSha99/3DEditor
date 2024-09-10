@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
-import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
+import { DRAGGABLE_CONTROLLER_WIDTH, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
@@ -35,7 +35,7 @@ export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
                 <InputNumber
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(50% - 3px)' }}
+                    style={{ width: 'calc(50% - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     controls={false}
@@ -61,7 +61,7 @@ export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
                 <InputNumber
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(50% - 3px)' }}
+                    style={{ width: 'calc(50% - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     controls={false}
@@ -117,7 +117,7 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                 <InputNumber
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(100%/3 - 3px)' }}
+                    style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
                     precision={3}
                     controls={false}
@@ -143,7 +143,7 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                 <InputNumber
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(100%/3 - 3px)' }}
+                    style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
                     precision={PRECISION_AMOUNT}
                     controls={false}
@@ -169,7 +169,7 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                 <InputNumber
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(100%/3 - 3px)' }}
+                    style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
                     precision={PRECISION_AMOUNT}
                     controls={false}

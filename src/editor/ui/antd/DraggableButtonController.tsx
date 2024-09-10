@@ -1,4 +1,5 @@
 import Icon from "@ant-design/icons";
+import { DRAGGABLE_CONTROLLER_WIDTH } from "@orb_UI/controller/items/SharedItemOptions";
 import { Button } from "antd";
 import { useRef } from "react";
 
@@ -42,7 +43,7 @@ export const DraggableButtonController: React.FC<DraggableButtonControllerInterf
             size="small"
             ref={buttonRef}
             icon={<Icon component={undefined} />}
-            style={{ left: 0, background: "grey", width: "3px", cursor: "ew-resize" }}
+            style={{ left: 0, background: "grey", width: DRAGGABLE_CONTROLLER_WIDTH, cursor: "ew-resize" }}
             block
             onMouseDown={(e) => {
                 document.addEventListener("mousemove", handleMouseMove);

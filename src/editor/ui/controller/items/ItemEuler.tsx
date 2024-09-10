@@ -4,7 +4,7 @@ import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
-import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
+import { DRAGGABLE_CONTROLLER_WIDTH, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
@@ -45,21 +45,25 @@ export const ItemEuler: React.FC<EulerInterface<{ [key: string]: any }>> = (
         z != object[variable].z && setZ(object[variable].z)
     });
 
+    const min = isDegree ? -180 : -Math.PI;
+    const max = isDegree ? 180 : Math.PI;
+    const step = isDegree ? 7.5 : Math.PI/24;
+
     return (
         <Form.Item label={label ? label : labelFromVariable(variable)} style={{ marginBottom: '0px', display: 'inline-block' }}>
             <Tooltip title={toFixedStripped(isDegree ? radToDeg(x) : x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: 'calc(100%/3 - 3px)' }}
+                    style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
                     value={isDegree ? radToDeg(x) : x}
                     precision={PRECISION_AMOUNT}
                     addonBefore={labelEuler?.x ? labelEuler.x : "X"}
                     controls={false}
-                    min={isDegree ? -180 : -Math.PI}
-                    max={isDegree ? 180 : Math.PI}
-                    step={isDegree ? 30 : Math.PI * 0.1667}
+                    min={min}
+                    max={max}
+                    step={step}
                     changeOnWheel
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -69,7 +73,7 @@ export const ItemEuler: React.FC<EulerInterface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={isDegree ? 30 : Math.PI * 0.1667}
+                    step={step}
                     onStep={(value, _rate, direction) => {
                         let clamped = 0;
                         if (isDegree)
@@ -86,15 +90,15 @@ export const ItemEuler: React.FC<EulerInterface<{ [key: string]: any }>> = (
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: 'calc(100%/3 - 3px)' }}
+                    style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
                     value={isDegree ? radToDeg(y) : y}
                     precision={PRECISION_AMOUNT}
                     addonBefore={labelEuler?.y ? labelEuler.y : "Y"}
                     controls={false}
-                    min={isDegree ? -180 : -Math.PI}
-                    max={isDegree ? 180 : Math.PI}
-                    step={isDegree ? 30 : Math.PI * 0.1667}
+                    min={min}
+                    max={max}
+                    step={step}
                     changeOnWheel
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -104,7 +108,7 @@ export const ItemEuler: React.FC<EulerInterface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={isDegree ? 30 : Math.PI * 0.1667}
+                    step={step}
                     onStep={(value, _rate, direction) => {
                         let clamped = 0;
                         if (isDegree)
@@ -121,15 +125,15 @@ export const ItemEuler: React.FC<EulerInterface<{ [key: string]: any }>> = (
                 <InputNumber
                     onFocus={() => loopStop()}
                     onBlur={() => loopStart()}
-                    style={{ width: 'calc(100%/3 - 3px)' }}
+                    style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
                     value={isDegree ? radToDeg(z) : z}
                     precision={PRECISION_AMOUNT}
                     addonBefore={labelEuler?.z ? labelEuler.z : "Z"}
                     controls={false}
-                    min={isDegree ? -180 : -Math.PI}
-                    max={isDegree ? 180 : Math.PI}
-                    step={isDegree ? 30 : Math.PI * 0.1667}
+                    min={min}
+                    max={max}
+                    step={step}
                     changeOnWheel
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -139,7 +143,7 @@ export const ItemEuler: React.FC<EulerInterface<{ [key: string]: any }>> = (
                         onChange && onChange(object[variable]);
                     }} />
                 <DraggableButtonController
-                    step={isDegree ? 30 : Math.PI * 0.1667}
+                    step={step}
                     onStep={(value, _rate, direction) => {
                         let clamped = 0;
                         if (isDegree)
