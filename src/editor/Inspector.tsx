@@ -4,7 +4,7 @@ import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import * as THREE from "three"
-import { ColorPickerItem, ItemNumber, ItemInput, ItemVector3, ItemEuler, SelectItem } from "./ui/controller/ControllerItems";
+import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
 
 export const EditorInspector = observer(() => {
@@ -169,10 +169,10 @@ export const SceneConfigs = observer(() => {
 
     return (
         <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} labelWrap>
-            <SelectItem
+            <ItemSelect
                 label="Environment"
                 enabled={true}
-                defaultValue={!environment ? "Custom" : environment}
+                defaultValue={!environment ? "Custom" : environment.replace(/^./, environment[0].toUpperCase())}
                 labelInValue={true}
                 onChangeSelect={(select: { value: string, label: string }) => {
                     let v = undefined;
@@ -180,7 +180,7 @@ export const SceneConfigs = observer(() => {
                     setEnvironmentByName(v)
                 }}
                 options={environmentList()} />
-            <ColorPickerItem
+            <ItemColorPicker
                 label="Background"
                 enabled={backgroundEnabled}
                 allowAlpha={false}

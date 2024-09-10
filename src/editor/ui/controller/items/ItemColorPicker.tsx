@@ -12,7 +12,7 @@ type ColorPickerInterface = {
     onChangeCompleteColorPicker?: (value: Color) => void
 }
 
-export const ColorPickerItem: React.FC<ColorPickerInterface> = (
+export const ItemColorPicker: React.FC<ColorPickerInterface> = (
     { label, enabled, defaultValue, allowAlpha, allowClear, onChangeCheckbox, onChangeColorPicker, onChangeCompleteColorPicker }
 ) => {
     return (
@@ -34,4 +34,4 @@ export const ColorPickerItem: React.FC<ColorPickerInterface> = (
     )
 }
 
-export default ColorPickerItem;
+export default ItemColorPicker;

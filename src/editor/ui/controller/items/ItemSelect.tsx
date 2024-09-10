@@ -1,6 +1,6 @@
 import { Form, Select } from "antd";
 
-type SelectItemInterface = {
+type SelectInterface = {
     label: string
     enabled?: boolean
     defaultValue?: string
@@ -9,7 +9,7 @@ type SelectItemInterface = {
     onChangeSelect?: (select: { value: string, label: string }) => void
 }
 
-export const SelectItem: React.FC<SelectItemInterface> = (
+export const ItemSelect: React.FC<SelectInterface> = (
     { label, enabled, defaultValue, labelInValue, options, onChangeSelect }
 ) => {
     return (
@@ -25,4 +25,4 @@ export const SelectItem: React.FC<SelectItemInterface> = (
     )
 }
 
-export default SelectItem;
+export default ItemSelect;
