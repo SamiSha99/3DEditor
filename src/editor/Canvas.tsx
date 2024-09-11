@@ -19,6 +19,8 @@ const Canvas = observer(() => {
         setLoaded(canvasRef.current != undefined);
     }, [canvasRef]);
 
+    console.log(THREE.Object3D.name);
+
     return (
         <ReactThreeFiberCanvas
             id="main"
