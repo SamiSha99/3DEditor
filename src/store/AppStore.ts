@@ -26,8 +26,10 @@ export class AppStore {
 
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
-    @observable environment: TYPE.Environments = TYPE.environments[1]; //TYPE.environments[0];
-    @observable background: Color | null = null;
+    @observable environment: TYPE.Environments = TYPE.environments[1];
+
+    static readonly DEFAULT_SCENE_BACKGROUND_COLOR = new Color(0x001029);
+    @observable background: Color | null = new Color(AppStore.DEFAULT_SCENE_BACKGROUND_COLOR).clone();
 
     @observable useRootSelection: boolean = false;
 
@@ -38,6 +40,7 @@ export class AppStore {
     constructor() {
         makeObservable(this)
         AppStore._instance = this;
+        this.scene.background = this.background;
         this.addObject(Box())
         this.setControlsTarget(this.sceneObjects[0])
     }

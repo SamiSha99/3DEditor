@@ -8,6 +8,7 @@ import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPic
 import { Color } from "antd/es/color-picker";
 import InspectorData from "./data/Inspector";
 import { Environment } from "@react-three/drei";
+import { AppStore } from "@orb_AppStore";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -181,16 +182,17 @@ export const SceneConfigs = observer(() => {
                     setEnvironmentByName(v)
                 }}
                 options={list} />
-                {/* to-do: finish this! */}
+            {/* to-do: finish this! */}
             <ItemColorPicker
                 object={scene}
                 variable="background"
                 label="Background"
                 allowAlpha={false}
-                defaultValue={"001029"}
+                defaultValue={background ? background.getHexString().replace("#", "") : AppStore.DEFAULT_SCENE_BACKGROUND_COLOR.getHexString()}
                 onChangeCheckbox={(e) => {
                     setBackgroundEnabled(e.target.checked);
-                    setbackground(background, e.target.checked)
+                    setbackground(e.target.checked ? background : null, e.target.checked);
+                    console.log("checking..")
                 }}
                 onChangeColorPicker={(_value: Color, hex: string) => {
                     scene.background = new THREE.Color(hex);

@@ -57,7 +57,7 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
     // the passed ref is null at load time! 
     if (!canvas) canvas = document.getElementById('main') as HTMLCanvasElement;
 
-    scene.background = background;
+    // scene.background = background;
 
     const selectObject = (e: MouseEvent) => {
         // Left Click only
