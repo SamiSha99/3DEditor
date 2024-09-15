@@ -1,25 +1,30 @@
 import { Form, Select } from "antd";
+import { Item, labelFromVariable } from "./SharedItemOptions";
+import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
+import { DefaultOptionType } from "antd/es/select";
 
-type SelectInterface = {
-    label: string
-    enabled?: boolean
+interface SelectInterface extends Item {
+    disabled?: boolean
     defaultValue?: string
     labelInValue?: boolean
-    options?: { value: string, label: string }[]
+    options?: DefaultOptionType[]
     onChangeSelect?: (select: { value: string, label: string }) => void
 }
 
 export const ItemSelect: React.FC<SelectInterface> = (
-    { label, enabled, defaultValue, labelInValue, options, onChangeSelect }
+    { label, object, variable, disabled, defaultValue, labelInValue, onChangeSelect }
 ) => {
+    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+    const list = object[variable] as DefaultOptionType[];
+
     return (
-        <Form.Item label={label}>
+        <Form.Item label={label ? label : labelFromVariable(variable)}>
             <Select
-                disabled={!enabled}
-                defaultValue={defaultValue ? { "value": defaultValue, "label": defaultValue } : undefined}
+                disabled={disabled != undefined ? disabled : false}
+                defaultValue={defaultValue ? { value: defaultValue, label: defaultValue } : undefined}
                 labelInValue={labelInValue}
                 onChange={(select: { value: string, label: string }) => { onChangeSelect && onChangeSelect(select); }}
-                options={options}
+                options={list}
             />
         </Form.Item>
     )

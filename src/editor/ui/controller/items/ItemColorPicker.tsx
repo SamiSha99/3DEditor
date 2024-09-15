@@ -1,9 +1,10 @@
 import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { Color } from "antd/es/color-picker";
 import { Checkbox, Form, ColorPicker } from "antd";
-type ColorPickerInterface = {
-    label: string
-    enabled?: boolean,
+import { Item } from "./SharedItemOptions";
+import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
+interface ColorPickerInterface extends Item {
+    disabled?: boolean,
     defaultValue?: string
     allowAlpha?: boolean
     allowClear?: boolean
@@ -13,8 +14,10 @@ type ColorPickerInterface = {
 }
 
 export const ItemColorPicker: React.FC<ColorPickerInterface> = (
-    { label, enabled, defaultValue, allowAlpha, allowClear, onChangeCheckbox, onChangeColorPicker, onChangeCompleteColorPicker }
+    { label, object, variable, disabled, defaultValue, allowAlpha, allowClear, onChangeCheckbox, onChangeColorPicker, onChangeCompleteColorPicker }
 ) => {
+    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+    
     return (
         <Form.Item label={label}>
             <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
@@ -23,7 +26,7 @@ export const ItemColorPicker: React.FC<ColorPickerInterface> = (
             <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
                 <ColorPicker
                     defaultValue={defaultValue}
-                    disabled={!enabled}
+                    disabled={disabled != undefined ? disabled : false}
                     disabledAlpha={!allowAlpha}
                     allowClear={allowClear}
                     onChange={(value: Color, hex: string) => { onChangeColorPicker && onChangeColorPicker(value, hex); }}

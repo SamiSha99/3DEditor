@@ -4,7 +4,7 @@ import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
-import { DRAGGABLE_CONTROLLER_WIDTH, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
+import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
@@ -18,17 +18,14 @@ const OrderOptions: SelectProps['options'] = [
     { value: "XZY", label: "XZY" }
 ];
 
-type EulerInterface<T> = {
-    variable: string,
-    object: T,
-    label?: string,
+interface EulerInterface extends Item {
     labelEuler?: { x?: string, y?: string, z?: string },
     showOrder?: boolean
     isDegree?: boolean,
     onChange?: (value: THREE.Euler) => void
 }
 
-export const ItemEuler: React.FC<EulerInterface<{ [key: string]: any }>> = (
+export const ItemEuler: React.FC<EulerInterface> = (
     { variable, object, label, labelEuler, showOrder, isDegree, onChange }
 ) => {
 
@@ -164,6 +161,7 @@ export const ItemEuler: React.FC<EulerInterface<{ [key: string]: any }>> = (
                             size="small"
                             value={order}
                             options={OrderOptions}
+                            labelInValue={true}
                             onChange={(value) => {
                                 // setOrder(value);
                                 // onChange && onChange({

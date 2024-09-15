@@ -7,6 +7,7 @@ import * as THREE from "three"
 import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
 import InspectorData from "./data/Inspector";
+import { Environment } from "@react-three/drei";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -153,7 +154,7 @@ export const HierarchyTree = observer(() => {
 
 export const SceneConfigs = observer(() => {
     const { environment, setEnvironmentByName, background, setbackground, scene } = useStores();
-    const [backgroundEnabled, setBackgroundEnabled] = useState(false);
+    const [_backgroundEnabled, setBackgroundEnabled] = useState(false);
 
     const environmentList = () => {
         let options: { value: string, label: string }[] = [];
@@ -167,12 +168,11 @@ export const SceneConfigs = observer(() => {
         return options;
     }
 
+    const list = environmentList();
 
     return (
         <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} labelWrap>
-            <ItemSelect
-                label="Environment"
-                enabled={true}
+            <ItemSelect object={{ Environment: list }} variable="Environment" label="Environment"
                 defaultValue={!environment ? "Custom" : environment.replace(/^./, environment[0].toUpperCase())}
                 labelInValue={true}
                 onChangeSelect={(select: { value: string, label: string }) => {
@@ -180,10 +180,12 @@ export const SceneConfigs = observer(() => {
                     if (select.value != "undefined") v = select.value as Environments
                     setEnvironmentByName(v)
                 }}
-                options={environmentList()} />
+                options={list} />
+                {/* to-do: finish this! */}
             <ItemColorPicker
+                object={scene}
+                variable="background"
                 label="Background"
-                enabled={backgroundEnabled}
                 allowAlpha={false}
                 defaultValue={"001029"}
                 onChangeCheckbox={(e) => {
@@ -202,7 +204,7 @@ export const SceneConfigs = observer(() => {
     )
 })
 
-export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({object}) => {
+export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
     // console.log(object instanceof InspectorData[0].type, InspectorData[0].type);
     // console.log(object instanceof InspectorData[1].type, InspectorData[1].type);
     return (

@@ -1,13 +1,14 @@
 
 import { Alert, Form } from "antd";
 import React from "react";
+import { Item } from "./SharedItemOptions";
 
-type InvalidAlertInterface<T> = {
-    variable: string,
-    object?: T
-}
+// type InvalidAlertInterface<T> = {
+//     variable: string,
+//     object?: T
+// }
 
-export const ItemInvalidAlert: React.FC<InvalidAlertInterface<{ [key: string]: any }>> = (
+export const ItemInvalidAlert: React.FC<Item> = (
     { variable, object }
 ) => {
 

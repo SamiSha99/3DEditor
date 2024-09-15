@@ -1,17 +1,14 @@
 import { Form, Tooltip, Input, Tabs } from "antd";
 import React, { useState } from "react";
-import { labelFromVariable, MOUSE_ENTER_DELAY } from "./SharedItemOptions";
+import { Item, labelFromVariable, MOUSE_ENTER_DELAY } from "./SharedItemOptions";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { useDeltaTime } from "src/store/Hooks";
 
-type InputInterface<T> = {
-    object: T,
-    variable: string,
-    label?: string,
+interface InputInterface extends Item {
     onChange?: (value: string) => void
 }
 
-export const ItemInput: React.FC<InputInterface<{ [key: string]: any }>> = (
+export const ItemInput: React.FC<InputInterface> = (
     { label, object, variable, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;

@@ -3,20 +3,17 @@ import React, { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
-import { DRAGGABLE_CONTROLLER_WIDTH, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
+import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
-type Vector2Interface<T> = {
-    label?: string | false,
+interface Vector2Interface extends Item {
     precision?: number | false,
-    object: T,
-    variable: string,
     labelVector?: { x?: string, y?: string },
     onChange?: (value: THREE.Vector2) => void
 }
 
-export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
+export const ItemVector2: React.FC<Vector2Interface> = (
     { label, precision, object, variable, labelVector, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
@@ -88,16 +85,14 @@ export const ItemVector2: React.FC<Vector2Interface<{ [key: string]: any }>> = (
     )
 }
 
-type Vector3Interface<T> = {
-    label?: string,
-    object: T,
-    variable: string,
+interface Vector3Interface extends Item {
+    precision?: number | false,
     labelVector?: { x?: string, y?: string, z?: string },
     onChange?: (value: THREE.Vector3) => void
 }
 
-export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
-    { label, object, variable, labelVector, onChange }
+export const ItemVector3: React.FC<Vector3Interface> = (
+    { label, object, variable, precision, labelVector, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
@@ -119,7 +114,7 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                     onBlur={loopStart}
                     style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
-                    precision={3}
+                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     controls={false}
                     changeOnWheel
                     value={x}
@@ -145,7 +140,7 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                     onBlur={loopStart}
                     style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
-                    precision={PRECISION_AMOUNT}
+                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     controls={false}
                     changeOnWheel
                     value={y}
@@ -171,7 +166,7 @@ export const ItemVector3: React.FC<Vector3Interface<{ [key: string]: any }>> = (
                     onBlur={loopStart}
                     style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
                     size="small"
-                    precision={PRECISION_AMOUNT}
+                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     controls={false}
                     changeOnWheel
                     value={z}

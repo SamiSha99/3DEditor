@@ -1,23 +1,20 @@
 import { Form, InputNumber, Tooltip } from "antd";
 import React, { useState } from "react";
-import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
+import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT, Item } from "./SharedItemOptions";
 import { useDeltaTime } from "src/store/Hooks";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 
-type InputNumberInterface<T> = {
-    label?: string,
-    object: T,
-    variable: string,
+interface InputNumberInterface extends Item {
     onChange?: (value: number) => void
 }
 
-export const ItemNumber: React.FC<InputNumberInterface<{ [key: string]: any }>> = (
+export const ItemNumber: React.FC<InputNumberInterface> = (
     { label, object, variable, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
 
-    const [loopStop, loopStart, isActive] = useDeltaTime(() => {
+    const [loopStop, loopStart, _isActive] = useDeltaTime(() => {
         v != object[variable] && setValue(object[variable]);
     });
 
