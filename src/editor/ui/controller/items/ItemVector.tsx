@@ -1,4 +1,4 @@
-import { Form, InputNumber, Tooltip } from "antd";
+import { Form, InputNumber, InputNumberProps, Tooltip } from "antd";
 import React, { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
@@ -6,6 +6,22 @@ import * as THREE from "three";
 import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
+
+const defaultProps: InputNumberProps<number> = {
+    size: "small",
+    controls: false,
+    changeOnWheel: true
+}
+
+const vector2Props: InputNumberProps<number> = {
+    style: { width: 'calc(100%/2 - ' + DRAGGABLE_CONTROLLER_WIDTH + ')' },
+    ...defaultProps
+}
+
+const vector3Props: InputNumberProps<number> = {
+    style: { width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH + ')' },
+    ...defaultProps
+}
 
 interface Vector2Interface extends Item {
     precision?: number | false,
@@ -26,17 +42,16 @@ export const ItemVector2: React.FC<Vector2Interface> = (
         y != object[variable].y && setY(object[variable].y)
     });
 
+
+
     return (
         <Form.Item label={label ? label : label != false && labelFromVariable(variable)}>
             <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    {...vector2Props}
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(50% - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
-                    size="small"
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
-                    controls={false}
-                    changeOnWheel
                     value={x}
                     addonBefore={labelVector?.x ? labelVector.x : "X"}
                     onChange={(v: number | null) => {
@@ -56,13 +71,10 @@ export const ItemVector2: React.FC<Vector2Interface> = (
             </Tooltip>
             <Tooltip title={toFixedStripped(y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    {...vector2Props}
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(50% - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
-                    size="small"
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
-                    controls={false}
-                    changeOnWheel
                     value={y}
                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
                     onChange={(v: number | null) => {
@@ -110,13 +122,10 @@ export const ItemVector3: React.FC<Vector3Interface> = (
         <Form.Item label={label ? label : labelFromVariable(variable)}>
             <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    {...vector3Props}
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
-                    size="small"
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
-                    controls={false}
-                    changeOnWheel
                     value={x}
                     addonBefore={labelVector?.x ? labelVector.x : "X"}
                     onChange={(v: number | null) => {
@@ -136,13 +145,10 @@ export const ItemVector3: React.FC<Vector3Interface> = (
             </Tooltip>
             <Tooltip title={toFixedStripped(y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    {...vector3Props}
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
-                    size="small"
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
-                    controls={false}
-                    changeOnWheel
                     value={y}
                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
                     onChange={(v: number | null) => {
@@ -162,13 +168,10 @@ export const ItemVector3: React.FC<Vector3Interface> = (
             </Tooltip>
             <Tooltip title={toFixedStripped(z, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
+                    {...vector3Props}
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH +')' }}
-                    size="small"
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
-                    controls={false}
-                    changeOnWheel
                     value={z}
                     addonBefore={labelVector?.z ? labelVector.z : "Z"}
                     onChange={(v: number | null) => {

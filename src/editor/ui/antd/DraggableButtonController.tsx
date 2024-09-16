@@ -1,10 +1,19 @@
 import Icon from "@ant-design/icons";
 import { DRAGGABLE_CONTROLLER_WIDTH } from "@orb_UI/controller/items/Item";
-import { Button } from "antd";
+import { Button, ButtonProps } from "antd";
 import { useRef } from "react";
 
 const DEFAULT_TRIGGER_SIZE = 10;
 const DEFAULT_STEP = 1;
+
+const props: ButtonProps = {
+    tabIndex: -1,
+    size: "small",
+    // a hack to remove all inner padding of the button by making an empty icon
+    icon: <Icon component={undefined} />,
+    style: { left: 0, background: "grey", width: DRAGGABLE_CONTROLLER_WIDTH, cursor: "ns-resize" },
+    block: true
+}
 
 type DraggableButtonControllerInterface = {
     step?: number,
@@ -24,35 +33,32 @@ export const DraggableButtonController: React.FC<DraggableButtonControllerInterf
     const handleMouseMove = (ev: MouseEvent) => {
         if (!onStep) return;
         if (stepPosition == -1) return;
-        if (stepPosition - ev.clientX >= triggerSize) {
-            stepRate--;
-            onStep(step, stepRate, -1);
-            stepPosition = (ev.clientX - ev.clientX % triggerSize)
-        }
-        if (stepPosition - ev.clientX <= -triggerSize) {
+        if (stepPosition - ev.clientY >= triggerSize) {
             stepRate++;
             onStep(step, stepRate, 1);
-            stepPosition = (ev.clientX - ev.clientX % triggerSize)
+            stepPosition = (ev.clientY - ev.clientY % triggerSize)
+        }
+        if (stepPosition - ev.clientY <= -triggerSize) {
+            stepRate--;
+            onStep(step, stepRate, -1);
+            stepPosition = (ev.clientY - ev.clientY % triggerSize)
         }
     }
 
     return (
-
         <Button
-            tabIndex={-1}
-            size="small"
             ref={buttonRef}
-            icon={<Icon component={undefined} />}
-            style={{ left: 0, background: "grey", width: DRAGGABLE_CONTROLLER_WIDTH, cursor: "ew-resize" }}
-            block
+            {...props}
             onMouseDown={(e) => {
                 document.addEventListener("mousemove", handleMouseMove);
                 document.addEventListener("mouseup", () => {
                     document.removeEventListener("mousemove", handleMouseMove);
                     stepRate = 0;
+                    document.body.style.cursor = "";
                 }, { once: true });
                 e.preventDefault();
-                stepPosition = (e.clientX);
+                stepPosition = (e.clientY);
+                document.body.style.cursor = "ns-resize";
             }}
         />
 

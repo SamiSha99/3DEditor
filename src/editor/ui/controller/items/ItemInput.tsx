@@ -1,4 +1,4 @@
-import { Form, Tooltip, Input, Tabs } from "antd";
+import { Form, Tooltip, Input } from "antd";
 import React, { useState } from "react";
 import { Item, labelFromVariable, MOUSE_ENTER_DELAY } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
