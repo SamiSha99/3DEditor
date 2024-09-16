@@ -42,6 +42,9 @@ export const MainTheme: ThemeConfig = {
             lineWidth: 2,
             fontSize: 28
         },
+        Checkbox: {
+            controlInteractiveSize: 18
+        },
         Tree: {
 
         }

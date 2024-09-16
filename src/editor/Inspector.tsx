@@ -4,10 +4,8 @@ import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import * as THREE from "three"
-import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker } from "./ui/controller/ControllerItems";
+import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker, ItemBoolean } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
-import InspectorData from "./data/Inspector";
-import { Environment } from "@react-three/drei";
 import { AppStore } from "@orb_AppStore";
 
 export const EditorInspector = observer(() => {
@@ -216,6 +214,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                 <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
                     <ItemInput object={object} variable="name" />
                     <ItemNumber object={object} variable="renderOrder" />
+                    <ItemBoolean object={object} variable="visible" />
                     <ItemVector3 object={object} variable="position" />
                     <ItemEuler object={object} variable="rotation" isDegree />
                     <ItemVector3 object={object} variable="scale" />
