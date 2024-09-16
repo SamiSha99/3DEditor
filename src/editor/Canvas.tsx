@@ -3,7 +3,7 @@ import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-thre
 import { useStores } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { Box, CameraControls, Environment, Grid, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { Box, CameraControls, Environment, GizmoHelper, GizmoViewport, Grid, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
@@ -138,9 +138,9 @@ const EditorControls = observer(() => {
         helper = new THREE.BoxHelper(controlsObject3D, 0xFFFF00)
     }
     // reset references position if we change selected target
-    if(originDraggerRef.current) {
+    if (originDraggerRef.current) {
         originDraggerRef.current.position.set(0, 0, 0);
-        if(controlsObject3D)
+        if (controlsObject3D)
             controlsSpace == "local" ? originDraggerRef.current.rotation.copy(controlsObject3D.rotation) : controlsObject3D && originDraggerRef.current.rotation.set(0, 0, 0);
     }
 
@@ -148,6 +148,9 @@ const EditorControls = observer(() => {
     return (
         <>
             <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} />
+            <GizmoHelper renderPriority={1} alignment="top-right" margin={[70, 70]}>
+                <GizmoViewport labelColor="black" />
+            </GizmoHelper>
             {
                 controlsObject3D &&
                 <group visible={isOriginPointMode} name="TRANSFORM_ORIGIN_WORLD_CENTER" renderOrder={-50}>
@@ -185,9 +188,9 @@ const EditorControls = observer(() => {
                             if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsObject3D;
                                 const dragger = originDraggerRef.current;
-                                
+
                                 translateOriginPoint(o, dragger.position);
-                                
+
                                 // Reset helpers
                                 dragger.position.set(0, 0, 0);
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
