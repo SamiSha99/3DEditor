@@ -1,5 +1,5 @@
 import Icon from "@ant-design/icons";
-import { DRAGGABLE_CONTROLLER_WIDTH } from "@orb_UI/controller/items/SharedItemOptions";
+import { DRAGGABLE_CONTROLLER_WIDTH } from "@orb_UI/controller/items/Item";
 import { Button } from "antd";
 import { useRef } from "react";
 

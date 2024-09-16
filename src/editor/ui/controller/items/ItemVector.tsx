@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
-import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./SharedItemOptions";
+import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 

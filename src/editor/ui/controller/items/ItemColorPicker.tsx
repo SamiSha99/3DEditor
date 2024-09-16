@@ -1,7 +1,7 @@
 import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { Color } from "antd/es/color-picker";
 import { Checkbox, Form, ColorPicker } from "antd";
-import { Item } from "./SharedItemOptions";
+import { Item } from "./Item";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 interface ColorPickerInterface extends Item {
     disabled?: boolean,

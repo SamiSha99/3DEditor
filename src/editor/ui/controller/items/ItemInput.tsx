@@ -1,6 +1,6 @@
 import { Form, Tooltip, Input, Tabs } from "antd";
 import React, { useState } from "react";
-import { Item, labelFromVariable, MOUSE_ENTER_DELAY } from "./SharedItemOptions";
+import { Item, labelFromVariable, MOUSE_ENTER_DELAY } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { useDeltaTime } from "src/store/Hooks";
 

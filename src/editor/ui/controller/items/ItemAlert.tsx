@@ -1,7 +1,7 @@
 
 import { Alert, Form } from "antd";
 import React from "react";
-import { Item } from "./SharedItemOptions";
+import { Item } from "./Item";
 
 // type InvalidAlertInterface<T> = {
 //     variable: string,

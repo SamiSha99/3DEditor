@@ -1,5 +1,5 @@
 import { Form, Select } from "antd";
-import { Item, labelFromVariable } from "./SharedItemOptions";
+import { Item, labelFromVariable } from "./Item";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 import { DefaultOptionType } from "antd/es/select";
 
