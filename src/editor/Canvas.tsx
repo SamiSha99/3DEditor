@@ -138,15 +138,10 @@ const EditorControls = observer(() => {
         helper = new THREE.BoxHelper(controlsObject3D, 0xFFFF00)
     }
     // reset references position if we change selected target
-    originDraggerRef.current && originDraggerRef.current.position.set(0, 0, 0);
-    controlsSpace == "local" && originDraggerRef.current && controlsObject3D && originDraggerRef.current.rotation.copy(controlsObject3D.rotation);
-    controlsSpace == "world" && originDraggerRef.current && controlsObject3D && originDraggerRef.current.rotation.set(0, 0, 0);
-
     if(originDraggerRef.current) {
         originDraggerRef.current.position.set(0, 0, 0);
-        if(controlsObject3D) {
+        if(controlsObject3D)
             controlsSpace == "local" ? originDraggerRef.current.rotation.copy(controlsObject3D.rotation) : controlsObject3D && originDraggerRef.current.rotation.set(0, 0, 0);
-        }
     }
 
     //to-do when launching origin point reset position of the origin point
@@ -192,7 +187,7 @@ const EditorControls = observer(() => {
                                 const dragger = originDraggerRef.current;
                                 
                                 translateOriginPoint(o, dragger.position);
-
+                                
                                 // Reset helpers
                                 dragger.position.set(0, 0, 0);
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
