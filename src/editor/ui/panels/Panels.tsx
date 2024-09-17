@@ -5,14 +5,20 @@ import { AppStore } from "@orb_AppStore";
 
 export type ActivePanelType = {
     id: string,
-    panel: React.ReactNode;
+    panel: React.ReactNode,
+    flags?: string[]
 }
 
-export const PANEL_ORIGIN_POINT: ActivePanelType = { id: "origin_point", panel: <PanelOriginPoint /> }
-export const PANEL_SCREENSHOT: ActivePanelType = { id: "screenshot", panel: <PanelScreenshot />} 
+export const PANEL_ORIGIN_POINT: ActivePanelType = { id: "origin_point", panel: <PanelOriginPoint />, flags: ["drag_object"] }
+export const PANEL_SCREENSHOT: ActivePanelType = { id: "screenshot", panel: <PanelScreenshot /> }
 
 /** Checks if the panel is currently active */
 export function isPanelActive(panel: ActivePanelType | string) {
     const id = (typeof panel === 'string' ? panel : panel.id);
-    return !!AppStore.Instance.activePanels.find(x => x.id == id);
+    return AppStore.Instance.activePanels.find(x => x.id == id);
+}
+
+export function panelHasFlag(panel: ActivePanelType | string, flag: string) {
+    console.log(isPanelActive(panel)?.flags);
+    return !!isPanelActive(panel)?.flags?.find(f => f == flag);
 }

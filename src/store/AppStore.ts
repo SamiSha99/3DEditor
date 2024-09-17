@@ -2,7 +2,7 @@ import { makeObservable, observable, action } from "mobx";
 import { Object3D, Scene, Color } from "three";
 import * as TYPE from "./type";
 import { Box } from "@orb_tools/create/Primitive";
-import { ActivePanelType } from "@orb_UI/panels/Panels";
+import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
 
 export class AppStore {
 
@@ -83,8 +83,35 @@ export class AppStore {
     @action.bound addActivePanel = (value: ActivePanelType) => {
         if (this.activePanels.find(x => x.id == value.id))
             console.warn("Panel is already active, ignoring... ID:", value.id)
-        else
-            this.activePanels.push(value);
+        else {
+            const obj = Object.assign({}, value);
+            if (!obj.flags) obj.flags = [];
+            this.activePanels.push(obj);
+        }
+    }
+
+    @action.bound addPanelFlag = (flag: string, to: ActivePanelType) => {
+        const panel = isPanelActive(to);
+        if (!panel) {
+            console.warn("Panel", to.id, "is not active!");
+            return;
+        }
+        if (panel.flags && !panel.flags.includes(flag)) {
+            panel.flags.push(flag);
+            console.log("added", flag, "to", panel.flags);
+        }
+    }
+
+    @action.bound removePanelFlag = (flag: string, from: ActivePanelType) => {
+        const panel = isPanelActive(from);
+        if (!panel) {
+            console.warn("Panel", from.id, "is not active!");
+            return;
+        }
+        if (panel.flags && panel.flags.includes(flag)) {
+            panel.flags.splice(panel.flags.indexOf(flag), 1);
+            console.log("removed", flag, "from", panel.flags);
+        }
     }
 
     @action.bound removeActivePanel = (id: string) => {

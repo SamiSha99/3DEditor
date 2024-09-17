@@ -38,7 +38,7 @@ export const PanelScreenshot = observer(() => {
     const offset = max.sub(min);
 
     return (
-        <DraggablePanel width={300} key={PANEL_SCREENSHOT.id} name="Screenshot" identifier={PANEL_SCREENSHOT.id} onClose={() => {
+        <DraggablePanel width={300} name="Screenshot" identifier={PANEL_SCREENSHOT.id} onClose={() => {
             resetDefaults();
             previewRenderer && previewRenderer.dispose();
             previewRenderer = undefined;
@@ -66,7 +66,7 @@ export const PanelScreenshot = observer(() => {
                             <Space.Compact style={{ marginBottom: "5px" }}>
                                 <div style={{ margin: "auto", width: "100%", alignContent: "top" }}>
                                     <Form style={{ width: "100%" }} colon={false} labelWrap>
-                                        <ItemVector2 object={object} variable="size" precision={false} label={false} labelVector={{ x: "Width", y: "Height" }} />
+                                        <ItemVector2 object={object} variable="size" precision={false} label={false} labelVector={{ x: "Width", y: "Height" }} limit={{ x: {min: 128, max: 1024}, y: {min: 128, max: 1024} }} />
                                     </Form>
                                 </div>
                             </Space.Compact>
