@@ -79,8 +79,8 @@ export const ItemVector2: React.FC<Vector2Interface> = (
                     onBlur={loopStart}
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     value={y}
-                    min={limit?.y.min}
-                    max={limit?.y.max}
+                    min={limit?.y?.min}
+                    max={limit?.y?.max}
                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -110,7 +110,7 @@ interface Vector3Interface extends Item {
 }
 
 export const ItemVector3: React.FC<Vector3Interface> = (
-    { label, object, variable, precision, labelVector, onChange }
+    { label, object, variable, precision, labelVector, limit, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
@@ -133,6 +133,8 @@ export const ItemVector3: React.FC<Vector3Interface> = (
                     onBlur={loopStart}
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     value={x}
+                    min={limit?.x?.min}
+                    max={limit?.x?.max}
                     addonBefore={labelVector?.x ? labelVector.x : "X"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -156,6 +158,8 @@ export const ItemVector3: React.FC<Vector3Interface> = (
                     onBlur={loopStart}
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     value={y}
+                    min={limit?.y?.min}
+                    max={limit?.y?.max}
                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -179,6 +183,8 @@ export const ItemVector3: React.FC<Vector3Interface> = (
                     onBlur={loopStart}
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     value={z}
+                    min={limit?.z?.min}
+                    max={limit?.z?.max}
                     addonBefore={labelVector?.z ? labelVector.z : "Z"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
