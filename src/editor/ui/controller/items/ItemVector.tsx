@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
-import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./Item";
+import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, Limit, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
@@ -26,11 +26,12 @@ const vector3Props: InputNumberProps<number> = {
 interface Vector2Interface extends Item {
     precision?: number | false,
     labelVector?: { x?: string, y?: string },
+    limit?: { x?: Limit, y?: Limit }
     onChange?: (value: THREE.Vector2) => void
 }
 
 export const ItemVector2: React.FC<Vector2Interface> = (
-    { label, precision, object, variable, labelVector, onChange }
+    { label, precision, object, variable, labelVector, limit, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
@@ -53,6 +54,8 @@ export const ItemVector2: React.FC<Vector2Interface> = (
                     onBlur={loopStart}
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     value={x}
+                    min={limit?.x?.min}
+                    max={limit?.x?.max}
                     addonBefore={labelVector?.x ? labelVector.x : "X"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -76,6 +79,8 @@ export const ItemVector2: React.FC<Vector2Interface> = (
                     onBlur={loopStart}
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     value={y}
+                    min={limit?.y.min}
+                    max={limit?.y.max}
                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
                     onChange={(v: number | null) => {
                         if (v == null) return;
@@ -100,6 +105,7 @@ export const ItemVector2: React.FC<Vector2Interface> = (
 interface Vector3Interface extends Item {
     precision?: number | false,
     labelVector?: { x?: string, y?: string, z?: string },
+    limit?: { x?: Limit, y?: Limit, z?: Limit }
     onChange?: (value: THREE.Vector3) => void
 }
 

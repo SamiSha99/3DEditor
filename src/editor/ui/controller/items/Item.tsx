@@ -12,3 +12,5 @@ export type Item = {
     variable: string 
     label?: string | false
 }
+
+export type Limit = { min?: number, max?: number }
