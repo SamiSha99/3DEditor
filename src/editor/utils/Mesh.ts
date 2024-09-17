@@ -29,10 +29,15 @@ export function invertGeometry(geometry: THREE.BufferGeometry) {
     geometry.index.needsUpdate = true
 }
 
-/** Returns an additive value to Translate Geometry and its Object3D, Values are [Geometry, Position] */
-export function getTranslationAmount(o: THREE.Object3D, amount: THREE.Vector3) {
-    const distance = amount.distanceTo({ x: 0, y: 0, z: 0 });
-    const dragDirWorld = o.worldToLocal(o.localToWorld(amount)).normalize();
+/**
+* Returns an additive value to Translate Geometry and its Object3D, Returns Vectors as [Geometry, Object] | 
+* o - the Object we want to translate |
+* amount - the translation amount |
+* byObject - switches the translation by using the object or its origin point
+*/
+export function getTranslationAmount(o: THREE.Object3D, amount: THREE.Vector3, byObject?: boolean) {
+    const distance = amount.distanceTo(byObject ? o.position : { x: 0, y: 0, z: 0 });
+    const dragDirWorld = (byObject ? amount.clone().sub(o.position) : o.worldToLocal(o.localToWorld(amount))).normalize();
     // turn this local direction to the world direction
     dragDirWorld.transformDirection(o.matrixWorld.clone().invert());
     // division isn't perfect to-do fix with multi axis dragging
@@ -41,9 +46,15 @@ export function getTranslationAmount(o: THREE.Object3D, amount: THREE.Vector3) {
     return [t, p] as [THREE.Vector3, THREE.Vector3];
 }
 
-export function translateOriginPoint(o: THREE.Mesh, amount: THREE.Vector3) {
-    const [t, p] = getTranslationAmount(o, amount);
+export function translateOriginPoint(o: THREE.Mesh, amount: THREE.Vector3, byObject?: boolean) {
+    const [t, p] = getTranslationAmount(o, amount, byObject);
     const geometry = (o.geometry as THREE.BufferGeometry);
-    geometry.translate(t.x, t.y, t.z);
-    o.position.add(p);
+    if (!byObject) {
+        geometry.translate(t.x, t.y, t.z);
+        o.position.add(p);
+    }
+    else {
+        t.negate();
+        geometry.translate(t.x, t.y, t.z);
+    }
 }

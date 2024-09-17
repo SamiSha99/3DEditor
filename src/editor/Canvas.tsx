@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { Box, CameraControls, Environment, GizmoHelper, GizmoViewport, Grid, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
-import { PANEL_ORIGIN_POINT } from "@orb_UI/panels/Panels";
+import { isPanelActive, PANEL_ORIGIN_POINT, panelHasFlag } from "@orb_UI/panels/Panels";
 import { translateOriginPoint } from "@orb_utils/Mesh";
 
 
@@ -114,9 +114,10 @@ const EditorHelpers = () => {
 }
 
 const EditorControls = observer(() => {
-    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming, activePanels } = useStores();
+    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming } = useStores();
     const { camera, scene } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
+    const [lastObjPlace, setLastObjectPlace] = useState<THREE.Vector3 | undefined>(undefined);
     const originDraggerRef = useRef<THREE.Group>(null);
 
     const onStart = () => {
@@ -132,7 +133,7 @@ const EditorControls = observer(() => {
         !cameraStartDrag && isTransforming && setIsTransforming(false);
     }
 
-    const isOriginPointMode = !!activePanels.find(x => x.id == PANEL_ORIGIN_POINT.id);
+    const isOriginPointMode = !!isPanelActive(PANEL_ORIGIN_POINT);
     let helper: THREE.BoxHelper | null = null;
     if (controlsObject3D) {
         helper = new THREE.BoxHelper(controlsObject3D, 0xFFFF00)
@@ -140,8 +141,10 @@ const EditorControls = observer(() => {
     // reset references position if we change selected target
     if (originDraggerRef.current) {
         originDraggerRef.current.position.set(0, 0, 0);
-        if (controlsObject3D)
+        if (controlsObject3D) {
+            originDraggerRef.current.parent?.position.copy(controlsObject3D.position)
             controlsSpace == "local" ? originDraggerRef.current.rotation.copy(controlsObject3D.rotation) : controlsObject3D && originDraggerRef.current.rotation.set(0, 0, 0);
+        }
     }
 
     //to-do when launching origin point reset position of the origin point
@@ -173,7 +176,7 @@ const EditorControls = observer(() => {
                 controlsObject3D &&
                 <TransformControlsDrei
                     name='TRANSFORM_HELPER'
-                    object={isOriginPointMode ? originDraggerRef : controlsObject3D}
+                    object={isOriginPointMode && !panelHasFlag(PANEL_ORIGIN_POINT, "drag_object") ? originDraggerRef : controlsObject3D}
                     mode={controlsMode}
                     space={controlsSpace}
                     camera={camera}
@@ -181,28 +184,33 @@ const EditorControls = observer(() => {
                         if (!isTransforming) return;
                         setIsTransforming(false);
                         if (isOriginPointMode) {
-                            if (!originDraggerRef.current) {
-                                return;
-                            }
-
                             if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsObject3D;
-                                const dragger = originDraggerRef.current;
-
-                                translateOriginPoint(o, dragger.position);
-
+                                if (!panelHasFlag(PANEL_ORIGIN_POINT, "drag_object")) {
+                                    if(!originDraggerRef.current) return;
+                                    const dragger = originDraggerRef.current;
+                                    translateOriginPoint(o, dragger.position);
+                                    dragger.position.set(0, 0, 0);
+                                }
+                                else {
+                                    const draggedTo = o.position.clone();
+                                    if (!lastObjPlace) return;
+                                    o.position.copy(lastObjPlace);
+                                    translateOriginPoint(o, draggedTo, true);
+                                }
                                 // Reset helpers
-                                dragger.position.set(0, 0, 0);
                                 const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
                                 origin?.position.copy(o.position);
                                 helper?.update();
-                                helper?.position.copy(o.position)
+                                helper?.position.copy(o.position);
                             }
                         }
+                        setLastObjectPlace(undefined);
                     }}
                     onMouseDown={() => {
                         if (isTransforming) return;
                         setIsTransforming(true);
+                        setLastObjectPlace(controlsObject3D.position.clone());
                     }}
                 />
             }

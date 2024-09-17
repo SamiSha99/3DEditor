@@ -1,16 +1,19 @@
 import { useStores } from "@orb_App";
-import { Row, Space, Button, Checkbox, Tooltip, Alert } from "antd";
+import { Row, Space, Button, Checkbox, Tooltip, Alert, Divider, ButtonProps } from "antd";
 import { observer } from "mobx-react-lite";
 import * as THREE from "three";
 import { useState } from "react";
 import { DraggablePanel } from "@orb_UI/ActivePanels";
 import { PANEL_ORIGIN_POINT } from "./Panels";
+import { SpaceCompactProps } from "antd/es/space/Compact";
+
+const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "5px" }, block: true }
+const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
 
 export const PanelOriginPoint = observer(() => {
-    const { controlsObject3D, scene } = useStores();
+    const { controlsObject3D, scene, addPanelFlag, removePanelFlag } = useStores();
+    const [onConstraintObject, setOnConstraintObject] = useState(true);
     const o = controlsObject3D;
-    const [onConstraintObject, setOnConstraintObject] = useState(false);
-    const c = document.getElementsByTagName("canvas")[0];
 
     const setOriginPoint = (pos?: { x?: number, y?: number, z?: number }, center?: boolean) => {
         if (!o) return;
@@ -25,7 +28,7 @@ export const PanelOriginPoint = observer(() => {
                 const max = o.geometry.boundingBox.max
                 if (center) {
                     o.geometry.center();
-                    onConstraintObject && o.position.add(centerPos);
+                    !onConstraintObject && o.position.add(centerPos);
                 }
                 else if (pos) {
                     const transAdd = new THREE.Vector3();
@@ -47,7 +50,7 @@ export const PanelOriginPoint = observer(() => {
                     }
 
                     o.geometry.translate(transAdd.x, transAdd.y, transAdd.z);
-                    onConstraintObject && o.position.add(objAdd);
+                    !onConstraintObject && o.position.add(objAdd);
                 }
                 const originGroup = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
                 const originDragger = originGroup?.children[0];
@@ -55,49 +58,56 @@ export const PanelOriginPoint = observer(() => {
                 originDragger?.position.set(0, 0, 0);
             }
         }
-
     }
 
     return (
-        <DraggablePanel key={PANEL_ORIGIN_POINT.id} name="Origin Point" identifier={PANEL_ORIGIN_POINT.id}>
+        <DraggablePanel name="Origin Point" identifier={PANEL_ORIGIN_POINT.id}>
             <Row align="middle" justify="center">
                 {
-                    !o && <Alert message="Select an object with a Mesh." type="info" showIcon />
-                }
-                {
-                    o && !(o instanceof THREE.Mesh) &&
-                    <Alert message="Selected Object is not a Mesh!" type="warning" showIcon />
-                }
-                {
-                    o && o instanceof THREE.Mesh && !(o.geometry instanceof THREE.BufferGeometry) &&
-                    <Alert message="Mesh has no geometry" type="warning" showIcon />
-                }
-                {
-                    o && o instanceof THREE.Mesh && o.geometry instanceof THREE.BufferGeometry &&
                     <Space>
                         <Space.Compact block direction="vertical">
-                            <Space.Compact style={{ marginBottom: "5px" }} block>
-                                <Tooltip title="Offsets the object to keep the model in place.">
-                                    <Checkbox children={"Constraint Object"} onChange={(e) => setOnConstraintObject(e.target.checked)} />
+                            <Space.Compact {...spaceCompactProps} style={{ marginBottom: 10 }}>
+                                {
+                                    o && !(o instanceof THREE.Mesh) &&
+                                    <Alert message="Not a Mesh!" type="warning" showIcon />
+                                }
+                                {
+                                    o && o instanceof THREE.Mesh && !(o.geometry instanceof THREE.BufferGeometry) &&
+                                    <Alert message="Mesh lacks geometry" type="warning" showIcon />
+                                }
+                            </Space.Compact>
+                            <Space.Compact {...spaceCompactProps}>
+                                <Tooltip title="While enabled, moves the Object while keeping the origin point in place.">
+                                    <Checkbox
+                                        disabled={!controlsObject3D}
+                                        children={"Lock Origin Point"}
+                                        defaultChecked={onConstraintObject}
+                                        onChange={(e) => {
+                                            setOnConstraintObject(e.target.checked);
+                                            if (e.target.checked)
+                                                addPanelFlag("drag_object", PANEL_ORIGIN_POINT);
+                                            else
+                                                removePanelFlag("drag_object", PANEL_ORIGIN_POINT);
+                                        }} />
                                 </Tooltip>
                             </Space.Compact>
-                            <Space.Compact style={{ marginBottom: "5px" }} block>
-                                <Button style={{ margin: "auto", width: "33.3%" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
+                            <Space.Compact {...spaceCompactProps}>
+                                <Button disabled={!controlsObject3D} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
                             </Space.Compact>
-                            <Space.Compact block>
-                                <Button style={{ width: "33.3%", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
-                                <Button style={{ width: "33.3%" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
-                                <Button style={{ width: "33.3%", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
+                            <Space.Compact {...spaceCompactPropsButtons}>
+                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
+                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
+                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
                             </Space.Compact>
-                            <Space.Compact block>
-                                <Button style={{ width: "33.3%" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
-                                <Button style={{ width: "33.3%" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
-                                <Button style={{ width: "33.3%" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
+                            <Space.Compact {...spaceCompactPropsButtons}>
+                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
+                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
+                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
                             </Space.Compact>
-                            <Space.Compact block>
-                                <Button style={{ width: "33.3%", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
-                                <Button style={{ width: "33.3%" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
-                                <Button style={{ width: "33.3%", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
+                            <Space.Compact {...spaceCompactPropsButtons}>
+                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
+                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
+                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
                             </Space.Compact>
                         </Space.Compact>
                     </Space>
