@@ -1,5 +1,5 @@
 import { Form, Tooltip, Image, Upload, UploadFile, Button } from "antd";
-import React, { useState } from "react";
+import React, { createElement, useEffect, useRef, useState } from "react";
 import { Item, labelFromVariable, MOUSE_ENTER_DELAY } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { useDeltaTime } from "src/store/Hooks";
@@ -13,39 +13,20 @@ export const ItemTexture: React.FC<TextureInterface> = (
     { label, object, variable, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
-    console.log(object, variable, object[variable]);
+    console.log(object[variable]);
     const [v, setValue] = useState<string>(object[variable]);
-    const material = (object[variable] as Texture);
-
-    const [fileList, setFileList] = useState<UploadFile[]>([
-        {
-            uid: material ? material.uuid : "-1",
-            name: material?.name,
-            url: material?.image.src
-        }
-    ]);
-
-    const [_loopStop, _loopStart, _isActive] = useDeltaTime(() => {
-        v != object[variable] && setValue(object[variable])
-    });
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext('2d');
+    const t = (object[variable] as Texture);
+    if (t) {
+        ctx?.drawImage(t.image, 0, 0, t.image.width, t.image.height, 0, 0, canvas.width, canvas.height);
+    }
+    const preview = canvas.toDataURL();
 
     return (
         <Form.Item label={label ? label : labelFromVariable(variable)}>
-            <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <Upload
-                    listType="picture-card"
-                    fileList={fileList}
-                    accept=".PNG, .JPG, .GIF, .DDS"
-                    style={{ display: 'inline-block', width: '100%' }}
-                    onChange={(v) => {
-                        if (v == null) return;
-                        object[variable] = v.target.value;
-                        onChange && onChange(v.target.value);
-                    }}
-                >
-                    {/* <div><img src={material?.image.src}/>"hello" </div> */}
-                    {fileList.length && null}
-                </Upload>
+            <Tooltip title={t.name} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+                <img src={preview} />
             </Tooltip>
         </Form.Item >
     )

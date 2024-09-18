@@ -219,7 +219,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                     <ItemVector3 object={object} variable="position" />
                     <ItemEuler object={object} variable="rotation" isDegree />
                     <ItemVector3 object={object} variable="scale" />
-                    {object.material != null && <ItemTexture object={object.material} variable="map" />}
+                    {object.material && <ItemTexture object={object.material} variable="map" />}
                 </Form>
             }
         </div>)
