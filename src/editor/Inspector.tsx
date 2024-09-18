@@ -7,6 +7,7 @@ import * as THREE from "three"
 import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker, ItemBoolean } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
 import { AppStore } from "@orb_AppStore";
+import { ItemTexture } from "@orb_UI/controller/items/ItemTexture";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -218,6 +219,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                     <ItemVector3 object={object} variable="position" />
                     <ItemEuler object={object} variable="rotation" isDegree />
                     <ItemVector3 object={object} variable="scale" />
+                    {object.material != null && <ItemTexture object={object.material} variable="map" />}
                 </Form>
             }
         </div>)
