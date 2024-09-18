@@ -19,15 +19,15 @@ export const ItemTexture: React.FC<TextureInterface> = (
     const ctx = canvas.getContext('2d');
     const t = (object[variable] as Texture);
     if (t) {
-        ctx?.drawImage(t.image, 0, 0, t.image.width, t.image.height, 0, 0, canvas.width, canvas.height);
+        canvas.width = t.image.width;
+        canvas.height = t.image.height;
+        ctx?.drawImage(t.image, 0, 0, t.image.width, t.image.height, 0, 0, t.image.width, t.image.height);
     }
     const preview = canvas.toDataURL();
 
     return (
         <Form.Item label={label ? label : labelFromVariable(variable)}>
-            <Tooltip title={t.name} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <img src={preview} />
-            </Tooltip>
+            <Image preview src={preview} height={100} width={100} />
         </Form.Item >
     )
 }
