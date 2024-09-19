@@ -134,6 +134,17 @@ export function save(blob: Blob, fileName: string) {
     URL.revokeObjectURL(a.href);
 }
 
+export function saveLink(link: string, fileName: string) {
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.href = link;
+    a.download = fileName;
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+}
+
 export function saveArrayBuffer(buffer: ArrayBuffer) { return new Blob([buffer], { type: 'application/octet-stream' }); }
 export function saveString(text: string) { return new Blob([text], { type: 'text/plain' }); }
 export function saveJSON(text: string) { return new Blob([JSON.stringify(text, null, "\t")], { type: 'application/json' }) }

@@ -208,6 +208,8 @@ export const SceneConfigs = observer(() => {
 export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
     // console.log(object instanceof InspectorData[0].type, InspectorData[0].type);
     // console.log(object instanceof InspectorData[1].type, InspectorData[1].type);
+    if (object)
+        console.log("material", ":", object.material)
     return (
         <div style={{ margin: "auto", alignContent: "top" }}>
             {
@@ -220,6 +222,8 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                     <ItemEuler object={object} variable="rotation" isDegree />
                     <ItemVector3 object={object} variable="scale" />
                     {object.material && <ItemTexture object={object.material} variable="map" />}
+                    {object.material && <ItemTexture object={object.material} variable="aoMap" />}
+                    {object.material && <ItemTexture object={object.material} variable="normalMap" />}
                 </Form>
             }
         </div>)

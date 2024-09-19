@@ -19,6 +19,5 @@ export function isPanelActive(panel: ActivePanelType | string) {
 }
 
 export function panelHasFlag(panel: ActivePanelType | string, flag: string) {
-    console.log(isPanelActive(panel)?.flags);
     return !!isPanelActive(panel)?.flags?.find(f => f == flag);
 }
