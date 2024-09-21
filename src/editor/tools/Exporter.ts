@@ -134,12 +134,13 @@ export function save(blob: Blob, fileName: string) {
     URL.revokeObjectURL(a.href);
 }
 
-export function saveLink(link: string, fileName: string) {
+export function saveLink(link: string, fileName: string, type?: string) {
     const a = document.createElement('a');
     a.style.display = 'none';
     document.body.appendChild(a);
     a.href = link;
     a.download = fileName;
+    a.type = type ? type : "";
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(a.href);
