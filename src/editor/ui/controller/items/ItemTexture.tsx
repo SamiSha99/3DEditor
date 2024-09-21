@@ -1,15 +1,14 @@
-import { Button, Form, Image, ImageProps, Popconfirm, Tooltip } from "antd";
+import { Button, Form, Image, Popconfirm } from "antd";
 import React, { useRef, useState } from "react";
-import { Item, labelFromVariable, MOUSE_ENTER_DELAY } from "./Item";
+import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
-import { CanvasTexture, Material, Texture } from "three";
+import { Material, Texture } from "three";
 import { saveLink } from "@orb_tools/Exporter";
 import { CloseOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
-import Icon from "@ant-design/icons/lib/components/Icon";
 import { doImportTexture } from "@orb_tools/Importer";
 
 interface TextureInterface extends Item {
-    onChange?: (value: string) => void
+    onChange?: (value?: Texture) => void
 }
 
 type TextureObject = {
@@ -32,19 +31,14 @@ export const ItemTexture: React.FC<TextureInterface> = (
         ctx?.drawImage(t.image, 0, 0, t.image.width, t.image.height, 0, 0, t.image.width, t.image.height);
         canvas.toBlob((b) => {
             if (!b) return;
-            console.log(b.type);
-            if (textureObject)
-                URL.revokeObjectURL(textureObject.url)
-            const obj = { url: URL.createObjectURL(b), type: b.type };
+            textureObject && URL.revokeObjectURL(textureObject.url)
+            const obj = { url: URL.createObjectURL(b), type: b.type } as TextureObject;
             setTextureObject(obj);
             imageRef.current.src = obj.url;
-
         });
     }
 
-    if (object[variable] && !textureObject) {
-        makeImageObject(object[variable] as Texture);
-    }
+    object[variable] && !textureObject && makeImageObject(object[variable] as Texture);
 
     const requestUploadTexture = () => {
         doImportTexture((texture) => {
@@ -52,29 +46,18 @@ export const ItemTexture: React.FC<TextureInterface> = (
             (object[variable] as Texture).needsUpdate = true;
             (object as Material).needsUpdate = true;
             makeImageObject(object[variable]);
+            onChange && onChange(texture);
         })
     }
 
     const requestDownloadTexture = () => {
-        console.log(object[variable].image);
-        if (textureObject)
-            saveLink(textureObject.url, variable, textureObject.type)
+        textureObject && saveLink(textureObject.url, variable, textureObject.type)
     }
 
     return (
         <Form.Item label={label ? label : labelFromVariable(variable)}>
             <div style={{ display: "flex" }}>
-                <div
-                    style={{
-                        width: 96,
-                        height: 48,
-                        backgroundColor: "#303030",
-                        border: "2px solid #404040",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
+                <div style={{ width: 96, height: 48, backgroundColor: "#303030", border: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     {!textureObject?.url && <CloseOutlined style={{ fontSize: 18 }} />}
                     {
                         textureObject?.url &&
@@ -90,15 +73,15 @@ export const ItemTexture: React.FC<TextureInterface> = (
                 <Button icon={<UploadOutlined />} onClick={requestUploadTexture} />
                 <Button icon={<DownloadOutlined />} disabled={!object[variable]} onClick={requestDownloadTexture} />
                 <Popconfirm
-                    title="Delete Texture"
+                    title="Remove Texture"
                     description="This cannot be undone."
                     onConfirm={() => {
                         const t = object[variable] as Texture;
                         t.dispose();
-                        t.needsUpdate = true;
                         object[variable] = undefined;
-                        setTextureObject(undefined);
                         (object as Material).needsUpdate = true;
+                        setTextureObject(undefined);
+                        onChange && onChange(undefined);
                     }}
                     okText="Yes"
                     cancelText="No"
