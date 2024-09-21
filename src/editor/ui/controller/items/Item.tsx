@@ -1,4 +1,4 @@
-export const MOUSE_ENTER_DELAY = 0.4;
+export const MOUSE_ENTER_DELAY = 0.3;
 export const PRECISION_AMOUNT = 3;
 export const DRAGGABLE_CONTROLLER_WIDTH = "4px";
 

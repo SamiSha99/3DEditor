@@ -4,10 +4,9 @@ import { Divider, Form, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import * as THREE from "three"
-import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker, ItemBoolean } from "./ui/controller/ControllerItems";
+import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker, ItemBoolean, ItemTexture } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
 import { AppStore } from "@orb_AppStore";
-import { ItemTexture } from "@orb_UI/controller/items/ItemTexture";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -206,10 +205,6 @@ export const SceneConfigs = observer(() => {
 })
 
 export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
-    // console.log(object instanceof InspectorData[0].type, InspectorData[0].type);
-    // console.log(object instanceof InspectorData[1].type, InspectorData[1].type);
-    if (object)
-        console.log("material", ":", object.material)
     return (
         <div style={{ margin: "auto", alignContent: "top" }}>
             {
