@@ -144,8 +144,10 @@ function getMaterialByType(material: THREE.Material) {
             return (
                 <>
                     <ItemTexture object={material} variable="map" />
-                    <ItemTexture object={material} variable="aoMap" />
                     <ItemTexture object={material} variable="normalMap" />
+                    <ItemTexture object={material} variable="aoMap" />
+                    <ItemNumber object={material} variable="aoMapIntensity" />
+                    <ItemNumber object={material} variable="metalness" limit={{ min: 0, max: 1 }} />
                 </>
             )
     }
