@@ -1,12 +1,12 @@
 import { Collapse } from "antd"
 
-type InspectorGroupInterface = {
+type ItemGroupInterface = {
     label: string,
     key: string,
     children?: React.ReactNode
 }
 
-export const InspectorGroup: React.FC<InspectorGroupInterface> = (
+export const ItemGroup: React.FC<ItemGroupInterface> = (
     { label, key, children }
 ) => {
     return (
@@ -16,3 +16,5 @@ export const InspectorGroup: React.FC<InspectorGroupInterface> = (
         />
     )
 }
+
+export default ItemGroup;
