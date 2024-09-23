@@ -1,12 +1,14 @@
 import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
-import { Divider, Form, Tabs, Tree, TreeDataNode, TreeProps } from "antd";
+import { Collapse, Divider, Form, Tabs, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import * as THREE from "three"
 import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker, ItemBoolean, ItemTexture } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
 import { AppStore } from "@orb_AppStore";
+import Panel from "antd/es/cascader/Panel";
+import { InspectorGroup } from "@orb_UI/antd/InspectorGroup";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -143,11 +145,20 @@ function getMaterialByType(material: THREE.Material) {
         case 'MeshStandardMaterial':
             return (
                 <>
-                    <ItemTexture object={material} variable="map" />
+                    <InspectorGroup key={"0"} label={"General"}>
+                        <ItemTexture object={material} variable="map" />
+                        <ItemBoolean object={material} variable="wireframe" />
+                        <ItemNumber object={material} variable="metalness" limit={{ min: 0, max: 1 }} />
+                        <ItemBoolean object={material} variable="fog" />
+                        <ItemBoolean object={material} variable="flatShading" />
+                    </InspectorGroup>
+                    <InspectorGroup key={"1"} label={"Ambient Occlusion"}>
+                        <ItemTexture object={material} variable="aoMap" />
+                        <ItemNumber object={material} variable="aoMapIntensity" />
+                    </InspectorGroup>
+                    <InspectorGroup key={"1"} label={"Map"}>
+                    </InspectorGroup>
                     <ItemTexture object={material} variable="normalMap" />
-                    <ItemTexture object={material} variable="aoMap" />
-                    <ItemNumber object={material} variable="aoMapIntensity" />
-                    <ItemNumber object={material} variable="metalness" limit={{ min: 0, max: 1 }} />
                 </>
             )
     }

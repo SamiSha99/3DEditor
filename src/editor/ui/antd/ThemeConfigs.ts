@@ -45,6 +45,10 @@ export const MainTheme: ThemeConfig = {
         Checkbox: {
             controlInteractiveSize: 18
         },
+        Slider: {
+            controlHeight: 0,
+            margin: 200
+        },
         Tree: {
 
         }

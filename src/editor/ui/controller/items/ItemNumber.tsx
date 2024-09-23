@@ -1,4 +1,4 @@
-import { Form, InputNumber, Slider, Tooltip } from "antd";
+import { Col, Form, InputNumber, Row, Slider, Tooltip } from "antd";
 import React, { useState } from "react";
 import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT, Item, Limit } from "./Item";
 import { useDeltaTime } from "src/store/Hooks";
@@ -21,27 +21,28 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
 
     return (
         <Form.Item label={label ? label : labelFromVariable(variable)}>
+            {
+                limit &&
+                <Slider
+                    style={{ display: 'inline-block', width: "calc(75% - 20px)", marginRight: 15}}
+                    min={limit?.min}
+                    max={limit?.max}
+                    step={0.01}
+                    onChange={(v: number | null) => {
+                        if (v == null) return;
+                        setValue(v)
+                        object[variable] = v;
+                        onChange && onChange(v);
+                    }}
+                    value={v}
+                />
+
+            }
             <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                {
-                    // limit?.min &&
-                    // limit?.max &&
-                    // <Slider
-                    //     style={{ display: 'inline-block', width: '100%' }}
-                    //     min={limit?.min}
-                    //     max={limit?.max}
-                    //     onChange={(v: number | null) => {
-                    //         if (v == null) return;
-                    //         setValue(v)
-                    //         object[variable] = v;
-                    //         onChange && onChange(v);
-                    //     }}
-                    //     value={object[variable]}
-                    // />
-                }
                 <InputNumber
+                    style={{ display: limit ? 'inline-block' : '', width: limit ? "25%" : "100%"}}
                     onFocus={loopStop}
                     onBlur={loopStart}
-                    style={{ display: 'inline-block', width: '100%' }}
                     value={v}
                     min={limit?.min}
                     max={limit?.max}
