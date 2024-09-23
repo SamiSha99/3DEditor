@@ -59,7 +59,7 @@ export const MainTheme: ThemeConfig = {
         borderRadiusLG: 0,
         borderRadiusOuter: 0,
         borderRadiusXS: 0,
-        motion: false
+        motion: true
     }
 }
 

@@ -1,4 +1,4 @@
-import { Form, Tooltip } from "antd";
+import { Form, Switch, Tooltip } from "antd";
 import React, { useState } from "react";
 import { Item, labelFromVariable, MOUSE_ENTER_DELAY } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
@@ -21,19 +21,19 @@ export const ItemBoolean: React.FC<BooleanInterface> = (
 
     return (
         <Form.Item label={label ? label : labelFromVariable(variable)}>
-            <div style={{ backgroundColor: "#303030", border: "2px solid #404040"}}>
-                <Tooltip style={{ display: 'inline-block', backgroundColor: "red" }} title={"" + v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                    <Checkbox
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: "2px 0" }}
-                        defaultChecked={object[variable]}
-                        onChange={(e) => {
-                            const b = e.target.checked;
-                            setValue(b);
-                            object[variable] = b;
-                            onChange && onChange(b);
-                        }} />
-                </Tooltip>
-            </div>
+            {/* <div style={{ backgroundColor: "#303030", border: "2px solid #404040" }}> */}
+            <Tooltip style={{ display: 'inline-block', backgroundColor: "red" }} title={"" + v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+                <Switch
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: "2px 0" }}
+                    defaultChecked={object[variable]}
+                    onChange={(e) => {
+                        const b = e;
+                        setValue(b);
+                        object[variable] = b;
+                        onChange && onChange(b);
+                    }} />
+            </Tooltip>
+            {/* </div> */}
         </Form.Item>
     )
 }

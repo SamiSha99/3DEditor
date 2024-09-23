@@ -145,8 +145,8 @@ function getMaterialByType(material: THREE.Material) {
                 <>
                     <ItemGroup key={"0"} label={"General"}>
                         <ItemTexture object={material} variable="map" />
-                        <ItemBoolean object={material} variable="wireframe" />
                         <ItemNumber object={material} variable="metalness" limit={{ min: 0, max: 1 }} />
+                        <ItemBoolean object={material} variable="wireframe" />
                         <ItemBoolean object={material} variable="fog" />
                         <ItemBoolean object={material} variable="flatShading" />
                     </ItemGroup>
