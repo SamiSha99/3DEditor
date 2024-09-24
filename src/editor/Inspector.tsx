@@ -1,25 +1,29 @@
 import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
-import { Divider, Form, Tabs, Tree, TreeDataNode, TreeProps } from "antd";
+import { ConfigProvider, Divider, Form, Tabs, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from "three"
-import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker, ItemBoolean, ItemTexture, ItemGroup } from "./ui/controller/ControllerItems";
+import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker, ItemBoolean, ItemTexture, ItemGroup, ItemVector2 } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
 import { AppStore } from "@orb_AppStore";
+import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
 
     return (
         <div style={{ backgroundColor: "#212121", width: "25%" }}>
-            <div style={{ width: "100%", height: "20%" }}>
-                <HierarchyTree />
-                <Divider />
+            <ConfigProvider theme={InspectorTheme}>
+                <div style={{ height: "20vh", paddingLeft: 10, paddingRight: 10 }}>
+                    <HierarchyTree />
+                </div>
                 <SceneConfigs />
-                <Divider />
-                <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
-            </div>
+                <div style={{ height: "80vh", padding: "0 10px" }}>
+                    <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
+                </div>
+            </ConfigProvider>
         </div>
     )
 })
@@ -38,7 +42,7 @@ export const HierarchyTree = observer(() => {
     };
 
     return (
-        <div style={{ margin: "auto auto", width: "90%", height: "90%", alignContent: "top", overflow: "auto", background: "#696969" }}>
+        <div style={{ margin: "auto auto", height: "100%", alignContent: "top", overflow: "auto", background: "#696969" }}>
             <Tree defaultExpandAll showLine blockNode onSelect={onSelect} treeData={treeData} />
         </div>
     )
@@ -99,18 +103,18 @@ export const SceneConfigs = observer(() => {
 
 export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
     return (
-        <Tabs items={[
+        <Tabs style={{ height: "85%", overflowY: "auto", overflowX: "hidden" }} items={[
             {
                 key: '1',
                 label: 'General',
                 children:
-                    <div style={{ margin: "auto", alignContent: "top" }}>
+                    <div style={{ height: "100%", margin: "auto", alignContent: "top" }}>
                         {
                             object &&
-                            <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
+                            <Form style={{ overflow: "auto" }} labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
                                 <ItemInput object={object} variable="name" />
                                 <ItemNumber object={object} variable="renderOrder" />
-                                <ItemBoolean object={object} variable="visible" />
+                                <ItemBoolean object={object} variable="visible" icons={{ on: <EyeOutlined />, off: <EyeInvisibleOutlined /> }} />
                                 <ItemVector3 object={object} variable="position" />
                                 <ItemEuler object={object} variable="rotation" isDegree />
                                 <ItemVector3 object={object} variable="scale" />
@@ -122,13 +126,15 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                 key: '2',
                 label: 'Material',
                 children:
-                    <div style={{ margin: "auto", alignContent: "top" }}>
-                        {
-                            object instanceof THREE.Mesh && object.material &&
-                            <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
-                                {getMaterialByType(object.material)}
-                            </Form>
-                        }
+                    <div style={{ height: "auto", margin: "auto", alignContent: "top" }}>
+                        <div style={{ overflowY: "auto", overflowX: "hidden" }}>
+                            {
+                                object instanceof THREE.Mesh && object.material &&
+                                <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
+                                    {getMaterialByType(object.material)}
+                                </Form>
+                            }
+                        </div>
                     </div>
             }
         ]}>
@@ -139,23 +145,30 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
 
 function getMaterialByType(material: THREE.Material) {
     console.log(material.type, material.type == 'MeshBasicMaterial');
+    console.log(material);
     switch (material.type) {
         case 'MeshStandardMaterial':
             return (
-                <>
-                    <ItemGroup key={"0"} label={"General"}>
-                        <ItemTexture object={material} variable="map" />
-                        <ItemNumber object={material} variable="metalness" limit={{ min: 0, max: 1 }} />
-                        <ItemBoolean object={material} variable="wireframe" />
-                        <ItemBoolean object={material} variable="fog" />
-                        <ItemBoolean object={material} variable="flatShading" />
-                    </ItemGroup>
+                <div>
+                    <ItemTexture object={material} variable="map" />
+                    <ItemNumber object={material} variable="metalness" limit={{ min: 0, max: 1 }} />
+                    <ItemNumber object={material} variable="roughness" limit={{ min: 0, max: 1 }} />
+                    <ItemNumber object={material} variable="opacity" limit={{ min: 0, max: 1 }} />
+                    <ItemNumber object={material} variable="_alphaTest" limit={{ min: 0, max: 1 }} label="Alpha Test" />
+                    <ItemBoolean object={material} variable="wireframe" />
+                    <ItemBoolean object={material} variable="transparent" />
+                    <ItemBoolean object={material} variable="fog" />
+                    <ItemBoolean object={material} variable="flatShading" />
                     <ItemGroup key={"1"} label={"Ambient Occlusion"}>
-                        <ItemTexture object={material} variable="aoMap" />
-                        <ItemNumber object={material} variable="aoMapIntensity" />
+                        <ItemTexture object={material} variable="aoMap" label="Map" />
+                        <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" />
                     </ItemGroup>
-                    <ItemTexture object={material} variable="normalMap" />
-                </>
+                    <ItemGroup key={"1"} label={"Normal"}>
+                        <ItemTexture object={material} variable="normalMap" label="Map" />
+                        <ItemVector2 object={material} variable="normalScale" label="Scale" />
+                        <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" />
+                    </ItemGroup>
+                </div >
             )
     }
     return <></>

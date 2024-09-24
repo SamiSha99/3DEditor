@@ -4,13 +4,15 @@ import Canvas from './Canvas'
 import { ActivePanels } from '@orb_UI/ActivePanels'
 
 export function Editor() {
-    
+
     return (
         <div style={{
-            display:"flex", 
-            flexWrap: "wrap", 
-            height:"100%", 
-            width:"100%"}}>
+            display: "flex",
+            flexWrap: "wrap",
+            height: "100%",
+            width: "100%",
+            overflow: "hidden"
+        }}>
             <EditorUI />
             <Canvas />
             <EditorInspector />

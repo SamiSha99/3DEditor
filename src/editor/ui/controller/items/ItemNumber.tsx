@@ -24,7 +24,7 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
             {
                 limit &&
                 <Slider
-                    style={{ display: 'inline-block', width: "calc(75% - 20px)", marginRight: 15}}
+                    style={{ display: 'inline-block', width: "calc(80% - 20px)", marginRight: 15 }}
                     min={limit?.min}
                     max={limit?.max}
                     step={0.01}
@@ -40,7 +40,7 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
             }
             <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
-                    style={{ display: limit ? 'inline-block' : '', width: limit ? "25%" : "100%"}}
+                    style={{ display: limit ? 'inline-block' : '', width: limit ? "20%" : "100%" }}
                     onFocus={loopStop}
                     onBlur={loopStart}
                     value={v}

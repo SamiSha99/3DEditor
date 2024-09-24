@@ -7,10 +7,11 @@ import { useDeltaTime } from "src/store/Hooks";
 
 interface BooleanInterface extends Item {
     onChange?: (value: boolean) => void
+    icons?: { on?: React.ReactNode, off?: React.ReactNode }
 }
 
 export const ItemBoolean: React.FC<BooleanInterface> = (
-    { label, object, variable, onChange }
+    { label, object, variable, icons, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<boolean>(object[variable]);
@@ -21,19 +22,18 @@ export const ItemBoolean: React.FC<BooleanInterface> = (
 
     return (
         <Form.Item label={label ? label : labelFromVariable(variable)}>
-            {/* <div style={{ backgroundColor: "#303030", border: "2px solid #404040" }}> */}
             <Tooltip style={{ display: 'inline-block', backgroundColor: "red" }} title={"" + v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <Switch
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: "2px 0" }}
                     defaultChecked={object[variable]}
+                    checkedChildren={icons?.on}
+                    unCheckedChildren={icons?.off}
                     onChange={(e) => {
-                        const b = e;
-                        setValue(b);
-                        object[variable] = b;
-                        onChange && onChange(b);
+                        setValue(e);
+                        object[variable] = e;
+                        onChange && onChange(e);
                     }} />
             </Tooltip>
-            {/* </div> */}
         </Form.Item>
     )
 }

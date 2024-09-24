@@ -11,6 +11,7 @@ export const ItemGroup: React.FC<ItemGroupInterface> = (
 ) => {
     return (
         <Collapse
+            defaultActiveKey={[key]}
             style={{ width: "100%" }}
             items={[{ label: label, key: key, children: children }]}
         />

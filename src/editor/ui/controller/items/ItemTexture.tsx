@@ -4,7 +4,7 @@ import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { Material, Texture } from "three";
 import { saveLink } from "@orb_tools/Exporter";
-import { CloseOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
+import { CloseOutlined, CloudUploadOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
 import { doImportTexture } from "@orb_tools/Importer";
 
 interface TextureInterface extends Item {
@@ -57,37 +57,37 @@ export const ItemTexture: React.FC<TextureInterface> = (
     return (
         <Form.Item label={label ? label : labelFromVariable(variable)}>
             <div style={{ display: "flex" }}>
-                <div style={{ width: 96, height: 48, backgroundColor: "#303030", border: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {!textureObject?.url && <CloseOutlined style={{ fontSize: 18 }} />}
+                <div style={{ width: 64, height: 64, flexShrink: 0, backgroundColor: "#303030", border: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {!textureObject?.url && <div style={{ color: "darkgrey" }}>[empty]</div>/*<CloseOutlined style={{ fontSize: 64, color: "darkgrey" }} />*/}
                     {
                         textureObject?.url &&
                         <Image
                             style={{ objectFit: "cover" }}
                             src={textureObject.url}
-                            preview={{ mask: <EyeOutlined style={{ fontSize: 18 }} /> }}
-                            height={48}
-                            width={96}
+                            preview={{ mask: <EyeOutlined style={{ fontSize: 32 }} /> }}
                         />
                     }
                 </div>
-                <Button icon={<UploadOutlined />} onClick={requestUploadTexture} />
-                <Button icon={<DownloadOutlined />} disabled={!object[variable]} onClick={requestDownloadTexture} />
-                <Popconfirm
-                    title="Remove Texture"
-                    description="This cannot be undone."
-                    onConfirm={() => {
-                        const t = object[variable] as Texture;
-                        t.dispose();
-                        object[variable] = undefined;
-                        (object as Material).needsUpdate = true;
-                        setTextureObject(undefined);
-                        onChange && onChange(undefined);
-                    }}
-                    okText="Yes"
-                    cancelText="No"
-                >
-                    <Button danger={object[variable]} disabled={!object[variable]} icon={<DeleteOutlined />} />
-                </Popconfirm>
+                <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
+                    <Button icon={<CloudUploadOutlined />} onClick={requestUploadTexture} />
+                    <Button icon={<DownloadOutlined />} disabled={!object[variable]} onClick={requestDownloadTexture} />
+                    <Popconfirm
+                        title="Remove Texture"
+                        description="This cannot be undone."
+                        onConfirm={() => {
+                            const t = object[variable] as Texture;
+                            t.dispose();
+                            object[variable] = undefined;
+                            (object as Material).needsUpdate = true;
+                            setTextureObject(undefined);
+                            onChange && onChange(undefined);
+                        }}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button danger={object[variable]} disabled={!object[variable]} icon={<DeleteOutlined />} />
+                    </Popconfirm>
+                </div>
             </div>
         </Form.Item >
     )

@@ -36,21 +36,6 @@ export const MainTheme: ThemeConfig = {
             colorPrimaryBorder: "none",
             buttonBg: "none",
             colorBorder: "rgb(0,0,0,0)",
-        },
-        Divider: {
-            colorSplit: "rgb(255, 255, 255, 0.5)",
-            lineWidth: 2,
-            fontSize: 28
-        },
-        Checkbox: {
-            controlInteractiveSize: 18
-        },
-        Slider: {
-            controlHeight: 0,
-            margin: 200
-        },
-        Tree: {
-
         }
     },
     token: {
@@ -60,6 +45,34 @@ export const MainTheme: ThemeConfig = {
         borderRadiusOuter: 0,
         borderRadiusXS: 0,
         motion: true
+    }
+}
+
+export const InspectorTheme: ThemeConfig = {
+    components: {
+        Collapse: {
+            contentBg: "#212121",
+            headerBg: "rgb(0,0,0,0.5)",
+            contentPadding: "16px 0",
+        },
+        Slider: {
+            controlHeight: 0
+        },
+        Divider: {
+            colorSplit: "rgb(255, 255, 255, 0.5)",
+            lineWidth: 2,
+            fontSize: 28
+        },
+        Checkbox: {
+            controlInteractiveSize: 18
+        },
+        Tabs: {
+            // horizontalMargin: "0 16px 16px 16px",
+            // paddingContentHorizontal: 16
+        },
+        Tree: {
+
+        }
     }
 }
 
