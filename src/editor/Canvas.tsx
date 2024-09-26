@@ -187,15 +187,15 @@ const EditorControls = observer(() => {
                             if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsObject3D;
                                 if (!panelHasFlag(PANEL_ORIGIN_POINT, "drag_object")) {
-                                    if(!originDraggerRef.current) return;
-                                    const dragger = originDraggerRef.current;
-                                    translateOriginPoint(o, dragger.position);
-                                    dragger.position.set(0, 0, 0);
+                                    if (!originDraggerRef.current) return;
+                                    const draggerPos = originDraggerRef.current.position;
+                                    translateOriginPoint(o, draggerPos);
+                                    draggerPos.set(0, 0, 0);
                                 }
                                 else {
-                                    const draggedTo = o.position.clone();
                                     if (!lastObjPlace) return;
                                     o.position.copy(lastObjPlace);
+                                    const draggedTo = o.position.clone();
                                     translateOriginPoint(o, draggedTo, true);
                                 }
                                 // Reset helpers
