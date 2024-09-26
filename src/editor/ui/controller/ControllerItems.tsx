@@ -7,3 +7,4 @@ export { ItemEuler } from "./items/ItemEuler";
 export { ItemBoolean } from "./items/ItemBoolean";
 export { ItemTexture } from "./items/ItemTexture";
 export { ItemGroup } from "./items/ItemGroup";
+export { ItemButton } from "./items/ItemButton"
