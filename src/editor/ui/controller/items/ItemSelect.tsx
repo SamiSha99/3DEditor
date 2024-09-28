@@ -2,6 +2,7 @@ import { Form, Select } from "antd";
 import { Item, labelFromVariable } from "./Item";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 import { DefaultOptionType } from "antd/es/select";
+import { label } from "three/examples/jsm/nodes/Nodes";
 
 interface SelectInterface extends Item {
     disabled?: boolean

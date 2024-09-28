@@ -2,18 +2,18 @@ import { Collapse } from "antd"
 
 type ItemGroupInterface = {
     label: string,
-    key: string,
     children?: React.ReactNode
+    collapsed?: boolean;
 }
 
 export const ItemGroup: React.FC<ItemGroupInterface> = (
-    { label, key, children }
+    { label, children, collapsed }
 ) => {
     return (
         <Collapse
-            defaultActiveKey={[key]}
+            defaultActiveKey={!collapsed ? ["1"] : undefined}
             style={{ width: "100%" }}
-            items={[{ label: label, key: key, children: children }]}
+            items={[{ label: label, key: "1", children: children }]}
         />
     )
 }
