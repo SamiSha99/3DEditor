@@ -1,6 +1,6 @@
-import { Col, Form, InputNumber, Row, Slider, Tooltip } from "antd";
+import { Form, InputNumber, Slider, Tooltip } from "antd";
 import React, { useState } from "react";
-import { labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT, Item, Limit } from "./Item";
+import { MOUSE_ENTER_DELAY, PRECISION_AMOUNT, Item, Limit, labelFromVariable } from "./Item";
 import { useDeltaTime } from "src/store/Hooks";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 
@@ -10,7 +10,7 @@ interface InputNumberInterface extends Item {
 }
 
 export const ItemNumber: React.FC<InputNumberInterface> = (
-    { label, object, variable, limit, onChange }
+    { label, labelInVariable, object, variable, limit, readonly, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
@@ -20,9 +20,9 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
     });
 
     return (
-        <Form.Item label={label ? label : labelFromVariable(variable)}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
             {
-                limit &&
+                !readonly && limit &&
                 <Slider
                     style={{ display: 'inline-block', width: "calc(80% - 20px)", marginRight: 15 }}
                     min={limit?.min}
@@ -49,6 +49,8 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
                     precision={PRECISION_AMOUNT}
                     controls={false}
                     changeOnWheel
+                    readOnly={readonly}
+                    disabled={readonly}
                     onChange={(v: number | null) => {
                         if (v == null) return;
                         setValue(v)

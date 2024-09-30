@@ -4,7 +4,7 @@ import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { Material, Texture } from "three";
 import { saveLink } from "@orb_tools/Exporter";
-import { CloseOutlined, CloudUploadOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
+import { CloudUploadOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined } from "@ant-design/icons";
 import { doImportTexture } from "@orb_tools/Importer";
 
 interface TextureInterface extends Item {
@@ -17,10 +17,11 @@ type TextureObject = {
 }
 
 export const ItemTexture: React.FC<TextureInterface> = (
-    { label, object, variable, onChange }
+    { label, labelInVariable, object, variable, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [textureObject, setTextureObject] = useState<TextureObject | undefined>(undefined);
+    const [hoverUploadIcon, setHoverUploadIcon] = useState(false);
     const imageRef = useRef<any>(null!);
 
     const makeImageObject = (t: Texture) => {
@@ -47,6 +48,7 @@ export const ItemTexture: React.FC<TextureInterface> = (
             (object as Material).needsUpdate = true;
             makeImageObject(object[variable]);
             onChange && onChange(texture);
+            setHoverUploadIcon(false);
         })
     }
 
@@ -55,10 +57,22 @@ export const ItemTexture: React.FC<TextureInterface> = (
     }
 
     return (
-        <Form.Item label={label ? label : labelFromVariable(variable)}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
             <div style={{ display: "flex" }}>
-                <div style={{ width: 64, height: 64, flexShrink: 0, backgroundColor: "#303030", border: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {!textureObject?.url && <div style={{ color: "darkgrey" }}>[empty]</div>/*<CloseOutlined style={{ fontSize: 64, color: "darkgrey" }} />*/}
+                <div style={{ width: 64, height: 64, flexShrink: 0, backgroundColor: "#303030", outline: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    onMouseEnter={() => {
+
+                        !textureObject && setHoverUploadIcon(true);
+                    }}
+                    onMouseLeave={() => {
+                        !textureObject && setHoverUploadIcon(false);
+                    }}>
+                    {
+                        !textureObject?.url &&
+                        <div style={{ color: "darkgrey", width: hoverUploadIcon ? "100%" : undefined, height: hoverUploadIcon ? "100%" : undefined }}>
+                            {hoverUploadIcon ? <Button style={{ width: "100%", height: "100%" }} icon={<CloudUploadOutlined style={{ fontSize: 32 }} />} onClick={requestUploadTexture} /> : "[empty]"}
+                        </div>
+                    }
                     {
                         textureObject?.url &&
                         <Image

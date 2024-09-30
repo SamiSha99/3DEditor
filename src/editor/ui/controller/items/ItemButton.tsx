@@ -11,7 +11,7 @@ interface ButtonInterface extends Item {
 }
 
 export const ItemButton: React.FC<ButtonInterface> = (
-    { label, object, variable, buttonName, onClick }
+    { label, labelInVariable, object, variable, buttonName, onClick }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     // const [v, setValue] = useState<boolean>(object[variable]);
@@ -21,9 +21,9 @@ export const ItemButton: React.FC<ButtonInterface> = (
     // });
 
     return (
-        <Form.Item label={label ? label : labelFromVariable(variable)}>
-            <Tooltip style={{ display: 'inline-block', backgroundColor: "red" }} title={""} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <Button onClick={() => { onClick && onClick() }} children={buttonName} />
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
+            <Tooltip title={""} mouseEnterDelay={MOUSE_ENTER_DELAY}>
+                <Button style={{ display: 'inline-block', width: "100%" }} onClick={() => { onClick && onClick() }} children={buttonName} />
             </Tooltip>
         </Form.Item>
     )

@@ -70,6 +70,13 @@ export const InspectorTheme: ThemeConfig = {
             // horizontalMargin: "0 16px 16px 16px",
             // paddingContentHorizontal: 16
         },
+        Form: {
+            itemMarginBottom: 5
+        },
+        Button: {
+            defaultBg: "#141414",
+            defaultBorderColor: "#424242",
+        },
         Tree: {
 
         }

@@ -104,7 +104,7 @@ export const SceneConfigs = observer(() => {
 
 export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
     return (
-        <Tabs style={{ height: "85%", overflowY: "auto", overflowX: "hidden" }} items={[
+        <Tabs style={{ height: "85%", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin" }} items={[
             {
                 key: '1',
                 label: 'General',
@@ -113,12 +113,12 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                         {
                             object &&
                             <Form style={{ overflow: "auto" }} labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
-                                <ItemInput object={object} variable="name" />
-                                <ItemNumber object={object} variable="renderOrder" />
-                                <ItemBoolean object={object} variable="visible" icons={{ on: <EyeOutlined />, off: <EyeInvisibleOutlined /> }} />
-                                <ItemVector3 object={object} variable="position" />
-                                <ItemEuler object={object} variable="rotation" isDegree />
-                                <ItemVector3 object={object} variable="scale" />
+                                <ItemInput object={object} variable="name" labelInVariable />
+                                <ItemNumber object={object} variable="renderOrder" labelInVariable />
+                                <ItemBoolean object={object} variable="visible" icons={{ on: <EyeOutlined />, off: <EyeInvisibleOutlined /> }} labelInVariable />
+                                <ItemVector3 object={object} variable="position" labelInVariable />
+                                <ItemEuler object={object} variable="rotation" isDegree labelInVariable />
+                                <ItemVector3 object={object} variable="scale" labelInVariable />
                             </Form>
                         }
                     </div>
@@ -128,7 +128,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                 label: 'Material',
                 children:
                     <div style={{ height: "auto", margin: "auto", alignContent: "top" }}>
-                        <div style={{ overflowY: "auto", overflowX: "hidden" }}>
+                        <div>
                             {
                                 object instanceof THREE.Mesh && object.material &&
                                 <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>

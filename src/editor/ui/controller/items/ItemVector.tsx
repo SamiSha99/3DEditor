@@ -31,7 +31,7 @@ interface Vector2Interface extends Item {
 }
 
 export const ItemVector2: React.FC<Vector2Interface> = (
-    { label, precision, object, variable, labelVector, limit, onChange }
+    { label, labelInVariable, precision, object, variable, labelVector, limit, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
@@ -46,7 +46,7 @@ export const ItemVector2: React.FC<Vector2Interface> = (
 
 
     return (
-        <Form.Item label={label ? label : label != false && labelFromVariable(variable)}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
             <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     {...vector2Props}
@@ -110,7 +110,7 @@ interface Vector3Interface extends Item {
 }
 
 export const ItemVector3: React.FC<Vector3Interface> = (
-    { label, object, variable, precision, labelVector, limit, onChange }
+    { label, labelInVariable, object, variable, precision, labelVector, limit, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
@@ -125,7 +125,7 @@ export const ItemVector3: React.FC<Vector3Interface> = (
     });
 
     return (
-        <Form.Item label={label ? label : labelFromVariable(variable)}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
             <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     {...vector3Props}

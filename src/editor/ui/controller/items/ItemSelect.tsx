@@ -2,24 +2,24 @@ import { Form, Select } from "antd";
 import { Item, labelFromVariable } from "./Item";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 import { DefaultOptionType } from "antd/es/select";
-import { label } from "three/examples/jsm/nodes/Nodes";
 
 interface SelectInterface extends Item {
     disabled?: boolean
     defaultValue?: string
     labelInValue?: boolean
     options?: DefaultOptionType[]
+    // to-do: the passed content is string when [labelInValue = false] otherwise very misleading, this needs to be checked further
     onChangeSelect?: (select: { value: string, label: string }) => void
 }
 
 export const ItemSelect: React.FC<SelectInterface> = (
-    { label, object, variable, disabled, defaultValue, labelInValue, onChangeSelect }
+    { label, labelInVariable, object, variable, disabled, defaultValue, labelInValue, onChangeSelect }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const list = object[variable] as DefaultOptionType[];
 
     return (
-        <Form.Item label={label ? label : labelFromVariable(variable)}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
             <Select
                 disabled={disabled != undefined ? disabled : false}
                 defaultValue={defaultValue ? { value: defaultValue, label: defaultValue } : undefined}

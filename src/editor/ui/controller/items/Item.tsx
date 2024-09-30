@@ -10,8 +10,10 @@ export const labelFromVariable = (variable: string) => {
 export type Item = {
     object: { [key: string]: any }
     variable: string
-    label?: string | false
+    label?: string | false,
+    labelInVariable?: boolean
+    readonly?: boolean
 }
 
 export type Limit = { min?: number, max?: number }
-export const LIMIT_01_CLAMPED = { min: 0, max: 1 } as Limit;
+export const LIMIT_01 = { min: 0, max: 1 } as Limit;

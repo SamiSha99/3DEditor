@@ -34,7 +34,7 @@ interface EulerInterface extends Item {
 }
 
 export const ItemEuler: React.FC<EulerInterface> = (
-    { variable, object, label, labelEuler, showOrder, isDegree, onChange }
+    { variable, object, label, labelInVariable, labelEuler, showOrder, isDegree, onChange }
 ) => {
 
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
@@ -59,7 +59,7 @@ export const ItemEuler: React.FC<EulerInterface> = (
     }
 
     return (
-        <Form.Item label={label ? label : labelFromVariable(variable)} style={{ marginBottom: '0px', display: 'inline-block' }}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} style={{ marginBottom: '0px', display: 'inline-block' }}>
             <Tooltip title={toFixedStripped(isDegree ? radToDeg(x) : x, 3) + (isDegree ? "°" : "")} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     {...eulerProps}

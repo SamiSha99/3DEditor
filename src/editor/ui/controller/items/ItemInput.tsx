@@ -9,7 +9,7 @@ interface InputInterface extends Item {
 }
 
 export const ItemInput: React.FC<InputInterface> = (
-    { label, object, variable, onChange }
+    { label, labelInVariable, object, variable, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<string>(object[variable]);
@@ -19,7 +19,7 @@ export const ItemInput: React.FC<InputInterface> = (
     });
 
     return (
-        <Form.Item label={label ? label : labelFromVariable(variable)}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
             <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <Input
                     onFocus={loopStop}
