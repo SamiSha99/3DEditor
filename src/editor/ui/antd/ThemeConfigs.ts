@@ -53,7 +53,9 @@ export const InspectorTheme: ThemeConfig = {
         Collapse: {
             contentBg: "#212121",
             headerBg: "rgb(0,0,0,0.5)",
-            contentPadding: "16px 0",
+            contentPadding: "16px 10px",
+            colorBorder: "none",
+            margin: 0
         },
         Slider: {
             controlHeight: 0
@@ -66,19 +68,12 @@ export const InspectorTheme: ThemeConfig = {
         Checkbox: {
             controlInteractiveSize: 18
         },
-        Tabs: {
-            // horizontalMargin: "0 16px 16px 16px",
-            // paddingContentHorizontal: 16
-        },
         Form: {
             itemMarginBottom: 5
         },
         Button: {
             defaultBg: "#141414",
             defaultBorderColor: "#424242",
-        },
-        Tree: {
-
         }
     }
 }

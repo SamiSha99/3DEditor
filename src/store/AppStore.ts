@@ -41,8 +41,7 @@ export class AppStore {
         makeObservable(this)
         AppStore._instance = this;
         this.scene.background = this.background;
-        this.addObject(Box())
-        this.setControlsTarget(this.sceneObjects[0])
+        this.setControlsTarget(this.addObject(Box()))
     }
 
     public static get Instance() {
@@ -134,10 +133,12 @@ export class AppStore {
     // When a new component is made, push it to the scene
     @action.bound addObject = (object: Object3D) => {
         this.sceneObjects.push(object);
+        return object;
     }
 
     @action.bound addHelper = (helper: Object3D) => {
         this.sceneHelpers.push(helper);
+        return helper;
     }
 
     @action.bound removeObject = (object: Object3D) => {

@@ -4,6 +4,7 @@ import { ItemBoolean, ItemButton, ItemCollapse, ItemNumber, ItemSelect, ItemText
 import { LIMIT_01 } from '@orb_UI/controller/items/Item';
 import { useStores } from '@orb_App';
 import { useState } from 'react';
+import { Divider } from 'antd';
 
 const needsUpdate = (m: THREE.Material) => { m.needsUpdate = true; }
 
@@ -20,7 +21,7 @@ const MaterialSelect = [
     { value: "MeshPhysicalMaterial", label: "Physical" },
 ] as { value: string, label: string }[];
 
-export const InspectorMaterial: React.FC<{ material: THREE.Material }> = observer(({ material }) => {
+export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observer(({ material }) => {
     const { controlsObject3D } = useStores();
     const [meshMaterial, setMeshMaterial] = useState(material);
 
@@ -59,22 +60,30 @@ export const InspectorMaterial: React.FC<{ material: THREE.Material }> = observe
                     object={{ Materials: MaterialSelect }}
                     variable="Materials"
                     label="Type"
-                    defaultValue={material.constructor.name.replace("Mesh", "").replace("Material", "")}
+                    defaultValue={material ? material.constructor.name.replace("Mesh", "").replace("Material", "") : "None"}
                     onChangeSelect={(s) => {
                         const str = s as unknown as string;
                         instantiateMaterial(str)
                     }} />
                 {/* Material Properties */}
-                <ItemGroup label={"Version"} sizes={["40%", "60%"]}>
-                    <ItemButton object={material} variable="version" buttonName="Force Update" onClick={() => needsUpdate(material)} />
-                    <ItemNumber object={material} variable="version" readonly />
-                </ItemGroup>
-                <ItemNumber object={material} variable="opacity" labelInVariable limit={LIMIT_01} />
-                <ItemBoolean object={material} variable="transparent" labelInVariable onChange={() => needsUpdate(material)} />
-                <ItemBoolean object={material} variable="visible" labelInVariable />
+                {
+                    material &&
+                    <>
+                        <ItemGroup label={"Version"} sizes={["40%", "60%"]}>
+                            <ItemButton object={material} variable="version" buttonName="Force Update" onClick={() => needsUpdate(material)} />
+                            <ItemNumber object={material} variable="version" readonly />
+                        </ItemGroup>
+                        <ItemNumber object={material} variable="opacity" labelInVariable limit={LIMIT_01} />
+                        <ItemBoolean object={material} variable="transparent" labelInVariable onChange={() => needsUpdate(material)} />
+                        <ItemBoolean object={material} variable="visible" labelInVariable />
+                    </>
+                }
             </ItemCollapse>
             {/* Don't render if its the parent */}
-            {meshMaterial.constructor != THREE.Material && <ItemCollapse label={meshMaterial.constructor.name} children={<ChildMaterial material={meshMaterial} />} />}
+            {
+                meshMaterial && meshMaterial.constructor != THREE.Material &&
+                <ItemCollapse label={meshMaterial.constructor.name} children={<ChildMaterial material={meshMaterial} />} />
+            }
         </>
     );
 })
@@ -96,15 +105,14 @@ const StandardMaterial: React.FC<{ material: THREE.MeshStandardMaterial }> = obs
             <ItemBoolean object={material} variable="transparent" labelInVariable />
             <ItemBoolean object={material} variable="fog" labelInVariable />
             <ItemBoolean object={material} variable="flatShading" labelInVariable />
-            <ItemCollapse label={"Ambient Occlusion"}>
-                <ItemTexture object={material} variable="aoMap" label="Map" />
-                <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" limit={LIMIT_01} />
-            </ItemCollapse>
-            <ItemCollapse label={"Normal"}>
-                <ItemTexture object={material} variable="normalMap" label="Map" />
-                <ItemVector2 object={material} variable="normalScale" label="Scale" />
-                <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" limit={LIMIT_01} />
-            </ItemCollapse>
+            <Divider children="Ambient Occlusion" orientation="left" />
+            <ItemTexture object={material} variable="aoMap" label="Map" />
+            <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" limit={LIMIT_01} />
+            <Divider children="Normal" orientation="left" />
+            <ItemTexture object={material} variable="normalMap" label="Map" />
+            <ItemVector2 object={material} variable="normalScale" label="Scale" />
+            <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" limit={LIMIT_01} />
+
         </>
     )
 })
@@ -112,7 +120,7 @@ const StandardMaterial: React.FC<{ material: THREE.MeshStandardMaterial }> = obs
 const BasicMaterial: React.FC<{ material: THREE.MeshBasicMaterial }> = observer(({ material }) => {
     return (
         <>
-            lol lmao even
+            Basic Material content here
         </>
     )
 })

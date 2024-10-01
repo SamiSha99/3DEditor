@@ -9,8 +9,8 @@ export function Editor() {
         <div style={{
             display: "flex",
             flexWrap: "wrap",
-            height: "100%",
-            width: "100%",
+            height: "100vh",
+            width: "100vw",
             overflow: "hidden"
         }}>
             <EditorUI />

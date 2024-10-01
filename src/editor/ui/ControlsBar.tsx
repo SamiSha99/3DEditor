@@ -8,15 +8,13 @@ import { isPanelActive, PANEL_ORIGIN_POINT } from "./panels/Panels";
 
 export const ControlsBar = observer(() => {
     return (
-        <>
-            <ControlsBarStyle>
-                <TranslationButton />
-                <Divider type="vertical" />
-                <TranslationSpaceButton />
-                <Divider type="vertical" />
-                <RootSelectionButton />
-            </ControlsBarStyle>
-        </>
+        <ControlsBarStyle>
+            <TranslationButton />
+            <Divider type="vertical" />
+            <TranslationSpaceButton />
+            <Divider type="vertical" />
+            <RootSelectionButton />
+        </ControlsBarStyle>
     )
 })
 

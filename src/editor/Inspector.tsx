@@ -1,6 +1,6 @@
 import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
-import { ConfigProvider, Divider, Form, Tabs, Tree, TreeDataNode, TreeProps } from "antd";
+import { Button, ConfigProvider, Divider, Form, Row, Tabs, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from "three"
@@ -10,18 +10,19 @@ import { AppStore } from "@orb_AppStore";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
 import { InspectorMaterial } from "./data/Material";
+import { InspectorObject3D } from "./data/Object3D";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
 
     return (
-        <div style={{ backgroundColor: "#212121", width: "25%" }}>
+        <div style={{ backgroundColor: "#212121", width: "25vw" }}>
             <ConfigProvider theme={InspectorTheme}>
-                <div style={{ height: "20vh", paddingLeft: 10, paddingRight: 10 }}>
+                <div style={{ height: "20vh", padding: "0 10px" }}>
                     <HierarchyTree />
                 </div>
-                <SceneConfigs />
-                <div style={{ height: "80vh", padding: "0 10px" }}>
+                {/* <SceneConfigs /> */}
+                <div style={{ height: "calc(80vh - 32px)", padding: "0 10px" }}>
                     <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
                 </div>
             </ConfigProvider>
@@ -43,7 +44,7 @@ export const HierarchyTree = observer(() => {
     };
 
     return (
-        <div style={{ margin: "auto auto", height: "100%", alignContent: "top", overflow: "auto", background: "#696969" }}>
+        <div style={{ margin: "auto auto", height: "100%", alignContent: "top", overflow: "auto", scrollbarWidth: "thin", background: "#696969" }}>
             <Tree defaultExpandAll showLine blockNode onSelect={onSelect} treeData={treeData} />
         </div>
     )
@@ -103,44 +104,28 @@ export const SceneConfigs = observer(() => {
 })
 
 export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
+    const [tab, setTab] = useState(object ? "OBJECT" : "");
     return (
-        <Tabs style={{ height: "85%", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin" }} items={[
+        <>
+            <Row style={{ marginTop: 24 }}>
+                <Button disabled={object == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
+                <Button disabled={!(object instanceof THREE.Mesh) || !object.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
+                <Divider style={{ margin: "0" }} />
+            </Row>
             {
-                key: '1',
-                label: 'General',
-                children:
-                    <div style={{ height: "100%", margin: "auto", alignContent: "top" }}>
-                        {
-                            object &&
-                            <Form style={{ overflow: "auto" }} labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
-                                <ItemInput object={object} variable="name" labelInVariable />
-                                <ItemNumber object={object} variable="renderOrder" labelInVariable />
-                                <ItemBoolean object={object} variable="visible" icons={{ on: <EyeOutlined />, off: <EyeInvisibleOutlined /> }} labelInVariable />
-                                <ItemVector3 object={object} variable="position" labelInVariable />
-                                <ItemEuler object={object} variable="rotation" isDegree labelInVariable />
-                                <ItemVector3 object={object} variable="scale" labelInVariable />
-                            </Form>
-                        }
+                tab &&
+                <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin" }}>
+                    <div style={{ margin: "auto", alignContent: "top" }}>
+                        <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} colon={false} labelWrap>
+                            {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
+                            {tab == "MATERIAL" && object instanceof THREE.Mesh && <InspectorMaterial material={object.material} />}
+                        </Form>
                     </div>
-            },
-            {
-                key: '2',
-                label: 'Material',
-                children:
-                    <div style={{ height: "auto", margin: "auto", alignContent: "top" }}>
-                        <div>
-                            {
-                                object instanceof THREE.Mesh && object.material &&
-                                <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
-                                    <InspectorMaterial material={object.material} />
-                                </Form>
-                            }
-                        </div>
-                    </div>
+                </div >
             }
-        ]}>
-        </Tabs>
+        </>
     )
+
 },)
 
 // Want to avoid showing the "Scene" node, so the first function is just iterating the root objects before going deeper on each one.
