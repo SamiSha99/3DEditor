@@ -9,7 +9,7 @@ interface InputInterface extends Item {
 }
 
 export const ItemInput: React.FC<InputInterface> = (
-    { label, labelInVariable, object, variable, onChange }
+    { label, labelInVariable, object, variable, readonly, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<string>(object[variable]);
@@ -26,6 +26,8 @@ export const ItemInput: React.FC<InputInterface> = (
                     onBlur={loopStart}
                     style={{ display: 'inline-block', width: '100%' }}
                     value={v}
+                    readOnly={readonly}
+                    disabled={readonly}
                     onChange={(v) => {
                         if (v == null) return;
                         setValue(v.target.value);

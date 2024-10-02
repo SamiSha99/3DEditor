@@ -11,22 +11,31 @@ import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
 import { InspectorMaterial } from "./data/Material";
 import { InspectorObject3D } from "./data/Object3D";
+import { MenuBar } from "@orb_UI/Menubar";
+import { ControlsBar } from "@orb_UI/ControlsBar";
+import { ActivePanels } from "@orb_UI/ActivePanels";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
 
     return (
-        <div style={{ backgroundColor: "#212121", width: "25vw" }}>
-            <ConfigProvider theme={InspectorTheme}>
-                <div style={{ height: "20vh", padding: "0 10px" }}>
-                    <HierarchyTree />
-                </div>
-                {/* <SceneConfigs /> */}
-                <div style={{ height: "calc(80vh - 32px)", padding: "0 10px" }}>
-                    <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
-                </div>
-            </ConfigProvider>
-        </div>
+        <div style={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh" }}>
+            <div>
+                <MenuBar />
+                <ControlsBar />
+            </div>
+            <div style={{ alignSelf: "flex-end", backgroundColor: "#212121", width: "25vw" }}>
+                <ConfigProvider theme={InspectorTheme}>
+                    <div style={{ height: "20vh", padding: "0 10px" }}>
+                        <HierarchyTree />
+                    </div>
+                    {/* <SceneConfigs /> */}
+                    <div style={{ height: "calc(80vh - 32px)", padding: "0 10px" }}>
+                        <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
+                    </div>
+                </ConfigProvider>
+            </div>
+        </div >
     )
 })
 
@@ -110,17 +119,15 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
             <Row style={{ marginTop: 24 }}>
                 <Button disabled={object == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
                 <Button disabled={!(object instanceof THREE.Mesh) || !object.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
-                <Divider style={{ margin: "0" }} />
+                <Divider style={{ margin: 0 }} />
             </Row>
             {
                 tab &&
                 <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin" }}>
-                    <div style={{ margin: "auto", alignContent: "top" }}>
-                        <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} colon={false} labelWrap>
-                            {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
-                            {tab == "MATERIAL" && object instanceof THREE.Mesh && <InspectorMaterial material={object.material} />}
-                        </Form>
-                    </div>
+                    <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} colon={false} labelWrap>
+                        {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
+                        {tab == "MATERIAL" && object instanceof THREE.Mesh && <InspectorMaterial material={object.material} />}
+                    </Form>
                 </div >
             }
         </>

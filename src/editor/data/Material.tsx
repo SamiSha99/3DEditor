@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { observer } from "mobx-react-lite";
-import { ItemBoolean, ItemButton, ItemCollapse, ItemNumber, ItemSelect, ItemTexture, ItemVector2, ItemGroup } from '@orb_UI/controller/ControllerItems';
+import { ItemBoolean, ItemButton, ItemCollapse, ItemNumber, ItemSelect, ItemTexture, ItemVector2, ItemGroup, ItemInput } from '@orb_UI/controller/ControllerItems';
 import { LIMIT_01 } from '@orb_UI/controller/items/Item';
 import { useStores } from '@orb_App';
 import { useState } from 'react';
@@ -67,15 +67,20 @@ export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observ
                     }} />
                 {/* Material Properties */}
                 {
-                    material &&
+                    meshMaterial &&
                     <>
-                        <ItemGroup label={"Version"} sizes={["40%", "60%"]}>
-                            <ItemButton object={material} variable="version" buttonName="Force Update" onClick={() => needsUpdate(material)} />
-                            <ItemNumber object={material} variable="version" readonly />
+                        <ItemInput object={meshMaterial} variable="name" labelInVariable />
+                        <ItemGroup label="UUID" sizes={["75%", "25%"]}>
+                            <ItemInput object={meshMaterial} variable="uuid" readonly />
+                            <ItemButton object={meshMaterial} variable="version" buttonName="Regenerate" onClick={() => { meshMaterial.uuid = THREE.MathUtils.generateUUID() }} size='small' />
                         </ItemGroup>
-                        <ItemNumber object={material} variable="opacity" labelInVariable limit={LIMIT_01} />
-                        <ItemBoolean object={material} variable="transparent" labelInVariable onChange={() => needsUpdate(material)} />
-                        <ItemBoolean object={material} variable="visible" labelInVariable />
+                        <ItemGroup label={"Version"} sizes={["75%", "25%"]}>
+                            <ItemNumber object={meshMaterial} variable="version" readonly />
+                            <ItemButton object={meshMaterial} variable="version" buttonName="Update" onClick={() => needsUpdate(meshMaterial)} size='small' />
+                        </ItemGroup>
+                        <ItemNumber object={meshMaterial} variable="opacity" labelInVariable limit={LIMIT_01} />
+                        <ItemBoolean object={meshMaterial} variable="transparent" labelInVariable onChange={() => needsUpdate(meshMaterial)} />
+                        <ItemBoolean object={meshMaterial} variable="visible" labelInVariable />
                     </>
                 }
             </ItemCollapse>

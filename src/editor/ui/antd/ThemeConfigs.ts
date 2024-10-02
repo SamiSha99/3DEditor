@@ -73,7 +73,10 @@ export const InspectorTheme: ThemeConfig = {
         },
         Button: {
             defaultBg: "#141414",
-            defaultBorderColor: "#424242",
+            defaultBorderColor: "none",
+            defaultShadow: "none",
+            defaultHoverBg: "#141414",
+            defaultActiveBg: "#141414"
         }
     }
 }

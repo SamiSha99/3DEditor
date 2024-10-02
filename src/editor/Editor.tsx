@@ -1,4 +1,3 @@
-import EditorUI from './UI'
 import EditorInspector from './Inspector'
 import Canvas from './Canvas'
 import { ActivePanels } from '@orb_UI/ActivePanels'
@@ -13,7 +12,6 @@ export function Editor() {
             width: "100vw",
             overflow: "hidden"
         }}>
-            <EditorUI />
             <Canvas />
             <EditorInspector />
             <ActivePanels />
