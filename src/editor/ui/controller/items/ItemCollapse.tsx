@@ -12,7 +12,7 @@ export const ItemCollapse: React.FC<ItemCollapseInterface> = (
     return (
         <Collapse
             defaultActiveKey={!collapsed ? ["1"] : undefined}
-            style={{ width: "100%" }}
+            style={{ width: "100%", paddingLeft: 5 }}
             items={[{ label: label, key: "1", children: children }]}
         />
     )

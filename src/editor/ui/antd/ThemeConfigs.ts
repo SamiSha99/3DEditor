@@ -53,7 +53,7 @@ export const InspectorTheme: ThemeConfig = {
         Collapse: {
             contentBg: "#212121",
             headerBg: "rgb(0,0,0,0.5)",
-            contentPadding: "16px 10px",
+            contentPadding: "0",
             colorBorder: "none",
             margin: 0
         },

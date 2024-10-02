@@ -124,7 +124,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
             {
                 tab &&
                 <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin" }}>
-                    <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} colon={false} labelWrap>
+                    <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} colon={false} labelWrap>
                         {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
                         {tab == "MATERIAL" && object instanceof THREE.Mesh && <InspectorMaterial material={object.material} />}
                     </Form>
