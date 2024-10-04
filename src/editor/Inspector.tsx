@@ -14,6 +14,7 @@ import { InspectorObject3D } from "./data/Object3D";
 import { MenuBar } from "@orb_UI/Menubar";
 import { ControlsBar } from "@orb_UI/ControlsBar";
 import { ActivePanels } from "@orb_UI/ActivePanels";
+import { InspectorGeometry } from "./data/Geometry";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -116,19 +117,36 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
     const [tab, setTab] = useState(object ? "OBJECT" : "");
     return (
         <>
-            <Row style={{ marginTop: 24 }}>
-                <Button disabled={object == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
-                <Button disabled={!(object instanceof THREE.Mesh) || !object.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
-                <Divider style={{ margin: 0 }} />
-            </Row>
             {
-                tab &&
-                <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin" }}>
-                    <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} colon={false} labelWrap>
-                        {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
-                        {tab == "MATERIAL" && object instanceof THREE.Mesh && <InspectorMaterial material={object.material} />}
-                    </Form>
-                </div >
+                object &&
+                <>
+                    <Row style={{ marginTop: 24 }}>
+                        <Button disabled={object == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
+                        {
+                            object instanceof THREE.Mesh &&
+                            <>
+                                <Button disabled={!object.material} children={"GEOMETRY"} onClick={() => setTab("GEOMETRY")} />
+                                <Button disabled={!object.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
+                            </>
+                        }
+                        <Divider style={{ margin: 0 }} />
+                    </Row>
+                    {
+                        tab &&
+                        <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin" }}>
+                            <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} colon={false} labelWrap>
+                                {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
+                                {
+                                    object instanceof THREE.Mesh &&
+                                    <>
+                                        {tab == "MATERIAL" && <InspectorMaterial material={object.material} />}
+                                        {tab == "GEOMETRY" && <InspectorGeometry geometry={object.geometry} />}
+                                    </>
+                                }
+                            </Form>
+                        </div >
+                    }
+                </>
             }
         </>
     )

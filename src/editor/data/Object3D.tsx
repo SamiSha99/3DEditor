@@ -30,7 +30,8 @@ export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(
 
 export const ChildObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
     switch (object.constructor) {
-        case THREE.Mesh: return <Mesh object={object as THREE.Mesh} />;
+        // Mesh doesn't have anything special outside of Material and Geometry, which should be serperate tabs.
+        // case THREE.Mesh: return <Mesh object={object as THREE.Mesh} />;
         default: return <>{object.constructor.name}</>;
     }
 })

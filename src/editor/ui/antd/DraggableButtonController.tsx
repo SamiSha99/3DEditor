@@ -19,10 +19,11 @@ type DraggableButtonControllerInterface = {
     step?: number,
     triggerSize?: number
     onStep?: (value: number, rate: number, direction: number) => void
+    onDragEnd?: () => void
 }
 
 export const DraggableButtonController: React.FC<DraggableButtonControllerInterface> = (
-    { step, triggerSize, onStep }
+    { step, triggerSize, onStep, onDragEnd }
 ) => {
     if (!triggerSize) triggerSize = DEFAULT_TRIGGER_SIZE
     if (!step) step = DEFAULT_STEP;
@@ -55,6 +56,7 @@ export const DraggableButtonController: React.FC<DraggableButtonControllerInterf
                     document.removeEventListener("mousemove", handleMouseMove);
                     stepRate = 0;
                     document.body.style.cursor = "";
+                    onDragEnd && onDragEnd();
                 }, { once: true });
                 e.preventDefault();
                 stepPosition = (e.clientY);

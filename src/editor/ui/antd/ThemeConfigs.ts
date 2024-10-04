@@ -53,9 +53,9 @@ export const InspectorTheme: ThemeConfig = {
         Collapse: {
             contentBg: "#212121",
             headerBg: "rgb(0,0,0,0.5)",
-            contentPadding: "0",
+            contentPadding: "10px 0px 0 0",
+            headerPadding: "10px",
             colorBorder: "none",
-            margin: 0
         },
         Slider: {
             controlHeight: 0

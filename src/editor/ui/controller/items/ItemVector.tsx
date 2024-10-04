@@ -174,6 +174,9 @@ export const ItemVector3: React.FC<Vector3Interface> = (
                         setY(res);
                         onChange && onChange(object[variable]);
                     }}
+                    onDragEnd={() => {
+                        onChange && onChange(object[variable]);
+                    }}
                 />
             </Tooltip>
             <Tooltip title={toFixedStripped(z, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
