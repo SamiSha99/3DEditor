@@ -6,11 +6,12 @@ import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 
 interface InputNumberInterface extends Item {
     limit?: Limit,
+    stepSlider?: number
     onChange?: (value: number) => void
 }
 
 export const ItemNumber: React.FC<InputNumberInterface> = (
-    { label, labelInVariable, object, variable, limit, readonly, onChange }
+    { label, labelInVariable, object, variable, limit, readonly, stepSlider, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
@@ -27,7 +28,7 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
                     style={{ display: 'inline-block', width: "calc(80% - 20px)", marginRight: 15 }}
                     min={limit?.min}
                     max={limit?.max}
-                    step={0.01}
+                    step={stepSlider == undefined ? 0.01 : stepSlider}
                     onChange={(v: number | null) => {
                         if (v == null) return;
                         setValue(v)
