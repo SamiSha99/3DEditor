@@ -9,7 +9,7 @@ import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonControlle
 
 const defaultProps: InputNumberProps<number> = {
     size: "small",
-    controls: false,
+    controls: true,
     changeOnWheel: true
 }
 

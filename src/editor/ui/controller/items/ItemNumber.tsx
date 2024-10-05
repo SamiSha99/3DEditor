@@ -48,7 +48,7 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
                     min={limit?.min}
                     max={limit?.max}
                     precision={PRECISION_AMOUNT}
-                    controls={false}
+                    // controls={false}
                     changeOnWheel
                     readOnly={readonly}
                     disabled={readonly}
