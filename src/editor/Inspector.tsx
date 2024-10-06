@@ -1,19 +1,17 @@
 import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
-import { Button, ConfigProvider, Divider, Form, Row, Tabs, Tree, TreeDataNode, TreeProps } from "antd";
+import { Button, ConfigProvider, Divider, Form, Row, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from "three"
-import { ItemNumber, ItemInput, ItemVector3, ItemEuler, ItemSelect, ItemColorPicker, ItemBoolean, ItemTexture, ItemGroup, ItemVector2 } from "./ui/controller/ControllerItems";
+import { ItemSelect, ItemColorPicker } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
 import { AppStore } from "@orb_AppStore";
-import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
 import { InspectorMaterial } from "./data/Material";
 import { InspectorObject3D } from "./data/Object3D";
 import { MenuBar } from "@orb_UI/Menubar";
 import { ControlsBar } from "@orb_UI/ControlsBar";
-import { ActivePanels } from "@orb_UI/ActivePanels";
 import { InspectorGeometry } from "./data/Geometry";
 
 export const EditorInspector = observer(() => {
@@ -133,8 +131,8 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                     </Row>
                     {
                         tab &&
-                        <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin" }}>
-                            <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} colon={false} labelWrap>
+                        <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarGutter: "auto" }}>
+                            <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} colon={false} labelWrap>
                                 {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
                                 {
                                     object instanceof THREE.Mesh &&

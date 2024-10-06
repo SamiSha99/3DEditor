@@ -1,10 +1,14 @@
 
 import { useStores } from "@orb_App";
 import { ItemBoolean, ItemCollapse, ItemGroup, ItemInput, ItemNumber, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
-import { LIMIT_01 } from "@orb_UI/controller/items/Item";
+import { Limit, LIMIT_01 } from "@orb_UI/controller/items/Item";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from 'three'
+
+const GEOMETRY_SEGMENTS_LIMIT = { min: 0, max: 100 } as Limit;
+const GEOMETRY_SEGMENTS_LIMIT_VECTOR_2 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMETRY_SEGMENTS_LIMIT };
+const GEOMETRY_SEGMENTS_LIMIT_VECTOR_3 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMETRY_SEGMENTS_LIMIT, z: GEOMETRY_SEGMENTS_LIMIT };
 
 const GeometrySelect = [
     { value: "BoxGeometry", label: "Box" },
@@ -120,6 +124,7 @@ export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry }> = o
                 object={{ segments: new THREE.Vector3(widthSegments, heightSegments, depthSegments) }}
                 variable="segments"
                 labelInVariable
+                limit={GEOMETRY_SEGMENTS_LIMIT_VECTOR_3}
                 labelVector={{ x: "Width", y: "Height", z: "Depth" }}
                 onChange={(v) => {
                     onChange({ wS: v.x, hS: v.y, dS: v.z });
@@ -203,6 +208,7 @@ export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeome
                 object={{ segments: new THREE.Vector2(radialSegments, heightSegments) }}
                 variable="segments"
                 labelInVariable
+                limit={GEOMETRY_SEGMENTS_LIMIT_VECTOR_2}
                 labelVector={{ x: "Radial", y: "Height" }}
                 onChange={(v) => {
                     onChange({ rS: v.x, hS: v.y });
@@ -276,6 +282,7 @@ export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry }>
                 object={{ segments: new THREE.Vector2(widthSegments, heightSegments) }}
                 variable="segments"
                 labelInVariable
+                limit={GEOMETRY_SEGMENTS_LIMIT_VECTOR_2}
                 labelVector={{ x: "Width", y: "Height" }}
                 onChange={(v) => {
                     onChange({ wS: v.x, hS: v.y });
@@ -325,6 +332,7 @@ export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometr
                 variable="segments"
                 labelInVariable
                 labelVector={{ x: "Cap", y: "Radial" }}
+                limit={GEOMETRY_SEGMENTS_LIMIT_VECTOR_2}
                 onChange={(v) => {
                     onChange({ cS: v.x, rS: v.y });
                 }}
@@ -382,6 +390,7 @@ export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry }>
                 variable="segments"
                 labelInVariable
                 labelVector={{ x: "Radial", y: "Tubular" }}
+                limit={GEOMETRY_SEGMENTS_LIMIT_VECTOR_2}
                 onChange={(v) => {
                     onChange({ rS: v.x, tS: v.y });
                 }}

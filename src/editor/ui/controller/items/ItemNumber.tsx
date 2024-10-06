@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { MOUSE_ENTER_DELAY, PRECISION_AMOUNT, Item, Limit, labelFromVariable } from "./Item";
 import { useDeltaTime } from "src/store/Hooks";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
+import { toFixedStripped } from "@orb_utils/Main";
 
 interface InputNumberInterface extends Item {
     limit?: Limit,
@@ -48,6 +49,8 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
                     min={limit?.min}
                     max={limit?.max}
                     precision={PRECISION_AMOUNT}
+                    formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` }}
+                    parser={(v) => v as unknown as number}
                     // controls={false}
                     changeOnWheel
                     readOnly={readonly}

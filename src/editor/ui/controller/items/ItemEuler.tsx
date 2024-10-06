@@ -22,6 +22,8 @@ const eulerProps: InputNumberProps<number> = {
     precision: PRECISION_AMOUNT,
     controls: false,
     changeOnWheel: true,
+    formatter: (v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}°` },
+    parser: (v) => v as unknown as number,
     style: { width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH + ')' },
     size: "small"
 }

@@ -10,7 +10,9 @@ import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonControlle
 const defaultProps: InputNumberProps<number> = {
     size: "small",
     controls: true,
-    changeOnWheel: true
+    changeOnWheel: true,
+    formatter: (v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` },
+    parser: (v) => v as unknown as number,
 }
 
 const vector2Props: InputNumberProps<number> = {
