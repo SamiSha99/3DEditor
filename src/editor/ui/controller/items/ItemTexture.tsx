@@ -6,6 +6,7 @@ import { Material, Texture } from "three";
 import { saveLink } from "@orb_tools/Exporter";
 import { CloudUploadOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined } from "@ant-design/icons";
 import { doImportTexture } from "@orb_tools/Importer";
+import { useOnUnmount } from "src/store/Hooks";
 
 interface TextureInterface extends Item {
     onChange?: (value?: Texture) => void
@@ -55,6 +56,9 @@ export const ItemTexture: React.FC<TextureInterface> = (
     const requestDownloadTexture = () => {
         textureObject && saveLink(textureObject.url, variable, textureObject.type)
     }
+
+    // clean up 
+    useOnUnmount(() => textureObject && URL.revokeObjectURL(textureObject.url), [textureObject])
 
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
