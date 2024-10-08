@@ -112,7 +112,7 @@ interface Vector3Interface extends Item {
 }
 
 export const ItemVector3: React.FC<Vector3Interface> = (
-    { label, labelInVariable, object, variable, precision, labelVector, limit, onChange }
+    { label, labelInVariable, object, variable, precision, labelVector, limit, onChange, tooltip }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
@@ -127,86 +127,80 @@ export const ItemVector3: React.FC<Vector3Interface> = (
     });
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
-            <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <InputNumber
-                    {...vector3Props}
-                    onFocus={loopStop}
-                    onBlur={loopStart}
-                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
-                    value={x}
-                    min={limit?.x?.min}
-                    max={limit?.x?.max}
-                    addonBefore={labelVector?.x ? labelVector.x : "X"}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        (object[variable] as THREE.Vector3).setX(v);
-                        setX(v);
-                        onChange && onChange(object[variable]);
-                    }} />
-                <DraggableButtonController
-                    onStep={(value, _rate, direction) => {
-                        const newVal = (object[variable] as THREE.Vector3).x + value * direction;
-                        const res = (object[variable] as THREE.Vector3).setX(newVal).x;
-                        setX(res);
-                        onChange && onChange(object[variable]);
-                    }}
-                />
-            </Tooltip>
-            <Tooltip title={toFixedStripped(y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <InputNumber
-                    {...vector3Props}
-                    onFocus={loopStop}
-                    onBlur={loopStart}
-                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
-                    value={y}
-                    min={limit?.y?.min}
-                    max={limit?.y?.max}
-                    addonBefore={labelVector?.y ? labelVector.y : "Y"}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        (object[variable] as THREE.Vector3).setY(v);
-                        setY(v);
-                        onChange && onChange(object[variable]);
-                    }} />
-                <DraggableButtonController
-                    onStep={(value, _rate, direction) => {
-                        const newVal = (object[variable] as THREE.Vector3).y + value * direction;
-                        const res = (object[variable] as THREE.Vector3).setY(newVal).y;
-                        setY(res);
-                        onChange && onChange(object[variable]);
-                    }}
-                    onDragEnd={() => {
-                        onChange && onChange(object[variable]);
-                    }}
-                />
-            </Tooltip>
-            <Tooltip title={toFixedStripped(z, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <InputNumber
-                    {...vector3Props}
-                    onFocus={loopStop}
-                    onBlur={loopStart}
-                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
-                    value={z}
-                    min={limit?.z?.min}
-                    max={limit?.z?.max}
-                    addonBefore={labelVector?.z ? labelVector.z : "Z"}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        (object[variable] as THREE.Vector3).setZ(v);
-                        setZ(v);
-                        onChange && onChange(object[variable]);
-                    }} />
-                <DraggableButtonController
-                    onStep={(value, _rate, direction) => {
-                        const newVal = (object[variable] as THREE.Vector3).z + value * direction;
-                        const res = (object[variable] as THREE.Vector3).setZ(newVal).z;
-                        setZ(res);
-                        onChange && onChange(object[variable]);
-                    }}
-                />
-            </Tooltip>
-        </Form.Item>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
+            <InputNumber
+                {...vector3Props}
+                onFocus={loopStop}
+                onBlur={loopStart}
+                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                value={x}
+                min={limit?.x?.min}
+                max={limit?.x?.max}
+                addonBefore={labelVector?.x ? labelVector.x : "X"}
+                onChange={(v: number | null) => {
+                    if (v == null) return;
+                    (object[variable] as THREE.Vector3).setX(v);
+                    setX(v);
+                    onChange && onChange(object[variable]);
+                }} />
+            <DraggableButtonController
+                onStep={(value, _rate, direction) => {
+                    const newVal = (object[variable] as THREE.Vector3).x + value * direction;
+                    const res = (object[variable] as THREE.Vector3).setX(newVal).x;
+                    setX(res);
+                    onChange && onChange(object[variable]);
+                }}
+            />
+            <InputNumber
+                {...vector3Props}
+                onFocus={loopStop}
+                onBlur={loopStart}
+                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                value={y}
+                min={limit?.y?.min}
+                max={limit?.y?.max}
+                addonBefore={labelVector?.y ? labelVector.y : "Y"}
+                onChange={(v: number | null) => {
+                    if (v == null) return;
+                    (object[variable] as THREE.Vector3).setY(v);
+                    setY(v);
+                    onChange && onChange(object[variable]);
+                }} />
+            <DraggableButtonController
+                onStep={(value, _rate, direction) => {
+                    const newVal = (object[variable] as THREE.Vector3).y + value * direction;
+                    const res = (object[variable] as THREE.Vector3).setY(newVal).y;
+                    setY(res);
+                    onChange && onChange(object[variable]);
+                }}
+                onDragEnd={() => {
+                    onChange && onChange(object[variable]);
+                }}
+            />
+            <InputNumber
+                {...vector3Props}
+                onFocus={loopStop}
+                onBlur={loopStart}
+                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                value={z}
+                min={limit?.z?.min}
+                max={limit?.z?.max}
+                addonBefore={labelVector?.z ? labelVector.z : "Z"}
+                onChange={(v: number | null) => {
+                    if (v == null) return;
+                    (object[variable] as THREE.Vector3).setZ(v);
+                    setZ(v);
+                    onChange && onChange(object[variable]);
+                }} />
+            <DraggableButtonController
+                onStep={(value, _rate, direction) => {
+                    const newVal = (object[variable] as THREE.Vector3).z + value * direction;
+                    const res = (object[variable] as THREE.Vector3).setZ(newVal).z;
+                    setZ(res);
+                    onChange && onChange(object[variable]);
+                }}
+            />
+        </Form.Item >
 
     )
 }

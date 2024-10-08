@@ -1,6 +1,6 @@
-import { Form, Switch, Tooltip } from "antd";
+import { Form, Switch } from "antd";
 import React, { useState } from "react";
-import { Item, labelFromVariable, MOUSE_ENTER_DELAY } from "./Item";
+import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { useDeltaTime } from "src/store/Hooks";
 
@@ -10,7 +10,7 @@ interface BooleanInterface extends Item {
 }
 
 export const ItemBoolean: React.FC<BooleanInterface> = (
-    { label, labelInVariable, object, variable, icons, onChange }
+    { label, labelInVariable, object, variable, icons, onChange, tooltip }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<boolean>(object[variable]);
@@ -20,19 +20,17 @@ export const ItemBoolean: React.FC<BooleanInterface> = (
     });
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
-            <Tooltip style={{ display: 'inline-block', backgroundColor: "red" }} title={"" + v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <Switch
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: "2px 0" }}
-                    defaultChecked={object[variable]}
-                    checkedChildren={icons?.on}
-                    unCheckedChildren={icons?.off}
-                    onChange={(e) => {
-                        setValue(e);
-                        object[variable] = e;
-                        onChange && onChange(e);
-                    }} />
-            </Tooltip>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
+            <Switch
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: "2px 0" }}
+                defaultChecked={object[variable]}
+                checkedChildren={icons?.on}
+                unCheckedChildren={icons?.off}
+                onChange={(e) => {
+                    setValue(e);
+                    object[variable] = e;
+                    onChange && onChange(e);
+                }} />
         </Form.Item>
     )
 }

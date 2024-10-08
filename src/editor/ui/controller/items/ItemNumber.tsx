@@ -1,6 +1,6 @@
-import { Form, InputNumber, Slider, Tooltip } from "antd";
+import { Form, InputNumber, Slider } from "antd";
 import React, { useState } from "react";
-import { MOUSE_ENTER_DELAY, PRECISION_AMOUNT, Item, Limit, labelFromVariable } from "./Item";
+import { PRECISION_AMOUNT, Item, Limit, labelFromVariable } from "./Item";
 import { useDeltaTime } from "src/store/Hooks";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 import { toFixedStripped } from "@orb_utils/Main";
@@ -12,7 +12,7 @@ interface InputNumberInterface extends Item {
 }
 
 export const ItemNumber: React.FC<InputNumberInterface> = (
-    { label, labelInVariable, object, variable, limit, readonly, stepSlider, onChange }
+    { label, labelInVariable, object, variable, limit, readonly, stepSlider, onChange, tooltip }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
@@ -22,7 +22,7 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
     });
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             {
                 !readonly && limit &&
                 <Slider
@@ -40,28 +40,26 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
                 />
 
             }
-            <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <InputNumber
-                    style={{ display: limit ? 'inline-block' : '', width: limit ? "20%" : "100%" }}
-                    onFocus={loopStop}
-                    onBlur={loopStart}
-                    value={v}
-                    min={limit?.min}
-                    max={limit?.max}
-                    precision={PRECISION_AMOUNT}
-                    formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` }}
-                    parser={(v) => v as unknown as number}
-                    // controls={false}
-                    changeOnWheel
-                    readOnly={readonly}
-                    disabled={readonly}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        setValue(v)
-                        object[variable] = v;
-                        onChange && onChange(v);
-                    }} />
-            </Tooltip>
+            <InputNumber
+                style={{ display: limit ? 'inline-block' : '', width: limit ? "20%" : "100%" }}
+                onFocus={loopStop}
+                onBlur={loopStart}
+                value={v}
+                min={limit?.min}
+                max={limit?.max}
+                precision={PRECISION_AMOUNT}
+                formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` }}
+                parser={(v) => v as unknown as number}
+                // controls={false}
+                changeOnWheel
+                readOnly={readonly}
+                disabled={readonly}
+                onChange={(v: number | null) => {
+                    if (v == null) return;
+                    setValue(v)
+                    object[variable] = v;
+                    onChange && onChange(v);
+                }} />
         </Form.Item>
     )
 }

@@ -64,13 +64,8 @@ export const ItemTexture: React.FC<TextureInterface> = (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
             <div style={{ display: "flex" }}>
                 <div style={{ width: 64, height: 64, flexShrink: 0, backgroundColor: "#303030", outline: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    onMouseEnter={() => {
-
-                        !textureObject && setHoverUploadIcon(true);
-                    }}
-                    onMouseLeave={() => {
-                        !textureObject && setHoverUploadIcon(false);
-                    }}>
+                    onMouseEnter={() => !textureObject && setHoverUploadIcon(true)}
+                    onMouseLeave={() => !textureObject && setHoverUploadIcon(false)}>
                     {
                         !textureObject?.url &&
                         <div style={{ color: "darkgrey", width: hoverUploadIcon ? "100%" : undefined, height: hoverUploadIcon ? "100%" : undefined }}>

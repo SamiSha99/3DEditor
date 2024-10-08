@@ -13,13 +13,13 @@ interface SelectInterface extends Item {
 }
 
 export const ItemSelect: React.FC<SelectInterface> = (
-    { label, labelInVariable, object, variable, disabled, defaultValue, labelInValue, onChangeSelect }
+    { label, labelInVariable, object, variable, disabled, defaultValue, labelInValue, onChangeSelect, tooltip }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const list = object[variable] as DefaultOptionType[];
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <Select
                 disabled={disabled != undefined ? disabled : false}
                 defaultValue={defaultValue ? { value: defaultValue, label: defaultValue } : undefined}

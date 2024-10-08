@@ -1,6 +1,6 @@
-import { Form, Tooltip, Input } from "antd";
+import { Form, Input } from "antd";
 import React, { useState } from "react";
-import { Item, labelFromVariable, MOUSE_ENTER_DELAY } from "./Item";
+import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { useDeltaTime } from "src/store/Hooks";
 
@@ -9,7 +9,7 @@ interface InputInterface extends Item {
 }
 
 export const ItemInput: React.FC<InputInterface> = (
-    { label, labelInVariable, object, variable, readonly, onChange }
+    { label, labelInVariable, object, variable, readonly, onChange, tooltip }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<string>(object[variable]);
@@ -19,22 +19,20 @@ export const ItemInput: React.FC<InputInterface> = (
     });
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
-            <Tooltip title={v} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <Input
-                    onFocus={loopStop}
-                    onBlur={loopStart}
-                    style={{ display: 'inline-block', width: '100%' }}
-                    value={v}
-                    readOnly={readonly}
-                    disabled={readonly}
-                    onChange={(v) => {
-                        if (v == null) return;
-                        setValue(v.target.value);
-                        object[variable] = v.target.value;
-                        onChange && onChange(v.target.value);
-                    }} />
-            </Tooltip>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
+            <Input
+                onFocus={loopStop}
+                onBlur={loopStart}
+                style={{ display: 'inline-block', width: '100%' }}
+                value={v}
+                readOnly={readonly}
+                disabled={readonly}
+                onChange={(v) => {
+                    if (v == null) return;
+                    setValue(v.target.value);
+                    object[variable] = v.target.value;
+                    onChange && onChange(v.target.value);
+                }} />
         </Form.Item>
     )
 }

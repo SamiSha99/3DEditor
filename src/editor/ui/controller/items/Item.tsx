@@ -1,3 +1,6 @@
+import { Form } from "antd";
+import FormItem, { FormItemProps } from "antd/es/form/FormItem";
+
 export const MOUSE_ENTER_DELAY = 0.3;
 export const PRECISION_AMOUNT = 6;
 export const DRAGGABLE_CONTROLLER_WIDTH = "4px";
@@ -7,7 +10,7 @@ export const labelFromVariable = (variable: string) => {
     return title.charAt(0).toUpperCase() + title.slice(1);
 }
 
-export type Item = {
+export interface Item extends FormItemProps {
     object: { [key: string]: any }
     variable: string
     label?: string | false,

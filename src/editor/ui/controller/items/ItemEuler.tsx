@@ -1,15 +1,14 @@
-import { Form, Select, InputNumber, Tooltip, SelectProps, InputNumberProps } from "antd";
+import { Form, Select, InputNumber, SelectProps, InputNumberProps } from "antd";
 import React, { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
-import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./Item";
+import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, PRECISION_AMOUNT } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
-// to-do: labels MAYBE as the labels specifiers?
-const orderOptions: SelectProps['options'] = [
+const orderOptions = [
     { value: "XYZ", label: "XYZ" },
     { value: "YXZ", label: "YXZ" },
     { value: "ZXY", label: "ZXY" },
@@ -36,7 +35,7 @@ interface EulerInterface extends Item {
 }
 
 export const ItemEuler: React.FC<EulerInterface> = (
-    { variable, object, label, labelInVariable, labelEuler, showOrder, isDegree, onChange }
+    { variable, object, label, labelInVariable, labelEuler, showOrder, isDegree, onChange, tooltip }
 ) => {
 
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
@@ -61,109 +60,91 @@ export const ItemEuler: React.FC<EulerInterface> = (
     }
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} style={{ marginBottom: '0px', display: 'inline-block' }}>
-            <Tooltip title={toFixedStripped(isDegree ? radToDeg(x) : x, 3) + (isDegree ? "°" : "")} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <InputNumber
-                    {...eulerProps}
-                    {...props}
-                    value={isDegree ? radToDeg(x) : x}
-                    addonBefore={labelEuler?.x ? labelEuler.x : "X"}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        v = isDegree ? degToRad(v) : v;
-                        setX(v);
-                        (object[variable] as THREE.Euler).x = v;
-                        onChange && onChange(object[variable]);
-                    }} />
-                <DraggableButtonController
-                    step={props.step as number}
-                    onStep={(value, _rate, direction) => {
-                        let clamped = 0;
-                        if (isDegree)
-                            clamped = degToRad(clamp(radToDeg((object[variable] as THREE.Euler).x) + value * direction, -180, 180));
-                        else
-                            clamped = clamp((object[variable] as THREE.Euler).x + value * direction, -Math.PI, Math.PI);
-                        (object[variable] as THREE.Euler).x = clamped;
-                        setX((object[variable] as THREE.Euler).x);
-                        onChange && onChange(object[variable]);
-                    }}
-                />
-            </Tooltip>
-            <Tooltip title={toFixedStripped(isDegree ? radToDeg(y) : y, 3) + (isDegree ? "°" : "")} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <InputNumber
-                    {...eulerProps}
-                    {...props}
-                    value={isDegree ? radToDeg(y) : y}
-                    addonBefore={labelEuler?.y ? labelEuler.y : "Y"}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        v = isDegree ? degToRad(v) : v;
-                        setY(v);
-                        (object[variable] as THREE.Euler).y = v;
-                        onChange && onChange(object[variable]);
-                    }} />
-                <DraggableButtonController
-                    step={props.step as number}
-                    onStep={(value, _rate, direction) => {
-                        let clamped = 0;
-                        if (isDegree)
-                            clamped = degToRad(clamp(radToDeg((object[variable] as THREE.Euler).y) + value * direction, -180, 180));
-                        else
-                            clamped = clamp((object[variable] as THREE.Euler).y + value * direction, -Math.PI, Math.PI);
-                        (object[variable] as THREE.Euler).y = clamped;
-                        setY((object[variable] as THREE.Euler).y);
-                        onChange && onChange(object[variable]);
-                    }}
-                />
-            </Tooltip>
-            <Tooltip title={toFixedStripped(isDegree ? radToDeg(z) : z, 3) + (isDegree ? "°" : "")} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <InputNumber
-                    {...eulerProps}
-                    {...props}
-                    value={isDegree ? radToDeg(z) : z}
-                    addonBefore={labelEuler?.z ? labelEuler.z : "Z"}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        v = isDegree ? degToRad(v) : v;
-                        setZ(v);
-                        (object[variable] as THREE.Euler).z = v;
-                        onChange && onChange(object[variable]);
-                    }} />
-                <DraggableButtonController
-                    step={props.step as number}
-                    onStep={(value, _rate, direction) => {
-                        let clamped = 0;
-                        if (isDegree)
-                            clamped = degToRad(clamp(radToDeg((object[variable] as THREE.Euler).z) + value * direction, -180, 180));
-                        else
-                            clamped = clamp((object[variable] as THREE.Euler).z + value * direction, -Math.PI, Math.PI);
-                        (object[variable] as THREE.Euler).z = clamped;
-                        setZ((object[variable] as THREE.Euler).z);
-                        onChange && onChange(object[variable]);
-                    }}
-                />
-            </Tooltip>
-            {showOrder && false &&
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} style={{ marginBottom: '0px', display: 'inline-block' }} tooltip={tooltip}>
+            <InputNumber
+                {...eulerProps}
+                {...props}
+                value={isDegree ? radToDeg(x) : x}
+                addonBefore={labelEuler?.x ? labelEuler.x : "X"}
+                onChange={(v: number | null) => {
+                    if (v == null) return;
+                    v = isDegree ? degToRad(v) : v;
+                    setX(v);
+                    (object[variable] as THREE.Euler).x = v;
+                    onChange && onChange(object[variable]);
+                }} />
+            <DraggableButtonController
+                step={props.step as number}
+                onStep={(value, _rate, direction) => {
+                    let clamped = 0;
+                    if (isDegree)
+                        clamped = degToRad(clamp(radToDeg((object[variable] as THREE.Euler).x) + value * direction, -180, 180));
+                    else
+                        clamped = clamp((object[variable] as THREE.Euler).x + value * direction, -Math.PI, Math.PI);
+                    (object[variable] as THREE.Euler).x = clamped;
+                    setX((object[variable] as THREE.Euler).x);
+                    onChange && onChange(object[variable]);
+                }}
+            />
+            <InputNumber
+                {...eulerProps}
+                {...props}
+                value={isDegree ? radToDeg(y) : y}
+                addonBefore={labelEuler?.y ? labelEuler.y : "Y"}
+                onChange={(v: number | null) => {
+                    if (v == null) return;
+                    v = isDegree ? degToRad(v) : v;
+                    setY(v);
+                    (object[variable] as THREE.Euler).y = v;
+                    onChange && onChange(object[variable]);
+                }} />
+            <DraggableButtonController
+                step={props.step as number}
+                onStep={(value, _rate, direction) => {
+                    let clamped = 0;
+                    if (isDegree)
+                        clamped = degToRad(clamp(radToDeg((object[variable] as THREE.Euler).y) + value * direction, -180, 180));
+                    else
+                        clamped = clamp((object[variable] as THREE.Euler).y + value * direction, -Math.PI, Math.PI);
+                    (object[variable] as THREE.Euler).y = clamped;
+                    setY((object[variable] as THREE.Euler).y);
+                    onChange && onChange(object[variable]);
+                }}
+            />
+            <InputNumber
+                {...eulerProps}
+                {...props}
+                value={isDegree ? radToDeg(z) : z}
+                addonBefore={labelEuler?.z ? labelEuler.z : "Z"}
+                onChange={(v: number | null) => {
+                    if (v == null) return;
+                    v = isDegree ? degToRad(v) : v;
+                    setZ(v);
+                    (object[variable] as THREE.Euler).z = v;
+                    onChange && onChange(object[variable]);
+                }} />
+            <DraggableButtonController
+                step={props.step as number}
+                onStep={(value, _rate, direction) => {
+                    let clamped = 0;
+                    if (isDegree)
+                        clamped = degToRad(clamp(radToDeg((object[variable] as THREE.Euler).z) + value * direction, -180, 180));
+                    else
+                        clamped = clamp((object[variable] as THREE.Euler).z + value * direction, -Math.PI, Math.PI);
+                    (object[variable] as THREE.Euler).z = clamped;
+                    setZ((object[variable] as THREE.Euler).z);
+                    onChange && onChange(object[variable]);
+                }}
+            />
+            {showOrder &&
                 <Form.Item labelCol={{ span: 4 }} wrapperCol={{ span: 6 }} label={"Order"} style={{ marginBottom: '0px', alignItems: 'center', alignContent: 'center' }}>
-                    <Tooltip title={"Order: " + order} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                        <Select
-                            style={{ width: "100%" }}
-                            size="small"
-                            value={order}
-                            options={orderOptions}
-                            labelInValue={true}
-                            onChange={(value) => {
-                                // setOrder(value);
-                                // onChange && onChange({
-                                // x: isDegree ? radToDeg(x) : x,
-                                // y: isDegree ? radToDeg(y) : y,
-                                // z: isDegree ? radToDeg(z) : z,
-                                // order: value,
-                                // isDegree: isDegree
-                                // });
-                            }}
-                        />
-                    </Tooltip>
+                    <Select
+                        style={{ width: "100%" }}
+                        size="small"
+                        value={orderOptions[0]}
+                        options={orderOptions}
+                        labelInValue={true}
+                    />
                 </Form.Item>
             }
         </Form.Item>

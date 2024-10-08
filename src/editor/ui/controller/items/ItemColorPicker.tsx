@@ -15,12 +15,12 @@ interface ColorPickerInterface extends Item {
 }
 
 export const ItemColorPicker: React.FC<ColorPickerInterface> = (
-    { label, labelInVariable, object, variable, disabled, defaultValue, allowAlpha, allowClear, onChangeCheckbox, onChangeColorPicker, onChangeCompleteColorPicker }
+    { label, labelInVariable, object, variable, disabled, defaultValue, allowAlpha, allowClear, onChangeCheckbox, onChangeColorPicker, onChangeCompleteColorPicker, tooltip }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
                 <Checkbox onChange={(e) => { onChangeCheckbox && onChangeCheckbox(e) }} />
             </Form.Item>
