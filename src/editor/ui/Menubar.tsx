@@ -10,9 +10,9 @@ export const MenuBar = () => {
         <MenuBarStyle>
             <File />
             <Add />
-            <Create />
+            {/* <Create /> */}
             <Tools />
-            <Settings />
+            {/* <Settings /> */}
         </MenuBarStyle>
     )
 }
