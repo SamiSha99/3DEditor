@@ -74,12 +74,12 @@ export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observ
                             <ItemInput object={meshMaterial} variable="uuid" readonly />
                             <ItemButton object={meshMaterial} variable="version" buttonName="Regenerate" onClick={() => { meshMaterial.uuid = THREE.MathUtils.generateUUID() }} size='small' />
                         </ItemGroup>
-                        <ItemGroup label={"Version"} sizes={["75%", "25%"]}>
+                        <ItemGroup label={"Version"} sizes={["75%", "25%"]} tooltip={"Automatically increments whenever an update to the material is required."}>
                             <ItemNumber object={meshMaterial} variable="version" readonly />
                             <ItemButton object={meshMaterial} variable="version" buttonName="Update" onClick={() => needsUpdate(meshMaterial)} size='small' />
                         </ItemGroup>
-                        <ItemNumber object={meshMaterial} variable="opacity" labelInVariable limit={LIMIT_01} />
                         <ItemBoolean object={meshMaterial} variable="transparent" labelInVariable onChange={() => needsUpdate(meshMaterial)} />
+                        <ItemNumber object={meshMaterial} variable="opacity" labelInVariable limit={LIMIT_01} />
                         <ItemBoolean object={meshMaterial} variable="visible" labelInVariable />
                     </>
                 }
