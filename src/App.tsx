@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import './App.css'
 import { useContext, createContext } from 'react'
 import { AppStore } from '@orb_AppStore'
@@ -21,10 +21,15 @@ const session = new AppStore();
 
 function App() {
 
+    useEffect(()=>{
+        console.log("@@@",window.location.search)
+    },[])
+
+
     return (
         <StoreProvider store={session}>
             <ConfigProvider theme={MainTheme}>
-                <Editor />
+                <Editor  />
             </ConfigProvider>
         </StoreProvider>
     )

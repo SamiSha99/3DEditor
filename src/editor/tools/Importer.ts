@@ -9,6 +9,17 @@ const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 
 type OnImport<T> = (result: T) => void;
 
+export const testFirebaseFiles = async (fileMetadata: any, onImport: OnImport<THREE.Object3D>) => {
+    try {
+        const res = await fetch(fileMetadata.fileUrlAndroid)
+        const blob = await res.blob()
+        const file = new File([blob], fileMetadata.fileName, { type: blob.type });
+        handleFiles([file], onImport);
+    } catch (err: any) {
+        throw new Error(err)
+    }
+}
+
 export function doImport(onImport: OnImport<THREE.Object3D>) {
     const input = document.createElement('input');
     input.type = "file";

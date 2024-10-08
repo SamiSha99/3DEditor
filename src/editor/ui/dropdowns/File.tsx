@@ -3,7 +3,7 @@ import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons"
 import { Dropdown, Button, message, Modal, Input, Form, Select, Checkbox } from "antd";
 import * as THREE from "three";
 import { useStores } from "@orb_App";
-import { doImport } from "@orb_tools/Importer";
+import { doImport, testFirebaseFiles } from "@orb_tools/Importer";
 import { ExportType, doExport, save } from "@orb_tools/Exporter";
 
 export const File = () => {
@@ -51,10 +51,15 @@ export const File = () => {
                             key: '1',
                             icon: <ImportOutlined />,
                             onClick: () => {
-                                doImport((scene) => {
+                                testFirebaseFiles({fileName: "test.glb", fileUrlAndroid: "REDACTED_URL"}, 
+                                    (scene) => {
                                     console.log(scene);
                                     addObject(scene);
                                 });
+                                // doImport((scene) => {
+                                //     console.log(scene);
+                                //     addObject(scene);
+                                // });
                             }
                         },
                         {
