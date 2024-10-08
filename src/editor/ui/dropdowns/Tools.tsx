@@ -180,7 +180,7 @@ const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmi
 
     return (
         <Modal
-            title={"Convert..."}
+            title={"Convert File(s)..."}
             open={open}
             onOk={() => {
                 onSubmit({ name: exportName, type: convertTo, textureSize: textureSize }, fileList as any as FileList);
