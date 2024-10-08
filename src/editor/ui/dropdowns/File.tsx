@@ -1,34 +1,21 @@
 import { useState } from "react";
-import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
-import { Dropdown, Button, message, Modal, Input, Form, Select, Checkbox } from "antd";
+import { EditOutlined, ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
+import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
 import * as THREE from "three";
 import { useStores } from "@orb_App";
 import { doImport } from "@orb_tools/Importer";
 import { ExportType, doExport, save } from "@orb_tools/Exporter";
+import { ItemBoolean, ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
+import { ConvertModal, textureSizeOptions } from "./Tools";
 
 export const File = () => {
-    const { setScene, controlsObject3D, sceneObjects, addObject } = useStores();
+    const { setScene, addObject } = useStores();
     const [modalExport, toggleModalExport] = useState(false);
+    const [modalConvert, toggleModalConvert] = useState(false);
     return (
         <>
-            <ExportModal open={modalExport} onCancel={() => { toggleModalExport(false) }} onSubmit={(res) => {
-                console.log("Exporting type", res.type, "for a file named", res.name, "using the", res.exportSelection ? "current selection." : "entire scene.")
-                let selection;
-                if (res.exportSelection) {
-                    selection = controlsObject3D;
-                }
-                else {
-                    const sceneExport = new THREE.Scene();
-                    if (sceneObjects)
-                        sceneExport.children = sceneObjects;
-                    selection = sceneExport;
-                }
-                console.log("selecton:", selection)
-                if (!selection) message.warning('No selection detected with "export selection", make sure you are selecting an Object before export.')
-
-                doExport(selection as THREE.Object3D, { type: res.type, name: res.name }, (blob) => save(blob, res.name + "." + res.type));
-                toggleModalExport(false);
-            }} />
+            <ExportModal open={modalExport} onSubmit={() => toggleModalExport(false)} onCancel={() => toggleModalExport(false)} />
+            <ConvertModal open={modalConvert} onCancel={() => toggleModalConvert(false)} onSubmit={() => toggleModalConvert(false)} />
             <Dropdown
                 trigger={["click"]}
                 children={<Button children={"File"} />}
@@ -39,9 +26,7 @@ export const File = () => {
                             key: '0',
                             icon: <SwapOutlined />,
                             disabled: false,
-                            onClick: () => {
-                                setScene();
-                            }
+                            onClick: () => setScene()
                         },
                         {
                             type: "divider"
@@ -61,17 +46,20 @@ export const File = () => {
                             label: 'Export...',
                             key: '2',
                             icon: <ExportOutlined />,
-                            onClick: () => {
-                                toggleModalExport(true);
-                            }
-                        }
+                            onClick: () => toggleModalExport(true)
+                        },
+                        {
+                            label: 'Convert File(s)...',
+                            key: '3',
+                            icon: <EditOutlined />,
+                            onClick: () => toggleModalConvert(true)
+                        },
                     ]
                 }} />
         </>
     )
 }
 
-type ExportFormData = { name: string, type: ExportType, exportSelection: boolean };
 const exportOptions = [
     { value: 'glb', label: 'GLB' },
     { value: 'gltf', label: 'GLTF' },
@@ -81,26 +69,37 @@ const exportOptions = [
     { value: 'stl', label: 'STL' }
 ]
 
-const ExportModal: React.FC<{ open: boolean, onCancel: () => void, onSubmit: (res: ExportFormData) => void }> = ({ open, onCancel, onSubmit }) => {
-    const [formData, setFormData] = useState<ExportFormData>({ name: "exportName", type: "glb", exportSelection: false });
+const exportSettings = { name: "exportName", type: exportOptions[0].value, exportSelection: false, textureSize: 1024 }
+
+const ExportModal: React.FC<{ open: boolean, onSubmit: () => void, onCancel: () => void }> = ({ open, onSubmit, onCancel }) => {
+    const { controlsObject3D, sceneObjects } = useStores();
+
+    const doDownload = () => {
+        const res = exportSettings;
+        console.log("Export settings:\n", res);
+        let selection: THREE.Object3D | null;
+        if (res.exportSelection)
+            selection = controlsObject3D;
+        else {
+            const sceneExport = new THREE.Scene();
+            if (sceneObjects)
+                sceneExport.children = sceneObjects;
+            selection = sceneExport;
+        }
+        if (!selection) message.warning('No selection detected with "export selection", make sure you are selecting an Object before export.')
+
+        doExport(selection as THREE.Object3D, { type: res.type as ExportType, name: res.name, maxTextureSize: res.textureSize }, (blob) => save(blob, res.name + "." + res.type));
+        onSubmit();
+    }
 
     return (
-        <Modal
-            title={"Export..."}
-            open={open}
-            onOk={() => onSubmit(formData)}
-            onCancel={() => onCancel()}>
+        <Modal title={"Export..."} open={open} onOk={doDownload} onCancel={onCancel}>
             <Form>
-                <Select title="Export as"
-                    defaultValue="glb"
-                    style={{ width: 120 }}
-                    onChange={(val: ExportType) => {
-                        setFormData({ name: formData.name, type: val, exportSelection: formData.exportSelection })
-                    }}
-                    options={exportOptions}
-                />
-                <Checkbox children={"Export selected only."} checked={formData.exportSelection} onChange={(e) => setFormData({ name: formData.name, type: formData.type, exportSelection: e.target.checked })} />
-                <Input defaultValue={"exportName"} title="hello" onInput={(e) => { setFormData({ name: (e.target as any).value, type: formData.type, exportSelection: formData.exportSelection }) }} />
+                <ItemInput object={exportSettings} variable="name" labelInVariable />
+                <ItemBoolean object={exportSettings} variable="exportSelection" labelInVariable />
+                <ItemSelect object={{ options: exportOptions }} variable={"options"} defaultValue={exportOptions[0].label} label="Type" onChangeSelect={(select) => exportSettings.type = select as string} />
+                <Divider />
+                <ItemSelect object={{ textureSizes: textureSizeOptions }} variable="textureSizes" label="Size of Textures" defaultValue={textureSizeOptions[0].value} onChangeSelect={(value) => exportSettings.textureSize = parseFloat("" + value)} />
             </Form>
         </Modal>
     )

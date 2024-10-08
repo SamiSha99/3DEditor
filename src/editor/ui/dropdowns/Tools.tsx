@@ -10,34 +10,25 @@ import { observer } from "mobx-react-lite";
 import { Sphere } from "@orb_tools/create/Primitive";
 import { invertGeometry } from "src/editor/utils/Mesh";
 import { PANEL_ORIGIN_POINT, PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
+import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
 
 export const Tools = observer(() => {
     const { controlsObject3D, addObject, setControlsModeByName, setControlSpaceByName, addActivePanel } = useStores();
-    const [modalConvert, toggleModalConvert] = useState(false);
     return (
         <>
-            <ConvertModal open={modalConvert} onCancel={() => { toggleModalConvert(false) }} onSubmit={(res, fileList) => {
-                console.log(fileList);
-                if (fileList) {
-                    CONVERTER.doConvertFileList(fileList, { type: res.type, name: res.name, maxTextureSize: res.textureSize }, (blob) => {
-                        EXPORTER.save(blob, (res.name || "export") + "." + res.type)
-                    });
-                }
-                toggleModalConvert(false);
-            }} />
             <Dropdown
                 trigger={["click"]}
                 children={<Button children={"Tools"} />}
                 menu={{
                     items: [
-                        {
-                            label: 'Convert...',
-                            key: '1',
-                            icon: <ICONS.EditOutlined />,
-                            onClick: () => {
-                                toggleModalConvert(true);
-                            }
-                        },
+                        // {
+                        //     label: 'Convert File(s)...',
+                        //     key: '1',
+                        //     icon: <ICONS.EditOutlined />,
+                        //     onClick: () => {
+                        //         toggleModalConvert(true);
+                        //     }
+                        // },
                         {
                             label: 'Animations...',
                             key: '2',
@@ -128,7 +119,6 @@ export const Tools = observer(() => {
     )
 })
 
-type ConvertFormData = { name: string, type: EXPORTER.ExportType, textureSize: number };
 const exportOptions = [
     { value: 'glb', label: 'GLB' },
     { value: 'gltf', label: 'GLTF' },
@@ -136,7 +126,7 @@ const exportOptions = [
     { value: 'obj', label: 'OBJ' }
 ]
 
-const textureSizeOptions = [
+export const textureSizeOptions = [
     { value: '2048', label: '2048' },
     { value: '1024', label: '1024' },
     { value: '512', label: '512' },
@@ -148,14 +138,13 @@ const textureSizeOptions = [
 
 type ConvertModalInterface = {
     open: boolean,
-    onCancel: () => void,
-    onSubmit: (res: ConvertFormData, fileList: FileList) => void
+    onSubmit: () => void,
+    onCancel: () => void
 }
 
-const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmit }) => {
-    const [exportName, setExportName] = useState("exportName");
-    const [convertTo, setConvertTo] = useState<EXPORTER.ExportType>("glb");
-    const [textureSize, setTextureSize] = useState(2048);
+const exportSettings = { name: "exportName", type: exportOptions[0].value, textureSize: 1024 }
+
+export const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmit }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const { Dragger } = Upload;
 
@@ -171,47 +160,30 @@ const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmi
         },
         beforeUpload: (file, fc) => {
             const fl = fc as any as FileList;
-            console.log(fl);
             setFileList(fc);
             return false;
         },
         fileList,
     };
 
+    const onRequest = () => {
+        const list = fileList as any as FileList;
+        const res = exportSettings;
+        if (fileList) {
+            CONVERTER.doConvertFileList(list, { type: res.type as EXPORTER.ExportType, name: res.name, maxTextureSize: res.textureSize }, (blob) => {
+                EXPORTER.save(blob, (res.name || "export") + "." + res.type)
+            });
+        }
+        setFileList([]);
+        onSubmit();
+    }
+
     return (
-        <Modal
-            title={"Convert File(s)..."}
-            open={open}
-            onOk={() => {
-                onSubmit({ name: exportName, type: convertTo, textureSize: textureSize }, fileList as any as FileList);
-                setConvertTo("glb");
-                setExportName("exportName")
-                setFileList([]);
-            }}
-            onCancel={() => onCancel()}>
-            <Form
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 14, offset: 4 }}
-                layout={"horizontal"}
-            >
-                <Select
-                    title="Convert Into"
-                    defaultValue={"glb"}
-                    style={{ width: 120 }}
-                    onChange={(val: EXPORTER.ExportType) => setConvertTo(val)}
-                    options={exportOptions}
-                />
-                <Select
-                    title="Texture Size"
-                    defaultValue={2048}
-                    onChange={(val) => setTextureSize(val)}
-                    options={textureSizeOptions}
-                />
-                <Input
-                    title="Name of Your File."
-                    defaultValue={"convertName"}
-                    onInput={(e) => { setExportName((e.target as any).value as string) }}
-                />
+        <Modal title={"Convert File(s)..."} open={open} onOk={onRequest} onCancel={onCancel}>
+            <Form>
+                <ItemSelect object={{ exportOptions: exportOptions }} variable="exportOptions" labelInVariable defaultValue={exportOptions[0].value} onChangeSelect={(s) => { exportSettings.type = s as EXPORTER.ExportType }} />
+                <ItemSelect object={{ textureSize: textureSizeOptions }} variable="textureSize" labelInVariable defaultValue={textureSizeOptions[0].value} onChangeSelect={(s) => { exportSettings.textureSize = parseFloat("" + s) }} />
+                <ItemInput object={exportSettings} variable="name" labelInVariable />
                 <Dragger {...props}>
                     <p className="ant-upload-drag-icon">
                         <ICONS.InboxOutlined />

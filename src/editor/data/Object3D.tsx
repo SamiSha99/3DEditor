@@ -16,7 +16,7 @@ export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(
                 <ItemEuler object={object} variable="rotation" isDegree labelInVariable />
                 <ItemVector3 object={object} variable="scale" labelInVariable />
                 <ItemBoolean object={object} variable="visible" icons={{ on: <EyeOutlined />, off: <EyeInvisibleOutlined /> }} labelInVariable />
-                <ItemNumber object={object} variable="renderOrder" label="Order" />
+                {/* <ItemNumber object={object} variable="renderOrder" label="Order" /> */}
             </ItemCollapse>
             {
                 controlsObject3D && controlsObject3D.constructor != THREE.Object3D &&
