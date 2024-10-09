@@ -3,6 +3,7 @@ import { message } from 'antd';
 import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
+import { isFileImage } from '@orb_utils/Main';
 
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
@@ -23,7 +24,17 @@ export function doImport(onImport: OnImport<THREE.Object3D>) {
                 return;
             }
             let files: File[] = [];
-            for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
+            for (let i = 0; i < filelist.length; i++) {
+                files.push(filelist[i]);
+                if (isFileImage(filelist[i])) {
+                    importTexture(filelist[i], (res) => {
+                        const mat = new THREE.MeshStandardMaterial({ map: res });
+                        const plane = new THREE.Mesh(new THREE.PlaneGeometry(), mat);
+                        plane.name = "Plane"
+                        onImport(plane);
+                    })
+                }
+            }
             handleFiles(files, onImport);
         }
         else
@@ -48,29 +59,35 @@ export function doImportTexture(onImport: OnImport<THREE.Texture>) {
             let files: File[] = [];
             for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
             files.map((file) => {
-                const url = URL.createObjectURL(file);
-                const loader = new THREE.TextureLoader();
-                loader.load(
-                    url,
-                    (res) => {
-                        // important to maintain texture quality else will look off from the original image
-                        res.colorSpace = THREE.SRGBColorSpace;
-                        // res.flipY = true
-                        res.flipY = true;
-                        res.needsUpdate = true;
-                        onImport(res);
-                        URL.revokeObjectURL(url);
-                    },
-                    undefined,
-                    (res) => {
-                        console.error("FAILED!", res)
-                        URL.revokeObjectURL(url);
-                    })
+                importTexture(file, (res) => {
+                    onImport(res);
+                })
             })
         }
         else
             message.error("FileList returned null.")
     })
+}
+
+export function importTexture(file: File, onImport: OnImport<THREE.Texture>) {
+    const url = URL.createObjectURL(file);
+    const loader = new THREE.TextureLoader();
+    loader.load(
+        url,
+        (res) => {
+            // important to maintain texture quality else will look off from the original image
+            res.colorSpace = THREE.SRGBColorSpace;
+            res.flipY = true;
+            res.needsUpdate = true;
+            onImport(res);
+            URL.revokeObjectURL(url);
+        },
+        undefined,
+        (res) => {
+            console.error("FAILED!", res)
+            URL.revokeObjectURL(url);
+        }
+    )
 }
 
 export function doImportAnimationClip(onImport: OnImport<THREE.AnimationClip>) {
