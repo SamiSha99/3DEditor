@@ -25,7 +25,7 @@ export const EditorInspector = observer(() => {
                 <Canvas />
                 <ControlsBar />
             </Splitter.Panel>
-            <Splitter.Panel min="20%" max="30%">
+            <Splitter.Panel>
                 <div style={{ backgroundColor: "#212121", height: "100vh" }}>
                     <ConfigProvider theme={InspectorTheme}>
                         <div style={{ height: "25%", padding: "0 10px" }}>

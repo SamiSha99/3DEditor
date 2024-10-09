@@ -60,7 +60,7 @@ export const ItemEuler: React.FC<EulerInterface> = (
     }
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} style={{ marginBottom: '0px', display: 'inline-block' }} tooltip={tooltip}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <InputNumber
                 {...eulerProps}
                 {...props}

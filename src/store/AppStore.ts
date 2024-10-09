@@ -145,7 +145,7 @@ export class AppStore {
         this.setControlsTarget(null);
         const indx = this.sceneObjects.findIndex(obj => obj.uuid == object.uuid);
         if (indx != -1) {
-            if ("helper" in object.userData) {
+            if (object.userData.helper) {
                 const helper = object.userData.helper as Object3D;
                 const helperIndx = this.sceneHelpers.findIndex(hlp => hlp.uuid == helper.uuid);
                 this.sceneHelpers.splice(helperIndx, 1);
