@@ -22,14 +22,7 @@ const Canvas = observer(() => {
     console.log(THREE.Object3D.name);
 
     return (
-        <ReactThreeFiberCanvas
-            id="main"
-            ref={canvasRef}
-            scene={scene}
-            shadows
-            style={{ position: "absolute", bottom: 0, height: "calc(100vh - 32px)", width: "75vw" }}
-            camera={{ position: [2.5, 1.5, 2.5] }}
-        >
+        <ReactThreeFiberCanvas id="main" ref={canvasRef} scene={scene} shadows style={{ bottom: 0, height: "calc(100vh - 32px)" }} camera={{ position: [2.5, 1.5, 2.5] }}>
             {
                 loaded &&
                 canvasRef.current &&
@@ -54,10 +47,10 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
         removeObject, setControlsTarget } = useStores();
     const { camera, raycaster } = useThree();
 
+    const boxRef = useRef<THREE.Object3D>(null!);
+
     // the passed ref is null at load time! 
     if (!canvas) canvas = document.getElementById('main') as HTMLCanvasElement;
-
-    // scene.background = background;
 
     const selectObject = (e: MouseEvent) => {
         // Left Click only
@@ -67,7 +60,7 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
         const bounds = canvas.getBoundingClientRect();
         const pointer = new THREE.Vector2(((e.clientX - bounds.left) / (bounds.right - bounds.left)) * 2 - 1, -((e.clientY - bounds.top) / (bounds.bottom - bounds.top)) * 2 + 1);
         raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects([...sceneObjects, ...sceneHelpers], true);
+        const intersects = raycaster.intersectObjects([...sceneObjects, ...sceneHelpers, boxRef.current], true);
 
         if (intersects.length <= 0) return;
 
@@ -105,7 +98,7 @@ const EditorHelpers = () => {
     const ref = useRef<THREE.Group>(null!);
 
     return (
-        <group renderOrder={-1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ "sceneHelpers": true }}>
+        <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ "sceneHelpers": true }}>
             <Box name='CENTER_GRID_HELPER' material-color={"red"} scale={[0.25, 0.0005, 0.25]} position={[0, 0, 0]} />
             <Grid name='GRID_HELPER' cellColor={"#2080ff"} infiniteGrid side={THREE.DoubleSide} />
             <EditorControls />

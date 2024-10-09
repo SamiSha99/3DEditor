@@ -1,6 +1,6 @@
 import * as ICONS from "@ant-design/icons";
 import { useStores } from "@orb_App";
-import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile } from "antd"
+import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile, Divider } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
 import * as IMPORTER from '@orb_tools/Importer'
@@ -142,7 +142,7 @@ type ConvertModalInterface = {
     onCancel: () => void
 }
 
-const exportSettings = { name: "exportName", type: exportOptions[0].value, textureSize: 1024 }
+const exportSettings = { name: "myExport", type: exportOptions[0].value, textureSize: 1024 }
 
 export const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmit }) => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -181,6 +181,8 @@ export const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, 
     return (
         <Modal title={"Convert File(s)..."} open={open} onOk={onRequest} onCancel={onCancel}>
             <Form>
+                <p>Convert 3D model files into .glb, .gtlf, .usdz (ASCII), .ply, .stl and .obj.</p>
+                <Divider />
                 <ItemSelect object={{ exportOptions: exportOptions }} variable="exportOptions" labelInVariable defaultValue={exportOptions[0].value} onChangeSelect={(s) => { exportSettings.type = s as EXPORTER.ExportType }} />
                 <ItemSelect object={{ textureSize: textureSizeOptions }} variable="textureSize" labelInVariable defaultValue={textureSizeOptions[0].value} onChangeSelect={(s) => { exportSettings.textureSize = parseFloat("" + s) }} />
                 <ItemInput object={exportSettings} variable="name" labelInVariable />

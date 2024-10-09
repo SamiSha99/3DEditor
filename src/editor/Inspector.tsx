@@ -1,6 +1,6 @@
 import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
-import { Button, ConfigProvider, Divider, Form, Row, Tree, TreeDataNode, TreeProps } from "antd";
+import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from "three"
@@ -10,31 +10,38 @@ import { AppStore } from "@orb_AppStore";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
 import { InspectorMaterial } from "./data/Material";
 import { InspectorObject3D } from "./data/Object3D";
-import { MenuBar } from "@orb_UI/Menubar";
 import { ControlsBar } from "@orb_UI/ControlsBar";
 import { InspectorGeometry } from "./data/Geometry";
+import Canvas from './Canvas'
+
+
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh" }}>
-            <div>
-                <MenuBar />
+        <Splitter>
+            <Splitter.Panel defaultSize={"75%"}>
+                <Canvas />
                 <ControlsBar />
-            </div>
-            <div style={{ alignSelf: "flex-end", backgroundColor: "#212121", width: "25vw" }}>
-                <ConfigProvider theme={InspectorTheme}>
-                    <div style={{ height: "20vh", padding: "0 10px" }}>
-                        <HierarchyTree />
-                    </div>
-                    {/* <SceneConfigs /> */}
-                    <div style={{ height: "calc(80vh - 32px)", padding: "0 10px" }}>
-                        <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
-                    </div>
-                </ConfigProvider>
-            </div>
-        </div >
+            </Splitter.Panel>
+            <Splitter.Panel min="20%" max="30%">
+                <div style={{ backgroundColor: "#212121", height: "100vh" }}>
+                    <ConfigProvider theme={InspectorTheme}>
+                        <div style={{ height: "25%", padding: "0 10px" }}>
+                            <HierarchyTree />
+                        </div>
+                        <div style={{ height: "5%", padding: "0 10px" }}>
+                            <SceneConfigs />
+                        </div>
+                        <div style={{ height: "calc(70% - 32px)", padding: "0 10px" }}>
+                            <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
+                        </div>
+                    </ConfigProvider>
+                </div>
+            </Splitter.Panel>
+        </Splitter>
+
     )
 })
 

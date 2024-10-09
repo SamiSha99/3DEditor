@@ -22,7 +22,7 @@ export const ItemBoolean: React.FC<BooleanInterface> = (
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <Switch
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: "2px 0" }}
+                style={{ margin: "2px 5px" }}
                 defaultChecked={object[variable]}
                 checkedChildren={icons?.on}
                 unCheckedChildren={icons?.off}

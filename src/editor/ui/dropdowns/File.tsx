@@ -49,7 +49,7 @@ export const File = () => {
                             onClick: () => toggleModalExport(true)
                         },
                         {
-                            label: 'Convert File(s)...',
+                            label: 'Convert...',
                             key: '3',
                             icon: <EditOutlined />,
                             onClick: () => toggleModalConvert(true)
