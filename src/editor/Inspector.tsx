@@ -2,7 +2,7 @@ import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
 import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three"
 import { ItemSelect, ItemColorPicker } from "./ui/controller/ControllerItems";
 import { Color } from "antd/es/color-picker";
@@ -13,8 +13,8 @@ import { InspectorObject3D } from "./data/Object3D";
 import { ControlsBar } from "@orb_UI/ControlsBar";
 import { InspectorGeometry } from "./data/Geometry";
 import Canvas from './Canvas'
-
-
+// import FPSStats from "react-fps-stats"
+import { Stats } from "@react-three/drei";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -23,6 +23,7 @@ export const EditorInspector = observer(() => {
         <Splitter>
             <Splitter.Panel defaultSize={"75%"}>
                 <Canvas />
+                <Stats className="fps" />
                 <ControlsBar />
             </Splitter.Panel>
             <Splitter.Panel>

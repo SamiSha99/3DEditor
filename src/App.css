@@ -5,3 +5,14 @@
   /* Incase of accidentally pressing Ctrl + A */
   user-select: none;
 }
+
+.fps {
+    left: auto !important;
+    right: 0 !important;
+    opacity: 0.3 !important;
+    transition: opacity 0.25s ease-in-out;
+}
+
+.fps:hover {
+    opacity: 0.9 !important;
+}
