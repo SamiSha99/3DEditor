@@ -15,24 +15,17 @@ const Canvas = observer(() => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [loaded, setLoaded] = useState<boolean>();
 
-    useEffect(() => {
-        setLoaded(canvasRef.current != undefined);
-    }, [canvasRef]);
-
-    console.log(THREE.Object3D.name);
+    useEffect(() => { setLoaded(canvasRef.current != undefined) }, [canvasRef]);
 
     return (
         <ReactThreeFiberCanvas id="main" ref={canvasRef} scene={scene} shadows style={{ bottom: 0, height: "calc(100vh - 32px)" }} camera={{ position: [2.5, 1.5, 2.5] }}>
             {
-                loaded &&
-                canvasRef.current &&
+                loaded && canvasRef.current &&
                 <>
                     <Scene canvas={canvasRef.current} />
                     <EditorHelpers />
                 </>
             }
-
-
         </ReactThreeFiberCanvas>
     )
 })
