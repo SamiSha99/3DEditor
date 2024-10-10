@@ -8,11 +8,13 @@ import { toFixedStripped } from "@orb_utils/Main";
 interface InputNumberInterface extends Item {
     limit?: Limit,
     stepSlider?: number
+    addonBefore?: React.ReactNode
+    addonAfter?: React.ReactNode
     onChange?: (value: number) => void
 }
 
 export const ItemNumber: React.FC<InputNumberInterface> = (
-    { label, labelInVariable, object, variable, limit, readonly, stepSlider, onChange, tooltip }
+    { label, labelInVariable, object, variable, limit, readonly, stepSlider, onChange, tooltip, addonBefore, addonAfter }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
@@ -50,10 +52,11 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
                 precision={PRECISION_AMOUNT}
                 formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` }}
                 parser={(v) => v as unknown as number}
-                // controls={false}
+                addonBefore={addonBefore}
+                addonAfter={addonAfter}
                 changeOnWheel
                 readOnly={readonly}
-                disabled={readonly}
+                // disabled={readonly}
                 onChange={(v: number | null) => {
                     if (v == null) return;
                     setValue(v)

@@ -7,8 +7,9 @@
 }
 
 .fps {
-    left: auto !important;
-    right: 0 !important;
+    position: fixed;
+    bottom: 0;
+    right: 0;
     opacity: 0.3 !important;
     transition: opacity 0.25s ease-in-out;
 }

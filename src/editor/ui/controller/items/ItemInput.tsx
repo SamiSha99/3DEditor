@@ -6,10 +6,12 @@ import { useDeltaTime } from "src/store/Hooks";
 
 interface InputInterface extends Item {
     onChange?: (value: string) => void
+    addonBefore?: React.ReactNode,
+    addonAfter?: React.ReactNode
 }
 
 export const ItemInput: React.FC<InputInterface> = (
-    { label, labelInVariable, object, variable, readonly, onChange, tooltip }
+    { label, labelInVariable, object, variable, readonly, onChange, tooltip, addonBefore, addonAfter }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<string>(object[variable]);
@@ -25,6 +27,8 @@ export const ItemInput: React.FC<InputInterface> = (
                 onBlur={loopStart}
                 style={{ display: 'inline-block', width: '100%' }}
                 value={v}
+                addonBefore={addonBefore}
+                addonAfter={addonAfter}
                 readOnly={readonly}
                 disabled={readonly}
                 onChange={(v) => {

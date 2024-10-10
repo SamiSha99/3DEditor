@@ -3,7 +3,7 @@ import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-thre
 import { useStores } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { Box, CameraControls, Environment, GizmoHelper, GizmoViewport, Grid, Line, Sphere, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { Box, CameraControls, Environment, GizmoHelper, GizmoViewport, Grid, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { isPanelActive, PANEL_ORIGIN_POINT, panelHasFlag } from "@orb_UI/panels/Panels";
@@ -26,6 +26,7 @@ const Canvas = observer(() => {
                     <EditorHelpers />
                 </>
             }
+            <StatsGl className="fps" />
         </ReactThreeFiberCanvas>
     )
 })

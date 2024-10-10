@@ -13,8 +13,6 @@ import { InspectorObject3D } from "./data/Object3D";
 import { ControlsBar } from "@orb_UI/ControlsBar";
 import { InspectorGeometry } from "./data/Geometry";
 import Canvas from './Canvas'
-// import FPSStats from "react-fps-stats"
-import { Stats } from "@react-three/drei";
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -23,7 +21,6 @@ export const EditorInspector = observer(() => {
         <Splitter>
             <Splitter.Panel defaultSize={"75%"}>
                 <Canvas />
-                <Stats className="fps" />
                 <ControlsBar />
             </Splitter.Panel>
             <Splitter.Panel>

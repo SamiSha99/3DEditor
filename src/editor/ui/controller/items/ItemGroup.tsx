@@ -2,7 +2,7 @@ import { Alert, Form } from "antd"
 import { LabelTooltipType } from "antd/es/form/FormItemLabel"
 
 type ItemGroupInterface = {
-    label: string,
+    label?: string,
     children: React.ReactNode | React.ReactNode[]
     sizes?: string[]
     tooltip?: LabelTooltipType
