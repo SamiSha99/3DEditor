@@ -8,12 +8,12 @@
 
 .fps {
     position: fixed;
+    left: 0;
     bottom: 0;
-    right: 0;
     opacity: 0.3 !important;
     transition: opacity 0.25s ease-in-out;
 }
 
 .fps:hover {
-    opacity: 0.9 !important;
+    opacity: 1 !important;
 }
