@@ -330,7 +330,8 @@ const Environment = observer<{ material: THREE.Material }>(({ material }) => {
     return (
         <>
             <Divider children="Environment" orientation="left" />
-            <ItemTexture object={material} variable="envMap" label="Map" />
+            {/* to-do EquirectangularReflectionMapping and EquirectangularRefractionMapping are two different things for differnet purposes! We need to make modifying textures directly important */}
+            <ItemTexture object={material} variable="envMap" label="Map" onChange={(v) => { v!.mapping = THREE.EquirectangularReflectionMapping }} />
             <ItemEuler object={material} variable="envMapRotation" label="Map Rotation" isDegree />
         </>
     )
