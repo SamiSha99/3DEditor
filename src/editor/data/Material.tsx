@@ -22,17 +22,6 @@ const MaterialSelect = [
     // { value: "MeshPhysicalMaterial", label: "Physical" },
 ] as { value: string, label: string }[];
 
-const NormalTypesSelect = [
-    { value: THREE.TangentSpaceNormalMap, label: "Tangent Space" },
-    { value: THREE.ObjectSpaceNormalMap, label: "Object Space" }
-]
-
-const CombineSelect = [
-    { value: THREE.MultiplyOperation, label: "Multiply" },
-    { value: THREE.MixOperation, label: "Mix" },
-    { value: THREE.AddOperation, label: "Add" }
-]
-
 export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observer(({ material }) => {
     const { controlsObject3D } = useStores();
     const [meshMaterial, setMeshMaterial] = useState(material);
@@ -90,7 +79,7 @@ export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observ
                             <ItemNumber object={meshMaterial} variable="version" readonly />
                             <ItemButton object={meshMaterial} variable="version" buttonName="Update" onClick={() => needsUpdate(meshMaterial)} size='small' />
                         </ItemGroup>
-                        <ItemBoolean object={meshMaterial} variable="transparent" labelInVariable onChange={() => needsUpdate(meshMaterial)} />
+                        <ItemBoolean object={meshMaterial} variable="transparent" labelInVariable onChange={() => { needsUpdate(meshMaterial) }} />
                         <ItemNumber object={meshMaterial} variable="opacity" labelInVariable limit={LIMIT_01} />
                         <ItemBoolean object={meshMaterial} variable="visible" labelInVariable />
                     </>
@@ -129,51 +118,16 @@ const StandardMaterial: React.FC<{ material: THREE.MeshStandardMaterial }> = obs
             <ItemBoolean object={material} variable="wireframe" labelInVariable />
             <ItemBoolean object={material} variable="fog" labelInVariable />
             <ItemBoolean object={material} variable="flatShading" labelInVariable />
-            {/* Alpha */}
-            <Divider children="Alpha" orientation="left" />
-            <ItemTexture object={material} variable="alphaMap" label="Map" />
-            {/* AO */}
-            <Divider children="Ambient Occlusion" orientation="left" />
-            <ItemTexture object={material} variable="aoMap" label="Map" />
-            <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" />
-            {/* Bump */}
-            <Divider children="Bump" orientation="left" />
-            <ItemTexture object={material} variable="bumpMap" label="Map" />
-            <ItemNumber object={material} variable="bumpScale" label="Scale" />
-            {/* Displacement */}
-            <Divider children="Displacement" orientation="left" />
-            <ItemTexture object={material} variable="displacementMap" label="Map" />
-            <ItemNumber object={material} variable="displacementScale" label="Scale" />
-            <ItemNumber object={material} variable="displacementBias" label="Bias" />
-            {/* Emissive */}
-            <Divider children="Emissive" orientation="left" />
-            <ItemTexture object={material} variable="emissiveMap" label="Map" />
-            <ItemColor object={material} variable="emissive" label="Color" allowClear />
-            <ItemNumber object={material} variable="emissiveIntensity" label="Scale" />
-            {/* Environment */}
-            <Divider children="Environment" orientation="left" />
-            <ItemTexture object={material} variable="envMap" label="Map" />
-            <ItemEuler object={material} variable="envMapRotation" label="Map Rotation" isDegree />
-            {/* Light */}
-            <Divider children="Light" orientation="left" />
-            <ItemTexture object={material} variable="lightMap" label="Map" />
-            <ItemNumber object={material} variable="lightMapIntensity" label="Map" />
-            {/* Normal */}
-            <Divider children="Normal" orientation="left" />
-            <ItemTexture object={material} variable="normalMap" label="Map" />
-            <ItemSelect
-                object={{ types: NormalTypesSelect }}
-                variable="types"
-                label="Type"
-                defaultValue={material.normalMapType ? "Object Space" : "Tangent Space"}
-                onChangeSelect={(s) => {
-                    material.normalMapType = parseInt(s as string) ? THREE.ObjectSpaceNormalMap : THREE.TangentSpaceNormalMap;
-                }} />
-            <ItemVector2 object={material} variable="normalScale" label="Scale" />
-            {/* Roughness */}
-            <Divider children="Roughness" orientation="left" />
-            <ItemTexture object={material} variable="roughnessMap" label="map" />
-            <ItemNumber object={material} variable="roughness" label="Intensity" />
+
+            <Alpha material={material} />
+            <AmbientOcclusion material={material} />
+            <Bump material={material} />
+            <Displacement material={material} />
+            <Emissive material={material} />
+            <Environment material={material} />
+            <Light material={material} />
+            <Normal material={material} />
+            <Roughness material={material} />
         </>
     )
 })
@@ -185,47 +139,14 @@ const BasicMaterial: React.FC<{ material: THREE.MeshBasicMaterial }> = observer(
             <ItemColor object={material} variable="color" labelInVariable />
             <ItemBoolean object={material} variable="fog" labelInVariable />
             <ItemBoolean object={material} variable="wireframe" labelInVariable />
-            <ItemNumber object={material} variable="refractionRatio" labelInVariable limit={LIMIT_01} />
-            <ItemNumber object={material} variable="reflectivity" labelInVariable />
-            <ItemSelect
-                object={{ combines: CombineSelect }}
-                variable="combines"
-                label="Reflectivity Combine"
-                defaultValue={
-                    (() => {
-                        switch (material.combine) {
-                            case THREE.MultiplyOperation: return "Multiply";
-                            case THREE.MixOperation: return "Mix";
-                            case THREE.AddOperation: return "Add";
-                            default: return "0";
-                        }
-                    })()
-                }
-                onChangeSelect={(s) => {
-                    switch (parseInt(s as string)) {
-                        case THREE.MultiplyOperation: material.combine = THREE.MultiplyOperation; break;
-                        case THREE.MixOperation: material.combine = THREE.MixOperation; break;
-                        case THREE.AddOperation: material.combine = THREE.AddOperation; break;
-                    }
-                }} />
-            {/* Alpha */}
-            <Divider children="Alpha" orientation="left" />
-            <ItemTexture object={material} variable="alphaMap" label="Map" />
-            {/* AO */}
-            <Divider children="Ambient Occlusion" orientation="left" />
-            <ItemTexture object={material} variable="aoMap" label="Map" />
-            <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" />
-            {/* Environment */}
-            <Divider children="Environment" orientation="left" />
-            <ItemTexture object={material} variable="envMap" label="Map" />
-            <ItemEuler object={material} variable="envMapRotation" label="Map Rotation" isDegree />
-            {/* Light */}
-            <Divider children="Light" orientation="left" />
-            <ItemTexture object={material} variable="lightMap" label="Map" />
-            <ItemNumber object={material} variable="lightMapIntensity" label="Map" />
-            {/* Specular */}
-            <Divider children="Specular" orientation="left" />
-            <ItemTexture object={material} variable="specularMap" label="Map" />
+
+            <Reflectivity material={material} />
+
+            <Alpha material={material} />
+            <AmbientOcclusion material={material} />
+            <Environment material={material} />
+            <Light material={material} />
+            <Specular material={material} />
         </>
     )
 })
@@ -238,75 +159,18 @@ const PhongMaterial: React.FC<{ material: THREE.MeshPhongMaterial }> = observer(
             <ItemBoolean object={material} variable="fog" labelInVariable />
             <ItemBoolean object={material} variable="flatShading" labelInVariable />
             <ItemBoolean object={material} variable="wireframe" labelInVariable />
-            <ItemNumber object={material} variable="refractionRatio" labelInVariable limit={LIMIT_01} />
-            <ItemNumber object={material} variable="reflectivity" labelInVariable />
-            <ItemSelect
-                object={{ combines: CombineSelect }}
-                variable="combines"
-                label="Reflectivity Combine"
-                defaultValue={
-                    (() => {
-                        switch (material.combine) {
-                            case THREE.MultiplyOperation: return "Multiply";
-                            case THREE.MixOperation: return "Mix";
-                            case THREE.AddOperation: return "Add";
-                            default: return "0";
-                        }
-                    })()
-                }
-                onChangeSelect={(s) => {
-                    switch (parseInt(s as string)) {
-                        case THREE.MultiplyOperation: material.combine = THREE.MultiplyOperation; break;
-                        case THREE.MixOperation: material.combine = THREE.MixOperation; break;
-                        case THREE.AddOperation: material.combine = THREE.AddOperation; break;
-                    }
-                }} />
-            {/* Alpha */}
-            <Divider children="Alpha" orientation="left" />
-            <ItemTexture object={material} variable="alphaMap" label="Map" />
-            {/* AO */}
-            <Divider children="Ambient Occlusion" orientation="left" />
-            <ItemTexture object={material} variable="aoMap" label="Map" />
-            <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" />
-            {/* Bump */}
-            <Divider children="Bump" orientation="left" />
-            <ItemTexture object={material} variable="bumpMap" label="Map" />
-            <ItemNumber object={material} variable="bumpScale" label="Scale" />
-            {/* Environment */}
-            <Divider children="Environment" orientation="left" />
-            <ItemTexture object={material} variable="envMap" label="Map" />
-            <ItemEuler object={material} variable="envMapRotation" label="Map Rotation" isDegree />
-            {/* Displacement */}
-            <Divider children="Displacement" orientation="left" />
-            <ItemTexture object={material} variable="displacementMap" label="Map" />
-            <ItemNumber object={material} variable="displacementScale" label="Scale" />
-            <ItemNumber object={material} variable="displacementBias" label="Bias" />
-            {/* Emissive */}
-            <Divider children="Emissive" orientation="left" />
-            <ItemTexture object={material} variable="emissiveMap" label="Map" />
-            <ItemColor object={material} variable="emissive" label="Color" allowClear />
-            <ItemNumber object={material} variable="emissiveIntensity" label="Scale" />
-            {/* Light */}
-            <Divider children="Light" orientation="left" />
-            <ItemTexture object={material} variable="lightMap" label="Map" />
-            <ItemNumber object={material} variable="lightMapIntensity" label="Map" />
-            {/* Normal */}
-            <Divider children="Normal" orientation="left" />
-            <ItemTexture object={material} variable="normalMap" label="Map" />
-            <ItemSelect
-                object={{ types: NormalTypesSelect }}
-                variable="types"
-                label="Type"
-                defaultValue={material.normalMapType ? "Object Space" : "Tangent Space"}
-                onChangeSelect={(s) => {
-                    material.normalMapType = parseInt(s as string) ? THREE.ObjectSpaceNormalMap : THREE.TangentSpaceNormalMap;
-                }} />
-            <ItemVector2 object={material} variable="normalScale" label="Scale" />
-            {/* Specular */}
-            <Divider children="Specular" orientation="left" />
-            <ItemTexture object={material} variable="specularMap" label="Map" />
-            <ItemNumber object={material} variable="shininess" labelInVariable step={1} />
-            <ItemColor object={material} variable="specular" labelInVariable />
+
+            <Reflectivity material={material} />
+
+            <Alpha material={material} />
+            <AmbientOcclusion material={material} />
+            <Bump material={material} />
+            <Displacement material={material} />
+            <Emissive material={material} />
+            <Environment material={material} />
+            <Light material={material} />
+            <Normal material={material} />
+            <Specular material={material} />
         </>
     )
 })
@@ -318,36 +182,180 @@ const ToonMaterial: React.FC<{ material: THREE.MeshToonMaterial }> = observer(({
             <ItemColor object={material} variable="color" labelInVariable />
             <ItemBoolean object={material} variable="fog" labelInVariable />
             <ItemBoolean object={material} variable="wireframe" labelInVariable />
-            {/* Alpha */}
+
+            <Alpha material={material} />
+            <AmbientOcclusion material={material} />
+            <Bump material={material} />
+            <Displacement material={material} />
+            <Emissive material={material} />
+            {/* BEGIN GRADIENT */}
+            {/* TO-DO: THE TEXTURE NEEDS TO BE A VERY SPECIFIC TYPE -> THREE.NearestFilter */}
+            <Divider children="Gradient" orientation="left" />
+            <ItemTexture object={material} variable="gradientMap" label="Map" />
+            {/* END GRADIENT */}
+            <Light material={material} />
+            <Normal material={material} />
+        </>
+    )
+})
+
+const DepthMaterial: React.FC<{ material: THREE.MeshDepthMaterial }> = observer(({ material }) => {
+    return (
+        <>
+
+            <ItemTexture object={material} variable="map" labelInVariable />
+
+            <ItemBoolean object={material} variable="wireframe" labelInVariable />
+
+            {/* It's specified as a constant in the docs, avoid? */}
+            {/* <ItemNumber object={material} variable="depthPacking" labelInVariable /> */}
+            <Alpha material={material} />
+            <Displacement material={material} />
+        </>
+    )
+})
+
+const LambertMaterial: React.FC<{ material: THREE.MeshLambertMaterial }> = observer(({ material }) => {
+    return (
+        <>
+            <ItemTexture object={material} variable="map" labelInVariable />
+            <ItemBoolean object={material} variable="wireframe" labelInVariable />
+            <ItemBoolean object={material} variable="fog" labelInVariable />
+            <ItemBoolean object={material} variable="flatShading" labelInVariable />
+
+            <Alpha material={material} />
+            <Bump material={material} />
+            <Displacement material={material} />
+            <Emissive material={material} />
+            <Environment material={material} />
+            <Light material={material} />
+            <Normal material={material} />
+            <Specular material={material} />
+        </>
+    )
+})
+
+const MatCapMaterial: React.FC<{ material: THREE.MeshMatcapMaterial }> = observer(({ material }) => {
+    return (
+        <>
+            <ItemTexture object={material} variable="map" labelInVariable />
+            <ItemTexture object={material} variable="matcap" labelInVariable />
+            <ItemBoolean object={material} variable="fog" labelInVariable />
+            <ItemBoolean object={material} variable="flatShading" labelInVariable />
+
+            <Alpha material={material} />
+            <Bump material={material} />
+            <Displacement material={material} />
+            <Normal material={material} />
+        </>
+    )
+})
+
+const NormalMaterial: React.FC<{ material: THREE.MeshNormalMaterial }> = observer(({ material }) => {
+    return (
+        <>
+            <ItemBoolean object={material} variable="flatShading" labelInVariable />
+            <Bump material={material} />
+            <Displacement material={material} />
+            <Normal material={material} />
+        </>
+    )
+})
+
+const PhysicalMaterial: React.FC<{ material: THREE.MeshPhysicalMaterial }> = observer(({ material }) => {
+    return (
+        <>
+            <StandardMaterial material={material} />
+            {/* to-do add physical material */}
+        </>
+    )
+})
+
+// ###################### //
+// BEGIN GROUP COMPONENTS //
+// ###################### //
+
+const Alpha = observer<{ material: THREE.Material }>(({ material }) => {
+    return (
+        <>
             <Divider children="Alpha" orientation="left" />
             <ItemTexture object={material} variable="alphaMap" label="Map" />
-            {/* AO */}
+        </>
+    )
+})
+
+const AmbientOcclusion = observer<{ material: THREE.Material }>(({ material }) => {
+    return (
+        <>
             <Divider children="Ambient Occlusion" orientation="left" />
             <ItemTexture object={material} variable="aoMap" label="Map" />
             <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" />
-            {/* Bump */}
+        </>
+    )
+})
+
+const Bump = observer<{ material: THREE.Material }>(({ material }) => {
+    return (
+        <>
             <Divider children="Bump" orientation="left" />
             <ItemTexture object={material} variable="bumpMap" label="Map" />
             <ItemNumber object={material} variable="bumpScale" label="Scale" />
-            {/* Displacement */}
+        </>
+    )
+})
+
+const Displacement = observer<{ material: THREE.Material }>(({ material }) => {
+    return (
+        <>
             <Divider children="Displacement" orientation="left" />
             <ItemTexture object={material} variable="displacementMap" label="Map" />
             <ItemNumber object={material} variable="displacementScale" label="Scale" />
             <ItemNumber object={material} variable="displacementBias" label="Bias" />
-            {/* Emissive */}
+        </>
+    )
+})
+
+const Emissive = observer<{ material: THREE.Material }>(({ material }) => {
+    return (
+        <>
             <Divider children="Emissive" orientation="left" />
             <ItemTexture object={material} variable="emissiveMap" label="Map" />
             <ItemColor object={material} variable="emissive" label="Color" allowClear />
             <ItemNumber object={material} variable="emissiveIntensity" label="Scale" />
-            {/* Gradient */}
-            {/* TO-DO: THE TEXTURE NEEDS TO BE A VERY SPECIFIC TYPE -> THREE.NearestFilter */}
-            <Divider children="Gradient" orientation="left" />
-            <ItemTexture object={material} variable="gradientMap" label="Map" />
-            {/* Light */}
+        </>
+    )
+})
+
+const Environment = observer<{ material: THREE.Material }>(({ material }) => {
+    return (
+        <>
+            <Divider children="Environment" orientation="left" />
+            <ItemTexture object={material} variable="envMap" label="Map" />
+            <ItemEuler object={material} variable="envMapRotation" label="Map Rotation" isDegree />
+        </>
+    )
+})
+
+const Light = observer<{ material: THREE.Material }>(({ material }) => {
+    return (
+        <>
             <Divider children="Light" orientation="left" />
             <ItemTexture object={material} variable="lightMap" label="Map" />
             <ItemNumber object={material} variable="lightMapIntensity" label="Map" />
-            {/* Normal */}
+        </>
+    )
+})
+
+type MaterialWithNormal = THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial | THREE.MeshLambertMaterial | THREE.MeshToonMaterial;
+const Normal = observer<{ material: MaterialWithNormal }>(({ material }) => {
+
+    const NormalTypesSelect = [
+        { value: THREE.TangentSpaceNormalMap, label: "Tangent Space" },
+        { value: THREE.ObjectSpaceNormalMap, label: "Object Space" }
+    ]
+
+    return (
+        <>
             <Divider children="Normal" orientation="left" />
             <ItemTexture object={material} variable="normalMap" label="Map" />
             <ItemSelect
@@ -363,49 +371,51 @@ const ToonMaterial: React.FC<{ material: THREE.MeshToonMaterial }> = observer(({
     )
 })
 
-const DepthMaterial: React.FC<{ material: THREE.MeshDepthMaterial }> = observer(({ material }) => {
+const Roughness = observer<{ material: THREE.Material }>(({ material }) => {
     return (
         <>
-
-            <ItemTexture object={material} variable="map" labelInVariable />
-            <ItemColor object={material} variable="color" labelInVariable />
-            <ItemBoolean object={material} variable="wireframe" labelInVariable />
-
-            {/* It's specified as a constant, avoid? */}
-            {/* <ItemNumber object={material} variable="depthPacking" labelInVariable /> */}
-            {/* Alpha */}
-            <Divider children="Alpha" orientation="left" />
-            <ItemTexture object={material} variable="alphaMap" label="Map" />
-            {/* AO */}
-            <Divider children="Ambient Occlusion" orientation="left" />
-            <ItemTexture object={material} variable="aoMap" label="Map" />
-            <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" />
-            {/* Bump */}
-            <Divider children="Bump" orientation="left" />
-            <ItemTexture object={material} variable="bumpMap" label="Map" />
-            <ItemNumber object={material} variable="bumpScale" label="Scale" />
-            {/* Displacement */}
-            <Divider children="Displacement" orientation="left" />
-            <ItemTexture object={material} variable="displacementMap" label="Map" />
-            <ItemNumber object={material} variable="displacementScale" label="Scale" />
-            <ItemNumber object={material} variable="displacementBias" label="Bias" />
+            <Divider children="Roughness" orientation="left" />
+            <ItemTexture object={material} variable="roughnessMap" label="map" />
+            <ItemNumber object={material} variable="roughness" label="Intensity" />
         </>
     )
 })
 
-const LambertMaterial: React.FC<{ material: THREE.MeshLambertMaterial }> = observer(({ material }) => {
+const Specular = observer<{ material: THREE.Material }>(({ material }) => {
     return (
         <>
-            <ItemTexture object={material} variable="map" labelInVariable />
-            <ItemBoolean object={material} variable="wireframe" labelInVariable />
-            <ItemBoolean object={material} variable="fog" labelInVariable />
-            <ItemBoolean object={material} variable="flatShading" labelInVariable />
-            <ItemNumber object={material} variable="refractionRatio" labelInVariable limit={LIMIT_01} />
-            <ItemNumber object={material} variable="reflectivity" labelInVariable />
+            <Divider children="Specular" orientation="left" />
+            <ItemTexture object={material} variable="specularMap" label="Map" />
+            {/* Exclusive to Phong material */}
+            {
+                material instanceof THREE.MeshPhongMaterial &&
+                <>
+                    <ItemNumber object={material} variable="shininess" labelInVariable step={1} />
+                    <ItemColor object={material} variable="specular" labelInVariable />
+                </>
+            }
+        </>
+    )
+})
+
+const Reflectivity = observer<{ material: THREE.MeshPhongMaterial | THREE.MeshBasicMaterial }>(({ material }) => {
+
+    const CombineSelect = [
+        { value: THREE.MultiplyOperation, label: "Multiply" },
+        { value: THREE.MixOperation, label: "Mix" },
+        { value: THREE.AddOperation, label: "Add" }
+    ]
+
+    return (
+        <>
+            <Divider children="Reflectivity" orientation="left" />
+            <ItemNumber object={material} variable="refractionRatio" labelInVariable limit={LIMIT_01} tooltip="the amount of refracted light on the material." />
+            <ItemNumber object={material} variable="reflectivity" label="Amount" limit={LIMIT_01} tooltip="Affects how much the Environment map affects the surface." />
             <ItemSelect
                 object={{ combines: CombineSelect }}
                 variable="combines"
-                label="Reflectivity Combine"
+                label="Type"
+                tooltip="Adjust the combination between the surface's color with the environment map."
                 defaultValue={
                     (() => {
                         switch (material.combine) {
@@ -424,123 +434,10 @@ const LambertMaterial: React.FC<{ material: THREE.MeshLambertMaterial }> = obser
                     }
                 }}
             />
-            {/* It's specified as a constant, avoid? */}
-            {/* <ItemNumber object={material} variable="depthPacking" labelInVariable /> */}
-            {/* Alpha */}
-            <Divider children="Alpha" orientation="left" />
-            <ItemTexture object={material} variable="alphaMap" label="Map" />
-            {/* Bump */}
-            <Divider children="Bump" orientation="left" />
-            <ItemTexture object={material} variable="bumpMap" label="Map" />
-            <ItemNumber object={material} variable="bumpScale" label="Scale" />
-            {/* Displacement */}
-            <Divider children="Displacement" orientation="left" />
-            <ItemTexture object={material} variable="displacementMap" label="Map" />
-            <ItemNumber object={material} variable="displacementScale" label="Scale" />
-            <ItemNumber object={material} variable="displacementBias" label="Bias" />
-            {/* Emissive */}
-            <Divider children="Emissive" orientation="left" />
-            <ItemTexture object={material} variable="emissiveMap" label="Map" />
-            <ItemColor object={material} variable="emissive" label="Color" allowClear />
-            <ItemNumber object={material} variable="emissiveIntensity" label="Scale" />
-            {/* Environment */}
-            <Divider children="Environment" orientation="left" />
-            <ItemTexture object={material} variable="envMap" label="Map" />
-            <ItemEuler object={material} variable="envMapRotation" label="Map Rotation" isDegree />
-            {/* Light */}
-            <Divider children="Light" orientation="left" />
-            <ItemTexture object={material} variable="lightMap" label="Map" />
-            <ItemNumber object={material} variable="lightMapIntensity" label="Map" />
-            {/* Normal */}
-            <Divider children="Normal" orientation="left" />
-            <ItemTexture object={material} variable="normalMap" label="Map" />
-            <ItemSelect
-                object={{ types: NormalTypesSelect }}
-                variable="types"
-                label="Type"
-                defaultValue={material.normalMapType ? "Object Space" : "Tangent Space"}
-                onChangeSelect={(s) => {
-                    material.normalMapType = parseInt(s as string) ? THREE.ObjectSpaceNormalMap : THREE.TangentSpaceNormalMap;
-                }} />
-            <ItemVector2 object={material} variable="normalScale" label="Scale" />
-            {/* Specular */}
-            <Divider children="Specular" orientation="left" />
-            <ItemTexture object={material} variable="specularMap" label="Map" />
         </>
     )
 })
 
-const MatCapMaterial: React.FC<{ material: THREE.MeshMatcapMaterial }> = observer(({ material }) => {
-    return (
-        <>
-            <ItemTexture object={material} variable="map" labelInVariable />
-            <ItemTexture object={material} variable="matcap" labelInVariable />
-            <ItemBoolean object={material} variable="fog" labelInVariable />
-            <ItemBoolean object={material} variable="flatShading" labelInVariable />
-            {/* It's specified as a constant, avoid? */}
-            {/* <ItemNumber object={material} variable="depthPacking" labelInVariable /> */}
-            {/* Alpha */}
-            <Divider children="Alpha" orientation="left" />
-            <ItemTexture object={material} variable="alphaMap" label="Map" />
-            {/* Bump */}
-            <Divider children="Bump" orientation="left" />
-            <ItemTexture object={material} variable="bumpMap" label="Map" />
-            <ItemNumber object={material} variable="bumpScale" label="Scale" />
-            {/* Displacement */}
-            <Divider children="Displacement" orientation="left" />
-            <ItemTexture object={material} variable="displacementMap" label="Map" />
-            <ItemNumber object={material} variable="displacementScale" label="Scale" />
-            <ItemNumber object={material} variable="displacementBias" label="Bias" />
-            {/* Normal */}
-            <Divider children="Normal" orientation="left" />
-            <ItemTexture object={material} variable="normalMap" label="Map" />
-            <ItemSelect
-                object={{ types: NormalTypesSelect }}
-                variable="types"
-                label="Type"
-                defaultValue={material.normalMapType ? "Object Space" : "Tangent Space"}
-                onChangeSelect={(s) => {
-                    material.normalMapType = parseInt(s as string) ? THREE.ObjectSpaceNormalMap : THREE.TangentSpaceNormalMap;
-                }} />
-            <ItemVector2 object={material} variable="normalScale" label="Scale" />
-        </>
-    )
-})
-
-const NormalMaterial: React.FC<{ material: THREE.MeshNormalMaterial }> = observer(({ material }) => {
-    return (
-        <>
-            <ItemBoolean object={material} variable="flatShading" labelInVariable />
-            {/* Bump */}
-            <Divider children="Bump" orientation="left" />
-            <ItemTexture object={material} variable="bumpMap" label="Map" />
-            <ItemNumber object={material} variable="bumpScale" label="Scale" />
-            {/* Displacement */}
-            <Divider children="Displacement" orientation="left" />
-            <ItemTexture object={material} variable="displacementMap" label="Map" />
-            <ItemNumber object={material} variable="displacementScale" label="Scale" />
-            <ItemNumber object={material} variable="displacementBias" label="Bias" />
-            {/* Normal */}
-            <Divider children="Normal" orientation="left" />
-            <ItemTexture object={material} variable="normalMap" label="Map" />
-            <ItemSelect
-                object={{ types: NormalTypesSelect }}
-                variable="types"
-                label="Type"
-                defaultValue={material.normalMapType ? "Object Space" : "Tangent Space"}
-                onChangeSelect={(s) => {
-                    material.normalMapType = parseInt(s as string) ? THREE.ObjectSpaceNormalMap : THREE.TangentSpaceNormalMap;
-                }} />
-            <ItemVector2 object={material} variable="normalScale" label="Scale" />
-        </>
-    )
-})
-
-const PhysicalMaterial: React.FC<{ material: THREE.MeshPhysicalMaterial }> = observer(({ material }) => {
-    return (
-        <>
-            <StandardMaterial material={material} />
-            {/* to-do add physical material */}
-        </>
-    )
-})
+// #################### //
+// END GROUP COMPONENTS //
+// #################### //
