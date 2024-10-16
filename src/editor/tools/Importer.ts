@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { message } from 'antd';
-import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader, RGBELoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 import { isFileImage } from '@orb_utils/Main';
@@ -47,7 +47,7 @@ export function doImportTexture(onImport: OnImport<THREE.Texture>) {
     input.type = "file";
     input.style.display = "none";
     input.multiple = true;
-    input.accept = ".png, .svg, .jpg, .jpeg, .tga, .bmp, .webp";
+    input.accept = ".png, .svg, .jpg, .jpeg, .tga, .bmp, .webp, .hdr";
     input.click();
     input.onchange = ((e: Event) => {
         const filelist = (e as any as React.ChangeEvent<HTMLInputElement>).target.files;
@@ -71,23 +71,41 @@ export function doImportTexture(onImport: OnImport<THREE.Texture>) {
 
 export function importTexture(file: File, onImport: OnImport<THREE.Texture>) {
     const url = URL.createObjectURL(file);
-    const loader = new THREE.TextureLoader();
-    loader.load(
-        url,
-        (res) => {
-            // important to maintain texture quality else will look off from the original image
-            res.colorSpace = THREE.SRGBColorSpace;
-            res.flipY = true;
-            res.needsUpdate = true;
-            onImport(res);
-            URL.revokeObjectURL(url);
-        },
-        undefined,
-        (res) => {
-            console.error("FAILED!", res)
-            URL.revokeObjectURL(url);
-        }
-    )
+    const type = file.type;
+    console.log("type", file.name.match(/\.[0-9a-z]+$/i)![0], type)
+    const loader = file.name.match(/\.[0-9a-z]+$/i)![0] == ".hdr" ? new RGBELoader() : new THREE.TextureLoader();
+    if (loader instanceof RGBELoader)
+        loader.load(
+            url,
+            (res) => {
+                res.colorSpace = THREE.SRGBColorSpace;
+                res.flipY = true;
+                res.needsUpdate = true;
+                onImport(res);
+                URL.revokeObjectURL(url);
+            },
+            undefined,
+            (res) => {
+                console.error("FAILED!", res)
+                URL.revokeObjectURL(url);
+            }
+        )
+    else
+        loader.load(
+            url,
+            (res) => {
+                res.colorSpace = THREE.SRGBColorSpace;
+                res.flipY = true;
+                res.needsUpdate = true;
+                onImport(res);
+                URL.revokeObjectURL(url);
+            },
+            undefined,
+            (res) => {
+                console.error("FAILED!", res)
+                URL.revokeObjectURL(url);
+            }
+        )
 }
 
 export function doImportAnimationClip(onImport: OnImport<THREE.AnimationClip>) {

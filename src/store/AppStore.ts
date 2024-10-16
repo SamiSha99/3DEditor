@@ -1,5 +1,5 @@
 import { makeObservable, observable, action } from "mobx";
-import { Object3D, Scene, Color } from "three";
+import { Object3D, Scene, Color, Texture } from "three";
 import * as TYPE from "./type";
 import { Box } from "@orb_tools/create/Primitive";
 import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
@@ -26,10 +26,10 @@ export class AppStore {
 
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
-    @observable environment: TYPE.Environments = TYPE.environments[1];
+    @observable environment: TYPE.Environments | Texture | null = TYPE.environments[1];
 
     static readonly DEFAULT_SCENE_BACKGROUND_COLOR = new Color(0x001029);
-    @observable background: Color | null = new Color(AppStore.DEFAULT_SCENE_BACKGROUND_COLOR).clone();
+    @observable background: Color | null = AppStore.DEFAULT_SCENE_BACKGROUND_COLOR.clone();
 
     @observable useRootSelection: boolean = false;
 
@@ -72,6 +72,7 @@ export class AppStore {
     @action.bound setControlSpaceByName = (mode: TYPE.TransformSpaces) => { this.controlsSpace = mode }
     // all default environment types from drei
     @action.bound setEnvironment = (index: number) => { this.environment = TYPE.environments[index] }
+    @action.bound setEnvironmentByTexture = (texture: Texture | null | undefined) => { this.environment = texture }
     @action.bound setEnvironmentByName = (environment: TYPE.Environments) => { this.environment = environment }
 
     @action.bound setbackground = (value: Color | null, enabled?: boolean) => { this.background = enabled ? value : null } //[value, enabled !== undefined ? enabled : this.background[1]]}

@@ -2,13 +2,14 @@ import { Button, Form, Image, Popconfirm } from "antd";
 import React, { useRef, useState } from "react";
 import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
-import { Material, Texture } from "three";
+import { DataTexture, Material, Texture } from "three";
 import { saveLink } from "@orb_tools/Exporter";
 import { CloudUploadOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined } from "@ant-design/icons";
 import { doImportTexture } from "@orb_tools/Importer";
 import { useOnUnmount } from "src/store/Hooks";
 
 interface TextureInterface extends Item {
+    hdr?: boolean,
     onChange?: (value?: Texture) => void
 }
 
@@ -18,7 +19,7 @@ type TextureObject = {
 }
 
 export const ItemTexture: React.FC<TextureInterface> = (
-    { label, labelInVariable, object, variable, onChange }
+    { label, labelInVariable, object, variable, hdr, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [textureObject, setTextureObject] = useState<TextureObject | undefined>(undefined);
@@ -28,9 +29,24 @@ export const ItemTexture: React.FC<TextureInterface> = (
     const makeImageObject = (t: Texture) => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext('2d');
-        canvas.width = t.image.width;
-        canvas.height = t.image.height;
-        ctx?.drawImage(t.image, 0, 0, t.image.width, t.image.height, 0, 0, t.image.width, t.image.height);
+        console.log("TEXTURE?", t);
+        if (hdr) {
+            // to-do implmenet datatextures!!
+            console.log(t.image)
+            const width = (t as DataTexture).image.width;
+            const height = (t as DataTexture).image.height;
+            const data = (t as DataTexture).image.data as unknown as Uint16Array;
+            const clampedData = new Uint8ClampedArray(data.buffer);
+            console.log("CLAMPED", clampedData)
+            // const iData = ctx?.createImageData(width, height);
+            // iData?.data.set(data.buffer)
+            // if (iData)
+            //     ctx?.putImageData(iData, 0, 0)
+        } else {
+            canvas.width = t.image.width;
+            canvas.height = t.image.height;
+            ctx?.drawImage(t.image, 0, 0, t.image.width, t.image.height, 0, 0, t.image.width, t.image.height);
+        }
         canvas.toBlob((b) => {
             if (!b) return;
             textureObject && URL.revokeObjectURL(textureObject.url)
@@ -39,14 +55,14 @@ export const ItemTexture: React.FC<TextureInterface> = (
             imageRef.current.src = obj.url;
         });
     }
-
     object[variable] && !textureObject && makeImageObject(object[variable] as Texture);
 
     const requestUploadTexture = () => {
         doImportTexture((texture) => {
             object[variable] = texture;
             (object[variable] as Texture).needsUpdate = true;
-            (object as Material).needsUpdate = true;
+            if (!hdr)
+                (object as Material).needsUpdate = true;
             makeImageObject(object[variable]);
             onChange && onChange(texture);
             setHoverUploadIcon(false);
@@ -91,7 +107,8 @@ export const ItemTexture: React.FC<TextureInterface> = (
                             const t = object[variable] as Texture;
                             t.dispose();
                             object[variable] = undefined;
-                            (object as Material).needsUpdate = true;
+                            if (!hdr)
+                                (object as Material).needsUpdate = true;
                             setTextureObject(undefined);
                             onChange && onChange(undefined);
                         }}

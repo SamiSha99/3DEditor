@@ -71,7 +71,13 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
         <>
             {sceneObjects && sceneObjects.map((child) => <EditorObject3D object={child} />)}
             {sceneHelpers && sceneHelpers.map((helper) => <EditorSceneHelpers helper={helper} />)}
-            {environment && <Environment key={"environment"} preset={environment} />}
+            {
+                environment &&
+                <Environment
+                    key={"environment"}
+                    preset={!(environment instanceof THREE.Texture) ? environment : undefined}
+                    map={typeof environment == "string" ? undefined : environment}
+                />}
         </>
     )
 })

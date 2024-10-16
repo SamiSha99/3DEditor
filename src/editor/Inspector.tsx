@@ -1,5 +1,4 @@
 import { useStores } from "@orb_App";
-import { Environments, environments } from "@orb_types";
 import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
@@ -39,8 +38,7 @@ export const EditorInspector = observer(() => {
 })
 
 export const HierarchyTree = observer(() => {
-    // @ts-ignore
-    const { sceneObjects, environment, spliceObject, scene, onUpdateInspector, badForceUpdateInspector, setControlsTarget, setEnvironmentByName } = useStores();
+    const { sceneObjects, spliceObject, scene, onUpdateInspector, badForceUpdateInspector, setControlsTarget } = useStores();
 
     let treeData = getTreeDataNodes(sceneObjects as THREE.Object3D[]);
 
