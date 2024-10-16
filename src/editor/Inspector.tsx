@@ -2,17 +2,15 @@ import { useStores } from "@orb_App";
 import { Environments, environments } from "@orb_types";
 import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect, useRef, useState } from "react";
-import * as THREE from "three"
-import { ItemSelect, ItemColorPicker } from "./ui/controller/ControllerItems";
-import { Color } from "antd/es/color-picker";
-import { AppStore } from "@orb_AppStore";
+import { useState } from "react";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
-import { InspectorMaterial } from "./data/Material";
+import { InspectorScene } from "./data/Scene";
 import { InspectorObject3D } from "./data/Object3D";
-import { ControlsBar } from "@orb_UI/ControlsBar";
+import { InspectorMaterial } from "./data/Material";
 import { InspectorGeometry } from "./data/Geometry";
+import { ControlsBar } from "@orb_UI/ControlsBar";
 import Canvas from './Canvas'
+import * as THREE from "three"
 
 export const EditorInspector = observer(() => {
     const { controlsObject3D } = useStores();
@@ -29,10 +27,7 @@ export const EditorInspector = observer(() => {
                         <div style={{ height: "25%", padding: "0 10px" }}>
                             <HierarchyTree />
                         </div>
-                        <div style={{ height: "5%", padding: "0 10px" }}>
-                            <SceneConfigs />
-                        </div>
-                        <div style={{ height: "calc(70% - 32px)", padding: "0 10px" }}>
+                        <div style={{ height: "calc(75% - 32px)", padding: "0 10px" }}>
                             <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
                         </div>
                     </ConfigProvider>
@@ -63,70 +58,17 @@ export const HierarchyTree = observer(() => {
     )
 })
 
-export const SceneConfigs = observer(() => {
-    const { environment, setEnvironmentByName, background, setbackground, scene } = useStores();
-    const [_backgroundEnabled, setBackgroundEnabled] = useState(false);
-
-    const environmentList = () => {
-        let options: { value: string, label: string }[] = [];
-        environments.map((e) => {
-            const obj = { value: e ? e : "undefined", label: e ? e.replace(/^./, e[0].toUpperCase()) : "Custom" };
-            if (e)
-                options.push(obj);
-            else
-                options.unshift(obj)
-        })
-        return options;
-    }
-
-    const list = environmentList();
-
-    return (
-        <Form labelCol={{ span: 5 }} wrapperCol={{ span: 18 }} labelWrap>
-            <ItemSelect object={{ Environment: list }} variable="Environment" label="Environment"
-                defaultValue={!environment ? "Custom" : environment.replace(/^./, environment[0].toUpperCase())}
-                labelInValue={true}
-                onChangeSelect={(select: { value: string, label: string }) => {
-                    let v = undefined;
-                    if (select.value != "undefined") v = select.value as Environments
-                    setEnvironmentByName(v)
-                }}
-                options={list} />
-            {/* to-do: finish this! */}
-            <ItemColorPicker
-                object={scene}
-                variable="background"
-                label="Background"
-                allowAlpha={false}
-                defaultValue={background ? background.getHexString().replace("#", "") : AppStore.DEFAULT_SCENE_BACKGROUND_COLOR.getHexString()}
-                onChangeCheckbox={(e) => {
-                    setBackgroundEnabled(e.target.checked);
-                    setbackground(e.target.checked ? background : null, e.target.checked);
-                    console.log("checking..")
-                }}
-                onChangeColorPicker={(_value: Color, hex: string) => {
-                    scene.background = new THREE.Color(hex);
-                }}
-                onChangeCompleteColorPicker={(c) => {
-                    const hex = c.toHexString().replace("#", "");
-                    setbackground(new THREE.Color(parseInt(hex, 16)));
-                }} />
-        </Form>
-
-    )
-})
-
 export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
     const [tab, setTab] = useState(object ? "OBJECT" : "");
     return (
         <>
             {
-                object &&
                 <>
                     <Row style={{ marginTop: 24 }}>
+                        <Button children={"SCENE"} onClick={() => setTab("SCENE")} />
                         <Button disabled={object == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
                         {
-                            object instanceof THREE.Mesh &&
+                            object && object instanceof THREE.Mesh &&
                             <>
                                 <Button disabled={!object.material} children={"GEOMETRY"} onClick={() => setTab("GEOMETRY")} />
                                 <Button disabled={!object.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
@@ -138,6 +80,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                         tab &&
                         <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarGutter: "auto" }}>
                             <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} colon={false} labelWrap>
+                                {tab == "SCENE" && <InspectorScene />}
                                 {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
                                 {
                                     object instanceof THREE.Mesh &&
