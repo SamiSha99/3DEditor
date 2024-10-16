@@ -1,5 +1,5 @@
 export { ItemSelect } from "./items/ItemSelect";
-export { ItemColorPicker } from "./items/ItemColorPicker";
+export { ItemColor } from "./items/ItemColor"
 export { ItemInput } from './items/ItemInput';
 export { ItemNumber } from './items/ItemNumber'
 export { ItemVector2, ItemVector3 } from "./items/ItemVector";
