@@ -12,23 +12,21 @@ interface ColorInterface extends Item {
     allowClear?: boolean,
     disabled?: boolean,
     disabledAlpha?: boolean,
+    defaultColor?: string
 }
 
 let timeoutActive: boolean = false;
 
 export const ItemColor: React.FC<ColorInterface> = (
-    { label, labelInVariable, object, variable, disabled, disabledAlpha, allowClear, onChange, onChangeComplete, onClear, tooltip }
+    { label, labelInVariable, object, variable, disabled, disabledAlpha, allowClear, defaultColor, onChange, onChangeComplete, onClear, tooltip }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<Color>(object[variable]);
-    // const [loopStop, loopStart, _] = useDeltaTime(() => {
-    // v != object[variable] && setValue(object[variable])
-    // });
 
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <ColorPicker
-                defaultValue={v.getHexString()}
+                defaultValue={defaultColor ? defaultColor : v.getHexString()}
                 disabled={disabled}
                 disabledAlpha={disabledAlpha}
                 allowClear={allowClear}

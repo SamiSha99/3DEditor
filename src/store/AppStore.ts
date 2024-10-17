@@ -29,7 +29,7 @@ export class AppStore {
     @observable environment: TYPE.Environments | Texture | null = TYPE.environments[1];
 
     static readonly DEFAULT_SCENE_BACKGROUND_COLOR = new Color(0x001029);
-    @observable background: Color | null = AppStore.DEFAULT_SCENE_BACKGROUND_COLOR.clone();
+    @observable background: Color | Texture | null = AppStore.DEFAULT_SCENE_BACKGROUND_COLOR.clone();
 
     @observable useRootSelection: boolean = false;
 
@@ -70,12 +70,13 @@ export class AppStore {
     // 0 = world | 1 = local
     @action.bound setControlSpace = (mode: number) => { this.controlsSpace = TYPE.transformSpaces[mode] }
     @action.bound setControlSpaceByName = (mode: TYPE.TransformSpaces) => { this.controlsSpace = mode }
-    // all default environment types from drei
-    @action.bound setEnvironment = (index: number) => { this.environment = TYPE.environments[index] }
-    @action.bound setEnvironmentByTexture = (texture: Texture | null | undefined) => { this.environment = texture }
-    @action.bound setEnvironmentByName = (environment: TYPE.Environments) => { this.environment = environment }
 
-    @action.bound setbackground = (value: Color | null, enabled?: boolean) => { this.background = enabled ? value : null } //[value, enabled !== undefined ? enabled : this.background[1]]}
+    @action.bound setEnvironment = (texture: Texture | null | undefined | TYPE.Environments) => { this.environment = texture }
+
+    @action.bound setBackground = (value: Color | Texture | null) => {
+        this.background = value;
+        this.scene.background = value
+    }
 
     @action.bound setIsTransforming = (b?: boolean) => { this.isTransforming = b != undefined ? b : !this.isTransforming }
 

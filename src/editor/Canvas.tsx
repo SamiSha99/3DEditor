@@ -75,8 +75,8 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
                 environment &&
                 <Environment
                     key={"environment"}
-                    preset={!(environment instanceof THREE.Texture) ? environment : undefined}
-                    map={typeof environment == "string" ? undefined : environment}
+                    map={environment instanceof THREE.Texture ? environment : undefined}
+                    preset={typeof environment == "string" ? environment : undefined}
                 />}
         </>
     )

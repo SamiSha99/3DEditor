@@ -1,16 +1,18 @@
 import { Button, Form, Image, Popconfirm } from "antd";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
-import { DataTexture, Material, Texture } from "three";
+import { DataTexture, Material, MeshBasicMaterial, Texture, WebGLRenderer } from "three";
 import { saveLink } from "@orb_tools/Exporter";
 import { CloudUploadOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined } from "@ant-design/icons";
 import { doImportTexture } from "@orb_tools/Importer";
 import { useOnUnmount } from "src/store/Hooks";
+import { FullScreenQuad } from "three/examples/jsm/Addons";
 
 interface TextureInterface extends Item {
     hdr?: boolean,
     onChange?: (value?: Texture) => void
+    onDelete?: () => void
 }
 
 type TextureObject = {
@@ -24,24 +26,17 @@ export const ItemTexture: React.FC<TextureInterface> = (
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [textureObject, setTextureObject] = useState<TextureObject | undefined>(undefined);
     const [hoverUploadIcon, setHoverUploadIcon] = useState(false);
-    const imageRef = useRef<any>(null!);
 
     const makeImageObject = (t: Texture) => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext('2d');
-        console.log("TEXTURE?", t);
-        if (hdr) {
-            // to-do implmenet datatextures!!
-            console.log(t.image)
-            const width = (t as DataTexture).image.width;
-            const height = (t as DataTexture).image.height;
-            const data = (t as DataTexture).image.data as unknown as Uint16Array;
-            const clampedData = new Uint8ClampedArray(data.buffer);
-            console.log("CLAMPED", clampedData)
-            // const iData = ctx?.createImageData(width, height);
-            // iData?.data.set(data.buffer)
-            // if (iData)
-            //     ctx?.putImageData(iData, 0, 0)
+        ctx?.clearRect(0, 0, canvas.width, canvas.height);
+        if (!t) return;
+        if (t instanceof DataTexture) {
+            canvas.width = t.image.width;
+            canvas.height = t.image.height;
+            const c = renderToCanvas(t);
+            ctx?.drawImage(c, 0, 0, 1024, 512, 0, 0, t.image.width, t.image.height)
         } else {
             canvas.width = t.image.width;
             canvas.height = t.image.height;
@@ -52,16 +47,15 @@ export const ItemTexture: React.FC<TextureInterface> = (
             textureObject && URL.revokeObjectURL(textureObject.url)
             const obj = { url: URL.createObjectURL(b), type: b.type } as TextureObject;
             setTextureObject(obj);
-            imageRef.current.src = obj.url;
         });
     }
-    object[variable] && !textureObject && makeImageObject(object[variable] as Texture);
+
 
     const requestUploadTexture = () => {
         doImportTexture((texture) => {
             object[variable] = texture;
             (object[variable] as Texture).needsUpdate = true;
-            if (!hdr)
+            if (object[variable])
                 (object as Material).needsUpdate = true;
             makeImageObject(object[variable]);
             onChange && onChange(texture);
@@ -73,6 +67,7 @@ export const ItemTexture: React.FC<TextureInterface> = (
         textureObject && saveLink(textureObject.url, variable, textureObject.type)
     }
 
+    useEffect(() => { object[variable] instanceof Texture && makeImageObject(object[variable]) }, []);
     // clean up 
     useOnUnmount(() => textureObject && URL.revokeObjectURL(textureObject.url), [textureObject])
 
@@ -121,6 +116,22 @@ export const ItemTexture: React.FC<TextureInterface> = (
             </div>
         </Form.Item >
     )
+}
+
+function renderToCanvas(texture: DataTexture) {
+
+    const renderer = new WebGLRenderer();
+    const fsQuad = new FullScreenQuad(new MeshBasicMaterial());
+
+    const image = texture.image;
+
+    renderer.setSize(image.width, image.height, false);
+
+    (fsQuad.material as MeshBasicMaterial).map = texture;
+    fsQuad.render(renderer);
+
+    return renderer.domElement;
+
 }
 
 export default ItemTexture;
