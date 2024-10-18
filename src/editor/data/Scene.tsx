@@ -36,7 +36,7 @@ export const InspectorScene: React.FC = observer(() => {
     const environmentList = () => {
         let options: { value: string, label: string }[] = [];
         environments.map((e) => {
-            const obj = { value: e ? e : "undefined", label: e ? e.replace(/^./, e[0].toUpperCase()) : "Off" };
+            const obj = { value: e ? e : "undefined", label: e ? e.replace(/^./, e[0].toUpperCase()) : "None" };
             if (e)
                 options.push(obj);
             else
@@ -88,7 +88,7 @@ export const InspectorScene: React.FC = observer(() => {
                 if (lastEnvironmentSample)
                     setEnvironment(lastEnvironmentSample.data);
                 return <ItemSelect object={{ environment: list }} variable="environment" label="Environment"
-                    defaultValue={!lastEnvironmentSample ? "Off" : lastEnvironmentSample.name.replace(/^./, lastEnvironmentSample.name[0].toUpperCase())}
+                    defaultValue={!lastEnvironmentSample ? "None" : lastEnvironmentSample.name.replace(/^./, lastEnvironmentSample.name[0].toUpperCase())}
                     onChangeSelect={(select) => {
                         let v = undefined;
                         if (select == "undefined") {
@@ -139,8 +139,13 @@ export const InspectorScene: React.FC = observer(() => {
             <ItemCollapse label="Environment">
                 <ItemSelect object={{ type: environmentOptions }} variable="type" defaultValue={environmentOptions[getEnvironmentOption(scene.environment)].label} labelInVariable onChangeSelect={(s) => setEnvironmentOption(s)} />
                 {environmentUI(environmentOption)}
-                <ItemNumber object={scene} variable="environmentIntensity" label="Intensity" />
-                <ItemEuler object={scene} variable="environmentRotation" label="Rotation" isDegree />
+                {
+                    environmentOption != 0 &&
+                    <>
+                        <ItemNumber object={scene} variable="environmentIntensity" label="Intensity" />
+                        <ItemEuler object={scene} variable="environmentRotation" label="Rotation" isDegree />
+                    </>
+                }
             </ItemCollapse>
             {/* to-do add fog */}
             <ItemCollapse label="Fog">
