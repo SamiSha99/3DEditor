@@ -1,5 +1,5 @@
 import { makeObservable, observable, action } from "mobx";
-import { Object3D, Scene, Color, Texture } from "three";
+import { Object3D, Scene, Color, Texture, Fog } from "three";
 import * as TYPE from "./type";
 import { Box } from "@orb_tools/create/Primitive";
 import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
@@ -26,10 +26,8 @@ export class AppStore {
 
     @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
-    @observable environment: TYPE.Environments | Texture | null = TYPE.environments[1];
 
     static readonly DEFAULT_SCENE_BACKGROUND_COLOR = new Color(0x001029);
-    @observable background: Color | Texture | null = AppStore.DEFAULT_SCENE_BACKGROUND_COLOR.clone();
 
     @observable useRootSelection: boolean = false;
 
@@ -40,7 +38,6 @@ export class AppStore {
     constructor() {
         makeObservable(this)
         AppStore._instance = this;
-        this.scene.background = this.background;
         this.setControlsTarget(this.addObject(Box()))
     }
 
@@ -71,15 +68,11 @@ export class AppStore {
     @action.bound setControlSpace = (mode: number) => { this.controlsSpace = TYPE.transformSpaces[mode] }
     @action.bound setControlSpaceByName = (mode: TYPE.TransformSpaces) => { this.controlsSpace = mode }
 
-    @action.bound setEnvironment = (texture: Texture | null | undefined | TYPE.Environments) => { this.environment = texture }
-
-    @action.bound setBackground = (value: Color | Texture | null) => {
-        this.background = value;
-        this.scene.background = value
-    }
+    @action.bound setEnvironment = (value: Texture | null) => this.scene.environment = value;
+    @action.bound setBackground = (value: Color | Texture | null) => this.scene.background = value;
+    @action.bound setFog = (value: Fog | null) => this.scene.fog = value;
 
     @action.bound setIsTransforming = (b?: boolean) => { this.isTransforming = b != undefined ? b : !this.isTransforming }
-
 
     @action.bound addActivePanel = (value: ActivePanelType) => {
         if (this.activePanels.find(x => x.id == value.id))

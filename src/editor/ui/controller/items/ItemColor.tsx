@@ -10,7 +10,6 @@ interface ColorInterface extends Item {
     onChangeComplete?: (value: Color) => void,
     onClear?: () => void,
     allowClear?: boolean,
-    disabled?: boolean,
     disabledAlpha?: boolean,
     defaultColor?: string
 }

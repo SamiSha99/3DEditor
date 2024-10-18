@@ -37,7 +37,7 @@ interface CanvasInfo {
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
 
-    const { environment, sceneObjects, sceneHelpers, controlsObject3D, isTransforming,
+    const { sceneObjects, sceneHelpers, controlsObject3D, isTransforming,
         removeObject, setControlsTarget } = useStores();
     const { camera, raycaster } = useThree();
 
@@ -71,13 +71,6 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
         <>
             {sceneObjects && sceneObjects.map((child) => <EditorObject3D object={child} />)}
             {sceneHelpers && sceneHelpers.map((helper) => <EditorSceneHelpers helper={helper} />)}
-            {
-                environment &&
-                <Environment
-                    key={"environment"}
-                    map={environment instanceof THREE.Texture ? environment : undefined}
-                    preset={typeof environment == "string" ? environment : undefined}
-                />}
         </>
     )
 })

@@ -32,15 +32,15 @@ export const ItemTexture: React.FC<TextureInterface> = (
         const ctx = canvas.getContext('2d');
         ctx?.clearRect(0, 0, canvas.width, canvas.height);
         if (!t) return;
+        const width = t.image.width;
+        const height = t.image.height;
+        canvas.width = width;
+        canvas.height = height;
         if (t instanceof DataTexture) {
-            canvas.width = t.image.width;
-            canvas.height = t.image.height;
             const c = renderToCanvas(t);
-            ctx?.drawImage(c, 0, 0, 1024, 512, 0, 0, t.image.width, t.image.height)
+            ctx?.drawImage(c, 0, 0, width, height, 0, 0, width, height)
         } else {
-            canvas.width = t.image.width;
-            canvas.height = t.image.height;
-            ctx?.drawImage(t.image, 0, 0, t.image.width, t.image.height, 0, 0, t.image.width, t.image.height);
+            ctx?.drawImage(t.image, 0, 0, width, height, 0, 0, width, height);
         }
         canvas.toBlob((b) => {
             if (!b) return;

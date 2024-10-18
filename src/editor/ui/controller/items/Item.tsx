@@ -1,5 +1,4 @@
-import { Form } from "antd";
-import FormItem, { FormItemProps } from "antd/es/form/FormItem";
+import { FormItemProps } from "antd/es/form/FormItem";
 
 export const MOUSE_ENTER_DELAY = 0.3;
 export const PRECISION_AMOUNT = 6;
@@ -15,6 +14,7 @@ export interface Item extends FormItemProps {
     variable: string
     label?: string | false,
     labelInVariable?: boolean
+    disabled?: boolean,
     readonly?: boolean
 }
 

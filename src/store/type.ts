@@ -4,5 +4,25 @@ export type TransformModes = typeof transformModes[number];
 export const transformSpaces = ['world', 'local'] as const;
 export type TransformSpaces = typeof transformSpaces[number];
 
-export const environments = [undefined, 'city', 'apartment', 'dawn', 'forest', 'lobby', 'night', 'park', 'studio', 'sunset', 'warehouse'] as const;
+// From pmndrs/assets, courtesy of Poly Haven
+export const environments = [
+    undefined,
+    'apartment',
+    'bridge',
+    'city',
+    'dawn',
+    'esplanade',
+    'forest',
+    'hall',
+    'lab',
+    'lobby',
+    'night',
+    'park',
+    'sky',
+    'studio',
+    'sunrise',
+    'sunset',
+    'venice',
+    'warehouse',
+    'workshop'] as const;
 export type Environments = typeof environments[number];
