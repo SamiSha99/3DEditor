@@ -30,7 +30,7 @@ let lastBackgroundTexture: Texture | null;
 export const InspectorScene: React.FC = observer(() => {
     const { scene, setEnvironment, setBackground, setFog } = useStores();
     const [environmentOption, setEnvironmentOption] = useState(getEnvironmentOption(scene.environment));
-    const [backgroundOption, setBackgroundOption] = useState(0);
+    const [backgroundOption, setBackgroundOption] = useState(getBackgroundOption(scene.background));
     const [fogScene, setFogScene] = useState(scene.fog);
 
     const environmentList = () => {
@@ -133,7 +133,7 @@ export const InspectorScene: React.FC = observer(() => {
 
             {/* Scene Background Options */}
             <ItemCollapse label="Background">
-                <ItemSelect object={{ type: backgroundOptions }} variable="type" defaultValue={backgroundOptions[0].label} labelInVariable onChangeSelect={(s) => setBackgroundOption(s)} />
+                <ItemSelect object={{ type: backgroundOptions }} variable="type" defaultValue={backgroundOptions[backgroundOption].label} labelInVariable onChangeSelect={(s) => setBackgroundOption(s)} />
                 {backgroundUI(backgroundOption)}
             </ItemCollapse>
             <ItemCollapse label="Environment">
@@ -151,15 +151,15 @@ export const InspectorScene: React.FC = observer(() => {
             <ItemCollapse label="Fog">
                 {/* to-do, delete this! Replace with a select for None, Linear, Exponential */}
                 <ItemGroup label="Actions" sizes={["15%", "15%"]}>
-                    <ItemButton disabled={scene.fog != null} buttonName={<PlusOutlined style={{ fontSize: 24 }} />} onClick={() => { setFog(new Fog(0x000000, 1, 25)); setFogScene(scene.fog); }} />
-                    <ItemButton disabled={scene.fog == null} buttonName={<MinusOutlined style={{ fontSize: 24 }} />} onClick={() => { setFog(null); setFogScene(scene.fog); }} />
+                    <ItemButton disabled={fogScene != null} buttonName={<PlusOutlined style={{ fontSize: 24 }} />} onClick={() => { setFog(new Fog(0x000000, 1, 25)); setFogScene(scene.fog); }} />
+                    <ItemButton disabled={fogScene == null} buttonName={<MinusOutlined style={{ fontSize: 24 }} />} onClick={() => { setFog(null); setFogScene(scene.fog); }} />
                 </ItemGroup>
                 {
-                    scene.fog &&
+                    fogScene &&
                     <>
-                        <ItemColor object={scene.fog} variable="color" labelInVariable />
-                        <ItemNumber object={scene.fog} variable="near" labelInVariable />
-                        <ItemNumber object={scene.fog} variable="far" labelInVariable />
+                        <ItemColor object={fogScene} variable="color" labelInVariable />
+                        <ItemNumber object={fogScene} variable="near" labelInVariable />
+                        <ItemNumber object={fogScene} variable="far" labelInVariable />
                     </>
                 }
             </ItemCollapse>
@@ -167,10 +167,16 @@ export const InspectorScene: React.FC = observer(() => {
     );
 })
 
+const getBackgroundOption = (background: Color | Texture | undefined | null) => {
+    if (!background) return 0; // Off
+    if (background instanceof Color) return 1; // Samples
+    return 2; // Texture
+}
+
 const getEnvironmentOption = (environment: string | Texture | undefined | null) => {
     if (environment == null) return 0; // Off
     if (environment == lastEnvironmentSample?.data) return 1; // Samples
-    return 2; // None Texture
+    return 2; // Texture
 }
 
 const samples = {
