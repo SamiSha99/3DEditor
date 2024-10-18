@@ -3,7 +3,6 @@ import { useStores } from "@orb_App";
 import { AppStore } from "@orb_AppStore";
 import { Environments, environments } from "@orb_types";
 import { ItemButton, ItemCollapse, ItemColor, ItemEuler, ItemGroup, ItemNumber, ItemSelect, ItemTexture } from "@orb_UI/controller/ControllerItems";
-import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { Color, DataTexture, EquirectangularReflectionMapping, Fog, Texture } from "three";
@@ -145,8 +144,9 @@ export const InspectorScene: React.FC = observer(() => {
             </ItemCollapse>
             {/* to-do add fog */}
             <ItemCollapse label="Fog">
+                {/* to-do, delete this! Replace with a select for None, Linear, Exponential */}
                 <ItemGroup label="Actions" sizes={["15%", "15%"]}>
-                    <ItemButton disabled={scene.fog != null} buttonName={<PlusOutlined style={{ fontSize: 24 }} />} onClick={() => { setFog(new Fog(0x000000)); setFogScene(scene.fog); }} />
+                    <ItemButton disabled={scene.fog != null} buttonName={<PlusOutlined style={{ fontSize: 24 }} />} onClick={() => { setFog(new Fog(0x000000, 1, 25)); setFogScene(scene.fog); }} />
                     <ItemButton disabled={scene.fog == null} buttonName={<MinusOutlined style={{ fontSize: 24 }} />} onClick={() => { setFog(null); setFogScene(scene.fog); }} />
                 </ItemGroup>
                 {
