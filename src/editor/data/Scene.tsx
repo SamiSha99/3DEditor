@@ -179,39 +179,23 @@ export const Fog = observer(() => {
         switch (selectedFogOption) {
 
             case 1:
-                if (lastFogLinear) setFog(lastFogLinear);
-                else {
-                    lastFogLinear = new THREE.Fog(0x000000, 1, 50);
-                    setFog(lastFogLinear);
-                }
+                if (!lastFogLinear) lastFogLinear = new THREE.Fog(0x000000, 1, 50);
+                setFog(lastFogLinear);
                 return (
                     <>
-                        {
-                            scene.fog &&
-                            <>
-                                <ItemColor key="linear" object={scene.fog} variable="color" labelInVariable />
-                                <ItemNumber object={scene.fog} variable="near" labelInVariable />
-                                <ItemNumber object={scene.fog} variable="far" labelInVariable />
-                            </>
-                        }
+                        <ItemColor key="linear" object={scene.fog!} variable="color" labelInVariable />
+                        <ItemNumber object={scene.fog!} variable="near" labelInVariable />
+                        <ItemNumber object={scene.fog!} variable="far" labelInVariable />
                     </>
                 )
 
             case 2:
-                if (lastFogExp2) setFog(lastFogExp2);
-                else {
-                    lastFogExp2 = new THREE.FogExp2(0x000000);
-                    setFog(lastFogExp2);
-                }
+                if (!lastFogExp2) lastFogExp2 = new THREE.FogExp2(0x000000);
+                setFog(lastFogExp2);
                 return (
                     <>
-                        {
-                            scene.fog &&
-                            <>
-                                <ItemColor key="exponential" object={scene.fog} variable="color" labelInVariable />
-                                <ItemNumber object={scene.fog} variable="density" labelInVariable />
-                            </>
-                        }
+                        <ItemColor key="exponential" object={scene.fog!} variable="color" labelInVariable />
+                        <ItemNumber object={scene.fog!} variable="density" labelInVariable />
                     </>
                 )
             // Off
