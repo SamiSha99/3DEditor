@@ -9,7 +9,7 @@ interface SelectInterface extends Item {
     labelInValue?: boolean
     options?: DefaultOptionType[]
     // to-do: the passed content is string when [labelInValue = false] otherwise very misleading, this needs to be checked further
-    onChangeSelect?: (select: { value: string, label: string } | string) => void;
+    onChangeSelect?: (select: { value: string, label: string } | string | number) => void;
 }
 
 export const ItemSelect: React.FC<SelectInterface> = (
@@ -24,7 +24,7 @@ export const ItemSelect: React.FC<SelectInterface> = (
                 disabled={disabled != undefined ? disabled : false}
                 defaultValue={defaultValue ? { value: defaultValue, label: defaultValue } : undefined}
                 labelInValue={labelInValue}
-                onChange={(select: { value: string, label: string }) => { onChangeSelect && onChangeSelect(select as unknown as string); }}
+                onChange={(select: { value: string, label: string }) => { onChangeSelect && onChangeSelect(select); }}
                 options={list}
             />
         </Form.Item>

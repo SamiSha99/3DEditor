@@ -1,5 +1,5 @@
 import { makeObservable, observable, action } from "mobx";
-import { Object3D, Scene, Color, Texture, Fog } from "three";
+import { Object3D, Scene, Color, Texture, Fog, FogExp2 } from "three";
 import * as TYPE from "./type";
 import { Box } from "@orb_tools/create/Primitive";
 import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
@@ -70,7 +70,7 @@ export class AppStore {
 
     @action.bound setEnvironment = (value: Texture | null) => this.scene.environment = value;
     @action.bound setBackground = (value: Color | Texture | null) => this.scene.background = value;
-    @action.bound setFog = (value: Fog | null) => this.scene.fog = value;
+    @action.bound setFog = (value: Fog | FogExp2 | null) => this.scene.fog = value;
 
     @action.bound setIsTransforming = (b?: boolean) => { this.isTransforming = b != undefined ? b : !this.isTransforming }
 
