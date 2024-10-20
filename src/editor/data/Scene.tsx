@@ -2,11 +2,11 @@ import { useStores } from "@orb_App";
 import { AppStore } from "@orb_AppStore";
 import { Environments, environments } from "@orb_types";
 import { ItemCollapse, ItemColor, ItemEuler, ItemNumber, ItemSelect, ItemTexture } from "@orb_UI/controller/ControllerItems";
+import { loadEnvironmentSample } from "@orb_utils/Samples";
 import { Alert } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from "three";
-import { EXRLoader } from "three/examples/jsm/Addons";
 
 const environmentOptions = [
     { value: 0, label: "Off" },
@@ -125,10 +125,11 @@ export const Environment = observer(() => {
                         }
                         else {
                             v = select as Environments
-
-                            loadEnvironmentSample(v!, (o) => {
-                                setEnvironment(o.data);
-                                lastEnvironmentSample = o;
+                            loadEnvironmentSample(v!).then((o) => {
+                                if (o) {
+                                    setEnvironment(o.data);
+                                    lastEnvironmentSample = o;
+                                }
                             })
                         }
                     }}
@@ -175,8 +176,8 @@ export const Fog = observer(() => {
     const { scene, setFog } = useStores();
     const [fogOption, setFogOption] = useState<number>(() => { return !scene.fog ? 0 : (scene.fog instanceof THREE.Fog ? 1 : 2) });
 
-    const fogUI = (selectedFogOption: number) => {
-        switch (selectedFogOption) {
+    const itemFog = (() => {
+        switch (fogOption) {
 
             case 1:
                 if (!lastFogLinear) lastFogLinear = new THREE.Fog(0x000000, 1, 50);
@@ -203,45 +204,13 @@ export const Fog = observer(() => {
                 setFog(null);
                 return <></>;
         }
-    }
+    })()
 
     return (
         <ItemCollapse label="Fog">
             <ItemSelect object={{ type: fogOptions }} variable="type" defaultValue={backgroundOptions[fogOption].label} labelInVariable onChangeSelect={(s) => setFogOption(s as number)} />
-            {fogUI(fogOption)}
+            {itemFog}
         </ItemCollapse>
     )
 
 })
-
-const samples = {
-    none: null,
-    apartment: await import('@pmndrs/assets/hdri/apartment.exr'),
-    bridge: await import('@pmndrs/assets/hdri/bridge.exr'),
-    city: await import('@pmndrs/assets/hdri/city.exr'),
-    dawn: await import('@pmndrs/assets/hdri/dawn.exr'),
-    esplanade: await import('@pmndrs/assets/hdri/esplanade.exr'),
-    forest: await import('@pmndrs/assets/hdri/forest.exr'),
-    hall: await import('@pmndrs/assets/hdri/hall.exr'),
-    lab: await import('@pmndrs/assets/hdri/lab.exr'),
-    lobby: await import('@pmndrs/assets/hdri/lobby.exr'),
-    night: await import('@pmndrs/assets/hdri/night.exr'),
-    park: await import('@pmndrs/assets/hdri/park.exr'),
-    sky: await import('@pmndrs/assets/hdri/sky.exr'),
-    studio: await import('@pmndrs/assets/hdri/studio.exr'),
-    sunrise: await import('@pmndrs/assets/hdri/sunrise.exr'),
-    sunset: await import('@pmndrs/assets/hdri/sunset.exr'),
-    venice: await import('@pmndrs/assets/hdri/venice.exr'),
-    warehouse: await import('@pmndrs/assets/hdri/warehouse.exr'),
-    workshop: await import('@pmndrs/assets/hdri/workshop.exr'),
-} as { [environments: string]: any };
-
-const loadEnvironmentSample = async (sampleName: string, onLoad: (obj: { name: string, data: THREE.DataTexture }) => void) => {
-    const sample = samples[sampleName]
-    console.log(sample);
-    new EXRLoader().load(sample.default, (texture) => {
-        texture.mapping = THREE.EquirectangularReflectionMapping
-        texture.needsUpdate = true
-        onLoad({ name: sampleName, data: texture });
-    })
-}
