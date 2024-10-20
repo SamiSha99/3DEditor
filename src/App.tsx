@@ -18,6 +18,13 @@ const StoreProvider: StoreComponent = ({ store, children }) => {
 }
 
 const session = new AppStore();
+const initScene = async () => {
+    const { Box } = await import("@orb_tools/create/Primitive");
+    const { loadEnvironmentSample } = await import("@orb_utils/Samples.ts");
+    session.setControlsTarget(session.addObject(Box()))
+    loadEnvironmentSample('city').then((o) => o && session.setEnvironment(o.data))
+}
+initScene();
 
 function App() {
 

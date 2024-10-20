@@ -1,7 +1,6 @@
 import { makeObservable, observable, action } from "mobx";
 import { Object3D, Scene, Color, Texture, Fog, FogExp2 } from "three";
 import * as TYPE from "./type";
-import { Box } from "@orb_tools/create/Primitive";
 import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
 
 export class AppStore {
@@ -38,14 +37,14 @@ export class AppStore {
     constructor() {
         makeObservable(this)
         AppStore._instance = this;
-        this.setControlsTarget(this.addObject(Box()))
+
     }
 
     public static get Instance() {
         return this._instance || (this._instance = new this());
     }
 
-    @action.bound setControlsTarget = (object: Object3D | null) => {
+    @action setControlsTarget = (object: Object3D | null) => {
 
         if (this.controlsObject3D == object) return;
         // Selects the highest in the hierachy regardless of which one clicked for now
@@ -62,19 +61,19 @@ export class AppStore {
     }
 
     // 0 = translate | 1 = rotate | 2 = scale
-    @action.bound setControlsMode = (mode: number) => { this.controlsMode = TYPE.transformModes[mode] }
-    @action.bound setControlsModeByName = (mode: TYPE.TransformModes) => { this.controlsMode = mode }
+    @action setControlsMode = (mode: number) => { this.controlsMode = TYPE.transformModes[mode] }
+    @action setControlsModeByName = (mode: TYPE.TransformModes) => { this.controlsMode = mode }
     // 0 = world | 1 = local
-    @action.bound setControlSpace = (mode: number) => { this.controlsSpace = TYPE.transformSpaces[mode] }
-    @action.bound setControlSpaceByName = (mode: TYPE.TransformSpaces) => { this.controlsSpace = mode }
+    @action setControlSpace = (mode: number) => { this.controlsSpace = TYPE.transformSpaces[mode] }
+    @action setControlSpaceByName = (mode: TYPE.TransformSpaces) => { this.controlsSpace = mode }
 
-    @action.bound setEnvironment = (value: Texture | null) => this.scene.environment = value;
-    @action.bound setBackground = (value: Color | Texture | null) => this.scene.background = value;
-    @action.bound setFog = (value: Fog | FogExp2 | null) => this.scene.fog = value;
+    @action setEnvironment = (value: Texture | null) => this.scene.environment = value;
+    @action setBackground = (value: Color | Texture | null) => this.scene.background = value;
+    @action setFog = (value: Fog | FogExp2 | null) => this.scene.fog = value;
 
-    @action.bound setIsTransforming = (b?: boolean) => { this.isTransforming = b != undefined ? b : !this.isTransforming }
+    @action setIsTransforming = (b?: boolean) => { this.isTransforming = b != undefined ? b : !this.isTransforming }
 
-    @action.bound addActivePanel = (value: ActivePanelType) => {
+    @action addActivePanel = (value: ActivePanelType) => {
         if (this.activePanels.find(x => x.id == value.id))
             console.warn("Panel is already active, ignoring... ID:", value.id)
         else {
@@ -84,7 +83,7 @@ export class AppStore {
         }
     }
 
-    @action.bound addPanelFlag = (flag: string, to: ActivePanelType) => {
+    @action addPanelFlag = (flag: string, to: ActivePanelType) => {
         const panel = isPanelActive(to);
         if (!panel) {
             console.warn("Panel", to.id, "is not active!");
@@ -96,7 +95,7 @@ export class AppStore {
         }
     }
 
-    @action.bound removePanelFlag = (flag: string, from: ActivePanelType) => {
+    @action removePanelFlag = (flag: string, from: ActivePanelType) => {
         const panel = isPanelActive(from);
         if (!panel) {
             console.warn("Panel", from.id, "is not active!");
@@ -108,7 +107,7 @@ export class AppStore {
         }
     }
 
-    @action.bound removeActivePanel = (id: string) => {
+    @action removeActivePanel = (id: string) => {
         const index = this.activePanels.findIndex(x => x.id == id);
         if (index == -1)
             console.warn("No panel found for", id, "index returned -1")
@@ -117,26 +116,26 @@ export class AppStore {
     }
 
     // this is NOT ok!!!
-    @action.bound badForceUpdateInspector = () => { this.onUpdateInspector = new Date().getUTCMilliseconds(); }
+    @action badForceUpdateInspector = () => { this.onUpdateInspector = new Date().getUTCMilliseconds(); }
 
-    @action.bound setScene(objects: Object3D[] = [], helpers: Object3D[] = []) {
+    @action setScene(objects: Object3D[] = [], helpers: Object3D[] = []) {
         this.setControlsTarget(null);
         this.sceneObjects = objects;
         this.sceneHelpers = helpers;
     }
 
     // When a new component is made, push it to the scene
-    @action.bound addObject = (object: Object3D) => {
+    @action addObject = (object: Object3D) => {
         this.sceneObjects.push(object);
         return object;
     }
 
-    @action.bound addHelper = (helper: Object3D) => {
+    @action addHelper = (helper: Object3D) => {
         this.sceneHelpers.push(helper);
         return helper;
     }
 
-    @action.bound removeObject = (object: Object3D) => {
+    @action removeObject = (object: Object3D) => {
         this.setControlsTarget(null);
         const indx = this.sceneObjects.findIndex(obj => obj.uuid == object.uuid);
         if (indx != -1) {
@@ -160,7 +159,7 @@ export class AppStore {
         }
     }
 
-    @action.bound spliceObject = (index: number, deleteCount: number = 1, items?: Object3D | null) => {
+    @action spliceObject = (index: number, deleteCount: number = 1, items?: Object3D | null) => {
         console.log(index, deleteCount);
         if (index == -1) return;
         if (items)
@@ -171,7 +170,7 @@ export class AppStore {
 
     }
 
-    @action.bound setRootSelection(b: boolean) {
+    @action setRootSelection(b: boolean) {
         this.useRootSelection = b;
     }
 }
