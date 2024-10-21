@@ -1,4 +1,4 @@
-import { Form, Select, InputNumber, SelectProps, InputNumberProps } from "antd";
+import { Form, Select, InputNumber, InputNumberProps } from "antd";
 import React, { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";

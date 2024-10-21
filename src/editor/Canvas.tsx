@@ -159,6 +159,7 @@ const EditorControls = observer(() => {
                 controlsObject3D &&
                 <TransformControlsDrei
                     name='TRANSFORM_HELPER'
+                    //@ts-ignore
                     object={isOriginPointMode && !panelHasFlag(PANEL_ORIGIN_POINT, "drag_object") ? originDraggerRef : controlsObject3D}
                     mode={controlsMode}
                     space={controlsSpace}

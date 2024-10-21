@@ -21,7 +21,7 @@ export function doExport(scene: THREE.Object3D, options: ExportOptions, onExport
         case "gltf": exportGLTF(scene, options, onExport); break;
         case "glb": exportGLB(scene, options, onExport); break;
         case "usdz": exportUSDZ(scene, options, onExport); break;
-        case "obj": exportOBJ(scene, options, onExport); break;
+        case "obj": exportOBJ(scene, onExport); break;
         case "stl": exportSTL(scene, options, onExport); break;
         case "ply": exportPLY(scene, options, onExport); break;
     }
@@ -57,11 +57,11 @@ export function exportGLB(scene: THREE.Object3D, options: ExportOptions, onExpor
             onExport && onExport(blob);
         },
         (error) => { console.warn(error) },
-        { binary: true, maxTextureSize: options.maxTextureSize || Infinity, animations: optimizedAnims,  }
+        { binary: true, maxTextureSize: options.maxTextureSize || Infinity, animations: optimizedAnims, }
     );
 }
 
-export function exportOBJ(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+export function exportOBJ(scene: THREE.Object3D, onExport?: OnExport) {
     const exporter = new OBJExporter();
     const blob = saveString(exporter.parse(scene));
     onExport && onExport(blob);
@@ -118,8 +118,10 @@ export function exportSTL(scene: THREE.Object3D, options: ExportOptions, onExpor
 }
 
 export function exportAnimationClip(ac: THREE.AnimationClip, optimize: boolean = false, onExport?: OnExport) {
+    if (optimize)
+        ac = ac.optimize();
     const json = THREE.AnimationClip.toJSON(ac);
-    const blob = saveJSON(json);
+    const blob = saveJSON(json as any);
     onExport && onExport(blob);
 }
 

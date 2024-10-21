@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import * as EXPORTER from './Exporter.ts';
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
 import { message } from 'antd';
 import { sleep } from '../utils/Main.ts';
@@ -64,11 +63,4 @@ export async function screenshotCanvas(canvas: HTMLCanvasElement, renderer: THRE
     renderer.setSize(defaults.width, defaults.height);
 
     return blob as Blob;
-}
-
-function save(canvas: HTMLCanvasElement) {
-    canvas.toBlob(blob => {
-        if (blob)
-            EXPORTER.save(blob, "preview.png");
-    }, 'image/png', 1);
 }

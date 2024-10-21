@@ -40,8 +40,8 @@ const TranslationButton = observer(() => {
         <Tooltip title="Change between Translation, Rotation and Scale" placement="bottom">
             <Radio.Group onChange={onChange} value={isOriginPointMode ? "translate" : controlsMode}>
                 <Radio.Button value={"translate"} children={<DragOutlined />} />
-                <Radio.Button disabled={isOriginPointMode} value={"rotate"} children={<SyncOutlined />} />
-                <Radio.Button disabled={isOriginPointMode} value={"scale"} children={<ExpandAltOutlined />} />
+                <Radio.Button disabled={isOriginPointMode != undefined} value={"rotate"} children={<SyncOutlined />} />
+                <Radio.Button disabled={isOriginPointMode != undefined} value={"scale"} children={<ExpandAltOutlined />} />
             </Radio.Group>
         </Tooltip>
     )
@@ -57,7 +57,7 @@ const TranslationSpaceButton = observer(() => {
     return (
         <Tooltip title="Local Position/Rotation" placement="bottom">
             <Button onClick={() => setControlSpaceByName(controlsSpace == "world" ? "local" : "world")}>
-                <Checkbox checked={controlsSpace == "local"} onChange={(e) => setControlSpaceByName(controlsSpace == "world" ? "local" : "world")} style={{ paddingRight: "5px" }} />
+                <Checkbox checked={controlsSpace == "local"} onChange={() => setControlSpaceByName(controlsSpace == "world" ? "local" : "world")} style={{ paddingRight: "5px" }} />
                 {"Local"}
             </Button>
         </Tooltip>

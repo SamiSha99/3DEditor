@@ -1,4 +1,3 @@
-import { AppStore } from '@orb_AppStore';
 import * as THREE from 'three';
 import { CreateHelper } from './Helpers';
 

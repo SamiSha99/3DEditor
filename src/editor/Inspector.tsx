@@ -38,7 +38,7 @@ export const EditorInspector = observer(() => {
 })
 
 export const HierarchyTree = observer(() => {
-    const { sceneObjects, spliceObject, scene, onUpdateInspector, badForceUpdateInspector, setControlsTarget } = useStores();
+    const { sceneObjects, scene, setControlsTarget } = useStores();
 
     let treeData = getTreeDataNodes(sceneObjects as THREE.Object3D[]);
 

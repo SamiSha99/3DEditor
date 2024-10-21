@@ -30,9 +30,9 @@ export const Create = () => {
                                 message.success('Generated a Button and attached to ' + (controlsObject3D as Object3D).name);
                             }
                         }],
-                    onClick: (e) => {
-                        // message.success('Generated ' + (e.domEvent.target as HTMLElement).innerText)
-                    }
+                    // onClick: (e) => {
+                    //     // message.success('Generated ' + (e.domEvent.target as HTMLElement).innerText)
+                    // }
                 }}
             />
         </>

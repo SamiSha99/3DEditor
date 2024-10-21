@@ -6,18 +6,21 @@ import wasm from "vite-plugin-wasm";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    build: {
+        target: 'esnext'
+    },
     plugins: [
         wasm(),
         {
             name: "configure-response-headers",
             configureServer: (server) => {
-              server.middlewares.use((_req, res, next) => {
-                res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-                res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-                next();
-              });
+                server.middlewares.use((_req, res, next) => {
+                    res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+                    res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+                    next();
+                });
             },
-        },  
+        },
         react(),
         tsconfigPaths(),
         basicSsl(), // for development with vite, remove when done

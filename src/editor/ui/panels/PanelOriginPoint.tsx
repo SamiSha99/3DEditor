@@ -1,5 +1,5 @@
 import { useStores } from "@orb_App";
-import { Row, Space, Button, Checkbox, Tooltip, Alert, Divider, ButtonProps } from "antd";
+import { Row, Space, Button, Checkbox, Tooltip, Alert } from "antd";
 import { observer } from "mobx-react-lite";
 import * as THREE from "three";
 import { useState } from "react";

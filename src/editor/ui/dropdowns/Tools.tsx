@@ -1,6 +1,6 @@
 import * as ICONS from "@ant-design/icons";
 import { useStores } from "@orb_App";
-import { Dropdown, message, Button, Modal, Form, Select, Input, Upload, UploadProps, UploadFile, Divider } from "antd"
+import { Dropdown, message, Button, Modal, Form, Upload, UploadProps, UploadFile, Divider } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
 import * as IMPORTER from '@orb_tools/Importer'
@@ -158,8 +158,8 @@ export const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, 
             newFileList.splice(index, 1);
             setFileList(newFileList);
         },
-        beforeUpload: (file, fc) => {
-            const fl = fc as any as FileList;
+        beforeUpload: (_file, fc) => {
+            // const fl = fc as any as FileList;
             setFileList(fc);
             return false;
         },

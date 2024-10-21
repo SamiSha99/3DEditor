@@ -96,7 +96,7 @@ export const Background = observer(() => {
 export const Environment = observer(() => {
     const { scene, setEnvironment } = useStores();
     const [environmentOption, setEnvironmentOption] = useState<number>(() => { return !scene.environment ? 0 : (scene.environment == lastEnvironmentSample?.data ? 1 : 2) });
-    const [selectedSample, setSelectedSample] = useState<string | undefined>(lastEnvironmentSample?.name);
+    const [_selectedSample, setSelectedSample] = useState<string | undefined>(lastEnvironmentSample?.name);
 
     const list = (() => {
         let options: { value: string, label: string }[] = [];
