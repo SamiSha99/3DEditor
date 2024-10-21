@@ -23,7 +23,7 @@ export async function Screenshot(object: THREE.Object3D, width: number = 1024, h
     const scene = new THREE.Scene();
     // Generate our own environment
     const pmremGen = new THREE.PMREMGenerator(renderer);
-    const texture = pmremGen.fromScene(new RoomEnvironment(renderer), 0.5).texture;
+    const texture = pmremGen.fromScene(new RoomEnvironment(), 0.5).texture;
     scene.background = new THREE.Color(0xE0E0E0);
     scene.environment = texture;
 

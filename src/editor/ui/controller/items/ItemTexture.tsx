@@ -11,9 +11,12 @@ import { FullScreenQuad } from "three/examples/jsm/Addons";
 
 interface TextureInterface extends Item {
     hdr?: boolean,
+    size?: { width: number, height: number }
     onChange?: (value?: Texture) => void
     onDelete?: () => void
 }
+
+const DEFAULT_SIZE = { width: 64, height: 64 };
 
 type TextureObject = {
     url: string,
@@ -21,11 +24,13 @@ type TextureObject = {
 }
 
 export const ItemTexture: React.FC<TextureInterface> = (
-    { label, labelInVariable, object, variable, hdr, onChange }
+    { label, labelInVariable, object, variable, hdr, readonly, size, onChange }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [textureObject, setTextureObject] = useState<TextureObject | undefined>(undefined);
     const [hoverUploadIcon, setHoverUploadIcon] = useState(false);
+
+    if (!size) size = DEFAULT_SIZE;
 
     const makeImageObject = (t: Texture) => {
         const canvas = document.createElement("canvas");
@@ -74,13 +79,13 @@ export const ItemTexture: React.FC<TextureInterface> = (
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
             <div style={{ display: "flex" }}>
-                <div style={{ width: 64, height: 64, flexShrink: 0, backgroundColor: "#303030", outline: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    onMouseEnter={() => !textureObject && setHoverUploadIcon(true)}
-                    onMouseLeave={() => !textureObject && setHoverUploadIcon(false)}>
+                <div style={{ width: size.width, height: size.height, flexShrink: 0, backgroundColor: "#303030", outline: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    onMouseEnter={() => !textureObject && !readonly && setHoverUploadIcon(true)}
+                    onMouseLeave={() => !textureObject && !readonly && setHoverUploadIcon(false)}>
                     {
                         !textureObject?.url &&
                         <div style={{ color: "darkgrey", width: hoverUploadIcon ? "100%" : undefined, height: hoverUploadIcon ? "100%" : undefined }}>
-                            {hoverUploadIcon ? <Button style={{ width: "100%", height: "100%" }} icon={<CloudUploadOutlined style={{ fontSize: 32 }} />} onClick={requestUploadTexture} /> : "[empty]"}
+                            {hoverUploadIcon ? <Button style={{ width: "100%", height: "100%" }} icon={<CloudUploadOutlined style={{ fontSize: Math.min(size.height / 2, 64) }} />} onClick={requestUploadTexture} /> : "[empty]"}
                         </div>
                     }
                     {
@@ -88,31 +93,34 @@ export const ItemTexture: React.FC<TextureInterface> = (
                         <Image
                             style={{ objectFit: "cover" }}
                             src={textureObject.url}
-                            preview={{ mask: <EyeOutlined style={{ fontSize: 32 }} /> }}
+                            preview={{ mask: <EyeOutlined style={{ fontSize: Math.min(size.height / 2, 64) }} /> }}
                         />
                     }
                 </div>
-                <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
-                    <Button icon={<CloudUploadOutlined />} onClick={requestUploadTexture} />
-                    <Button icon={<DownloadOutlined />} disabled={!object[variable]} onClick={requestDownloadTexture} />
-                    <Popconfirm
-                        title="Remove Texture"
-                        description="This cannot be undone."
-                        onConfirm={() => {
-                            const t = object[variable] as Texture;
-                            t.dispose();
-                            object[variable] = undefined;
-                            if (!hdr)
-                                (object as Material).needsUpdate = true;
-                            setTextureObject(undefined);
-                            onChange && onChange(undefined);
-                        }}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button danger={object[variable]} disabled={!object[variable]} icon={<DeleteOutlined />} />
-                    </Popconfirm>
-                </div>
+                {
+                    !readonly &&
+                    <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
+                        <Button icon={<CloudUploadOutlined />} onClick={requestUploadTexture} />
+                        <Button icon={<DownloadOutlined />} disabled={!object[variable]} onClick={requestDownloadTexture} />
+                        <Popconfirm
+                            title="Remove Texture"
+                            description="This cannot be undone."
+                            onConfirm={() => {
+                                const t = object[variable] as Texture;
+                                t.dispose();
+                                object[variable] = undefined;
+                                if (!hdr)
+                                    (object as Material).needsUpdate = true;
+                                setTextureObject(undefined);
+                                onChange && onChange(undefined);
+                            }}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button danger={object[variable]} disabled={!object[variable]} icon={<DeleteOutlined />} />
+                        </Popconfirm>
+                    </div>
+                }
             </div>
         </Form.Item >
     )

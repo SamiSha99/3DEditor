@@ -53,7 +53,7 @@ export const Background = observer(() => {
 
     const backgroundUI = (selectedBackgroundOption: number) => {
         switch (selectedBackgroundOption) {
-            // Adjust THREE.Color
+            // Adjust Color
             case 1:
                 lastBackgroundColor && setBackground(lastBackgroundColor);
                 return <ItemColor object={{ background: scene.background }} variable="background" label="Color" disabledAlpha
@@ -62,7 +62,7 @@ export const Background = observer(() => {
                         setBackground(c);
                     }}
                 />
-            // Adjust by THREE.Texture
+            // Adjust by Texture
             case 2:
                 lastBackgroundTexture && setBackground(lastBackgroundTexture);
                 return <>
@@ -96,6 +96,7 @@ export const Background = observer(() => {
 export const Environment = observer(() => {
     const { scene, setEnvironment } = useStores();
     const [environmentOption, setEnvironmentOption] = useState<number>(() => { return !scene.environment ? 0 : (scene.environment == lastEnvironmentSample?.data ? 1 : 2) });
+    const [selectedSample, setSelectedSample] = useState<string | undefined>(lastEnvironmentSample?.name);
 
     const list = (() => {
         let options: { value: string, label: string }[] = [];
@@ -113,34 +114,40 @@ export const Environment = observer(() => {
         switch (selectedEnvironmentOption) {
             // Provided samples from the Drei library
             case 1:
-                if (lastEnvironmentSample)
-                    setEnvironment(lastEnvironmentSample.data);
-                return <ItemSelect object={{ environment: list }} variable="environment" label="Environment"
-                    defaultValue={!lastEnvironmentSample ? "None" : lastEnvironmentSample.name.replace(/^./, lastEnvironmentSample.name[0].toUpperCase())}
-                    onChangeSelect={(select) => {
-                        let v = undefined;
-                        if (select == "undefined") {
-                            setEnvironment(null);
-                            lastEnvironmentSample = null;
-                        }
-                        else {
-                            v = select as Environments
-                            loadEnvironmentSample(v!).then((o) => {
-                                if (o) {
-                                    setEnvironment(o.data);
-                                    lastEnvironmentSample = o;
+                setEnvironment(lastEnvironmentSample ? lastEnvironmentSample.data : null);
+                return (
+                    <>
+                        <ItemSelect object={{ environment: list }} variable="environment" label="Sample"
+                            defaultValue={!lastEnvironmentSample ? "None" : lastEnvironmentSample.name.replace(/^./, lastEnvironmentSample.name[0].toUpperCase())}
+                            onChangeSelect={(select) => {
+                                let v = undefined;
+                                if (select == "undefined") {
+                                    setEnvironment(null);
+                                    setSelectedSample(undefined)
+                                    lastEnvironmentSample = null;
                                 }
-                            })
-                        }
-                    }}
-                    options={list}
-                />
+                                else {
+                                    v = select as Environments
+                                    loadEnvironmentSample(v!).then((o) => {
+                                        if (o) {
+                                            setEnvironment(o.data);
+                                            setSelectedSample(o.name)
+                                            lastEnvironmentSample = o;
+                                        }
+                                    })
+                                }
+                            }}
+                            options={list}
+                        />
+                        {<ItemTexture key={"sample" + scene.environment?.uuid} object={scene} variable="environment" labelInVariable hdr readonly size={{ width: 128, height: 64 }} />}
+                    </>
+                )
             // Manually upload HDRI files
             case 2:
                 if (lastEnvironmentTexture) {
                     setEnvironment(lastEnvironmentTexture);
                 }
-                return <ItemTexture object={scene} variable="environment" labelInVariable hdr
+                return <ItemTexture key={"custom" + scene.environment?.uuid} object={scene} variable="environment" labelInVariable hdr size={{ width: 128, height: 64 }}
                     onChange={(t) => {
                         if (t) {
                             t.mapping = THREE.EquirectangularReflectionMapping;

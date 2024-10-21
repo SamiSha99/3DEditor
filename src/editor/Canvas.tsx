@@ -3,7 +3,7 @@ import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-thre
 import { useStores } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { Box, CameraControls, Environment, GizmoHelper, GizmoViewport, Grid, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { Box, CameraControls, GizmoHelper, GizmoViewport, Grid, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { isPanelActive, PANEL_ORIGIN_POINT, panelHasFlag } from "@orb_UI/panels/Panels";
@@ -36,11 +36,9 @@ interface CanvasInfo {
 }
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
-
     const { sceneObjects, sceneHelpers, controlsObject3D, isTransforming,
         removeObject, setControlsTarget } = useStores();
     const { camera, raycaster } = useThree();
-
 
     // the passed ref is null at load time! 
     if (!canvas) canvas = document.getElementById('main') as HTMLCanvasElement;
@@ -64,7 +62,7 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
     }
     canvas.onmouseup = selectObject;
 
-    useHotkeys("delete", () => controlsObject3D instanceof THREE.Object3D && removeObject(controlsObject3D))
+    useHotkeys("backspace", () => controlsObject3D instanceof THREE.Object3D && removeObject(controlsObject3D))
     useHotkeys("esc", () => controlsObject3D && setControlsTarget(null))
 
     return (
