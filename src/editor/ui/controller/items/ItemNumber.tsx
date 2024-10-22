@@ -58,7 +58,7 @@ export const ItemNumber: React.FC<InputNumberInterface> = (
                 changeOnWheel
                 readOnly={readonly}
                 step={step == undefined ? 0.1 : step}
-                // disabled={readonly}
+                disabled={readonly}
                 onChange={(v: number | null) => {
                     if (v == null) return;
                     setValue(v)

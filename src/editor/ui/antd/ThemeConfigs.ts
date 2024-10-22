@@ -49,6 +49,10 @@ export const MainTheme: ThemeConfig = {
 }
 
 export const InspectorTheme: ThemeConfig = {
+    token: {
+        colorTextDisabled: "rgba(255, 255, 255, 0.6)",
+        // colorBgContainerDisabled: "rgba(128, 128, 128, 0.20)"
+    },
     components: {
         Collapse: {
             contentBg: "#212121",
@@ -77,7 +81,7 @@ export const InspectorTheme: ThemeConfig = {
             defaultShadow: "none",
             defaultHoverBg: "#141414",
             defaultActiveBg: "#141414"
-        }
+        },
     }
 }
 
