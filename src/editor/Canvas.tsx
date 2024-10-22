@@ -84,17 +84,16 @@ const EditorSceneHelpers: React.FC<{ helper: THREE.Object3D }> = observer(({ hel
     return (<primitive key={helper.uuid} object={helper} />)
 })
 
-const EditorHelpers = () => {
+const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
-
+    const { grid } = useStores();
     return (
         <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
-            <Box name='CENTER_GRID_HELPER' material-color={"red"} scale={[0.25, 0.0005, 0.25]} position={[0, 0, 0]} />
-            <Grid name='GRID_HELPER' cellColor={"#2080ff"} infiniteGrid side={THREE.DoubleSide} />
             <EditorControls />
+            {grid.enabled && <primitive object={grid.helper} />}
         </group>
     )
-}
+})
 
 const EditorControls = observer(() => {
     const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming } = useStores();
