@@ -1,6 +1,6 @@
 import { useStores } from "@orb_App";
 import { screenshotCanvas } from "@orb_tools/Previewer";
-import { DraggablePanel } from "src/editor/Panels";
+import { DraggablePanel } from "../antd/DraggablePanel";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Alert, Button, Form, message, Row, Space } from "antd";
 import { observer } from "mobx-react-lite";
