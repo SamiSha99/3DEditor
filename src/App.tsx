@@ -2,20 +2,17 @@ import { ReactNode } from 'react'
 import './App.css'
 import { useContext, createContext } from 'react'
 import { AppStore } from '@orb_AppStore'
-import Editor from './editor/Editor.tsx'
+import { ActivePanels } from '@orb_UI/ActivePanels'
+import { MenuBar } from '@orb_UI/Menubar'
 import { ConfigProvider } from 'antd'
 import { MainTheme } from '@orb_UI/antd/ThemeConfigs.ts'
+import EditorInspector from './editor/Inspector'
 
 export const StoreContext = createContext<AppStore>({} as any)
 export const useStores = () => useContext(StoreContext)
 
 type StoreComponent = React.FC<{ store: any, children: ReactNode }>
-
-const StoreProvider: StoreComponent = ({ store, children }) => {
-    return (
-        <StoreContext.Provider value={store} children={children} />
-    )
-}
+const StoreProvider: StoreComponent = ({ store, children }) => { return <StoreContext.Provider value={store} children={children} /> }
 
 const session = new AppStore();
 const initScene = async () => {
@@ -31,7 +28,11 @@ function App() {
     return (
         <StoreProvider store={session}>
             <ConfigProvider theme={MainTheme}>
-                <Editor />
+                <div style={{ display: "flex", flexWrap: "wrap", height: "100vh", width: "100vw", overflow: "hidden" }}>
+                    <MenuBar />
+                    <EditorInspector />
+                    <ActivePanels />
+                </div>
             </ConfigProvider>
         </StoreProvider>
     )
