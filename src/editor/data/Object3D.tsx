@@ -6,7 +6,6 @@ import * as THREE from 'three';
 
 export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
     const { controlsObject3D } = useStores();
-    console.log(object.userData, JSON.stringify(object.userData));
     return (
         <>
             <ItemCollapse label={"Object3D"}>
