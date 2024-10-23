@@ -4,7 +4,7 @@ import { useContext, createContext } from 'react'
 import { ConfigProvider } from 'antd'
 import { MainTheme } from '@orb_UI/antd/ThemeConfigs.ts'
 import { Editor } from '@orb_Editor'
-import { MenuBar, Inspector, Panels } from './editor/EditorComponents'
+import { MenuBar, Inspector, Overlay } from './editor/EditorComponents'
 
 export const StoreContext = createContext<Editor>({} as any)
 export const useStores = () => useContext(StoreContext)
@@ -29,7 +29,7 @@ function App() {
                 <div style={{ display: "flex", flexWrap: "wrap", height: "100vh", width: "100vw", overflow: "hidden" }}>
                     <MenuBar />
                     <Inspector />
-                    <Panels />
+                    <Overlay />
                 </div>
             </ConfigProvider>
         </StoreProvider>

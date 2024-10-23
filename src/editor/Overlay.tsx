@@ -6,7 +6,7 @@ import Draggable, { DraggableBounds } from "react-draggable";
 import { CloseOutlined } from "@ant-design/icons";
 import { useEffect, useRef, useState } from "react";
 
-export const Panels = observer(() => {
+export const Overlay = observer(() => {
     const { activePanels } = useStores();
 
     return (
@@ -71,4 +71,4 @@ export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ nam
     )
 })
 
-export default Panels;
+export default Overlay;
