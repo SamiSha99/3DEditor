@@ -9,8 +9,8 @@ import { MenuBar, Inspector, Overlay } from './editor/EditorComponents'
 export const EditorContext = createContext<Editor>({} as any)
 export const useEditor = () => useContext(EditorContext);
 
-type EditorComponent = React.FC<{ editor: any, children: ReactNode }>
-const EditorProvider: EditorComponent = ({ editor, children }) => { return <EditorContext.Provider value={editor} children={children} /> }
+type EditorComponent = { editor: Editor, children: ReactNode }
+const EditorProvider = ({ editor, children }: EditorComponent) => { return <EditorContext.Provider value={editor} children={children} /> }
 
 const editor = new Editor();
 
