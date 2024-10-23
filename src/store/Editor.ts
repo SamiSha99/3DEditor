@@ -4,9 +4,9 @@ import * as TYPE from "./type";
 import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
 import * as THREE from 'three';
 
-export class AppStore {
+export class Editor {
 
-    static _instance: AppStore;
+    static _instance: Editor;
 
     // Object3D ID
     @observable controlsTarget: number | number[] = -1;
@@ -31,8 +31,7 @@ export class AppStore {
         ),
         enabled: true
     }
-    // Last update request time in milliseconds
-    @observable onUpdateInspector = new Date().getUTCMilliseconds();
+
     // Currently selected Objects
     @observable controlsObject3D: Object3D | null = null;
 
@@ -49,7 +48,7 @@ export class AppStore {
 
     constructor() {
         makeObservable(this)
-        AppStore._instance = this;
+        Editor._instance = this;
     }
 
     public static get Instance() {
@@ -126,9 +125,6 @@ export class AppStore {
         else
             this.activePanels.splice(index, 1);
     }
-
-    // this is NOT ok!!!
-    @action badForceUpdateInspector = () => { this.onUpdateInspector = new Date().getUTCMilliseconds(); }
 
     @action setScene(objects: Object3D[] = [], helpers: Object3D[] = []) {
         this.setControlsTarget(null);

@@ -1,7 +1,7 @@
 import React from "react";
 import PanelOriginPoint from './PanelOriginPoint';
 import PanelScreenshot from "./PanelScreenshot";
-import { AppStore } from "@orb_AppStore";
+import { Editor } from "@orb_Editor";
 
 export type ActivePanelType = {
     id: string,
@@ -15,7 +15,7 @@ export const PANEL_SCREENSHOT: ActivePanelType = { id: "screenshot", panel: <Pan
 /** Checks if the panel is currently active */
 export function isPanelActive(panel: ActivePanelType | string) {
     const id = (typeof panel === 'string' ? panel : panel.id);
-    return AppStore.Instance.activePanels.find(x => x.id == id);
+    return Editor.Instance.activePanels.find(x => x.id == id);
 }
 
 export function panelHasFlag(panel: ActivePanelType | string, flag: string) {

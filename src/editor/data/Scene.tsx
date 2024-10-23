@@ -1,5 +1,5 @@
 import { useStores } from "@orb_App";
-import { AppStore } from "@orb_AppStore";
+import { Editor } from "@orb_Editor";
 import { Environments, environments } from "@orb_types";
 import { ItemCollapse, ItemColor, ItemEuler, ItemNumber, ItemSelect, ItemTexture } from "@orb_UI/controller/ControllerItems";
 import { loadEnvironmentSample } from "@orb_utils/Samples";
@@ -23,7 +23,7 @@ const backgroundOptions = [
     { value: 2, label: "Texture" }
 ]
 
-let lastBackgroundColor: THREE.Color | null = AppStore.DEFAULT_SCENE_BACKGROUND_COLOR.clone();
+let lastBackgroundColor: THREE.Color | null = Editor.DEFAULT_SCENE_BACKGROUND_COLOR.clone();
 let lastBackgroundTexture: THREE.Texture | null;
 
 const fogOptions = [
