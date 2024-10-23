@@ -1,9 +1,9 @@
-import { useEditor } from "@orb_Editor"
 import { Dropdown, Button, Checkbox } from "antd"
 import { observer } from "mobx-react-lite";
+import { useViewport } from "src/store/Viewport";
 export const View = observer(() => {
-    const { setGrid, grid } = useEditor();
-
+    const { setGrid, gridEnabled } = useViewport();
+    console.log("refreshed...", gridEnabled)
     return (
         <>
             <Dropdown trigger={["click"]} children={<Button children={"View"} />}
@@ -11,10 +11,8 @@ export const View = observer(() => {
                     items: [
                         {
                             key: "0",
-                            label: "Grid",
-                            // TO-DO: Doesn't update!
-                            icon: <Checkbox defaultChecked={grid.enabled} onClick={(e) => e.stopPropagation()} onChange={(e) => { e.stopPropagation(), setGrid(e.target.checked) }} />,
-                            onClick: () => { setGrid(!grid.enabled) }
+                            label: "Grid Helper",
+                            onClick: () => { setGrid(!gridEnabled) }
                         }
                     ]
                 }} />

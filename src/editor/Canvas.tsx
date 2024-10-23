@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { isPanelActive, PANEL_ORIGIN_POINT, panelHasFlag } from "@orb_UI/panels/Panels";
 import { translateOriginPoint } from "@orb_utils/Mesh";
+import { useViewport } from "src/store/Viewport";
 
 
 const Canvas = observer(() => {
@@ -86,11 +87,12 @@ const EditorSceneHelpers: React.FC<{ helper: THREE.Object3D }> = observer(({ hel
 
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
-    const { grid } = useEditor();
+    const { gridEnabled, grid } = useViewport();
+
     return (
         <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
             <EditorControls />
-            {grid.enabled && <primitive object={grid.helper} />}
+            {gridEnabled && <primitive object={grid} />}
         </group>
     )
 })
