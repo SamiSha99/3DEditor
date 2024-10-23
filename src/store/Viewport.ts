@@ -1,5 +1,7 @@
 import { makeObservable } from "mobx";
 
+// to-do move Editor grid to here
+// This controls all related content that allows the user to interact with the scene
 export class Viewport {
 
     static _instance: Viewport;
