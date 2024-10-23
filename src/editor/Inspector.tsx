@@ -16,7 +16,7 @@ export const Inspector = () => {
 
     return (
         <Splitter>
-            <Splitter.Panel defaultSize={"75%"}>
+            <Splitter.Panel defaultSize={"70%"} min={"60%"} max={"80%"}>
                 <Canvas />
                 <ControlsBar />
             </Splitter.Panel>
