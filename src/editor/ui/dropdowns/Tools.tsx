@@ -1,5 +1,5 @@
 import * as ICONS from "@ant-design/icons";
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { Dropdown, message, Button, Modal, Form, Upload, UploadProps, UploadFile, Divider } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
@@ -13,7 +13,7 @@ import { PANEL_ORIGIN_POINT, PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
 
 export const Tools = observer(() => {
-    const { controlsObject3D, addObject, setControlsModeByName, setControlSpaceByName, addActivePanel } = useStores();
+    const { controlsObject3D, addObject, setControlsModeByName, setControlSpaceByName, addActivePanel } = useEditor();
     return (
         <>
             <Dropdown

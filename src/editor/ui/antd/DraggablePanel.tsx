@@ -1,4 +1,4 @@
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { observer } from "mobx-react-lite";
 import { Button, Card } from "antd";
 import Draggable, { DraggableBounds } from "react-draggable";
@@ -25,7 +25,7 @@ const getCanvasBounds = (width?: number, height?: number) => {
 }
 
 export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ name, identifier, width, height, startingPositionNormalized, children, onClose }) => {
-    const { removeActivePanel } = useStores();
+    const { removeActivePanel } = useEditor();
     const ref = useRef<HTMLDivElement>(null);
     const w = width ? width : ref.current?.offsetWidth;
     const h = height ? height : ref.current?.offsetHeight;

@@ -1,5 +1,5 @@
 
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { ItemBoolean, ItemCollapse, ItemGroup, ItemNumber, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { Limit } from "@orb_UI/controller/items/Item";
 import { observer } from "mobx-react-lite";
@@ -21,7 +21,7 @@ const GeometrySelect = [
 ] as { value: string, label: string }[];
 
 export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = observer(({ geometry }) => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
     const [g, setG] = useState(geometry);
 
     const instantiateGeometry = (value: string) => {
@@ -85,7 +85,7 @@ export const ChildGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = obser
 })
 
 export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry }> = observer(({ geometry }) => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
 
     const width = geometry.parameters.width;
     const height = geometry.parameters.height;
@@ -136,7 +136,7 @@ export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry }> = o
 
 // Cone is a child of Cylinder
 export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeometry | THREE.ConeGeometry }> = observer(({ geometry }) => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
 
     const radiusTop = geometry instanceof THREE.ConeGeometry ? 0 : geometry.parameters.radiusTop;
     const radiusBottom = geometry instanceof THREE.ConeGeometry ? geometry.parameters.radius : geometry.parameters.radiusBottom;
@@ -247,7 +247,7 @@ export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeome
 })
 
 export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry }> = observer(({ geometry }) => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
 
     const width = geometry.parameters.width;
     const height = geometry.parameters.height;
@@ -293,7 +293,7 @@ export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry }>
 })
 
 export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometry }> = observer(({ geometry }) => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
 
     const radius = geometry.parameters.radius;
     const length = geometry.parameters.length;
@@ -342,7 +342,7 @@ export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometr
 })
 
 export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry }> = observer(({ geometry }) => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
 
     const radius = geometry.parameters.radius;
     const tube = geometry.parameters.tube;
@@ -400,7 +400,7 @@ export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry }>
 })
 
 export const InspectorIcosahedronGeometry: React.FC<{ geometry: THREE.IcosahedronGeometry }> = observer(({ geometry }) => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
 
     const radius = geometry.parameters.radius;
     const detail = geometry.parameters.detail;

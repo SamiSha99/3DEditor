@@ -1,4 +1,4 @@
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { screenshotCanvas } from "@orb_tools/Previewer";
 import { DraggablePanel } from "../antd/DraggablePanel";
 import { Environment, OrbitControls } from "@react-three/drei";
@@ -24,7 +24,7 @@ function resetDefaults() {
 }
 
 export const PanelScreenshot = observer(() => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
 
     const obj = controlsObject3D?.clone();
     obj?.position.set(0, 0, 0);

@@ -1,4 +1,4 @@
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { Editor } from "@orb_Editor";
 import { Environments, environments } from "@orb_types";
 import { ItemCollapse, ItemColor, ItemEuler, ItemNumber, ItemSelect, ItemTexture } from "@orb_UI/controller/ControllerItems";
@@ -48,7 +48,7 @@ export const InspectorScene = observer(() => {
 })
 
 export const Background = observer(() => {
-    const { scene, setBackground } = useStores();
+    const { scene, setBackground } = useEditor();
     const [backgroundOption, setBackgroundOption] = useState<number>(() => { return !scene.background ? 0 : (scene.background instanceof THREE.Color ? 1 : 2); });
 
     const backgroundUI = (selectedBackgroundOption: number) => {
@@ -94,7 +94,7 @@ export const Background = observer(() => {
 })
 
 export const Environment = observer(() => {
-    const { scene, setEnvironment } = useStores();
+    const { scene, setEnvironment } = useEditor();
     const [environmentOption, setEnvironmentOption] = useState<number>(() => { return !scene.environment ? 0 : (scene.environment == lastEnvironmentSample?.data ? 1 : 2) });
     const [_selectedSample, setSelectedSample] = useState<string | undefined>(lastEnvironmentSample?.name);
 
@@ -180,7 +180,7 @@ export const Environment = observer(() => {
 })
 
 export const Fog = observer(() => {
-    const { scene, setFog } = useStores();
+    const { scene, setFog } = useEditor();
     const [fogOption, setFogOption] = useState<number>(() => { return !scene.fog ? 0 : (scene.fog instanceof THREE.Fog ? 1 : 2) });
 
     const itemFog = (() => {

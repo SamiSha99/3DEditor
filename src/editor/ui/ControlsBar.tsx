@@ -1,6 +1,6 @@
 import { DragOutlined, ExpandAltOutlined, SyncOutlined } from "@ant-design/icons"
 import { ControlsBarStyle } from "./style"
-import { useStores } from "@orb_App"
+import { useEditor } from "@orb_App"
 import { observer } from "mobx-react-lite"
 import { Button, Checkbox, Divider, Radio, RadioChangeEvent, Tooltip } from "antd";
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -19,7 +19,7 @@ export const ControlsBar = observer(() => {
 })
 
 const TranslationButton = observer(() => {
-    const { controlsMode, setControlsModeByName } = useStores();
+    const { controlsMode, setControlsModeByName } = useEditor();
     const isOriginPointMode = isPanelActive(PANEL_ORIGIN_POINT);
 
     useHotkeys("space", () => {
@@ -48,7 +48,7 @@ const TranslationButton = observer(() => {
 })
 
 const TranslationSpaceButton = observer(() => {
-    const { setControlSpaceByName, controlsSpace } = useStores();
+    const { setControlSpaceByName, controlsSpace } = useEditor();
 
     useHotkeys("l", () => {
         setControlSpaceByName(controlsSpace == "world" ? "local" : "world")
@@ -65,7 +65,7 @@ const TranslationSpaceButton = observer(() => {
 })
 
 const RootSelectionButton = observer(() => {
-    const { setRootSelection, useRootSelection } = useStores();
+    const { setRootSelection, useRootSelection } = useEditor();
     useHotkeys("r", () => setRootSelection(!useRootSelection));
 
     return (

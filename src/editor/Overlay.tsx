@@ -1,11 +1,11 @@
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { observer } from "mobx-react-lite";
 import { ConfigProvider } from "antd";
 import { PanelsThemeConfig } from "@orb_UI/antd/ThemeConfigs";
 
 
 export const Overlay = observer(() => {
-    const { activePanels } = useStores();
+    const { activePanels } = useEditor();
 
     return (
         <ConfigProvider theme={PanelsThemeConfig}>

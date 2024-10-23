@@ -1,4 +1,4 @@
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { Row, Space, Button, Checkbox, Tooltip, Alert } from "antd";
 import { observer } from "mobx-react-lite";
 import * as THREE from "three";
@@ -11,7 +11,7 @@ const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justify
 const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
 
 export const PanelOriginPoint = observer(() => {
-    const { controlsObject3D, scene, addPanelFlag, removePanelFlag } = useStores();
+    const { controlsObject3D, scene, addPanelFlag, removePanelFlag } = useEditor();
     const [onConstraintObject, setOnConstraintObject] = useState(true);
     const o = controlsObject3D;
 

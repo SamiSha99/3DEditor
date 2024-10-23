@@ -1,8 +1,8 @@
-import { useStores } from "@orb_App"
+import { useEditor } from "@orb_App"
 import { Dropdown, Button, Checkbox } from "antd"
 import { observer } from "mobx-react-lite";
 export const View = observer(() => {
-    const { setGrid, grid } = useStores();
+    const { setGrid, grid } = useEditor();
 
     return (
         <>

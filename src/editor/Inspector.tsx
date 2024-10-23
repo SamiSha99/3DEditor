@@ -1,4 +1,4 @@
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
@@ -12,7 +12,7 @@ import Canvas from './Canvas'
 import * as THREE from "three"
 
 export const Inspector = () => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
 
     return (
         <Splitter>
@@ -38,7 +38,7 @@ export const Inspector = () => {
 }
 
 export const HierarchyTree = observer(() => {
-    const { sceneObjects, scene, setControlsTarget } = useStores();
+    const { sceneObjects, scene, setControlsTarget } = useEditor();
 
     let treeData = getTreeDataNodes(sceneObjects as THREE.Object3D[]);
 

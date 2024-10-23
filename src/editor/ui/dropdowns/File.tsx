@@ -2,14 +2,14 @@ import { useState } from "react";
 import { EditOutlined, ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
 import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
 import * as THREE from "three";
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { doImport } from "@orb_tools/Importer";
 import { ExportType, doExport, save } from "@orb_tools/Exporter";
 import { ItemBoolean, ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { ConvertModal, textureSizeOptions } from "./Tools";
 
 export const File = () => {
-    const { setScene, addObject } = useStores();
+    const { setScene, addObject } = useEditor();
     const [modalExport, toggleModalExport] = useState(false);
     const [modalConvert, toggleModalConvert] = useState(false);
     return (
@@ -72,7 +72,7 @@ const exportOptions = [
 const exportSettings = { name: "exportName", type: exportOptions[0].value, exportSelection: false, textureSize: 1024 }
 
 const ExportModal: React.FC<{ open: boolean, onSubmit: () => void, onCancel: () => void }> = ({ open, onSubmit, onCancel }) => {
-    const { controlsObject3D, sceneObjects } = useStores();
+    const { controlsObject3D, sceneObjects } = useEditor();
 
     const doDownload = () => {
         const res = exportSettings;

@@ -7,7 +7,7 @@ import { Editor } from '@orb_Editor'
 import { MenuBar, Inspector, Overlay } from './editor/EditorComponents'
 
 export const StoreContext = createContext<Editor>({} as any)
-export const useStores = () => useContext(StoreContext)
+export const useEditor = () => useContext(StoreContext)
 
 type StoreComponent = React.FC<{ store: any, children: ReactNode }>
 const StoreProvider: StoreComponent = ({ store, children }) => { return <StoreContext.Provider value={store} children={children} /> }

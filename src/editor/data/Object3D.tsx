@@ -1,11 +1,11 @@
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { ItemBoolean, ItemCollapse, ItemEuler, ItemInput, ItemNumber, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { observer } from "mobx-react-lite";
 import * as THREE from 'three';
 
 export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
-    const { controlsObject3D } = useStores();
+    const { controlsObject3D } = useEditor();
     return (
         <>
             <ItemCollapse label={"Object3D"}>

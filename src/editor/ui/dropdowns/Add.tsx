@@ -1,12 +1,12 @@
 import { Dropdown, Button, message } from "antd";
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { Button3D } from "@orb_tools/create/Button3D";
 import { Object3D } from "three";
 import * as LIGHT from "@orb_tools/create/Light"
 import * as GEOMETRY from "@orb_tools/create/Primitive"
 
 export const Add = () => {
-    const { addObject, addHelper } = useStores();
+    const { addObject, addHelper } = useEditor();
 
     const onCreate = (object: Object3D, helper?: Object3D) => {
         object && addObject(object);
@@ -56,7 +56,7 @@ export const Add = () => {
                     message.success('Created ' + (e.domEvent.target as HTMLElement).innerText)
                 }
             }}
-            
+
         />
     )
 }

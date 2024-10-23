@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-three/fiber';
-import { useStores } from "@orb_App";
+import { useEditor } from "@orb_App";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { Box, CameraControls, GizmoHelper, GizmoViewport, Grid, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { CameraControls, GizmoHelper, GizmoViewport, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { isPanelActive, PANEL_ORIGIN_POINT, panelHasFlag } from "@orb_UI/panels/Panels";
@@ -11,7 +11,7 @@ import { translateOriginPoint } from "@orb_utils/Mesh";
 
 
 const Canvas = observer(() => {
-    const { scene } = useStores()
+    const { scene } = useEditor()
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [loaded, setLoaded] = useState<boolean>();
 
@@ -37,7 +37,7 @@ interface CanvasInfo {
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
     const { sceneObjects, sceneHelpers, controlsObject3D, isTransforming,
-        removeObject, setControlsTarget } = useStores();
+        removeObject, setControlsTarget } = useEditor();
     const { camera, raycaster } = useThree();
 
     // the passed ref is null at load time! 
@@ -86,7 +86,7 @@ const EditorSceneHelpers: React.FC<{ helper: THREE.Object3D }> = observer(({ hel
 
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
-    const { grid } = useStores();
+    const { grid } = useEditor();
     return (
         <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
             <EditorControls />
@@ -96,7 +96,7 @@ const EditorHelpers = observer(() => {
 })
 
 const EditorControls = observer(() => {
-    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming } = useStores();
+    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming } = useEditor();
     const { camera, scene } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const [lastObjPlace, setLastObjectPlace] = useState<THREE.Vector3 | undefined>(undefined);
