@@ -1,5 +1,5 @@
 
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { ItemBoolean, ItemCollapse, ItemGroup, ItemNumber, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { Limit } from "@orb_UI/controller/items/Item";
 import { observer } from "mobx-react-lite";

@@ -1,4 +1,4 @@
-import { useEditor } from "@orb_App"
+import { useEditor } from "@orb_Editor"
 import { Dropdown, Button, Checkbox } from "antd"
 import { observer } from "mobx-react-lite";
 export const View = observer(() => {

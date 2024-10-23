@@ -1,5 +1,5 @@
 import * as ICONS from "@ant-design/icons";
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { Dropdown, message, Button, Modal, Form, Upload, UploadProps, UploadFile, Divider } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';

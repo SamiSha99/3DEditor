@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-three/fiber';
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
 import { CameraControls, GizmoHelper, GizmoViewport, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";

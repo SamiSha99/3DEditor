@@ -1,4 +1,4 @@
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { screenshotCanvas } from "@orb_tools/Previewer";
 import { DraggablePanel } from "../antd/DraggablePanel";
 import { Environment, OrbitControls } from "@react-three/drei";

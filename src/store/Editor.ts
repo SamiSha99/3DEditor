@@ -3,10 +3,17 @@ import { Object3D, Scene, Color, Texture, Fog, FogExp2 } from "three";
 import * as TYPE from "./type";
 import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
 import * as THREE from 'three';
+import { Viewport } from "./Viewport";
+import { createContext, useContext } from "react";
+
+export const EditorContext = createContext<Editor>({} as any)
+export const useEditor = () => useContext(EditorContext);
 
 export class Editor {
 
     static _instance: Editor;
+
+    @observable viewport = new Viewport();
 
     // Object3D ID
     @observable controlsTarget: number | number[] = -1;

@@ -1,4 +1,4 @@
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";

@@ -1,4 +1,4 @@
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { observer } from "mobx-react-lite";
 import { ConfigProvider } from "antd";
 import { PanelsThemeConfig } from "@orb_UI/antd/ThemeConfigs";

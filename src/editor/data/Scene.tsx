@@ -1,4 +1,4 @@
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { Editor } from "@orb_Editor";
 import { Environments, environments } from "@orb_types";
 import { ItemCollapse, ItemColor, ItemEuler, ItemNumber, ItemSelect, ItemTexture } from "@orb_UI/controller/ControllerItems";

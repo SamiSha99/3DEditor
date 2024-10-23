@@ -1,6 +1,6 @@
 import { DragOutlined, ExpandAltOutlined, SyncOutlined } from "@ant-design/icons"
 import { ControlsBarStyle } from "./style"
-import { useEditor } from "@orb_App"
+import { useEditor } from "@orb_Editor"
 import { observer } from "mobx-react-lite"
 import { Button, Checkbox, Divider, Radio, RadioChangeEvent, Tooltip } from "antd";
 import { useHotkeys } from 'react-hotkeys-hook';

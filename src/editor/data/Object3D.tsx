@@ -1,5 +1,5 @@
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { ItemBoolean, ItemCollapse, ItemEuler, ItemInput, ItemNumber, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { observer } from "mobx-react-lite";
 import * as THREE from 'three';

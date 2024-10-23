@@ -1,4 +1,4 @@
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { Row, Space, Button, Checkbox, Tooltip, Alert } from "antd";
 import { observer } from "mobx-react-lite";
 import * as THREE from "three";

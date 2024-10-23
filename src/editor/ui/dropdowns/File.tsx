@@ -2,7 +2,7 @@ import { useState } from "react";
 import { EditOutlined, ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
 import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
 import * as THREE from "three";
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { doImport } from "@orb_tools/Importer";
 import { ExportType, doExport, save } from "@orb_tools/Exporter";
 import { ItemBoolean, ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";

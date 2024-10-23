@@ -1,5 +1,5 @@
 import { Dropdown, Button, message } from "antd";
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { Button3D } from "@orb_tools/create/Button3D";
 import { Object3D } from "three";
 import * as LIGHT from "@orb_tools/create/Light"

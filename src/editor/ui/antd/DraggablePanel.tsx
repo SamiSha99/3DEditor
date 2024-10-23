@@ -1,4 +1,4 @@
-import { useEditor } from "@orb_App";
+import { useEditor } from "@orb_Editor";
 import { observer } from "mobx-react-lite";
 import { Button, Card } from "antd";
 import Draggable, { DraggableBounds } from "react-draggable";

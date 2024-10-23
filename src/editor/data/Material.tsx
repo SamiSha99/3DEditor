@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { observer } from "mobx-react-lite";
 import { ItemBoolean, ItemButton, ItemCollapse, ItemNumber, ItemSelect, ItemTexture, ItemVector2, ItemGroup, ItemInput, ItemEuler } from '@orb_UI/controller/ControllerItems';
 import { LIMIT_01 } from '@orb_UI/controller/items/Item';
-import { useEditor } from '@orb_App';
+import { useEditor } from '@orb_Editor';
 import { useState } from 'react';
 import { Divider } from 'antd';
 import { ItemColor } from '@orb_UI/controller/items/ItemColor';

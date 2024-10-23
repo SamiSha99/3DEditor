@@ -1,16 +1,9 @@
 import './App.css'
-import { ReactNode } from 'react'
-import { useContext, createContext } from 'react'
 import { ConfigProvider } from 'antd'
 import { MainTheme } from '@orb_UI/antd/ThemeConfigs.ts'
 import { Editor } from '@orb_Editor'
 import { MenuBar, Inspector, Overlay } from './editor/EditorComponents'
-
-export const EditorContext = createContext<Editor>({} as any)
-export const useEditor = () => useContext(EditorContext);
-
-type EditorComponent = { editor: Editor, children: ReactNode }
-const EditorProvider = ({ editor, children }: EditorComponent) => { return <EditorContext.Provider value={editor} children={children} /> }
+import { EditorProvider, ViewportProvider } from './store/Providers'
 
 const editor = new Editor();
 
@@ -26,13 +19,15 @@ function App() {
 
     return (
         <EditorProvider editor={editor}>
-            <ConfigProvider theme={MainTheme}>
-                <div style={{ display: "flex", flexWrap: "wrap", height: "100vh", width: "100vw", overflow: "hidden" }}>
-                    <MenuBar />
-                    <Inspector />
-                    <Overlay />
-                </div>
-            </ConfigProvider>
+            <ViewportProvider viewport={editor.viewport}>
+                <ConfigProvider theme={MainTheme}>
+                    <div style={{ display: "flex", flexWrap: "wrap", height: "100vh", width: "100vw", overflow: "hidden" }}>
+                        <MenuBar />
+                        <Inspector />
+                        <Overlay />
+                    </div>
+                </ConfigProvider>
+            </ViewportProvider>
         </EditorProvider>
     )
 }
