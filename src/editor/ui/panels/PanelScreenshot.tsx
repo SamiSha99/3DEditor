@@ -1,6 +1,6 @@
 import { useStores } from "@orb_App";
 import { screenshotCanvas } from "@orb_tools/Previewer";
-import { DraggablePanel } from "@orb_UI/ActivePanels";
+import { DraggablePanel } from "src/editor/Panels";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Alert, Button, Form, message, Row, Space } from "antd";
 import { observer } from "mobx-react-lite";
@@ -66,7 +66,7 @@ export const PanelScreenshot = observer(() => {
                             <Space.Compact style={{ marginBottom: "5px" }}>
                                 <div style={{ margin: "auto", width: "100%", alignContent: "top" }}>
                                     <Form style={{ width: "100%" }} colon={false} labelWrap>
-                                        <ItemVector2 object={object} variable="size" precision={false} label={false} labelVector={{ x: "Width", y: "Height" }} limit={{ x: {min: 128, max: 1024}, y: {min: 128, max: 1024} }} />
+                                        <ItemVector2 object={object} variable="size" precision={false} label={false} labelVector={{ x: "Width", y: "Height" }} limit={{ x: { min: 128, max: 1024 }, y: { min: 128, max: 1024 } }} />
                                     </Form>
                                 </div>
                             </Space.Compact>

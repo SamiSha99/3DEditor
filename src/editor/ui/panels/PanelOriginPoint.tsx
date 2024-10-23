@@ -3,7 +3,7 @@ import { Row, Space, Button, Checkbox, Tooltip, Alert } from "antd";
 import { observer } from "mobx-react-lite";
 import * as THREE from "three";
 import { useState } from "react";
-import { DraggablePanel } from "@orb_UI/ActivePanels";
+import { DraggablePanel } from "src/editor/Panels";
 import { PANEL_ORIGIN_POINT } from "./Panels";
 import { SpaceCompactProps } from "antd/es/space/Compact";
 

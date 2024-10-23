@@ -6,6 +6,7 @@ export const MenuBarStyle = styled.div`
     width: 100vw;
     padding: 0;
     margin: 0;
+    z-index: 2;
 `
 
 export const ControlsBarStyle = styled.div`

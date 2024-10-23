@@ -11,7 +11,7 @@ import { ControlsBar } from "@orb_UI/ControlsBar";
 import Canvas from './Canvas'
 import * as THREE from "three"
 
-export const EditorInspector = observer(() => {
+export const Inspector = () => {
     const { controlsObject3D } = useStores();
 
     return (
@@ -35,7 +35,7 @@ export const EditorInspector = observer(() => {
         </Splitter>
 
     )
-})
+}
 
 export const HierarchyTree = observer(() => {
     const { sceneObjects, scene, setControlsTarget } = useStores();
@@ -125,4 +125,4 @@ function createTreeDataNode(object: THREE.Object3D) {
     return nodeObject;
 }
 
-export default EditorInspector
+export default Inspector
