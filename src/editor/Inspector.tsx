@@ -17,7 +17,7 @@ export const Inspector = () => {
 
     return (
         <Splitter>
-            <Splitter.Panel defaultSize={"70%"} min={"60%"} max={"80%"}>
+            <Splitter.Panel defaultSize={"70%"} min={"62.5%"} max={"77.5%"}>
                 <div style={{ display: "flex", position: "relative" }}>
                     <Canvas />
                     <ControlsBar />
@@ -81,7 +81,7 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                     {
                         tab &&
                         <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarGutter: "auto" }}>
-                            <Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }} colon={false} labelWrap>
+                            <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} colon={false} labelWrap>
                                 {tab == "SCENE" && <InspectorScene />}
                                 {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
                                 {
