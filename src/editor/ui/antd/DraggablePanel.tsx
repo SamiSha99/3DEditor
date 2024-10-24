@@ -10,6 +10,7 @@ type DraggablePanelInterface = {
     identifier: string
     width?: number,
     height?: number,
+    // boundElement?: Element,
     startingPositionNormalized?: { x: number, y: number }, // value is clamped between 0 - 1 for top/left - bottom/right
     children?: React.ReactNode,
     onClose?: () => void
@@ -23,7 +24,7 @@ const getCanvasBounds = (width?: number, height?: number) => {
     if (height) draggableBounds.bottom -= height;
     return draggableBounds;
 }
-
+// to-do this should not hard lock to as the bound and its position should be handled accordingly when canvas changes too
 export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ name, identifier, width, height, startingPositionNormalized, children, onClose }) => {
     const { removeActivePanel } = useEditor();
     const ref = useRef<HTMLDivElement>(null);
@@ -46,8 +47,16 @@ export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ nam
     const defaultPosition = { x: boundsWidth * startPos.x, y: boundsHeight * startPos.y };
 
     return (
-        <div ref={ref} style={{ position: "absolute", width: width, height: height }}>
-            <Draggable bounds={bounds} handle=".handle" cancel=".noHandle" defaultPosition={defaultPosition}>
+        <Draggable
+            bounds="parent"
+            handle=".handle"
+            cancel=".noHandle"
+            defaultPosition={defaultPosition}
+            onDrag={(e, d) => {
+                console.log("event:", e, "\n", "data:", d)
+            }}
+        >
+            <div ref={ref} style={{ position: "absolute", width: width, height: height }}>
                 <Card
                     classNames={{ header: "handle" }}
                     styles={{ header: { cursor: "all-scroll" }, title: { marginRight: 20 } }}
@@ -55,7 +64,7 @@ export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ nam
                     extra={<Button className="noHandle" icon={<CloseOutlined />} danger type="text" onClick={close} />}
                     children={children}
                 />
-            </Draggable>
-        </div>
+            </div>
+        </Draggable>
     )
 })
