@@ -2,7 +2,6 @@ import { makeObservable, observable, action } from "mobx";
 import { Object3D, Scene, Color, Texture, Fog, FogExp2 } from "three";
 import * as TYPE from "./type";
 import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
-import * as THREE from 'three';
 import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
 
@@ -26,18 +25,6 @@ export class Editor {
     * When intersected their userData returns the reference for the object from sceneObjects
     */
     @observable sceneHelpers: Object3D[] = [];
-
-    /** The Scene's Grid */
-    @observable grid = {
-        helper: new THREE.Group().add(
-            new THREE.GridHelper(100, 100, 0x2080ff, 0x2080ff),
-            new THREE.Mesh(
-                new THREE.BoxGeometry(0.5, 0.0005, 0.5),
-                new THREE.MeshBasicMaterial({ color: "red" })
-            )
-        ),
-        enabled: true
-    }
 
     // Currently selected Objects
     @observable controlsObject3D: Object3D | null = null;
@@ -187,11 +174,5 @@ export class Editor {
 
     @action setRootSelection = (b: boolean) => {
         this.useRootSelection = b;
-    }
-
-    @action setGrid = (b: boolean) => {
-        console.log(this.grid)
-        const helper = this.grid.helper;
-        this.grid = { helper: helper, enabled: b }
     }
 }

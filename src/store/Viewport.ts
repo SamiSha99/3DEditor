@@ -19,8 +19,6 @@ export class Viewport {
         )
     )
 
-
-
     constructor() {
         makeObservable(this)
         Viewport._instance = this;
