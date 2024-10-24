@@ -2,7 +2,10 @@ import { Dropdown, Button, Checkbox } from "antd"
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
 export const View = observer(() => {
-    const { setGrid, gridEnabled } = useViewport();
+    const {
+        setGrid, gridEnabled,
+        setFPS, fpsEnabled
+    } = useViewport();
     console.log("refreshed...", gridEnabled)
     return (
         <>
@@ -11,8 +14,13 @@ export const View = observer(() => {
                     items: [
                         {
                             key: "0",
-                            label: "Grid Helper",
+                            label: !gridEnabled ? "Show Grid" : "Hide Grid",
                             onClick: () => { setGrid(!gridEnabled) }
+                        },
+                        {
+                            key: "1",
+                            label: !fpsEnabled ? "Show FPS" : "Hide FPS",
+                            onClick: () => { setFPS(!fpsEnabled) }
                         }
                     ]
                 }} />

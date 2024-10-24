@@ -13,6 +13,7 @@ import { useViewport } from "src/store/Viewport";
 
 const Canvas = observer(() => {
     const { scene } = useEditor()
+    const { fpsEnabled } = useViewport();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [loaded, setLoaded] = useState<boolean>();
 
@@ -27,7 +28,7 @@ const Canvas = observer(() => {
                     <EditorHelpers />
                 </>
             }
-            <StatsGl className="fps" />
+            {fpsEnabled && <StatsGl className="fps" />}
         </ReactThreeFiberCanvas>
     )
 })

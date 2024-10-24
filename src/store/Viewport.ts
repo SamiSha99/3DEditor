@@ -19,7 +19,7 @@ export class Viewport {
         )
     )
 
-    @observable gridEnabled = true;
+
 
     constructor() {
         makeObservable(this)
@@ -28,7 +28,9 @@ export class Viewport {
 
     public static get Instance() { return this._instance || (this._instance = new this()); }
 
-    @action setGrid = (b: boolean) => {
-        this.gridEnabled = b;
-    }
+    @observable gridEnabled = true;
+    @action setGrid = (b: boolean) => { this.gridEnabled = b; }
+
+    @observable fpsEnabled = false;
+    @action setFPS = (b: boolean) => { this.fpsEnabled = b; }
 }
