@@ -24,7 +24,6 @@ function App() {
                     <div style={{ display: "flex", flexWrap: "wrap", height: "100vh", width: "100vw", overflow: "hidden" }}>
                         <MenuBar />
                         <Inspector />
-                        <Overlay />
                     </div>
                 </ConfigProvider>
             </ViewportProvider>

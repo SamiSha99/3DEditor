@@ -10,6 +10,7 @@ import { InspectorGeometry } from "./data/Geometry";
 import { ControlsBar } from "@orb_UI/ControlsBar";
 import Canvas from './Canvas'
 import * as THREE from "three"
+import Overlay from "./Overlay";
 
 export const Inspector = () => {
     const { controlsObject3D } = useEditor();
@@ -17,8 +18,11 @@ export const Inspector = () => {
     return (
         <Splitter>
             <Splitter.Panel defaultSize={"70%"} min={"60%"} max={"80%"}>
-                <Canvas />
-                <ControlsBar />
+                <div style={{ display: "flex", position: "relative" }}>
+                    <Canvas />
+                    <ControlsBar />
+                    <Overlay />
+                </div>
             </Splitter.Panel>
             <Splitter.Panel>
                 <div style={{ backgroundColor: "#212121", height: "100vh" }}>
