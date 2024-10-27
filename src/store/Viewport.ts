@@ -30,7 +30,7 @@ export class Viewport {
         )
     )
 
-    camera = new THREE.PerspectiveCamera(50, 16 / 9, 0.1, 100);
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
 
     orbitControls = new OrbitControls(this.camera);
 
@@ -44,18 +44,13 @@ export class Viewport {
         makeObservable(this)
         Viewport._instance = this;
         this.editor = editor;
-        setTimeout(() => {
-            // this.controls.attach(this.editor.sceneObjects[0]);
-            // const canvas = document.getElementById("main");
-            // console.log(canvas)
-            // this.controls.domElement = canvas;
-            // this.editor.addObject(this.controls.getHelper());
-            // this.controls.connect();
-            // this.orbitControls.domElement = canvas;
-            // this.orbitControls.connect();
-            // this.editor.scene.add(this.camera);
-            // console.log(this.controls.object);
-        }, (1000));
+        this.camera.position.set(2.5, 1.5, 2.5);
+        this.camera.lookAt(new THREE.Vector3());
+        this.editor.scene.add(this.controls.getHelper());
+
+        this.controls.addEventListener('dragging-changed', (e) => {
+            this.orbitControls.enabled = !e.value;
+        });
     }
 
     public static get Instance() { return this._instance; }
@@ -70,4 +65,12 @@ export class Viewport {
     @action setGrid = (b: boolean) => { this.gridEnabled = b; }
 
     @action setFPS = (b: boolean) => { this.fpsEnabled = b; }
+
+    // Called by Fiber when its loaded.
+    onCanvasLoaded = (canvas: HTMLCanvasElement) => {
+        this.orbitControls.domElement = canvas;
+        this.orbitControls.connect();
+        this.controls.domElement = canvas;
+        this.controls.connect();
+    }
 }
