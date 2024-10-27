@@ -11,15 +11,14 @@ export class Editor {
 
     static _instance: Editor;
 
-    @observable viewport = new Viewport(this);
 
     /** All instatiated Objects in the scene */
     @observable scene: Scene = new Scene();
     /** All objects that can be modified */
     @observable sceneObjects: Object3D[] = [];
     /**
-    * These need to be in the root of the scene else they will cause a lot of bugs
-    * When intersected their userData returns the reference for the object from sceneObjects
+     * These need to be in the root of the scene else they will cause a lot of bugs
+     * When intersected their userData returns the reference for the object from sceneObjects
     */
     @observable sceneHelpers: Object3D[] = [];
 
@@ -31,6 +30,8 @@ export class Editor {
     @observable useRootSelection: boolean = false;
 
     @observable activePanels: ActivePanelType[] = []
+
+    @observable viewport = new Viewport(this);
 
     constructor() {
         makeObservable(this)
@@ -49,6 +50,18 @@ export class Editor {
             object = object.parent;
         }
         this.controlsTarget = object;
+        if (object) {
+
+            this.viewport.controls.attach(object);
+            if (this.viewport.controls.domElement)
+                this.viewport.controls.connect();
+        }
+        else {
+            this.viewport.controls.detach();
+            if (this.viewport.controls.domElement)
+                this.viewport.controls.disconnect();
+        }
+
     }
 
     @action setEnvironment = (value: Texture | null) => this.scene.environment = value;
