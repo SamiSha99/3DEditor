@@ -30,7 +30,6 @@ export function SpotLight() {
     const light = new THREE.SpotLight();
     light.name = "SpotLight";
     const helper = CreateHelper(THREE.SpotLightHelper, light);
-    console.log(helper);
     helper?.update();
     return { object: light, helper: helper } as GenerateInfo;
 }
