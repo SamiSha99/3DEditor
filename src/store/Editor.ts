@@ -110,24 +110,27 @@ export class Editor {
             this.activePanels.splice(index, 1);
     }
 
+    // to-do this needs to reinitialize the entirety of viewport again, probably.
     @action setScene(objects: Object3D[] = [], helpers: Object3D[] = []) {
         this.setTarget(null);
         this.sceneObjects = objects;
         this.sceneHelpers = helpers;
     }
 
-    // When a new component is made, push it to the scene
+    /** Adds object to the scene, returns the added object */
     @action addObject = (object: Object3D) => {
         this.sceneObjects.push(object);
         return object;
     }
 
+    /** Adds helper to the scene, returns the added helper */
     @action addHelper = (helper: Object3D) => {
         this.sceneHelpers.push(helper);
         return helper;
     }
 
     // this is broken when it comes to helpers, fix!
+    /** Removes object from the scene, returns the removed object */
     @action removeObject = (object: Object3D) => {
         this.setTarget(null);
         const indx = this.sceneObjects.findIndex(obj => obj.uuid == object.uuid);
