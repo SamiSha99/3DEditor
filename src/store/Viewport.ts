@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import * as TYPE from "./Type";
 import { makeObservable, observable, action } from "mobx";
 import { createContext, useContext } from 'react';
+import { Editor } from '@orb_Editor';
 
 export const ViewportContext = createContext<Viewport>({} as any)
 export const useViewport = () => useContext(ViewportContext);
@@ -9,6 +10,8 @@ export const useViewport = () => useContext(ViewportContext);
 // This controls all related content that allows the user to interact with the scene
 export class Viewport {
 
+    // @ts-ignore
+    private editor: Editor;
     static _instance: Viewport;
 
     @observable transformControlsMode: TYPE.TransformModes = TYPE.transformModes[0];
@@ -25,15 +28,15 @@ export class Viewport {
     @observable gridEnabled: boolean = true;
     @observable fpsEnabled: boolean = false;
 
-    constructor() {
+    constructor(editor: Editor) {
         makeObservable(this)
         Viewport._instance = this;
+        this.editor = editor;
     }
 
-    public static get Instance() { return this._instance || (this._instance = new this()); }
+    public static get Instance() { return this._instance; }
 
     // 0 = translate | 1 = rotate | 2 = scale
-
     @action setTransformControlsMode = (mode: TYPE.Range<0, 3> | TYPE.TransformModes) => { typeof mode == "number" ? this.transformControlsMode = TYPE.transformModes[mode] : this.transformControlsMode = mode }
     // 0 = world | 1 = local
     @action setTransformControlsSpace = (mode: TYPE.Range<0, 2> | TYPE.TransformSpaces) => { typeof mode == "number" ? this.transformControlsSpace = TYPE.transformSpaces[mode] : this.transformControlsSpace = mode }

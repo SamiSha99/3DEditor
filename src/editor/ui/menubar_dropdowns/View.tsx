@@ -2,11 +2,8 @@ import { Dropdown, Button, Checkbox } from "antd"
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
 export const View = observer(() => {
-    const {
-        setGrid, gridEnabled,
-        setFPS, fpsEnabled
-    } = useViewport();
-    console.log("refreshed...", gridEnabled)
+    const { setGrid, gridEnabled, setFPS, fpsEnabled } = useViewport();
+
     return (
         <>
             <Dropdown trigger={["click"]} children={<Button children={"View"} />}

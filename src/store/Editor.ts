@@ -12,7 +12,7 @@ export class Editor {
 
     static _instance: Editor;
 
-    @observable viewport = new Viewport();
+    @observable viewport = new Viewport(this);
 
     // Object3D ID
     @observable controlsTarget: number | number[] = -1;
@@ -54,12 +54,10 @@ export class Editor {
             object = object.parent;
         }
         this.controlsObject3D = object;
-        console.log(this.controlsObject3D);
         if (object)
             this.controlsTarget = object.id
         else
             this.controlsTarget = -1;
-        console.log(this.controlsTarget);
     }
 
     @action setEnvironment = (value: Texture | null) => this.scene.environment = value;
