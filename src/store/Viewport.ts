@@ -12,7 +12,6 @@ export const useViewport = () => useContext(ViewportContext);
 // This controls all related content that allows the user to interact with the scene
 export class Viewport {
 
-    // @ts-ignore
     private editor: Editor;
     static _instance: Viewport;
 
@@ -46,10 +45,12 @@ export class Viewport {
         this.editor = editor;
         this.camera.position.set(2.5, 1.5, 2.5);
         this.camera.lookAt(new THREE.Vector3());
+        this.orbitControls.update();
         this.editor.scene.add(this.controls.getHelper());
 
         this.controls.addEventListener('dragging-changed', (e) => {
             this.orbitControls.enabled = !e.value;
+            this.transforming = !!e.value;
         });
     }
 
@@ -58,9 +59,21 @@ export class Viewport {
     @action setTransforming = (b?: boolean) => { this.transforming = b != undefined ? b : !this.transforming }
 
     // 0 = translate | 1 = rotate | 2 = scale
-    @action setTransformControlsMode = (mode: TYPE.Range<0, 3> | TYPE.TransformModes) => { typeof mode == "number" ? this.transformControlsMode = TYPE.transformModes[mode] : this.transformControlsMode = mode }
+    @action setTransformControlsMode = (mode: TYPE.Range<0, 3> | TYPE.TransformModes) => {
+        if (typeof mode == "number")
+            this.transformControlsMode = TYPE.transformModes[mode]
+        else
+            this.transformControlsMode = mode
+        this.controls.setMode(this.transformControlsMode);
+    }
     // 0 = world | 1 = local
-    @action setTransformControlsSpace = (mode: TYPE.Range<0, 2> | TYPE.TransformSpaces) => { typeof mode == "number" ? this.transformControlsSpace = TYPE.transformSpaces[mode] : this.transformControlsSpace = mode }
+    @action setTransformControlsSpace = (mode: TYPE.Range<0, 2> | TYPE.TransformSpaces) => {
+        if (typeof mode == "number")
+            this.transformControlsSpace = TYPE.transformSpaces[mode]
+        else
+            this.transformControlsSpace = mode
+        this.controls.setSpace(this.transformControlsSpace);
+    }
 
     @action setGrid = (b: boolean) => { this.gridEnabled = b; }
 
