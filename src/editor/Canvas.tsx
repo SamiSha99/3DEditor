@@ -13,14 +13,24 @@ import { useViewport } from "src/store/Viewport";
 
 const Canvas = observer(() => {
     const { scene } = useEditor()
-    const { fpsEnabled } = useViewport();
+    const { fpsEnabled, camera, onCanvasLoaded } = useViewport();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [loaded, setLoaded] = useState<boolean>();
 
-    useEffect(() => { setLoaded(canvasRef.current != undefined) }, [canvasRef]);
+    if (loaded && canvasRef.current) {
+        onCanvasLoaded(canvasRef.current);
+    }
 
     return (
-        <ReactThreeFiberCanvas id="main" ref={canvasRef} scene={scene} shadows style={{ bottom: 0, height: "calc(100vh - 32px)" }} camera={{ position: [2.5, 1.5, 2.5] }}>
+        <ReactThreeFiberCanvas
+            ref={canvasRef}
+            id="main"
+            style={{ bottom: 0, height: "calc(100vh - 32px)" }}
+            scene={scene}
+            camera={camera}
+            shadows
+            onCreated={() => setLoaded(canvasRef.current != undefined)}
+        >
             {
                 loaded && canvasRef.current &&
                 <>
@@ -88,11 +98,12 @@ const EditorSceneHelpers: React.FC<{ helper: THREE.Object3D }> = observer(({ hel
 
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
-    const { gridEnabled, grid } = useViewport();
+    const { gridEnabled, grid, controls } = useViewport();
 
     return (
         <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
-            <EditorControls />
+            {/* <EditorControls /> */}
+            {controls && <primitive object={controls.getHelper()} />}
             {gridEnabled && <primitive object={grid} />}
         </group>
     )
