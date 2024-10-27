@@ -125,6 +125,7 @@ export class Editor {
         return helper;
     }
 
+    // this is broken when it comes to helpers, fix!
     @action removeObject = (object: Object3D) => {
         this.setControlsTarget(null);
         const indx = this.sceneObjects.findIndex(obj => obj.uuid == object.uuid);
@@ -147,17 +148,6 @@ export class Editor {
             const helperIndx = this.sceneHelpers.findIndex(hlp => hlp.uuid == helper.uuid);
             this.sceneHelpers.splice(helperIndx, 1);
         }
-    }
-
-    @action spliceObject = (index: number, deleteCount: number = 1, items?: Object3D | null) => {
-        console.log(index, deleteCount);
-        if (index == -1) return;
-        if (items)
-            this.sceneObjects.splice(index, deleteCount, items);
-        else
-            this.sceneObjects.splice(index, deleteCount);
-        console.log(this.sceneObjects);
-
     }
 
     @action setRootSelection = (b: boolean) => {
