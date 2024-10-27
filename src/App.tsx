@@ -2,7 +2,7 @@ import './App.css'
 import { ConfigProvider } from 'antd'
 import { MainTheme } from '@orb_UI/antd/ThemeConfigs.ts'
 import { Editor } from '@orb_Editor'
-import { MenuBar, Inspector, Overlay } from './editor/EditorComponents'
+import { MenuBar, Inspector } from './editor/EditorComponents'
 import { EditorProvider, ViewportProvider } from './store/Providers'
 
 const editor = new Editor();
@@ -10,8 +10,9 @@ const editor = new Editor();
 const initScene = async () => {
     const { Box } = await import("@orb_tools/create/Primitive");
     const { loadEnvironmentSample } = await import("@orb_utils/Samples.ts");
-    editor.setTarget(editor.addObject(Box()))
+    const box = editor.addObject(Box());
     loadEnvironmentSample('city').then((o) => o && editor.setEnvironment(o.data))
+    editor.setTarget(box)
 }
 initScene();
 
