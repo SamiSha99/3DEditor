@@ -45,16 +45,16 @@ export class Viewport {
         Viewport._instance = this;
         this.editor = editor;
         setTimeout(() => {
-            this.controls.attach(this.editor.sceneObjects[0]);
-            const canvas = document.getElementById("main");
-            console.log(canvas)
-            this.controls.domElement = canvas;
-            this.editor.addObject(this.controls.getHelper());
-            this.controls.connect();
-            this.orbitControls.domElement = canvas;
-            this.orbitControls.connect();
-            this.editor.scene.add(this.camera);
-            console.log(this.controls.object);
+            // this.controls.attach(this.editor.sceneObjects[0]);
+            // const canvas = document.getElementById("main");
+            // console.log(canvas)
+            // this.controls.domElement = canvas;
+            // this.editor.addObject(this.controls.getHelper());
+            // this.controls.connect();
+            // this.orbitControls.domElement = canvas;
+            // this.orbitControls.connect();
+            // this.editor.scene.add(this.camera);
+            // console.log(this.controls.object);
         }, (1000));
     }
 
