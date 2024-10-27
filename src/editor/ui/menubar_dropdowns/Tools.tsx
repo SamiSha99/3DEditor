@@ -11,9 +11,11 @@ import { Sphere } from "@orb_tools/create/Primitive";
 import { invertGeometry } from "src/editor/utils/Mesh";
 import { PANEL_ORIGIN_POINT, PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
+import { useViewport } from "src/store/Viewport";
 
 export const Tools = observer(() => {
-    const { controlsObject3D, addObject, setControlsModeByName, setControlSpaceByName, addActivePanel } = useEditor();
+    const { controlsObject3D, addObject, addActivePanel } = useEditor();
+    const { setTransformControlsSpace, setTransformControlsMode } = useViewport();
     return (
         <>
             <Dropdown
@@ -101,8 +103,8 @@ export const Tools = observer(() => {
                             icon: <ICONS.DotChartOutlined />,
                             onClick: () => {
                                 addActivePanel(PANEL_ORIGIN_POINT)
-                                setControlsModeByName("translate");
-                                setControlSpaceByName("local");
+                                setTransformControlsMode("translate");
+                                setTransformControlsSpace("local");
                             }
                         },
                         {

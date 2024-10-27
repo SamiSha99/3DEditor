@@ -1,6 +1,6 @@
 import { makeObservable, observable, action } from "mobx";
 import { Object3D, Scene, Color, Texture, Fog, FogExp2 } from "three";
-import * as TYPE from "./type";
+import * as TYPE from "./Type";
 import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
 import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
@@ -28,9 +28,6 @@ export class Editor {
 
     // Currently selected Objects
     @observable controlsObject3D: Object3D | null = null;
-
-    @observable controlsMode: TYPE.TransformModes = TYPE.transformModes[0];
-    @observable controlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
 
     static readonly DEFAULT_SCENE_BACKGROUND_COLOR = new Color(0x001029);
 
@@ -64,13 +61,6 @@ export class Editor {
             this.controlsTarget = -1;
         console.log(this.controlsTarget);
     }
-
-    // 0 = translate | 1 = rotate | 2 = scale
-    @action setControlsMode = (mode: number) => { this.controlsMode = TYPE.transformModes[mode] }
-    @action setControlsModeByName = (mode: TYPE.TransformModes) => { this.controlsMode = mode }
-    // 0 = world | 1 = local
-    @action setControlSpace = (mode: number) => { this.controlsSpace = TYPE.transformSpaces[mode] }
-    @action setControlSpaceByName = (mode: TYPE.TransformSpaces) => { this.controlsSpace = mode }
 
     @action setEnvironment = (value: Texture | null) => this.scene.environment = value;
     @action setBackground = (value: Color | Texture | null) => this.scene.background = value;

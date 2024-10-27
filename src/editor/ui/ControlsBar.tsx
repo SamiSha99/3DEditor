@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite"
 import { Button, Checkbox, Divider, Radio, RadioChangeEvent, Tooltip } from "antd";
 import { useHotkeys } from 'react-hotkeys-hook';
 import { isPanelActive, PANEL_ORIGIN_POINT } from "./panels/Panels";
+import { useViewport } from "src/store/Viewport";
 
 export const ControlsBar = observer(() => {
     return (
@@ -19,26 +20,26 @@ export const ControlsBar = observer(() => {
 })
 
 const TranslationButton = observer(() => {
-    const { controlsMode, setControlsModeByName } = useEditor();
+    const { setTransformControlsMode, transformControlsMode } = useViewport();
     const isOriginPointMode = isPanelActive(PANEL_ORIGIN_POINT);
 
     useHotkeys("space", () => {
         if (isOriginPointMode) return;
         const newControlsMode = (() => {
-            switch (controlsMode) {
+            switch (transformControlsMode) {
                 case "translate": return "rotate";
                 case "rotate": return "scale";
                 case "scale": return "translate";
             }
         })()
-        setControlsModeByName(newControlsMode);
+        setTransformControlsMode(newControlsMode);
     })
 
-    const onChange = (e: RadioChangeEvent) => { setControlsModeByName(e.target.value); }
+    const onChange = (e: RadioChangeEvent) => { setTransformControlsMode(e.target.value); }
 
     return (
         <Tooltip title="Change between Translation, Rotation and Scale" placement="bottom">
-            <Radio.Group onChange={onChange} value={isOriginPointMode ? "translate" : controlsMode}>
+            <Radio.Group onChange={onChange} value={isOriginPointMode ? "translate" : transformControlsMode}>
                 <Radio.Button value={"translate"} children={<DragOutlined />} />
                 <Radio.Button disabled={isOriginPointMode != undefined} value={"rotate"} children={<SyncOutlined />} />
                 <Radio.Button disabled={isOriginPointMode != undefined} value={"scale"} children={<ExpandAltOutlined />} />
@@ -48,16 +49,14 @@ const TranslationButton = observer(() => {
 })
 
 const TranslationSpaceButton = observer(() => {
-    const { setControlSpaceByName, controlsSpace } = useEditor();
+    const { setTransformControlsSpace, transformControlsSpace } = useViewport();
 
-    useHotkeys("l", () => {
-        setControlSpaceByName(controlsSpace == "world" ? "local" : "world")
-    })
+    useHotkeys("l", () => setTransformControlsSpace(transformControlsSpace == "world" ? "local" : "world"))
 
     return (
         <Tooltip title="Local Position/Rotation" placement="bottom">
-            <Button onClick={() => setControlSpaceByName(controlsSpace == "world" ? "local" : "world")}>
-                <Checkbox checked={controlsSpace == "local"} onChange={() => setControlSpaceByName(controlsSpace == "world" ? "local" : "world")} style={{ paddingRight: "5px" }} />
+            <Button onClick={() => setTransformControlsSpace(transformControlsSpace == "world" ? "local" : "world")}>
+                <Checkbox checked={transformControlsSpace == "local"} onChange={() => setTransformControlsSpace(transformControlsSpace == "world" ? "local" : "world")} style={{ paddingRight: "5px" }} />
                 {"Local"}
             </Button>
         </Tooltip>
@@ -69,10 +68,10 @@ const RootSelectionButton = observer(() => {
     useHotkeys("r", () => setRootSelection(!useRootSelection));
 
     return (
-        <Tooltip title="Causes selection to target the root of the model instead of its children." placement="bottom">
+        <Tooltip title="When selecting part of a model it will select the root of the model instead." placement="bottom">
             <Button onClick={(e) => { setRootSelection(!useRootSelection), e.stopPropagation() }}>
                 <Checkbox checked={useRootSelection} onChange={(e) => setRootSelection(e.target.checked)} style={{ paddingRight: "5px" }} />
-                {"Root Selection"}
+                {"Root"}
             </Button>
         </Tooltip>
     )

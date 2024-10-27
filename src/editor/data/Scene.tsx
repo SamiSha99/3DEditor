@@ -1,6 +1,6 @@
 import { useEditor } from "@orb_Editor";
 import { Editor } from "@orb_Editor";
-import { Environments, environments } from "@orb_types";
+import { Environments, environments } from "src/store/Type";
 import { ItemCollapse, ItemColor, ItemEuler, ItemNumber, ItemSelect, ItemTexture } from "@orb_UI/controller/ControllerItems";
 import { loadEnvironmentSample } from "@orb_utils/Samples";
 import { Alert } from "antd";

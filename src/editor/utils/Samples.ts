@@ -1,6 +1,6 @@
 // For pmndrs/assets repo
 import * as THREE from 'three';
-import { Environments } from '@orb_types';
+import { Environments } from 'src/store/Type';
 
 const sample = ({
     none: null,

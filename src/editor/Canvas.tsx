@@ -99,7 +99,8 @@ const EditorHelpers = observer(() => {
 })
 
 const EditorControls = observer(() => {
-    const { isTransforming, controlsObject3D, controlsMode, controlsSpace, setIsTransforming } = useEditor();
+    const { isTransforming, controlsObject3D, setIsTransforming } = useEditor();
+    const { transformControlsMode, transformControlsSpace } = useViewport();
     const { camera, scene } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const [lastObjPlace, setLastObjectPlace] = useState<THREE.Vector3 | undefined>(undefined);
@@ -128,7 +129,7 @@ const EditorControls = observer(() => {
         originDraggerRef.current.position.set(0, 0, 0);
         if (controlsObject3D) {
             originDraggerRef.current.parent?.position.copy(controlsObject3D.position)
-            controlsSpace == "local" ? originDraggerRef.current.rotation.copy(controlsObject3D.rotation) : controlsObject3D && originDraggerRef.current.rotation.set(0, 0, 0);
+            transformControlsSpace == "local" ? originDraggerRef.current.rotation.copy(controlsObject3D.rotation) : controlsObject3D && originDraggerRef.current.rotation.set(0, 0, 0);
         }
     }
 
@@ -163,8 +164,8 @@ const EditorControls = observer(() => {
                     name='TRANSFORM_HELPER'
                     //@ts-ignore
                     object={isOriginPointMode && !panelHasFlag(PANEL_ORIGIN_POINT, "drag_object") ? originDraggerRef : controlsObject3D}
-                    mode={controlsMode}
-                    space={controlsSpace}
+                    mode={transformControlsMode}
+                    space={transformControlsSpace}
                     camera={camera}
                     onMouseUp={() => {
                         if (!isTransforming) return;
