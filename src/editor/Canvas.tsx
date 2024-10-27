@@ -103,7 +103,7 @@ const EditorHelpers = observer(() => {
     return (
         <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
             {/* <EditorControls /> */}
-            {controls && <primitive object={controls.getHelper()} />}
+            <primitive object={controls.getHelper()} />
             {gridEnabled && <primitive object={grid} />}
         </group>
     )

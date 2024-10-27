@@ -12,14 +12,18 @@ export const useViewport = () => useContext(ViewportContext);
 // This controls all related content that allows the user to interact with the scene
 export class Viewport {
 
+    // @ts-ignore
     private editor: Editor;
     static _instance: Viewport;
 
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+    orbitControls = new OrbitControls(this.camera);
+
     /** True when moving/rotating/scaling */
     @observable transforming: boolean = false;
-
     @observable transformControlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable transformControlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
+    controls = new TransformControls(this.camera);
 
     grid = new THREE.Group().add(
         new THREE.GridHelper(100, 100, 0x2080ff, 0x2080ff),
@@ -28,13 +32,6 @@ export class Viewport {
             new THREE.MeshBasicMaterial({ color: "red" })
         )
     )
-
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-
-    orbitControls = new OrbitControls(this.camera);
-
-    controls = new TransformControls(this.camera);
-    // transformControls = new TransformControls();    
 
     @observable gridEnabled: boolean = true;
     @observable fpsEnabled: boolean = false;
@@ -46,7 +43,6 @@ export class Viewport {
         this.camera.position.set(2.5, 1.5, 2.5);
         this.camera.lookAt(new THREE.Vector3());
         this.orbitControls.update();
-        this.editor.scene.add(this.controls.getHelper());
 
         this.controls.addEventListener('dragging-changed', (e) => {
             this.orbitControls.enabled = !e.value;
@@ -56,29 +52,6 @@ export class Viewport {
 
     public static get Instance() { return this._instance; }
 
-    @action setTransforming = (b?: boolean) => { this.transforming = b != undefined ? b : !this.transforming }
-
-    // 0 = translate | 1 = rotate | 2 = scale
-    @action setTransformControlsMode = (mode: TYPE.Range<0, 3> | TYPE.TransformModes) => {
-        if (typeof mode == "number")
-            this.transformControlsMode = TYPE.transformModes[mode]
-        else
-            this.transformControlsMode = mode
-        this.controls.setMode(this.transformControlsMode);
-    }
-    // 0 = world | 1 = local
-    @action setTransformControlsSpace = (mode: TYPE.Range<0, 2> | TYPE.TransformSpaces) => {
-        if (typeof mode == "number")
-            this.transformControlsSpace = TYPE.transformSpaces[mode]
-        else
-            this.transformControlsSpace = mode
-        this.controls.setSpace(this.transformControlsSpace);
-    }
-
-    @action setGrid = (b: boolean) => { this.gridEnabled = b; }
-
-    @action setFPS = (b: boolean) => { this.fpsEnabled = b; }
-
     // Called by Fiber when its loaded.
     onCanvasLoaded = (canvas: HTMLCanvasElement) => {
         this.orbitControls.domElement = canvas;
@@ -86,4 +59,20 @@ export class Viewport {
         this.controls.domElement = canvas;
         this.controls.connect();
     }
+
+    @action setTransforming = (b?: boolean) => { this.transforming = b != undefined ? b : !this.transforming }
+
+    // 0 = translate | 1 = rotate | 2 = scale
+    @action setTransformControlsMode = (mode: TYPE.Range<0, 3> | TYPE.TransformModes) => {
+        this.transformControlsMode = typeof mode == "number" ? TYPE.transformModes[mode] : mode;
+        this.controls.setMode(this.transformControlsMode);
+    }
+    // 0 = world | 1 = local
+    @action setTransformControlsSpace = (mode: TYPE.Range<0, 2> | TYPE.TransformSpaces) => {
+        this.transformControlsSpace = typeof mode == "number" ? TYPE.transformSpaces[mode] : mode;
+        this.controls.setSpace(this.transformControlsSpace);
+    }
+
+    @action setGrid = (b: boolean) => { this.gridEnabled = b; }
+    @action setFPS = (b: boolean) => { this.fpsEnabled = b; }
 }
