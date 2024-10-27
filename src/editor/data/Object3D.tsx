@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import * as THREE from 'three';
 
 export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
-    const { controlsObject3D } = useEditor();
+    const { controlsTarget } = useEditor();
     return (
         <>
             <ItemCollapse label={"Object3D"}>
@@ -18,9 +18,9 @@ export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(
                 <ItemNumber object={object} variable="renderOrder" label="Order" />
             </ItemCollapse>
             {
-                controlsObject3D && controlsObject3D.constructor != THREE.Object3D &&
-                <ItemCollapse label={controlsObject3D.constructor.name}>
-                    <ChildObject3D object={controlsObject3D} />
+                controlsTarget && controlsTarget.constructor != THREE.Object3D &&
+                <ItemCollapse label={controlsTarget.constructor.name}>
+                    <ChildObject3D object={controlsTarget} />
                 </ItemCollapse>
             }
         </>

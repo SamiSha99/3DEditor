@@ -11,9 +11,9 @@ const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justify
 const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
 
 export const PanelOriginPoint = observer(() => {
-    const { controlsObject3D, scene, addPanelFlag, removePanelFlag } = useEditor();
+    const { controlsTarget, scene, addPanelFlag, removePanelFlag } = useEditor();
     const [onConstraintObject, setOnConstraintObject] = useState(true);
-    const o = controlsObject3D;
+    const o = controlsTarget;
 
     const setOriginPoint = (pos?: { x?: number, y?: number, z?: number }, center?: boolean) => {
         if (!o) return;
@@ -79,7 +79,7 @@ export const PanelOriginPoint = observer(() => {
                             <Space.Compact {...spaceCompactProps}>
                                 <Tooltip title="While enabled, moves the Object while keeping the origin point in place.">
                                     <Checkbox
-                                        disabled={!controlsObject3D}
+                                        disabled={!controlsTarget}
                                         children={"Lock Origin Point"}
                                         defaultChecked={onConstraintObject}
                                         onChange={(e) => {
@@ -92,22 +92,22 @@ export const PanelOriginPoint = observer(() => {
                                 </Tooltip>
                             </Space.Compact>
                             <Space.Compact {...spaceCompactProps}>
-                                <Button disabled={!controlsObject3D} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
+                                <Button disabled={!controlsTarget} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
                             </Space.Compact>
                             <Space.Compact {...spaceCompactPropsButtons}>
-                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
-                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
-                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
+                                <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
+                                <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
+                                <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
                             </Space.Compact>
                             <Space.Compact {...spaceCompactPropsButtons}>
-                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
-                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
-                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
+                                <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
+                                <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
+                                <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
                             </Space.Compact>
                             <Space.Compact {...spaceCompactPropsButtons}>
-                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
-                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
-                                <Button disabled={!controlsObject3D} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
+                                <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
+                                <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
+                                <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
                             </Space.Compact>
                         </Space.Compact>
                     </Space>

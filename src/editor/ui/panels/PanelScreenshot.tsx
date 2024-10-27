@@ -24,9 +24,9 @@ function resetDefaults() {
 }
 
 export const PanelScreenshot = observer(() => {
-    const { controlsObject3D } = useEditor();
+    const { controlsTarget } = useEditor();
 
-    const obj = controlsObject3D?.clone();
+    const obj = controlsTarget?.clone();
     obj?.position.set(0, 0, 0);
 
     const scene = new THREE.Scene();

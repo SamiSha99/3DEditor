@@ -72,14 +72,14 @@ const exportOptions = [
 const exportSettings = { name: "exportName", type: exportOptions[0].value, exportSelection: false, textureSize: 1024 }
 
 const ExportModal: React.FC<{ open: boolean, onSubmit: () => void, onCancel: () => void }> = ({ open, onSubmit, onCancel }) => {
-    const { controlsObject3D, sceneObjects } = useEditor();
+    const { controlsTarget, sceneObjects } = useEditor();
 
     const doDownload = () => {
         const res = exportSettings;
         console.log("Export settings:\n", res);
         let selection: THREE.Object3D | null;
         if (res.exportSelection)
-            selection = controlsObject3D;
+            selection = controlsTarget;
         else {
             const sceneExport = new THREE.Scene();
             if (sceneObjects)

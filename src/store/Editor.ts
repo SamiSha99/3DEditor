@@ -1,6 +1,5 @@
 import { makeObservable, observable, action } from "mobx";
 import { Object3D, Scene, Color, Texture, Fog, FogExp2 } from "three";
-import * as TYPE from "./Type";
 import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
 import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
@@ -14,8 +13,6 @@ export class Editor {
 
     @observable viewport = new Viewport(this);
 
-    // Object3D ID
-    @observable controlsTarget: number | number[] = -1;
     /** All instatiated Objects in the scene */
     @observable scene: Scene = new Scene();
     /** All objects that can be modified */
@@ -27,13 +24,11 @@ export class Editor {
     @observable sceneHelpers: Object3D[] = [];
 
     // Currently selected Objects
-    @observable controlsObject3D: Object3D | null = null;
+    @observable controlsTarget: Object3D | null = null;
 
     static readonly DEFAULT_SCENE_BACKGROUND_COLOR = new Color(0x001029);
 
     @observable useRootSelection: boolean = false;
-
-    @observable isTransforming: boolean = false;
 
     @observable activePanels: ActivePanelType[] = []
 
@@ -46,25 +41,19 @@ export class Editor {
         return this._instance || (this._instance = new this());
     }
 
-    @action setControlsTarget = (object: Object3D | null) => {
+    @action setTarget = (object: Object3D | null) => {
 
-        if (this.controlsObject3D == object) return;
+        if (this.controlsTarget == object) return;
         // Selects the highest in the hierachy regardless of which one clicked for now
         while (this.useRootSelection && object?.parent && !(object.parent instanceof Scene)) {
             object = object.parent;
         }
-        this.controlsObject3D = object;
-        if (object)
-            this.controlsTarget = object.id
-        else
-            this.controlsTarget = -1;
+        this.controlsTarget = object;
     }
 
     @action setEnvironment = (value: Texture | null) => this.scene.environment = value;
     @action setBackground = (value: Color | Texture | null) => this.scene.background = value;
     @action setFog = (value: Fog | FogExp2 | null) => this.scene.fog = value;
-
-    @action setIsTransforming = (b?: boolean) => { this.isTransforming = b != undefined ? b : !this.isTransforming }
 
     @action addActivePanel = (value: ActivePanelType) => {
         if (this.activePanels.find(x => x.id == value.id))
@@ -109,7 +98,7 @@ export class Editor {
     }
 
     @action setScene(objects: Object3D[] = [], helpers: Object3D[] = []) {
-        this.setControlsTarget(null);
+        this.setTarget(null);
         this.sceneObjects = objects;
         this.sceneHelpers = helpers;
     }
@@ -127,7 +116,7 @@ export class Editor {
 
     // this is broken when it comes to helpers, fix!
     @action removeObject = (object: Object3D) => {
-        this.setControlsTarget(null);
+        this.setTarget(null);
         const indx = this.sceneObjects.findIndex(obj => obj.uuid == object.uuid);
         if (indx != -1) {
             if (object.userData.helper) {

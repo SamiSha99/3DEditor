@@ -3,6 +3,8 @@ import * as TYPE from "./Type";
 import { makeObservable, observable, action } from "mobx";
 import { createContext, useContext } from 'react';
 import { Editor } from '@orb_Editor';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { OrbitControls } from 'three/examples/jsm/Addons';
 
 export const ViewportContext = createContext<Viewport>({} as any)
 export const useViewport = () => useContext(ViewportContext);
@@ -13,6 +15,9 @@ export class Viewport {
     // @ts-ignore
     private editor: Editor;
     static _instance: Viewport;
+
+    /** True when moving/rotating/scaling */
+    @observable transforming: boolean = false;
 
     @observable transformControlsMode: TYPE.TransformModes = TYPE.transformModes[0];
     @observable transformControlsSpace: TYPE.TransformSpaces = TYPE.transformSpaces[0];
@@ -25,6 +30,13 @@ export class Viewport {
         )
     )
 
+    camera = new THREE.PerspectiveCamera(50, 16 / 9, 0.1, 100);
+
+    orbitControls = new OrbitControls(this.camera);
+
+    controls = new TransformControls(this.camera);
+    // transformControls = new TransformControls();    
+
     @observable gridEnabled: boolean = true;
     @observable fpsEnabled: boolean = false;
 
@@ -32,9 +44,23 @@ export class Viewport {
         makeObservable(this)
         Viewport._instance = this;
         this.editor = editor;
+        setTimeout(() => {
+            this.controls.attach(this.editor.sceneObjects[0]);
+            const canvas = document.getElementById("main");
+            console.log(canvas)
+            this.controls.domElement = canvas;
+            this.editor.addObject(this.controls.getHelper());
+            this.controls.connect();
+            this.orbitControls.domElement = canvas;
+            this.orbitControls.connect();
+            this.editor.scene.add(this.camera);
+            console.log(this.controls.object);
+        }, (1000));
     }
 
     public static get Instance() { return this._instance; }
+
+    @action setTransforming = (b?: boolean) => { this.transforming = b != undefined ? b : !this.transforming }
 
     // 0 = translate | 1 = rotate | 2 = scale
     @action setTransformControlsMode = (mode: TYPE.Range<0, 3> | TYPE.TransformModes) => { typeof mode == "number" ? this.transformControlsMode = TYPE.transformModes[mode] : this.transformControlsMode = mode }

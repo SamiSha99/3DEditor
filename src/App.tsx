@@ -10,7 +10,7 @@ const editor = new Editor();
 const initScene = async () => {
     const { Box } = await import("@orb_tools/create/Primitive");
     const { loadEnvironmentSample } = await import("@orb_utils/Samples.ts");
-    editor.setControlsTarget(editor.addObject(Box()))
+    editor.setTarget(editor.addObject(Box()))
     loadEnvironmentSample('city').then((o) => o && editor.setEnvironment(o.data))
 }
 initScene();

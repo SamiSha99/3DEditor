@@ -38,17 +38,17 @@ interface CanvasInfo {
 }
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
-    const { sceneObjects, sceneHelpers, controlsObject3D, isTransforming,
-        removeObject, setControlsTarget } = useEditor();
+    const { sceneObjects, sceneHelpers, controlsTarget,
+        removeObject, setTarget } = useEditor();
+    const { transforming } = useViewport();
     const { camera, raycaster } = useThree();
-
     // the passed ref is null at load time! 
     if (!canvas) canvas = document.getElementById('main') as HTMLCanvasElement;
 
     const selectObject = (e: MouseEvent) => {
         // Left Click only
         if (e.button != 0) return;
-        if (isTransforming) return;
+        if (transforming) return;
         // Bounds are used to calculate an offseted AND/OR resized canvas that doesn't take the entire screen due to inspector.
         const bounds = canvas.getBoundingClientRect();
         const pointer = new THREE.Vector2(((e.clientX - bounds.left) / (bounds.right - bounds.left)) * 2 - 1, -((e.clientY - bounds.top) / (bounds.bottom - bounds.top)) * 2 + 1);
@@ -59,13 +59,13 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
 
         let hit = intersects[0].object;
         if (hit.userData.object as THREE.Object3D) hit = hit.userData.object;
-        setControlsTarget(hit);
+        setTarget(hit);
 
     }
     canvas.onmouseup = selectObject;
 
-    useHotkeys("backspace", () => controlsObject3D instanceof THREE.Object3D && removeObject(controlsObject3D))
-    useHotkeys("esc", () => controlsObject3D && setControlsTarget(null))
+    useHotkeys("backspace", () => controlsTarget instanceof THREE.Object3D && removeObject(controlsTarget))
+    useHotkeys("esc", () => controlsTarget && setTarget(null))
 
     return (
         <>
@@ -99,8 +99,8 @@ const EditorHelpers = observer(() => {
 })
 
 const EditorControls = observer(() => {
-    const { isTransforming, controlsObject3D, setIsTransforming } = useEditor();
-    const { transformControlsMode, transformControlsSpace } = useViewport();
+    const { controlsTarget } = useEditor();
+    const { transformControlsMode, transformControlsSpace, transforming, setTransforming } = useViewport();
     const { camera, scene } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const [lastObjPlace, setLastObjectPlace] = useState<THREE.Vector3 | undefined>(undefined);
@@ -111,25 +111,25 @@ const EditorControls = observer(() => {
     }
     const onEnd = () => {
         setCameraStartDrag(false);
-        isTransforming && setIsTransforming(false);
+        transforming && setTransforming(false);
     }
     // rather of a hack for onChange running after onEnd multiple times due to dragging smoothness from draggingSmoothTime
     const onChange = () => {
-        cameraStartDrag && !isTransforming && setIsTransforming(true);
-        !cameraStartDrag && isTransforming && setIsTransforming(false);
+        cameraStartDrag && !transforming && setTransforming(true);
+        !cameraStartDrag && transforming && setTransforming(false);
     }
 
     const isOriginPointMode = !!isPanelActive(PANEL_ORIGIN_POINT);
     let helper: THREE.BoxHelper | null = null;
-    if (controlsObject3D) {
-        helper = new THREE.BoxHelper(controlsObject3D, 0xFFFF00)
+    if (controlsTarget) {
+        helper = new THREE.BoxHelper(controlsTarget, 0xFFFF00)
     }
     // reset references position if we change selected target
     if (originDraggerRef.current) {
         originDraggerRef.current.position.set(0, 0, 0);
-        if (controlsObject3D) {
-            originDraggerRef.current.parent?.position.copy(controlsObject3D.position)
-            transformControlsSpace == "local" ? originDraggerRef.current.rotation.copy(controlsObject3D.rotation) : controlsObject3D && originDraggerRef.current.rotation.set(0, 0, 0);
+        if (controlsTarget) {
+            originDraggerRef.current.parent?.position.copy(controlsTarget.position)
+            transformControlsSpace == "local" ? originDraggerRef.current.rotation.copy(controlsTarget.rotation) : controlsTarget && originDraggerRef.current.rotation.set(0, 0, 0);
         }
     }
 
@@ -141,10 +141,10 @@ const EditorControls = observer(() => {
                 <GizmoViewport labelColor="black" />
             </GizmoHelper>
             {
-                controlsObject3D &&
+                controlsTarget &&
                 <group visible={isOriginPointMode} name="TRANSFORM_ORIGIN_WORLD_CENTER" renderOrder={-50}>
                     {helper && <primitive object={helper} />}
-                    <group name="TRANSFORM_ORIGIN_GROUP" position={controlsObject3D?.position}>
+                    <group name="TRANSFORM_ORIGIN_GROUP" position={controlsTarget?.position}>
                         <group ref={originDraggerRef} name="TRANSFORM_ORIGIN_DRAGGER">
                             <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
                             <Line color={0xFF0000} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
@@ -159,20 +159,20 @@ const EditorControls = observer(() => {
             }
             {
 
-                controlsObject3D &&
+                controlsTarget &&
                 <TransformControlsDrei
                     name='TRANSFORM_HELPER'
                     //@ts-ignore
-                    object={isOriginPointMode && !panelHasFlag(PANEL_ORIGIN_POINT, "drag_object") ? originDraggerRef : controlsObject3D}
+                    object={isOriginPointMode && !panelHasFlag(PANEL_ORIGIN_POINT, "drag_object") ? originDraggerRef : controlsTarget}
                     mode={transformControlsMode}
                     space={transformControlsSpace}
                     camera={camera}
                     onMouseUp={() => {
-                        if (!isTransforming) return;
-                        setIsTransforming(false);
+                        if (!transforming) return;
+                        setTransforming(false);
                         if (isOriginPointMode) {
-                            if (controlsObject3D instanceof THREE.Mesh && controlsObject3D.geometry instanceof THREE.BufferGeometry) {
-                                const o = controlsObject3D;
+                            if (controlsTarget instanceof THREE.Mesh && controlsTarget.geometry instanceof THREE.BufferGeometry) {
+                                const o = controlsTarget;
                                 if (!panelHasFlag(PANEL_ORIGIN_POINT, "drag_object")) {
                                     if (!originDraggerRef.current) return;
                                     const draggerPos = originDraggerRef.current.position;
@@ -195,9 +195,9 @@ const EditorControls = observer(() => {
                         setLastObjectPlace(undefined);
                     }}
                     onMouseDown={() => {
-                        if (isTransforming) return;
-                        setIsTransforming(true);
-                        setLastObjectPlace(controlsObject3D.position.clone());
+                        if (transforming) return;
+                        setTransforming(true);
+                        setLastObjectPlace(controlsTarget.position.clone());
                     }}
                 />
             }

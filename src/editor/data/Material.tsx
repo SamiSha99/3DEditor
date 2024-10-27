@@ -23,7 +23,7 @@ const MaterialSelect = [
 ] as { value: string, label: string }[];
 
 export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observer(({ material }) => {
-    const { controlsObject3D } = useEditor();
+    const { controlsTarget } = useEditor();
     const [meshMaterial, setMeshMaterial] = useState(material);
 
     const instantiateMaterial = (value: string) => {
@@ -43,11 +43,11 @@ export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observ
             default: return;
         }
 
-        if (controlsObject3D instanceof THREE.Mesh) {
-            const oldMaterial = controlsObject3D.material as THREE.Material;
+        if (controlsTarget instanceof THREE.Mesh) {
+            const oldMaterial = controlsTarget.material as THREE.Material;
             // mat.copy(oldMaterial)
-            controlsObject3D.material = mat;
-            (controlsObject3D.material as THREE.Material).needsUpdate = true;
+            controlsTarget.material = mat;
+            (controlsTarget.material as THREE.Material).needsUpdate = true;
             setMeshMaterial(mat)
             oldMaterial.dispose();
         }

@@ -14,7 +14,7 @@ import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { useViewport } from "src/store/Viewport";
 
 export const Tools = observer(() => {
-    const { controlsObject3D, addObject, addActivePanel } = useEditor();
+    const { controlsTarget, addObject, addActivePanel } = useEditor();
     const { setTransformControlsSpace, setTransformControlsMode } = useViewport();
     return (
         <>
@@ -39,8 +39,8 @@ export const Tools = observer(() => {
                                 label: 'Export from Selected Object',
                                 key: '2.1',
                                 onClick: () => {
-                                    if (controlsObject3D) {
-                                        const animations = (controlsObject3D as THREE.Object3D).animations;
+                                    if (controlsTarget) {
+                                        const animations = (controlsTarget as THREE.Object3D).animations;
                                         if (!animations || animations.length <= 0) {
                                             message.warning("The selected model has no animations!");
                                             return;
@@ -55,9 +55,9 @@ export const Tools = observer(() => {
                                 label: 'Import into Selected Object',
                                 key: '2.2',
                                 onClick: () => {
-                                    if (controlsObject3D) {
+                                    if (controlsTarget) {
                                         IMPORTER.doImportAnimationClip((clip) => {
-                                            (controlsObject3D as THREE.Object3D).animations.push(clip);
+                                            (controlsTarget as THREE.Object3D).animations.push(clip);
                                         })
                                     }
                                     else

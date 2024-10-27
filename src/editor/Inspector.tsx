@@ -13,8 +13,6 @@ import * as THREE from "three"
 import Overlay from "./Overlay";
 
 export const Inspector = () => {
-    const { controlsObject3D } = useEditor();
-
     return (
         <Splitter>
             <Splitter.Panel defaultSize={"70%"} min={"62.5%"} max={"77.5%"}>
@@ -31,7 +29,7 @@ export const Inspector = () => {
                             <HierarchyTree />
                         </div>
                         <div style={{ height: "calc(75% - 32px)", padding: "0 10px" }}>
-                            <SelectedObject key={controlsObject3D?.uuid} object={controlsObject3D} />
+                            <SelectedObject />
                         </div>
                     </ConfigProvider>
                 </div>
@@ -42,7 +40,7 @@ export const Inspector = () => {
 }
 
 export const HierarchyTree = observer(() => {
-    const { sceneObjects, scene, setControlsTarget } = useEditor();
+    const { sceneObjects, scene, setTarget } = useEditor();
 
     let treeData = getTreeDataNodes(sceneObjects as THREE.Object3D[]);
 
@@ -50,7 +48,7 @@ export const HierarchyTree = observer(() => {
         console.log('selected', selectedKeys, info);
         const selectedObject = scene.getObjectById(selectedKeys[0] as number);
         if (selectedObject)
-            setControlsTarget(selectedObject);
+            setTarget(selectedObject);
     };
 
     return (
@@ -60,20 +58,21 @@ export const HierarchyTree = observer(() => {
     )
 })
 
-export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = observer(({ object }) => {
-    const [tab, setTab] = useState(object ? "OBJECT" : "");
+export const SelectedObject: React.FC = observer(() => {
+    const { controlsTarget } = useEditor();
+    const [tab, setTab] = useState(controlsTarget ? "OBJECT" : "");
     return (
         <>
             {
                 <>
                     <Row style={{ marginTop: 24 }}>
                         <Button children={"SCENE"} onClick={() => setTab("SCENE")} />
-                        <Button disabled={object == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
+                        <Button disabled={controlsTarget == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
                         {
-                            object && object instanceof THREE.Mesh &&
+                            controlsTarget && controlsTarget instanceof THREE.Mesh &&
                             <>
-                                <Button disabled={!object.material} children={"GEOMETRY"} onClick={() => setTab("GEOMETRY")} />
-                                <Button disabled={!object.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
+                                <Button disabled={!controlsTarget.material} children={"GEOMETRY"} onClick={() => setTab("GEOMETRY")} />
+                                <Button disabled={!controlsTarget.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
                             </>
                         }
                         <Divider style={{ margin: 0 }} />
@@ -83,12 +82,12 @@ export const SelectedObject: React.FC<{ object: THREE.Object3D | null }> = obser
                         <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarGutter: "auto" }}>
                             <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} colon={false} labelWrap>
                                 {tab == "SCENE" && <InspectorScene />}
-                                {tab == "OBJECT" && object && <InspectorObject3D object={object} />}
+                                {tab == "OBJECT" && controlsTarget && <InspectorObject3D object={controlsTarget} />}
                                 {
-                                    object instanceof THREE.Mesh &&
+                                    controlsTarget instanceof THREE.Mesh &&
                                     <>
-                                        {tab == "MATERIAL" && <InspectorMaterial material={object.material} />}
-                                        {tab == "GEOMETRY" && <InspectorGeometry geometry={object.geometry} />}
+                                        {tab == "MATERIAL" && <InspectorMaterial material={controlsTarget.material} />}
+                                        {tab == "GEOMETRY" && <InspectorGeometry geometry={controlsTarget.geometry} />}
                                     </>
                                 }
                             </Form>
