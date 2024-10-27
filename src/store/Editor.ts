@@ -112,6 +112,8 @@ export class Editor {
 
     // to-do this needs to reinitialize the entirety of viewport again, probably.
     @action setScene(objects: Object3D[] = [], helpers: Object3D[] = []) {
+        document.location.reload();
+        return;
         this.setTarget(null);
         this.sceneObjects = objects;
         this.sceneHelpers = helpers;
