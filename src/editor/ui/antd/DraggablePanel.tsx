@@ -52,8 +52,8 @@ export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ nam
             handle=".handle"
             cancel=".noHandle"
             defaultPosition={defaultPosition}
-            onDrag={(e, d) => {
-                console.log("event:", e, "\n", "data:", d)
+            onDrag={(_e, _d) => {
+                // console.log("event:", e, "\n", "data:", d)
             }}
         >
             <div ref={ref} style={{ position: "absolute", width: width, height: height }}>
