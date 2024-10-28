@@ -46,7 +46,7 @@ export class Viewport {
         
         // disabling the plane pickers to not be overwhelming to users
         const controlsHelper = this.controls.getHelper().children[0] as TransformControlsGizmo;
-        console.log(controlsHelper)
+        
         const pickerTranslate = controlsHelper.picker.translate;
         const pickerLeftover = [] as THREE.Object3D[];
         pickerLeftover.push(pickerTranslate.children.find(c => c.name == "XY")!);
