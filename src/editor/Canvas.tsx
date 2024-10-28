@@ -111,24 +111,24 @@ const EditorHelpers = observer(() => {
 
 const EditorControls = observer(() => {
     const { controlsTarget } = useEditor();
-    const { transformControlsMode, transformControlsSpace, transforming, setTransforming } = useViewport();
+    const { transformControlsMode, transformControlsSpace } = useViewport();
     const { camera, scene } = useThree();
     const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const [lastObjPlace, setLastObjectPlace] = useState<THREE.Vector3 | undefined>(undefined);
     const originDraggerRef = useRef<THREE.Group>(null);
 
-    const onStart = () => {
-        !cameraStartDrag && setCameraStartDrag(true);
-    }
-    const onEnd = () => {
-        setCameraStartDrag(false);
-        transforming && setTransforming(false);
-    }
+    // const onStart = () => {
+        // !cameraStartDrag && setCameraStartDrag(true);
+    // }
+    // const onEnd = () => {
+        // setCameraStartDrag(false);
+        // transforming && setTransforming(false);
+    // }
     // rather of a hack for onChange running after onEnd multiple times due to dragging smoothness from draggingSmoothTime
-    const onChange = () => {
-        cameraStartDrag && !transforming && setTransforming(true);
-        !cameraStartDrag && transforming && setTransforming(false);
-    }
+    // const onChange = () => {
+        // cameraStartDrag && !transforming && setTransforming(true);
+        // !cameraStartDrag && transforming && setTransforming(false);
+    // }
 
     const isOriginPointMode = !!isPanelActive(PANEL_ORIGIN_POINT);
     let helper: THREE.BoxHelper | null = null;
@@ -147,7 +147,7 @@ const EditorControls = observer(() => {
     //to-do when launching origin point reset position of the origin point
     return (
         <>
-            <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} />
+            {/* <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} /> */}
             <GizmoHelper renderPriority={1} alignment="top-right" margin={[70, 70]}>
                 <GizmoViewport labelColor="black" />
             </GizmoHelper>
@@ -179,8 +179,8 @@ const EditorControls = observer(() => {
                     space={transformControlsSpace}
                     camera={camera}
                     onMouseUp={() => {
-                        if (!transforming) return;
-                        setTransforming(false);
+                        // if (!transforming) return;
+                        // setTransforming(false);
                         if (isOriginPointMode) {
                             if (controlsTarget instanceof THREE.Mesh && controlsTarget.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsTarget;
@@ -206,8 +206,8 @@ const EditorControls = observer(() => {
                         setLastObjectPlace(undefined);
                     }}
                     onMouseDown={() => {
-                        if (transforming) return;
-                        setTransforming(true);
+                        // if (transforming) return;
+                        // setTransforming(true);
                         setLastObjectPlace(controlsTarget.position.clone());
                     }}
                 />
