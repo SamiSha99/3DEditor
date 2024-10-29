@@ -35,6 +35,7 @@ export class Viewport {
 
     @observable gridEnabled: boolean = true;
     @observable fpsEnabled: boolean = false;
+    @observable viewHelperEnabled: boolean = true;
 
     constructor(editor: Editor) {
         makeObservable(this)
@@ -42,44 +43,33 @@ export class Viewport {
         this.editor = editor;
         this.camera.position.set(2.5, 1.5, 2.5);
         this.camera.lookAt(new THREE.Vector3());
-        this.orbitControls.update();
-        
-        // disabling the plane pickers to not be overwhelming to users
-        const controlsHelper = this.controls.getHelper().children[0] as TransformControlsGizmo;
-        
-        const pickerTranslate = controlsHelper.picker.translate;
-        const pickerLeftover = [] as THREE.Object3D[];
-        pickerLeftover.push(pickerTranslate.children.find(c => c.name == "XY")!);
-        pickerLeftover.push(pickerTranslate.children.find(c => c.name == "YZ")!);
-        pickerLeftover.push(pickerTranslate.children.find(c => c.name == "XZ")!);
-        pickerLeftover.push(pickerTranslate.children.find(c => c.name == "XYZ")!);
-        pickerTranslate.remove(...pickerLeftover); 
-        
-        const gizmoTranslate = controlsHelper.gizmo.translate;
-        const gizmoLeftover = [] as THREE.Object3D[];
-        gizmoLeftover.push(gizmoTranslate.children.find(c => c.name == "XY")!);
-        gizmoLeftover.push(gizmoTranslate.children.find(c => c.name == "YZ")!);
-        gizmoLeftover.push(gizmoTranslate.children.find(c => c.name == "XZ")!);
-        gizmoLeftover.push(gizmoTranslate.children.find(c => c.name == "XYZ")!);
-        gizmoTranslate.remove(...gizmoLeftover); 
 
-        console.log(pickerLeftover, gizmoLeftover)
-        
+        // Removing multi gizmo controls to avoid the controls being overwhelming, to-do: Make this a toggle option!
+        const controlsHelper = this.controls.getHelper().children[0] as TransformControlsGizmo;
+        const picker = controlsHelper.picker;
+        const gizmo = controlsHelper.gizmo;
+
+        // Translate
+        picker.translate.remove(...picker.translate.children.filter(c => c.name == "XY" || c.name == "YZ" || c.name == "XZ" || c.name == "XYZ"));
+        gizmo.translate.remove(...gizmo.translate.children.filter(c => c.name == "XY" || c.name == "YZ" || c.name == "XZ" || c.name == "XYZ"));
+
+        // Rotate
+        picker.rotate.remove(...picker.rotate.children.filter(c => c.name == "XYZE" || c.name == "E"));
+        gizmo.rotate.remove(...gizmo.rotate.children.filter(c => c.name == "XYZE" || c.name == "E"));
+
+        // Scale
+        picker.scale.remove(...picker.scale.children.filter(c => c.name == "XY" || c.name == "YZ" || c.name == "XZ" || c.name == "XYZ"));
+        gizmo.scale.remove(...gizmo.scale.children.filter(c => c.name == "XY" || c.name == "YZ" || c.name == "XZ" || c.name == "XYZ"));
+
         this.controls.addEventListener('dragging-changed', (e) => {
             this.orbitControls.enabled = !e.value;
             this.transforming = !!e.value;
         });
+
+
     }
 
     public static get Instance() { return this._instance; }
-
-    // Called by Fiber when its loaded.
-    onCanvasLoaded = (canvas: HTMLCanvasElement) => {
-        this.orbitControls.domElement = canvas;
-        this.orbitControls.connect();
-        this.controls.domElement = canvas;
-        this.controls.connect();
-    }
 
     @action setTransforming = (b?: boolean) => { this.transforming = b != undefined ? b : !this.transforming }
 
@@ -96,4 +86,22 @@ export class Viewport {
 
     @action setGrid = (b: boolean) => { this.gridEnabled = b; }
     @action setFPS = (b: boolean) => { this.fpsEnabled = b; }
+    @action setViewHelper = (b: boolean) => { this.viewHelperEnabled = b; }
+
+    // Called by Fiber when its loaded.
+    onCanvasLoaded = (canvas: HTMLCanvasElement) => {
+        this.orbitControls.domElement = canvas;
+        this.orbitControls.connect();
+
+        this.orbitControls.enableDamping = true;
+        this.orbitControls.dampingFactor = 0.1;
+        this.orbitControls.zoomSpeed = 2;
+
+        this.controls.domElement = canvas;
+        this.controls.connect();
+    }
+
+    update = (_delta: number) => {
+        this.orbitControls.update();
+    }
 }

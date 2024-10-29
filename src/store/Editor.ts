@@ -11,6 +11,8 @@ export class Editor {
 
     static _instance: Editor;
 
+    gl?: THREE.WebGLRenderer;
+    clock = new THREE.Clock();
 
     /** All instatiated Objects in the scene */
     @observable scene: THREE.Scene = new THREE.Scene();
@@ -37,15 +39,20 @@ export class Editor {
         makeObservable(this)
         Editor._instance = this;
         window.onkeydown = (e) => {
-            if(e.key == "m")
+            if (e.key == "m")
                 (this.controlsTarget as THREE.Mesh).geometry.scale(0.5, 1, 1);
-            if(e.key == "n")
+            if (e.key == "n")
                 (this.controlsTarget as THREE.Mesh).geometry.scale(2, 1, 1);
         }
     }
 
     public static get Instance() {
         return this._instance || (this._instance = new this());
+    }
+
+    update = () => {
+        const delta = this.clock.getDelta();
+        this.viewport.update(delta);
     }
 
     @action setTarget = (object: THREE.Object3D | null) => {
@@ -165,5 +172,10 @@ export class Editor {
 
     @action setRootSelection = (b: boolean) => {
         this.useRootSelection = b;
+    }
+
+    @action setGL = (gl: THREE.WebGLRenderer) => {
+        this.gl = gl;
+        gl.setAnimationLoop(this.update);
     }
 }

@@ -3,8 +3,8 @@ import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-thre
 import { useEditor } from "@orb_Editor";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { CameraControls, GizmoHelper, GizmoViewport, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
-import { useEffect, useRef, useState } from "react";
+import { GizmoHelper, GizmoViewport, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { useRef, useState } from "react";
 import React from "react";
 import { isPanelActive, PANEL_ORIGIN_POINT, panelHasFlag } from "@orb_UI/panels/Panels";
 import { translateOriginPoint } from "@orb_utils/Mesh";
@@ -12,10 +12,10 @@ import { useViewport } from "src/store/Viewport";
 
 
 const Canvas = observer(() => {
-    const { scene } = useEditor()
+    const { scene, setGL } = useEditor()
     const { fpsEnabled, camera, onCanvasLoaded } = useViewport();
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [loaded, setLoaded] = useState<boolean>();
+    const [loaded, setLoaded] = useState<boolean>(false);
 
     if (loaded && canvasRef.current) {
         onCanvasLoaded(canvasRef.current);
@@ -29,7 +29,10 @@ const Canvas = observer(() => {
             scene={scene}
             camera={camera}
             shadows
-            onCreated={() => setLoaded(canvasRef.current != undefined)}
+            onCreated={(_s) => {
+                setGL(_s.gl);
+                setLoaded(canvasRef.current != undefined);
+            }}
         >
             {
                 loaded && canvasRef.current &&
@@ -48,8 +51,7 @@ interface CanvasInfo {
 }
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
-    const { sceneObjects, sceneHelpers, controlsTarget,
-        removeObject, setTarget } = useEditor();
+    const { sceneObjects, sceneHelpers, controlsTarget, removeObject, setTarget } = useEditor();
     const { transforming } = useViewport();
     const { camera, raycaster } = useThree();
     // the passed ref is null at load time! 
@@ -98,11 +100,13 @@ const EditorSceneHelpers: React.FC<{ helper: THREE.Object3D }> = observer(({ hel
 
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
-    const { gridEnabled, grid, controls } = useViewport();
-
+    const { gridEnabled, grid, viewHelperEnabled, controls } = useViewport();
     return (
         <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
-            {/* <EditorControls /> */}
+            {viewHelperEnabled && <GizmoHelper
+                alignment="top-right"
+                margin={[70, 70]}
+                children={<GizmoViewport disabled />} />}
             <primitive object={controls.getHelper()} />
             {gridEnabled && <primitive object={grid} />}
         </group>
@@ -113,22 +117,8 @@ const EditorControls = observer(() => {
     const { controlsTarget } = useEditor();
     const { transformControlsMode, transformControlsSpace } = useViewport();
     const { camera, scene } = useThree();
-    const [cameraStartDrag, setCameraStartDrag] = useState(false);
     const [lastObjPlace, setLastObjectPlace] = useState<THREE.Vector3 | undefined>(undefined);
     const originDraggerRef = useRef<THREE.Group>(null);
-
-    // const onStart = () => {
-        // !cameraStartDrag && setCameraStartDrag(true);
-    // }
-    // const onEnd = () => {
-        // setCameraStartDrag(false);
-        // transforming && setTransforming(false);
-    // }
-    // rather of a hack for onChange running after onEnd multiple times due to dragging smoothness from draggingSmoothTime
-    // const onChange = () => {
-        // cameraStartDrag && !transforming && setTransforming(true);
-        // !cameraStartDrag && transforming && setTransforming(false);
-    // }
 
     const isOriginPointMode = !!isPanelActive(PANEL_ORIGIN_POINT);
     let helper: THREE.BoxHelper | null = null;
@@ -147,7 +137,6 @@ const EditorControls = observer(() => {
     //to-do when launching origin point reset position of the origin point
     return (
         <>
-            {/* <CameraControls makeDefault onStart={onStart} onEnd={onEnd} onChange={onChange} /> */}
             <GizmoHelper renderPriority={1} alignment="top-right" margin={[70, 70]}>
                 <GizmoViewport labelColor="black" />
             </GizmoHelper>
@@ -179,8 +168,6 @@ const EditorControls = observer(() => {
                     space={transformControlsSpace}
                     camera={camera}
                     onMouseUp={() => {
-                        // if (!transforming) return;
-                        // setTransforming(false);
                         if (isOriginPointMode) {
                             if (controlsTarget instanceof THREE.Mesh && controlsTarget.geometry instanceof THREE.BufferGeometry) {
                                 const o = controlsTarget;
@@ -206,8 +193,6 @@ const EditorControls = observer(() => {
                         setLastObjectPlace(undefined);
                     }}
                     onMouseDown={() => {
-                        // if (transforming) return;
-                        // setTransforming(true);
                         setLastObjectPlace(controlsTarget.position.clone());
                     }}
                 />
