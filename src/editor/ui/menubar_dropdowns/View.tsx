@@ -1,8 +1,8 @@
-import { Dropdown, Button, Checkbox } from "antd"
+import { Dropdown, Button } from "antd"
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
 export const View = observer(() => {
-    const { setGrid, gridEnabled, setFPS, fpsEnabled } = useViewport();
+    const { setGrid, gridEnabled, setFPS, fpsEnabled, setViewHelper, viewHelperEnabled } = useViewport();
 
     return (
         <>
@@ -18,6 +18,11 @@ export const View = observer(() => {
                             key: "1",
                             label: !fpsEnabled ? "Show FPS" : "Hide FPS",
                             onClick: () => { setFPS(!fpsEnabled) }
+                        },
+                        {
+                            key: "2",
+                            label: !viewHelperEnabled ? "Show View Helper" : "Hide View Helper",
+                            onClick: () => { setViewHelper(!viewHelperEnabled) }
                         }
                     ]
                 }} />

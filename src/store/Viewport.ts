@@ -17,7 +17,7 @@ export class Viewport {
     static _instance: Viewport;
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-    orbitControls = new OrbitControls(this.camera);
+    cameraControls = new OrbitControls(this.camera);
 
     /** True when moving/rotating/scaling */
     @observable transforming: boolean = false;
@@ -62,7 +62,7 @@ export class Viewport {
         gizmo.scale.remove(...gizmo.scale.children.filter(c => c.name == "XY" || c.name == "YZ" || c.name == "XZ" || c.name == "XYZ"));
 
         this.controls.addEventListener('dragging-changed', (e) => {
-            this.orbitControls.enabled = !e.value;
+            this.cameraControls.enabled = !e.value;
             this.transforming = !!e.value;
         });
 
@@ -90,18 +90,18 @@ export class Viewport {
 
     // Called by Fiber when its loaded.
     onCanvasLoaded = (canvas: HTMLCanvasElement) => {
-        this.orbitControls.domElement = canvas;
-        this.orbitControls.connect();
+        this.cameraControls.domElement = canvas;
+        this.cameraControls.connect();
 
-        this.orbitControls.enableDamping = true;
-        this.orbitControls.dampingFactor = 0.1;
-        this.orbitControls.zoomSpeed = 2;
+        this.cameraControls.enableDamping = true;
+        this.cameraControls.dampingFactor = 0.1;
+        this.cameraControls.zoomSpeed = 2;
 
         this.controls.domElement = canvas;
         this.controls.connect();
     }
 
     update = (_delta: number) => {
-        this.orbitControls.update();
+        this.cameraControls.update();
     }
 }
