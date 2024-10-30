@@ -23,14 +23,6 @@ export const Tools = observer(() => {
                 children={<Button children={"Tools"} />}
                 menu={{
                     items: [
-                        // {
-                        //     label: 'Convert File(s)...',
-                        //     key: '1',
-                        //     icon: <ICONS.EditOutlined />,
-                        //     onClick: () => {
-                        //         toggleModalConvert(true);
-                        //     }
-                        // },
                         {
                             label: 'Animations...',
                             key: '2',
@@ -97,16 +89,16 @@ export const Tools = observer(() => {
                                 })
                             }
                         },
-                        {
-                            label: 'Adjust Origin Point',
-                            key: '4',
-                            icon: <ICONS.DotChartOutlined />,
-                            onClick: () => {
-                                addActivePanel(PANEL_ORIGIN_POINT)
-                                setTransformControlsMode("translate");
-                                setTransformControlsSpace("local");
-                            }
-                        },
+                        // {
+                        //     label: 'Adjust Origin Point',
+                        //     key: '4',
+                        //     icon: <ICONS.DotChartOutlined />,
+                        //     onClick: () => {
+                        //         addActivePanel(PANEL_ORIGIN_POINT)
+                        //         setTransformControlsMode("translate");
+                        //         setTransformControlsSpace("local");
+                        //     }
+                        // },
                         {
                             label: 'Take a Screenshot',
                             key: '0',

@@ -5,6 +5,7 @@ import { createContext, useContext } from 'react';
 import { Editor } from '@orb_Editor';
 import { TransformControls, TransformControlsGizmo } from 'three/examples/jsm/controls/TransformControls';
 import { OrbitControls } from 'three/examples/jsm/Addons';
+import { sleep } from '@orb_utils/Main';
 
 export const ViewportContext = createContext<Viewport>({} as any)
 export const useViewport = () => useContext(ViewportContext);
@@ -44,29 +45,23 @@ export class Viewport {
         this.camera.position.set(2.5, 1.5, 2.5);
         this.camera.lookAt(new THREE.Vector3());
 
-        // Removing multi gizmo controls to avoid the controls being overwhelming, to-do: Make this a toggle option!
+        // Removing multi 3-gizmo controls to avoid the controls being overwhelming, to-do: Make this a toggle option!
         const controlsHelper = this.controls.getHelper().children[0] as TransformControlsGizmo;
         const picker = controlsHelper.picker;
         const gizmo = controlsHelper.gizmo;
 
         // Translate
-        picker.translate.remove(...picker.translate.children.filter(c => c.name == "XY" || c.name == "YZ" || c.name == "XZ" || c.name == "XYZ"));
-        gizmo.translate.remove(...gizmo.translate.children.filter(c => c.name == "XY" || c.name == "YZ" || c.name == "XZ" || c.name == "XYZ"));
+        picker.translate.remove(...picker.translate.children.filter(c => /* c.name == "XY" || c.name == "YZ" || c.name == "XZ" || */ c.name == "XYZ"));
+        gizmo.translate.remove(...gizmo.translate.children.filter(c => /* c.name == "XY" || c.name == "YZ" || c.name == "XZ" || */ c.name == "XYZ"));
 
         // Rotate
         picker.rotate.remove(...picker.rotate.children.filter(c => c.name == "XYZE" || c.name == "E"));
         gizmo.rotate.remove(...gizmo.rotate.children.filter(c => c.name == "XYZE" || c.name == "E"));
 
         // Scale
-        picker.scale.remove(...picker.scale.children.filter(c => c.name == "XY" || c.name == "YZ" || c.name == "XZ" || c.name == "XYZ"));
-        gizmo.scale.remove(...gizmo.scale.children.filter(c => c.name == "XY" || c.name == "YZ" || c.name == "XZ" || c.name == "XYZ"));
-
-        this.controls.addEventListener('dragging-changed', (e) => {
-            this.cameraControls.enabled = !e.value;
-            this.transforming = !!e.value;
-        });
-
-
+        // Scaling everything at once isn't bad
+        // picker.scale.remove(...picker.scale.children.filter(c => /* c.name == "XY" || c.name == "YZ" || c.name == "XZ" || */ c.name == "XYZ"));
+        // gizmo.scale.remove(...gizmo.scale.children.filter(c => /* c.name == "XY" || c.name == "YZ" || c.name == "XZ" || */ c.name == "XYZ"));
     }
 
     public static get Instance() { return this._instance; }
@@ -88,8 +83,30 @@ export class Viewport {
     @action setFPS = (b: boolean) => { this.fpsEnabled = b; }
     @action setViewHelper = (b: boolean) => { this.viewHelperEnabled = b; }
 
+    selectObject = (e: MouseEvent) => {
+
+        // Left Click only
+        if (e.button != 0) return;
+        if (this.transforming) return;
+        if (!this.editor.gl) return;
+        // Bounds are used to calculate an offseted AND/OR resized canvas that doesn't take the entire screen due to inspector.
+        const bounds = this.editor.gl.domElement.getBoundingClientRect();
+        const pointer = new THREE.Vector2(((e.clientX - bounds.left) / (bounds.right - bounds.left)) * 2 - 1, -((e.clientY - bounds.top) / (bounds.bottom - bounds.top)) * 2 + 1);
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(pointer, this.camera);
+        const intersects = raycaster.intersectObjects([...this.editor.sceneObjects, ...this.editor.sceneHelpers], true);
+
+        if (intersects.length <= 0) return;
+
+        let hit = intersects[0].object;
+        if (hit.userData.object as THREE.Object3D) hit = hit.userData.object;
+        this.editor.setTarget(hit);
+
+    }
+
     // Called by Fiber when its loaded.
     onCanvasLoaded = (canvas: HTMLCanvasElement) => {
+        canvas.onmouseup = this.selectObject;
         this.cameraControls.domElement = canvas;
         this.cameraControls.connect();
 
@@ -99,9 +116,16 @@ export class Viewport {
 
         this.controls.domElement = canvas;
         this.controls.connect();
+        this.controls.addEventListener('dragging-changed', async (e) => {
+            if (this.transforming) await sleep(1);
+            this.cameraControls.enabled = !e.value;
+            this.transforming = !!e.value;
+        });
+        // this.cameraControls.addEventListener('start', () => { this.transforming = true; })
+        // this.cameraControls.addEventListener('end', async () => { sleep(10); this.transforming = false; })
     }
 
-    update = (_delta: number) => {
-        this.cameraControls.update();
+    update = (delta: number) => {
+        this.cameraControls.update(delta);
     }
 }

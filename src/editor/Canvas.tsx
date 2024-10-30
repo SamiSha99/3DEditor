@@ -12,8 +12,8 @@ import { useViewport } from "src/store/Viewport";
 
 
 const Canvas = observer(() => {
-    const { scene, setGL } = useEditor()
-    const { fpsEnabled, camera, onCanvasLoaded } = useViewport();
+    const { scene, setGL, onCanvasLoaded } = useEditor()
+    const { fpsEnabled, camera } = useViewport();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [loaded, setLoaded] = useState<boolean>(false);
 
@@ -52,50 +52,18 @@ interface CanvasInfo {
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
     const { sceneObjects, sceneHelpers, controlsTarget, removeObject, setTarget } = useEditor();
-    const { transforming } = useViewport();
-    const { camera, raycaster } = useThree();
     // the passed ref is null at load time! 
     if (!canvas) canvas = document.getElementById('main') as HTMLCanvasElement;
-
-    const selectObject = (e: MouseEvent) => {
-        // Left Click only
-        if (e.button != 0) return;
-        if (transforming) return;
-        // Bounds are used to calculate an offseted AND/OR resized canvas that doesn't take the entire screen due to inspector.
-        const bounds = canvas.getBoundingClientRect();
-        const pointer = new THREE.Vector2(((e.clientX - bounds.left) / (bounds.right - bounds.left)) * 2 - 1, -((e.clientY - bounds.top) / (bounds.bottom - bounds.top)) * 2 + 1);
-        raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects([...sceneObjects, ...sceneHelpers], true);
-
-        if (intersects.length <= 0) return;
-
-        let hit = intersects[0].object;
-        if (hit.userData.object as THREE.Object3D) hit = hit.userData.object;
-        setTarget(hit);
-
-    }
-    canvas.onmouseup = selectObject;
 
     useHotkeys("backspace", () => controlsTarget instanceof THREE.Object3D && removeObject(controlsTarget))
     useHotkeys("esc", () => controlsTarget && setTarget(null))
 
     return (
         <>
-            {sceneObjects && sceneObjects.map((child) => <EditorObject3D object={child} />)}
-            {sceneHelpers && sceneHelpers.map((helper) => <EditorSceneHelpers helper={helper} />)}
+            {sceneObjects && sceneObjects.map((child) => <primitive key={child.uuid} object={child} />)}
+            {sceneHelpers && sceneHelpers.map((helper) => <primitive key={helper.uuid} object={helper} />)}
         </>
     )
-})
-
-const EditorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
-    return <primitive key={object.uuid} object={object} />
-})
-
-const EditorSceneHelpers: React.FC<{ helper: THREE.Object3D }> = observer(({ helper }) => {
-    useFrame(() => {
-        if (helper instanceof THREE.SpotLightHelper) helper.update();
-    })
-    return (<primitive key={helper.uuid} object={helper} />)
 })
 
 const EditorHelpers = observer(() => {

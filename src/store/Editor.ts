@@ -50,10 +50,7 @@ export class Editor {
         return this._instance || (this._instance = new this());
     }
 
-    update = () => {
-        const delta = this.clock.getDelta();
-        this.viewport.update(delta);
-    }
+
 
     @action setTarget = (object: THREE.Object3D | null) => {
 
@@ -63,6 +60,8 @@ export class Editor {
             object = object.parent;
         }
         this.controlsTarget = object;
+        this.viewport.transforming = false;
+        this.viewport.cameraControls.enabled = true;
         if (object) {
 
             this.viewport.controls.attach(object);
@@ -175,5 +174,17 @@ export class Editor {
     @action setGL = (gl: THREE.WebGLRenderer) => {
         this.gl = gl;
         gl.setAnimationLoop(this.update);
+    }
+
+    onCanvasLoaded = (canvas: HTMLCanvasElement) => {
+        this.viewport.onCanvasLoaded(canvas);
+    }
+
+    update = (delta = this.clock.getDelta()) => {
+        this.viewport.update(delta);
+        this.sceneHelpers.map((helper) => {
+            if (helper instanceof THREE.SpotLightHelper)
+                helper.update();
+        })
     }
 }
