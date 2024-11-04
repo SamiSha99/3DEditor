@@ -18,27 +18,35 @@ const Canvas = observer(() => {
     const [loaded, setLoaded] = useState<boolean>(false);
 
     return (
-        <ReactThreeFiberCanvas
-            ref={canvasRef}
-            id="main"
-            style={{ bottom: 0, height: "calc(100vh - 32px)" }}
-            scene={scene}
-            camera={camera}
-            shadows
-            onCreated={(_s) => {
-                onLoad(_s.gl.domElement, _s.gl)
-                setLoaded(true);
-            }}
-        >
-            {
-                loaded && canvasRef.current &&
-                <>
-                    <Scene canvas={canvasRef.current} />
-                    <EditorHelpers />
-                </>
-            }
-            {fpsEnabled && <StatsGl className="fps" />}
-        </ReactThreeFiberCanvas>
+        <>
+            <div style={{ backgroundColor: "#696969", width: "100%", height: "calc(100vh - 32px)", display: loaded ? "none" : "flex", alignItems: "center", alignContent: "center" }}>
+                <div style={{ margin: "auto", textAlign: "center", fontSize: 32, fontWeight: "bold" }}>
+                    Loading Scene, please wait.
+                </div>
+            </div >
+            <ReactThreeFiberCanvas
+                ref={canvasRef}
+                id="main"
+                style={{ bottom: 0, height: "calc(100vh - 32px)", width: loaded ? "100%" : "1px" }}
+
+                scene={scene}
+                camera={camera}
+                shadows
+                onCreated={(_s) => {
+                    onLoad(_s.gl.domElement, _s.gl)
+                    setLoaded(true);
+                }}
+            >
+                {
+                    loaded && canvasRef.current &&
+                    <>
+                        <Scene canvas={canvasRef.current} />
+                        <EditorHelpers />
+                    </>
+                }
+                {fpsEnabled && <StatsGl className="fps" />}
+            </ReactThreeFiberCanvas>
+        </>
     )
 })
 
