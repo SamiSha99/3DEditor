@@ -38,6 +38,8 @@ export class Viewport {
     @observable fpsEnabled: boolean = false;
     @observable viewHelperEnabled: boolean = true;
 
+    private cameraDragStart: boolean = false;
+
     constructor(editor: Editor) {
         makeObservable(this)
         Viewport._instance = this;
@@ -51,8 +53,9 @@ export class Viewport {
         const gizmo = controlsHelper.gizmo;
 
         // Translate
-        picker.translate.remove(...picker.translate.children.filter(c => /* c.name == "XY" || c.name == "YZ" || c.name == "XZ" || */ c.name == "XYZ"));
-        gizmo.translate.remove(...gizmo.translate.children.filter(c => /* c.name == "XY" || c.name == "YZ" || c.name == "XZ" || */ c.name == "XYZ"));
+        // Multi 3-gizmo can be confusing
+        picker.translate.remove(...picker.translate.children.filter(c => c.name == "XYZ"));
+        gizmo.translate.remove(...gizmo.translate.children.filter(c => c.name == "XYZ"));
 
         // Rotate
         picker.rotate.remove(...picker.rotate.children.filter(c => c.name == "XYZE" || c.name == "E"));
@@ -83,12 +86,12 @@ export class Viewport {
     @action setFPS = (b: boolean) => { this.fpsEnabled = b; }
     @action setViewHelper = (b: boolean) => { this.viewHelperEnabled = b; }
 
-    selectObject = (e: MouseEvent) => {
-
+    /** Runs when left clicking on the Canvas */
+    onSelectObject = (e: MouseEvent) => {
         // Left Click only
-        if (e.button != 0) return;
         if (this.transforming) return;
-        if (!this.editor.gl) return;
+        if (e.button != 0) return;
+        console.log("selecting an object...")
         // Bounds are used to calculate an offseted AND/OR resized canvas that doesn't take the entire screen due to inspector.
         const bounds = this.editor.gl.domElement.getBoundingClientRect();
         const pointer = new THREE.Vector2(((e.clientX - bounds.left) / (bounds.right - bounds.left)) * 2 - 1, -((e.clientY - bounds.top) / (bounds.bottom - bounds.top)) * 2 + 1);
@@ -101,28 +104,46 @@ export class Viewport {
         let hit = intersects[0].object;
         if (hit.userData.object as THREE.Object3D) hit = hit.userData.object;
         this.editor.setTarget(hit);
-
     }
 
-    // Called by Fiber when its loaded.
-    onCanvasLoaded = (canvas: HTMLCanvasElement) => {
-        canvas.onmouseup = this.selectObject;
+    onLoad = (canvas: HTMLCanvasElement, _gl: THREE.WebGLRenderer) => {
+        canvas.onpointerup = this.onSelectObject;
         this.cameraControls.domElement = canvas;
         this.cameraControls.connect();
 
         this.cameraControls.enableDamping = true;
-        this.cameraControls.dampingFactor = 0.1;
+        this.cameraControls.dampingFactor = 0.15;
         this.cameraControls.zoomSpeed = 2;
 
         this.controls.domElement = canvas;
         this.controls.connect();
-        this.controls.addEventListener('dragging-changed', async (e) => {
-            if (this.transforming) await sleep(1);
+
+        this.controls.addEventListener('dragging-changed', (e) => {
             this.cameraControls.enabled = !e.value;
             this.transforming = !!e.value;
         });
-        // this.cameraControls.addEventListener('start', () => { this.transforming = true; })
-        // this.cameraControls.addEventListener('end', async () => { sleep(10); this.transforming = false; })
+
+        // Flag that we started dragging
+        this.cameraControls.addEventListener('start', () => {
+            this.cameraDragStart = true;
+            console.log("camera start")
+        });
+
+        // if the camera gets changed in any way then we are transforming
+        // this should safely differentiate between object select and camera dragging
+        this.cameraControls.addEventListener('change', () => {
+            if (this.cameraDragStart && !this.transforming) {
+                this.transforming = true;
+                console.log("camera transforming");
+            }
+        });
+
+        // Reset
+        this.cameraControls.addEventListener('end', () => {
+            this.transforming = false;
+            this.cameraDragStart = false;
+            console.log("camera end");
+        });
     }
 
     update = (delta: number) => {

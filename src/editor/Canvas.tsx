@@ -12,14 +12,10 @@ import { useViewport } from "src/store/Viewport";
 
 
 const Canvas = observer(() => {
-    const { scene, setGL, onCanvasLoaded } = useEditor()
+    const { scene, onLoad } = useEditor()
     const { fpsEnabled, camera } = useViewport();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [loaded, setLoaded] = useState<boolean>(false);
-
-    if (loaded && canvasRef.current) {
-        onCanvasLoaded(canvasRef.current);
-    }
 
     return (
         <ReactThreeFiberCanvas
@@ -30,8 +26,8 @@ const Canvas = observer(() => {
             camera={camera}
             shadows
             onCreated={(_s) => {
-                setGL(_s.gl);
-                setLoaded(canvasRef.current != undefined);
+                onLoad(_s.gl.domElement, _s.gl)
+                setLoaded(true);
             }}
         >
             {

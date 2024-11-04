@@ -11,7 +11,9 @@ export class Editor {
 
     static _instance: Editor;
 
-    gl?: THREE.WebGLRenderer;
+    /** This is passed from Fiber through onCanvasLoaded */
+    gl!: THREE.WebGLRenderer;
+    canvas!: HTMLCanvasElement;
     clock = new THREE.Clock();
 
     /** All instatiated Objects in the scene */
@@ -27,8 +29,6 @@ export class Editor {
     // Currently selected Objects
     @observable controlsTarget: THREE.Object3D | null = null;
 
-    static readonly DEFAULT_SCENE_BACKGROUND_COLOR = new THREE.Color(0x001029);
-
     @observable useRootSelection: boolean = false;
 
     @observable activePanels: ActivePanelType[] = []
@@ -38,19 +38,11 @@ export class Editor {
     constructor() {
         makeObservable(this)
         Editor._instance = this;
-        window.onkeydown = (e) => {
-            if (e.key == "m")
-                (this.controlsTarget as THREE.Mesh).geometry.scale(0.5, 1, 1);
-            if (e.key == "n")
-                (this.controlsTarget as THREE.Mesh).geometry.scale(2, 1, 1);
-        }
     }
 
     public static get Instance() {
         return this._instance || (this._instance = new this());
     }
-
-
 
     @action setTarget = (object: THREE.Object3D | null) => {
 
@@ -176,8 +168,11 @@ export class Editor {
         gl.setAnimationLoop(this.update);
     }
 
-    onCanvasLoaded = (canvas: HTMLCanvasElement) => {
-        this.viewport.onCanvasLoaded(canvas);
+    onLoad = (canvas: HTMLCanvasElement, gl: THREE.WebGLRenderer) => {
+        this.canvas = canvas;
+        this.gl = gl;
+        gl.setAnimationLoop(this.update);
+        this.viewport.onLoad(this.canvas, this.gl);
     }
 
     update = (delta = this.clock.getDelta()) => {
