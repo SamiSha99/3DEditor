@@ -59,11 +59,6 @@ export class Viewport {
         // Rotate
         picker.rotate.remove(...picker.rotate.children.filter(c => c.name == "XYZE" || c.name == "E"));
         gizmo.rotate.remove(...gizmo.rotate.children.filter(c => c.name == "XYZE" || c.name == "E"));
-
-        // Scale
-        // Scaling everything at once isn't bad
-        // picker.scale.remove(...picker.scale.children.filter(c => /* c.name == "XY" || c.name == "YZ" || c.name == "XZ" || */ c.name == "XYZ"));
-        // gizmo.scale.remove(...gizmo.scale.children.filter(c => /* c.name == "XY" || c.name == "YZ" || c.name == "XZ" || */ c.name == "XYZ"));
     }
 
     public static get Instance() { return this._instance; }
