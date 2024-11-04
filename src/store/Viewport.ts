@@ -82,8 +82,9 @@ export class Viewport {
 
     /** Runs when left clicking on the Canvas */
     onSelectObject = (e: MouseEvent) => {
-        // Left Click only
+        // When adjusting objects with the controls or moving the camera in any way
         if (this.transforming) return;
+        // Left Click only
         if (e.button != 0) return;
         console.log("selecting an object...")
         // Bounds are used to calculate an offseted AND/OR resized canvas that doesn't take the entire screen due to inspector.
@@ -112,32 +113,12 @@ export class Viewport {
         this.controls.domElement = canvas;
         this.controls.connect();
 
-        this.controls.addEventListener('dragging-changed', (e) => {
-            this.cameraControls.enabled = !e.value;
-            this.transforming = !!e.value;
-        });
-
-        // Flag that we started dragging
-        this.cameraControls.addEventListener('start', () => {
-            this.cameraDragStart = true;
-            console.log("camera start")
-        });
-
-        // if the camera gets changed in any way then we are transforming
-        // this should safely differentiate between object select and camera dragging
-        this.cameraControls.addEventListener('change', () => {
-            if (this.cameraDragStart && !this.transforming) {
-                this.transforming = true;
-                console.log("camera transforming");
-            }
-        });
-
-        // Reset
-        this.cameraControls.addEventListener('end', () => {
-            this.transforming = false;
-            this.cameraDragStart = false;
-            console.log("camera end");
-        });
+        // Handles whether we should consider left click selection for tracing and selecting an object in the scene,
+        // if transforming becomes true then we ignore onSelectObject
+        this.controls.addEventListener('dragging-changed', (e) => { this.cameraControls.enabled = !e.value; this.transforming = !!e.value; });
+        this.cameraControls.addEventListener('start', () => this.cameraDragStart = true);
+        this.cameraControls.addEventListener('change', () => this.cameraDragStart && !this.transforming && (this.transforming = true));
+        this.cameraControls.addEventListener('end', () => { this.transforming = false; this.cameraDragStart = false; });
     }
 
     update = (delta: number) => {
