@@ -4,7 +4,7 @@ import { useEditor } from "@orb_Editor"
 import { observer } from "mobx-react-lite"
 import { Button, Checkbox, Divider, Radio, RadioChangeEvent, Tooltip } from "antd";
 import { useHotkeys } from 'react-hotkeys-hook';
-import { isPanelActive, PANEL_ORIGIN_POINT } from "./panels/Panels";
+import { isPanelActive } from "./panels/Panels";
 import { useViewport } from "src/store/Viewport";
 
 export const ControlsBar = observer(() => {
@@ -21,7 +21,7 @@ export const ControlsBar = observer(() => {
 
 const TranslationButton = observer(() => {
     const { setTransformControlsMode, transformControlsMode } = useViewport();
-    const isOriginPointMode = isPanelActive(PANEL_ORIGIN_POINT);
+    const isOriginPointMode = false;
 
     useHotkeys("space", () => {
         if (isOriginPointMode) return;

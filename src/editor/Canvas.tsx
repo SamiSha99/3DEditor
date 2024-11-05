@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { GizmoHelper, GizmoViewport, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
 import { useRef, useState } from "react";
 import React from "react";
-import { isPanelActive, PANEL_ORIGIN_POINT, panelHasFlag } from "@orb_UI/panels/Panels";
+import { isPanelActive, panelHasFlag } from "@orb_UI/panels/Panels";
 import { translateOriginPoint } from "@orb_utils/Mesh";
 import { useViewport } from "src/store/Viewport";
 
