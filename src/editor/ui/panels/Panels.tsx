@@ -1,5 +1,5 @@
 import React from "react";
-import PanelOriginPoint from './PanelOriginPoint';
+// import PanelOriginPoint from './PanelOriginPoint';
 import PanelScreenshot from "./PanelScreenshot";
 import { Editor } from "@orb_Editor";
 
@@ -9,7 +9,7 @@ export type ActivePanelType = {
     flags?: string[]
 }
 
-export const PANEL_ORIGIN_POINT: ActivePanelType = { id: "origin_point", panel: <PanelOriginPoint />, flags: ["drag_object"] }
+// export const PANEL_ORIGIN_POINT: ActivePanelType = { id: "origin_point", panel: <PanelOriginPoint />, flags: ["drag_object"] }
 export const PANEL_SCREENSHOT: ActivePanelType = { id: "screenshot", panel: <PanelScreenshot /> }
 
 /** Checks if the panel is currently active */

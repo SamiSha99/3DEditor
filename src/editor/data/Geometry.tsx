@@ -1,10 +1,14 @@
 
 import { useEditor } from "@orb_Editor";
+import { useDeltaTime } from "@orb_Hooks";
 import { ItemBoolean, ItemCollapse, ItemGroup, ItemNumber, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { Limit } from "@orb_UI/controller/items/Item";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from 'three'
+
+import { Row, Space, Button, Checkbox, Tooltip, Alert, Form } from "antd";
+import { SpaceCompactProps } from "antd/es/space/Compact";
 
 const GEOMETRY_SEGMENTS_LIMIT = { min: 0, max: 100 } as Limit;
 const GEOMETRY_SEGMENTS_LIMIT_VECTOR_2 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMETRY_SEGMENTS_LIMIT };
@@ -45,8 +49,16 @@ export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = o
             setG(geo)
         }
     }
+
+    const [loopStop, loopStart, _isActive] = useDeltaTime(() => {
+
+    });
+
     return (
         <>
+            <ItemCollapse label="Tools">
+                <Tools />
+            </ItemCollapse>
             <ItemCollapse label={"BufferGeometry"}>
                 <ItemSelect
                     object={{ Geometries: GeometrySelect }}
@@ -65,26 +77,122 @@ export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = o
                 </ItemGroup>
             </ItemCollapse>
             <ItemCollapse label={g.type}>
-                <ChildGeometry geometry={g} />
+                <ChildGeometry geometry={g} onChange={(g) => setG(g)} />
             </ItemCollapse>
         </>
     );
 })
 
-export const ChildGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = observer(({ geometry }) => {
+export const Tools = observer(() => {
+    const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "5px" }, block: true }
+    const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
+    const { controlsTarget, scene } = useEditor();
+    const [onConstraintObject, setOnConstraintObject] = useState(true);
+    const o = controlsTarget;
+
+    const setOriginPoint = (pos?: { x?: number, y?: number, z?: number }, center?: boolean) => {
+        if (!o) return;
+        if (o instanceof THREE.Mesh && o.geometry instanceof THREE.BufferGeometry) {
+            o.geometry.computeBoundingBox();
+            if (o.geometry.boundingBox) {
+                const size = new THREE.Vector3();
+                const centerPos = new THREE.Vector3();
+                o.geometry.boundingBox.getCenter(centerPos);
+                o.geometry.boundingBox.getSize(size);
+                const min = o.geometry.boundingBox.min
+                const max = o.geometry.boundingBox.max
+                if (center) {
+                    o.geometry.center();
+                    !onConstraintObject && o.position.add(centerPos);
+                }
+                else if (pos) {
+                    const transAdd = new THREE.Vector3();
+                    const objAdd = new THREE.Vector3();
+                    if (pos.x != undefined) {
+                        pos.x < 0 && objAdd.setX(min.x) && transAdd.setX(max.x - 2 * centerPos.x);
+                        pos.x > 0 && objAdd.setX(max.x) && transAdd.setX(min.x - 2 * centerPos.x)
+                        pos.x == 0 && objAdd.setX(centerPos.x) && transAdd.setX(-centerPos.x);
+                    }
+                    if (pos.y != undefined) {
+                        pos.y < 0 && objAdd.setY(min.y) && transAdd.setY(max.y - 2 * centerPos.y);
+                        pos.y > 0 && objAdd.setY(max.y) && transAdd.setY(min.y - 2 * centerPos.y);
+                        pos.y == 0 && objAdd.setY(centerPos.y) && transAdd.setY(-centerPos.y);
+                    }
+                    if (pos.z != undefined) {
+                        pos.z < 0 && objAdd.setZ(min.z) && transAdd.setZ(max.z - 2 * centerPos.z);
+                        pos.z > 0 && objAdd.setZ(max.z) && transAdd.setZ(min.z - 2 * centerPos.z);
+                        pos.z == 0 && objAdd.setZ(centerPos.z) && transAdd.setZ(-centerPos.z);
+                    }
+
+                    o.geometry.translate(transAdd.x, transAdd.y, transAdd.z);
+                    !onConstraintObject && o.position.add(objAdd);
+                }
+                const originGroup = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
+                const originDragger = originGroup?.children[0];
+                originGroup?.position.copy(o.position);
+                originDragger?.position.set(0, 0, 0);
+            }
+        }
+    }
+
+    return (
+        <Form.Item label="lol">
+            <Space>
+                <Space.Compact block direction="vertical">
+                    <Space.Compact {...spaceCompactProps}>
+                        <Tooltip title="While enabled, moves the Object while keeping the origin point in place.">
+                            <Checkbox
+                                disabled={!controlsTarget}
+                                children={"Lock Origin Point"}
+                                defaultChecked={onConstraintObject}
+                                onChange={(e) => {
+                                    setOnConstraintObject(e.target.checked);
+                                }} />
+                        </Tooltip>
+                    </Space.Compact>
+                    <Space.Compact {...spaceCompactProps}>
+                        <Button disabled={!controlsTarget} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
+                    </Space.Compact>
+                    <Space.Compact {...spaceCompactPropsButtons}>
+                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
+                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
+                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
+                    </Space.Compact>
+                    <Space.Compact {...spaceCompactPropsButtons}>
+                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
+                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
+                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
+                    </Space.Compact>
+                    <Space.Compact {...spaceCompactPropsButtons}>
+                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
+                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
+                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
+                    </Space.Compact>
+                </Space.Compact>
+            </Space>
+        </Form.Item>
+
+    )
+})
+
+export const ToolsTranslate = () => {
+    return <></>
+}
+
+export const ChildGeometry: React.FC<{ geometry: THREE.BufferGeometry, onChange: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onChange }) => {
 
     switch (geometry.constructor) {
-        case THREE.BoxGeometry: return <InspectorBoxGeometry geometry={geometry as THREE.BoxGeometry} />;
-        case THREE.CylinderGeometry: return <InspectorCylinderGeometry geometry={geometry as THREE.CylinderGeometry} />;
-        case THREE.ConeGeometry: return <InspectorCylinderGeometry geometry={geometry as THREE.ConeGeometry} />;
-        case THREE.PlaneGeometry: return <InspectorPlaneGeometry geometry={geometry as THREE.PlaneGeometry} />;
-        case THREE.CapsuleGeometry: return <InspectorCapsuleGeometry geometry={geometry as THREE.CapsuleGeometry} />;
-        case THREE.TorusGeometry: return <InspectorTorusGeometry geometry={geometry as THREE.TorusGeometry} />;
-        case THREE.IcosahedronGeometry: return <InspectorIcosahedronGeometry geometry={geometry as THREE.IcosahedronGeometry} />;
+        case THREE.BoxGeometry: return <InspectorBoxGeometry geometry={geometry as THREE.BoxGeometry} onNewGeometry={onChange} />;
+        case THREE.CylinderGeometry: return <InspectorCylinderGeometry geometry={geometry as THREE.CylinderGeometry} onNewGeometry={onChange} />;
+        case THREE.ConeGeometry: return <InspectorCylinderGeometry geometry={geometry as THREE.ConeGeometry} onNewGeometry={onChange} />;
+        case THREE.PlaneGeometry: return <InspectorPlaneGeometry geometry={geometry as THREE.PlaneGeometry} onNewGeometry={onChange} />;
+        case THREE.CapsuleGeometry: return <InspectorCapsuleGeometry geometry={geometry as THREE.CapsuleGeometry} onNewGeometry={onChange} />;
+        case THREE.TorusGeometry: return <InspectorTorusGeometry geometry={geometry as THREE.TorusGeometry} onNewGeometry={onChange} />;
+        case THREE.IcosahedronGeometry: return <InspectorIcosahedronGeometry geometry={geometry as THREE.IcosahedronGeometry} onNewGeometry={onChange} />;
     }
 })
 
-export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry }> = observer(({ geometry }) => {
+export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
     const { controlsTarget } = useEditor();
 
     const width = geometry.parameters.width;
@@ -106,6 +214,7 @@ export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry }> = o
                 p.hS != undefined ? p.hS : old.heightSegments,
                 p.dS != undefined ? p.dS : old.depthSegments
             );
+            onNewGeometry(controlsTarget.geometry);
         }
     }
 
@@ -135,7 +244,7 @@ export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry }> = o
 })
 
 // Cone is a child of Cylinder
-export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeometry | THREE.ConeGeometry }> = observer(({ geometry }) => {
+export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeometry | THREE.ConeGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
     const { controlsTarget } = useEditor();
 
     const radiusTop = geometry instanceof THREE.ConeGeometry ? 0 : geometry.parameters.radiusTop;
@@ -174,6 +283,7 @@ export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeome
                         p.tL != undefined ? p.tL : old.thetaLength
                     );
             }
+            onNewGeometry(controlsTarget.geometry);
         }
     }
 
@@ -246,7 +356,7 @@ export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeome
     )
 })
 
-export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry }> = observer(({ geometry }) => {
+export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
     const { controlsTarget } = useEditor();
 
     const width = geometry.parameters.width;
@@ -264,6 +374,7 @@ export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry }>
                 p.wS != undefined ? p.wS : old.widthSegments,
                 p.hS != undefined ? p.hS : old.heightSegments,
             );
+            onNewGeometry(controlsTarget.geometry);
         }
     }
 
@@ -292,7 +403,7 @@ export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry }>
     )
 })
 
-export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometry }> = observer(({ geometry }) => {
+export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
     const { controlsTarget } = useEditor();
 
     const radius = geometry.parameters.radius;
@@ -310,6 +421,7 @@ export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometr
                 p.cS != undefined ? p.cS : old.capSegments,
                 p.rS != undefined ? p.rS : old.radialSegments,
             );
+            onNewGeometry(controlsTarget.geometry);
         }
     }
 
@@ -341,7 +453,7 @@ export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometr
     )
 })
 
-export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry }> = observer(({ geometry }) => {
+export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
     const { controlsTarget } = useEditor();
 
     const radius = geometry.parameters.radius;
@@ -361,6 +473,7 @@ export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry }>
                 p.tS != undefined ? p.tS : old.tubularSegments,
                 p.a != undefined ? p.a : old.arc
             );
+            onNewGeometry(controlsTarget.geometry);
         }
     }
 
@@ -399,7 +512,7 @@ export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry }>
     )
 })
 
-export const InspectorIcosahedronGeometry: React.FC<{ geometry: THREE.IcosahedronGeometry }> = observer(({ geometry }) => {
+export const InspectorIcosahedronGeometry: React.FC<{ geometry: THREE.IcosahedronGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
     const { controlsTarget } = useEditor();
 
     const radius = geometry.parameters.radius;
@@ -413,6 +526,7 @@ export const InspectorIcosahedronGeometry: React.FC<{ geometry: THREE.Icosahedro
                 p.r != undefined ? p.r : old.radius,
                 p.d != undefined ? p.d : old.detail,
             );
+            onNewGeometry(controlsTarget.geometry);
         }
     }
 
