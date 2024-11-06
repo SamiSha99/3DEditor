@@ -9,13 +9,11 @@ import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
 import { Sphere } from "@orb_tools/create/Primitive";
 import { invertGeometry } from "src/editor/utils/Mesh";
-import { PANEL_ORIGIN_POINT, PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
+import { PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
-import { useViewport } from "src/store/Viewport";
 
 export const Tools = observer(() => {
-    const { controlsTarget, addObject, addActivePanel } = useEditor();
-    const { setTransformControlsSpace, setTransformControlsMode } = useViewport();
+    const { controlsTarget, addObject, activatePanel } = useEditor();
     return (
         <>
             <Dropdown
@@ -89,22 +87,12 @@ export const Tools = observer(() => {
                                 })
                             }
                         },
-                        // {
-                        //     label: 'Adjust Origin Point',
-                        //     key: '4',
-                        //     icon: <ICONS.DotChartOutlined />,
-                        //     onClick: () => {
-                        //         addActivePanel(PANEL_ORIGIN_POINT)
-                        //         setTransformControlsMode("translate");
-                        //         setTransformControlsSpace("local");
-                        //     }
-                        // },
                         {
                             label: 'Take a Screenshot',
                             key: '0',
                             icon: <ICONS.CameraOutlined />,
                             onClick: () => {
-                                addActivePanel(PANEL_SCREENSHOT);
+                                activatePanel(PANEL_SCREENSHOT);
                             }
                         }
                     ]

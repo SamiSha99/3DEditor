@@ -3,21 +3,22 @@ import React from "react";
 import PanelScreenshot from "./PanelScreenshot";
 import { Editor } from "@orb_Editor";
 
-export type ActivePanelType = {
+export type Panel = {
     id: string,
     panel: React.ReactNode,
-    flags?: string[]
+    flags?: string[],
+    parameters?: { [key: string]: any }
 }
 
-// export const PANEL_ORIGIN_POINT: ActivePanelType = { id: "origin_point", panel: <PanelOriginPoint />, flags: ["drag_object"] }
-export const PANEL_SCREENSHOT: ActivePanelType = { id: "screenshot", panel: <PanelScreenshot /> }
+// export const PANEL_ORIGIN_POINT: Panel = { id: "origin_point", panel: <PanelOriginPoint />, flags: ["drag_object"] }
+export const PANEL_SCREENSHOT: Panel = { id: "screenshot", panel: <PanelScreenshot /> }
 
 /** Checks if the panel is currently active */
-export function isPanelActive(panel: ActivePanelType | string) {
+export function isPanelActive(panel: Panel | string) {
     const id = (typeof panel === 'string' ? panel : panel.id);
     return Editor.Instance.activePanels.find(x => x.id == id);
 }
 
-export function panelHasFlag(panel: ActivePanelType | string, flag: string) {
+export function panelHasFlag(panel: Panel | string, flag: string) {
     return !!isPanelActive(panel)?.flags?.find(f => f == flag);
 }

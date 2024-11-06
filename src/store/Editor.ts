@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { makeObservable, observable, action } from "mobx";
-import { ActivePanelType, isPanelActive } from "@orb_UI/panels/Panels";
+import { Panel, isPanelActive } from "@orb_UI/panels/Panels";
 import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
 
@@ -31,7 +31,7 @@ export class Editor {
 
     @observable useRootSelection: boolean = false;
 
-    @observable activePanels: ActivePanelType[] = []
+    @observable activePanels: Panel[] = []
 
     @observable viewport = new Viewport(this);
 
@@ -72,7 +72,7 @@ export class Editor {
     @action setBackground = (value: THREE.Color | THREE.Texture | null) => this.scene.background = value;
     @action setFog = (value: THREE.Fog | THREE.FogExp2 | null) => this.scene.fog = value;
 
-    @action addActivePanel = (value: ActivePanelType) => {
+    @action activatePanel = (value: Panel) => {
         if (this.activePanels.find(x => x.id == value.id))
             console.warn("Panel is already active, ignoring... ID:", value.id)
         else {
@@ -82,7 +82,7 @@ export class Editor {
         }
     }
 
-    @action addPanelFlag = (flag: string, to: ActivePanelType) => {
+    @action addPanelFlag = (flag: string, to: Panel) => {
         const panel = isPanelActive(to);
         if (!panel) {
             console.warn("Panel", to.id, "is not active!");
@@ -94,7 +94,7 @@ export class Editor {
         }
     }
 
-    @action removePanelFlag = (flag: string, from: ActivePanelType) => {
+    @action removePanelFlag = (flag: string, from: Panel) => {
         const panel = isPanelActive(from);
         if (!panel) {
             console.warn("Panel", from.id, "is not active!");
