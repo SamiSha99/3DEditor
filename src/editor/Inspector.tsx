@@ -11,6 +11,7 @@ import { ControlsBar } from "@orb_UI/ControlsBar";
 import Canvas from './Canvas'
 import * as THREE from "three"
 import Overlay from "./Overlay";
+import { useViewport } from "src/store/Viewport";
 
 export const Inspector = () => {
     return (
@@ -40,8 +41,8 @@ export const Inspector = () => {
 }
 
 export const HierarchyTree = observer(() => {
-    const { sceneObjects, scene, setTarget } = useEditor();
-
+    const { sceneObjects, scene } = useEditor();
+    const { setTarget } = useViewport();
     let treeData = getTreeDataNodes(sceneObjects as THREE.Object3D[]);
 
     const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
@@ -59,7 +60,7 @@ export const HierarchyTree = observer(() => {
 })
 
 export const SelectedObject: React.FC = observer(() => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
     const [tab, setTab] = useState(controlsTarget ? "OBJECT" : "");
     return (
         <>

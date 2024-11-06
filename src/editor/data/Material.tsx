@@ -6,6 +6,7 @@ import { useEditor } from '@orb_Editor';
 import { useState } from 'react';
 import { Divider } from 'antd';
 import { ItemColor } from '@orb_UI/controller/items/ItemColor';
+import { useViewport } from 'src/store/Viewport';
 
 const needsUpdate = (m: THREE.Material) => { m.needsUpdate = true; }
 
@@ -23,7 +24,7 @@ const MaterialSelect = [
 ] as { value: string, label: string }[];
 
 export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observer(({ material }) => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
     const [meshMaterial, setMeshMaterial] = useState(material);
 
     const instantiateMaterial = (value: string) => {

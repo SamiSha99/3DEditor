@@ -10,6 +10,7 @@ import { useRef } from "react";
 import * as EXPORTER from '@orb_tools/Exporter';
 import * as THREE from 'three';
 import { ItemVector2 } from "@orb_UI/controller/ControllerItems";
+import { useViewport } from "src/store/Viewport";
 
 const DEFAULT_SIZE_WIDTH = 256;
 const DEFAULT_SIZE_HEIGHT = 256;
@@ -24,7 +25,7 @@ function resetDefaults() {
 }
 
 export const PanelScreenshot = observer(() => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
 
     const obj = controlsTarget?.clone();
     obj?.position.set(0, 0, 0);

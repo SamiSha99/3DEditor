@@ -7,6 +7,7 @@ import { doImport } from "@orb_tools/Importer";
 import { ExportType, doExport, save } from "@orb_tools/Exporter";
 import { ItemBoolean, ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { ConvertModal, textureSizeOptions } from "./Tools";
+import { useViewport } from "src/store/Viewport";
 
 export const File = () => {
     const { setScene, addObject } = useEditor();
@@ -72,7 +73,8 @@ const exportOptions = [
 const exportSettings = { name: "exportName", type: exportOptions[0].value, exportSelection: false, textureSize: 1024 }
 
 const ExportModal: React.FC<{ open: boolean, onSubmit: () => void, onCancel: () => void }> = ({ open, onSubmit, onCancel }) => {
-    const { controlsTarget, sceneObjects } = useEditor();
+    const { sceneObjects } = useEditor();
+    const { controlsTarget } = useViewport();
 
     const doDownload = () => {
         const res = exportSettings;

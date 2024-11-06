@@ -12,7 +12,7 @@ const initScene = async () => {
     const { loadEnvironmentSample } = await import("@orb_utils/Samples.ts");
     const box = editor.addObject(Box());
     loadEnvironmentSample('city').then((o) => o && editor.setEnvironment(o.data))
-    editor.setTarget(box)
+    editor.viewport.setTarget(box)
 }
 initScene();
 

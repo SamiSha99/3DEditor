@@ -1,6 +1,6 @@
 
 import { useEditor } from "@orb_Editor";
-import { useDeltaTime } from "@orb_Hooks";
+import { useDeltaTime, useOnUnmount } from "@orb_Hooks";
 import { ItemBoolean, ItemCollapse, ItemGroup, ItemNumber, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { Limit } from "@orb_UI/controller/items/Item";
 import { observer } from "mobx-react-lite";
@@ -9,6 +9,7 @@ import * as THREE from 'three'
 
 import { Row, Space, Button, Checkbox, Tooltip, Alert, Form } from "antd";
 import { SpaceCompactProps } from "antd/es/space/Compact";
+import { useViewport } from "src/store/Viewport";
 
 const GEOMETRY_SEGMENTS_LIMIT = { min: 0, max: 100 } as Limit;
 const GEOMETRY_SEGMENTS_LIMIT_VECTOR_2 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMETRY_SEGMENTS_LIMIT };
@@ -25,7 +26,7 @@ const GeometrySelect = [
 ] as { value: string, label: string }[];
 
 export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = observer(({ geometry }) => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
     const [g, setG] = useState(geometry);
 
     const instantiateGeometry = (value: string) => {
@@ -86,7 +87,8 @@ export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = o
 export const Tools = observer(() => {
     const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "5px" }, block: true }
     const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
-    const { controlsTarget, scene } = useEditor();
+    const { scene, addFlag, removeFlag } = useEditor();
+    const { controlsTarget } = useViewport();
     const [onConstraintObject, setOnConstraintObject] = useState(true);
     const o = controlsTarget;
 
@@ -135,49 +137,54 @@ export const Tools = observer(() => {
         }
     }
 
-    return (
-        <Form.Item label="lol">
-            <Space>
-                <Space.Compact block direction="vertical">
-                    <Space.Compact {...spaceCompactProps}>
-                        <Tooltip title="While enabled, moves the Object while keeping the origin point in place.">
-                            <Checkbox
-                                disabled={!controlsTarget}
-                                children={"Lock Origin Point"}
-                                defaultChecked={onConstraintObject}
-                                onChange={(e) => {
-                                    setOnConstraintObject(e.target.checked);
-                                }} />
-                        </Tooltip>
-                    </Space.Compact>
-                    <Space.Compact {...spaceCompactProps}>
-                        <Button disabled={!controlsTarget} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
-                    </Space.Compact>
-                    <Space.Compact {...spaceCompactPropsButtons}>
-                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
-                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
-                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
-                    </Space.Compact>
-                    <Space.Compact {...spaceCompactPropsButtons}>
-                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
-                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
-                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
-                    </Space.Compact>
-                    <Space.Compact {...spaceCompactPropsButtons}>
-                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
-                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
-                        <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
-                    </Space.Compact>
-                </Space.Compact>
-            </Space>
-        </Form.Item>
+    useOnUnmount(() => { removeFlag("geometry_tools") }, [])
 
+    return (
+        <>
+            <ItemBoolean object={{ enableTools: false }}
+                variable="enableTools"
+                labelInVariable
+                onChange={(v) => {
+                    v ? addFlag("geometry_tools") : removeFlag("geometry_tools");
+                }} />
+            <Form.Item label="lol">
+                <Space>
+                    <Space.Compact block direction="vertical">
+                        <Space.Compact {...spaceCompactProps}>
+                            <Tooltip title="While enabled, moves the Object while keeping the origin point in place.">
+                                <Checkbox
+                                    disabled={!controlsTarget}
+                                    children={"Lock Origin Point"}
+                                    defaultChecked={onConstraintObject}
+                                    onChange={(e) => {
+                                        setOnConstraintObject(e.target.checked);
+                                    }} />
+                            </Tooltip>
+                        </Space.Compact>
+                        <Space.Compact {...spaceCompactProps}>
+                            <Button disabled={!controlsTarget} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
+                        </Space.Compact>
+                        <Space.Compact {...spaceCompactPropsButtons}>
+                            <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
+                            <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
+                            <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
+                        </Space.Compact>
+                        <Space.Compact {...spaceCompactPropsButtons}>
+                            <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
+                            <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
+                            <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
+                        </Space.Compact>
+                        <Space.Compact {...spaceCompactPropsButtons}>
+                            <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
+                            <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
+                            <Button disabled={!controlsTarget} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
+                        </Space.Compact>
+                    </Space.Compact>
+                </Space>
+            </Form.Item>
+        </>
     )
 })
-
-export const ToolsTranslate = () => {
-    return <></>
-}
 
 export const ChildGeometry: React.FC<{ geometry: THREE.BufferGeometry, onChange: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onChange }) => {
 
@@ -193,7 +200,7 @@ export const ChildGeometry: React.FC<{ geometry: THREE.BufferGeometry, onChange:
 })
 
 export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
 
     const width = geometry.parameters.width;
     const height = geometry.parameters.height;
@@ -245,7 +252,7 @@ export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry, onNew
 
 // Cone is a child of Cylinder
 export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeometry | THREE.ConeGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
 
     const radiusTop = geometry instanceof THREE.ConeGeometry ? 0 : geometry.parameters.radiusTop;
     const radiusBottom = geometry instanceof THREE.ConeGeometry ? geometry.parameters.radius : geometry.parameters.radiusBottom;
@@ -357,7 +364,7 @@ export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeome
 })
 
 export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
 
     const width = geometry.parameters.width;
     const height = geometry.parameters.height;
@@ -404,7 +411,7 @@ export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry, o
 })
 
 export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
 
     const radius = geometry.parameters.radius;
     const length = geometry.parameters.length;
@@ -454,7 +461,7 @@ export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometr
 })
 
 export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
 
     const radius = geometry.parameters.radius;
     const tube = geometry.parameters.tube;
@@ -513,7 +520,7 @@ export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry, o
 })
 
 export const InspectorIcosahedronGeometry: React.FC<{ geometry: THREE.IcosahedronGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
 
     const radius = geometry.parameters.radius;
     const detail = geometry.parameters.detail;

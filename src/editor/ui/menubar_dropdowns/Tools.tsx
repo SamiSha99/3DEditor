@@ -11,9 +11,11 @@ import { Sphere } from "@orb_tools/create/Primitive";
 import { invertGeometry } from "src/editor/utils/Mesh";
 import { PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
+import { useViewport } from "src/store/Viewport";
 
 export const Tools = observer(() => {
-    const { controlsTarget, addObject, activatePanel } = useEditor();
+    const { addObject, activatePanel } = useEditor();
+    const { controlsTarget } = useViewport();
     return (
         <>
             <Dropdown

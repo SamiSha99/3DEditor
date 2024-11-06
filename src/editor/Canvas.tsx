@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Canvas as ReactThreeFiberCanvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas as ReactThreeFiberCanvas, useThree } from '@react-three/fiber';
 import { useEditor } from "@orb_Editor";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
@@ -55,7 +55,8 @@ interface CanvasInfo {
 }
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
-    const { sceneObjects, sceneHelpers, controlsTarget, removeObject, setTarget } = useEditor();
+    const { sceneObjects, sceneHelpers, removeObject } = useEditor();
+    const { setTarget, controlsTarget } = useViewport();
     // the passed ref is null at load time! 
     if (!canvas) canvas = document.getElementById('main') as HTMLCanvasElement;
 
@@ -72,21 +73,43 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
 
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
+    const { flags } = useEditor();
     const { gridEnabled, grid, viewHelperEnabled, controls } = useViewport();
+
+    let helper: THREE.WireframeGeometry | null = null;
+    if (controls.object instanceof THREE.Mesh) {
+        helper = new THREE.WireframeGeometry(controls.object.geometry)
+    }
+
     return (
         <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
             {viewHelperEnabled && <GizmoHelper
                 alignment="top-right"
                 margin={[70, 70]}
                 children={<GizmoViewport disabled />} />}
+            <group visible={flags.includes("geometry_tools")} name="TRANSFORM_ORIGIN_WORLD_CENTER" renderOrder={0}>
+                {helper && <primitive object={helper} />}
+                <group name="TRANSFORM_ORIGIN_GROUP" position={controls.object.position}>
+                    <group name="TRANSFORM_ORIGIN_DRAGGER">
+                        <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
+                        <Line color={0xFF0000} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
+                        <Line color={0x00FF00} points={[[0, 0, 0], [0, 10, 0]]} lineWidth={5} />
+                        <Line color={0x0000FF} points={[[0, 0, 0], [0, 0, 10]]} lineWidth={5} />
+                        <Line dashed dashScale={10} color={0xFF0000} points={[[0, 0, 0], [-10, 0, 0]]} lineWidth={5} />
+                        <Line dashed dashScale={10} color={0x00FF00} points={[[0, 0, 0], [0, -10, 0]]} lineWidth={5} />
+                        <Line dashed dashScale={10} color={0x0000FF} points={[[0, 0, 0], [0, 0, -10]]} lineWidth={5} />
+                    </group>
+                </group>
+            </group>
             <primitive object={controls.getHelper()} />
             {gridEnabled && <primitive object={grid} />}
         </group>
     )
 })
 
+// to-do delete
 const EditorControls = observer(() => {
-    const { controlsTarget } = useEditor();
+    const { controlsTarget } = useViewport();
     const { transformControlsMode, transformControlsSpace } = useViewport();
     const { camera, scene } = useThree();
     const [lastObjPlace, setLastObjectPlace] = useState<THREE.Vector3 | undefined>(undefined);

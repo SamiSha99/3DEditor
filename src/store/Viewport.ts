@@ -16,6 +16,9 @@ export class Viewport {
     private editor: Editor;
     static _instance: Viewport;
 
+    // Currently selected Objects
+    @observable controlsTarget: THREE.Object3D | null = null;
+
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
     cameraControls = new OrbitControls(this.camera);
 
@@ -63,6 +66,29 @@ export class Viewport {
 
     public static get Instance() { return this._instance; }
 
+    @action setTarget = (object: THREE.Object3D | null) => {
+        if (this.controlsTarget == object) return;
+        // Selects the highest in the hierachy regardless of which one clicked for now
+        while (this.editor.useRootSelection && object?.parent && !(object.parent instanceof THREE.Scene)) {
+            object = object.parent;
+        }
+        this.controlsTarget = object;
+        this.transforming = false;
+        this.cameraControls.enabled = true;
+        if (object) {
+
+            this.controls.attach(object);
+            if (this.controls.domElement)
+                this.controls.connect();
+        }
+        else {
+            this.controls.detach();
+            if (this.controls.domElement)
+                this.controls.disconnect();
+        }
+
+    }
+
     @action setTransforming = (b?: boolean) => { this.transforming = b != undefined ? b : !this.transforming }
 
     // 0 = translate | 1 = rotate | 2 = scale
@@ -98,7 +124,7 @@ export class Viewport {
 
         let hit = intersects[0].object;
         if (hit.userData.object as THREE.Object3D) hit = hit.userData.object;
-        this.editor.setTarget(hit);
+        this.setTarget(hit);
     }
 
     onLoad = (canvas: HTMLCanvasElement, _gl: THREE.WebGLRenderer) => {
@@ -123,5 +149,14 @@ export class Viewport {
 
     update = (delta: number) => {
         this.cameraControls.update(delta);
+    }
+
+    onAddFlag = (flag: string) => {
+
+    }
+
+    onRemoveFlag = (flag: string) => {
+
+
     }
 }
