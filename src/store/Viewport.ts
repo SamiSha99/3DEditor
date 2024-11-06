@@ -16,8 +16,8 @@ export class Viewport {
     private editor: Editor;
     static _instance: Viewport;
 
-    // Currently selected Objects
-    @observable controlsTarget: THREE.Object3D | null = null;
+    /** Currently selected Objects */
+    @observable target: THREE.Object3D | null = null;
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
     cameraControls = new OrbitControls(this.camera);
@@ -67,12 +67,12 @@ export class Viewport {
     public static get Instance() { return this._instance; }
 
     @action setTarget = (object: THREE.Object3D | null) => {
-        if (this.controlsTarget == object) return;
+        if (this.target == object) return;
         // Selects the highest in the hierachy regardless of which one clicked for now
         while (this.editor.useRootSelection && object?.parent && !(object.parent instanceof THREE.Scene)) {
             object = object.parent;
         }
-        this.controlsTarget = object;
+        this.target = object;
         this.transforming = false;
         this.cameraControls.enabled = true;
         if (object) {

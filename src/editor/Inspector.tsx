@@ -60,20 +60,20 @@ export const HierarchyTree = observer(() => {
 })
 
 export const SelectedObject: React.FC = observer(() => {
-    const { controlsTarget } = useViewport();
-    const [tab, setTab] = useState(controlsTarget ? "OBJECT" : "");
+    const { target } = useViewport();
+    const [tab, setTab] = useState(target ? "OBJECT" : "");
     return (
         <>
             {
                 <>
                     <Row style={{ marginTop: 24 }}>
                         <Button children={"SCENE"} onClick={() => setTab("SCENE")} />
-                        <Button disabled={controlsTarget == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
+                        <Button disabled={target == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
                         {
-                            controlsTarget && controlsTarget instanceof THREE.Mesh &&
+                            target && target instanceof THREE.Mesh &&
                             <>
-                                <Button disabled={!controlsTarget.material} children={"GEOMETRY"} onClick={() => setTab("GEOMETRY")} />
-                                <Button disabled={!controlsTarget.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
+                                <Button disabled={!target.material} children={"GEOMETRY"} onClick={() => setTab("GEOMETRY")} />
+                                <Button disabled={!target.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
                             </>
                         }
                         <Divider style={{ margin: 0 }} />
@@ -83,12 +83,12 @@ export const SelectedObject: React.FC = observer(() => {
                         <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarGutter: "auto" }}>
                             <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} colon={false} labelWrap>
                                 {tab == "SCENE" && <InspectorScene />}
-                                {tab == "OBJECT" && controlsTarget && <InspectorObject3D object={controlsTarget} />}
+                                {tab == "OBJECT" && target && <InspectorObject3D object={target} />}
                                 {
-                                    controlsTarget instanceof THREE.Mesh &&
+                                    target instanceof THREE.Mesh &&
                                     <>
-                                        {tab == "MATERIAL" && <InspectorMaterial material={controlsTarget.material} />}
-                                        {tab == "GEOMETRY" && <InspectorGeometry geometry={controlsTarget.geometry} />}
+                                        {tab == "MATERIAL" && <InspectorMaterial material={target.material} />}
+                                        {tab == "GEOMETRY" && <InspectorGeometry geometry={target.geometry} />}
                                     </>
                                 }
                             </Form>

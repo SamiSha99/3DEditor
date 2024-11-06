@@ -56,12 +56,12 @@ interface CanvasInfo {
 
 const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
     const { sceneObjects, sceneHelpers, removeObject } = useEditor();
-    const { setTarget, controlsTarget } = useViewport();
+    const { setTarget, target } = useViewport();
     // the passed ref is null at load time! 
     if (!canvas) canvas = document.getElementById('main') as HTMLCanvasElement;
 
-    useHotkeys("backspace", () => controlsTarget instanceof THREE.Object3D && removeObject(controlsTarget))
-    useHotkeys("esc", () => controlsTarget && setTarget(null))
+    useHotkeys("backspace", () => target instanceof THREE.Object3D && removeObject(target))
+    useHotkeys("esc", () => target && setTarget(null))
 
     return (
         <>
@@ -109,7 +109,7 @@ const EditorHelpers = observer(() => {
 
 // to-do delete
 const EditorControls = observer(() => {
-    const { controlsTarget } = useViewport();
+    const { target } = useViewport();
     const { transformControlsMode, transformControlsSpace } = useViewport();
     const { camera, scene } = useThree();
     const [lastObjPlace, setLastObjectPlace] = useState<THREE.Vector3 | undefined>(undefined);
@@ -117,15 +117,15 @@ const EditorControls = observer(() => {
 
     const isOriginPointMode = !!isPanelActive(PANEL_ORIGIN_POINT);
     let helper: THREE.BoxHelper | null = null;
-    if (controlsTarget) {
-        helper = new THREE.BoxHelper(controlsTarget, 0xFFFF00)
+    if (target) {
+        helper = new THREE.BoxHelper(target, 0xFFFF00)
     }
     // reset references position if we change selected target
     if (originDraggerRef.current) {
         originDraggerRef.current.position.set(0, 0, 0);
-        if (controlsTarget) {
-            originDraggerRef.current.parent?.position.copy(controlsTarget.position)
-            transformControlsSpace == "local" ? originDraggerRef.current.rotation.copy(controlsTarget.rotation) : controlsTarget && originDraggerRef.current.rotation.set(0, 0, 0);
+        if (target) {
+            originDraggerRef.current.parent?.position.copy(target.position)
+            transformControlsSpace == "local" ? originDraggerRef.current.rotation.copy(target.rotation) : target && originDraggerRef.current.rotation.set(0, 0, 0);
         }
     }
 
@@ -136,10 +136,10 @@ const EditorControls = observer(() => {
                 <GizmoViewport labelColor="black" />
             </GizmoHelper>
             {
-                controlsTarget &&
+                target &&
                 <group visible={isOriginPointMode} name="TRANSFORM_ORIGIN_WORLD_CENTER" renderOrder={-50}>
                     {helper && <primitive object={helper} />}
-                    <group name="TRANSFORM_ORIGIN_GROUP" position={controlsTarget?.position}>
+                    <group name="TRANSFORM_ORIGIN_GROUP" position={target?.position}>
                         <group ref={originDraggerRef} name="TRANSFORM_ORIGIN_DRAGGER">
                             <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
                             <Line color={0xFF0000} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
@@ -154,18 +154,18 @@ const EditorControls = observer(() => {
             }
             {
 
-                controlsTarget &&
+                target &&
                 <TransformControlsDrei
                     name='TRANSFORM_HELPER'
                     //@ts-ignore
-                    object={isOriginPointMode && !panelHasFlag(PANEL_ORIGIN_POINT, "drag_object") ? originDraggerRef : controlsTarget}
+                    object={isOriginPointMode && !panelHasFlag(PANEL_ORIGIN_POINT, "drag_object") ? originDraggerRef : target}
                     mode={transformControlsMode}
                     space={transformControlsSpace}
                     camera={camera}
                     onMouseUp={() => {
                         if (isOriginPointMode) {
-                            if (controlsTarget instanceof THREE.Mesh && controlsTarget.geometry instanceof THREE.BufferGeometry) {
-                                const o = controlsTarget;
+                            if (target instanceof THREE.Mesh && target.geometry instanceof THREE.BufferGeometry) {
+                                const o = target;
                                 if (!panelHasFlag(PANEL_ORIGIN_POINT, "drag_object")) {
                                     if (!originDraggerRef.current) return;
                                     const draggerPos = originDraggerRef.current.position;
@@ -188,7 +188,7 @@ const EditorControls = observer(() => {
                         setLastObjectPlace(undefined);
                     }}
                     onMouseDown={() => {
-                        setLastObjectPlace(controlsTarget.position.clone());
+                        setLastObjectPlace(target.position.clone());
                     }}
                 />
             }

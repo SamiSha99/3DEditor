@@ -74,14 +74,14 @@ const exportSettings = { name: "exportName", type: exportOptions[0].value, expor
 
 const ExportModal: React.FC<{ open: boolean, onSubmit: () => void, onCancel: () => void }> = ({ open, onSubmit, onCancel }) => {
     const { sceneObjects } = useEditor();
-    const { controlsTarget } = useViewport();
+    const { target } = useViewport();
 
     const doDownload = () => {
         const res = exportSettings;
         console.log("Export settings:\n", res);
         let selection: THREE.Object3D | null;
         if (res.exportSelection)
-            selection = controlsTarget;
+            selection = target;
         else {
             const sceneExport = new THREE.Scene();
             if (sceneObjects)

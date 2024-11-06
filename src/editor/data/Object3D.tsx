@@ -6,7 +6,7 @@ import { useViewport } from "src/store/Viewport";
 import * as THREE from 'three';
 
 export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
-    const { controlsTarget } = useViewport();
+    const { target } = useViewport();
     return (
         <>
             <ItemCollapse label={"Object3D"}>
@@ -19,9 +19,9 @@ export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(
                 <ItemNumber object={object} variable="renderOrder" label="Order" />
             </ItemCollapse>
             {
-                controlsTarget && controlsTarget.constructor != THREE.Object3D &&
-                <ItemCollapse label={controlsTarget.constructor.name}>
-                    <ChildObject3D object={controlsTarget} />
+                target && target.constructor != THREE.Object3D &&
+                <ItemCollapse label={target.constructor.name}>
+                    <ChildObject3D object={target} />
                 </ItemCollapse>
             }
         </>

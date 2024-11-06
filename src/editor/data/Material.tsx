@@ -24,7 +24,7 @@ const MaterialSelect = [
 ] as { value: string, label: string }[];
 
 export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observer(({ material }) => {
-    const { controlsTarget } = useViewport();
+    const { target } = useViewport();
     const [meshMaterial, setMeshMaterial] = useState(material);
 
     const instantiateMaterial = (value: string) => {
@@ -44,11 +44,11 @@ export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observ
             default: return;
         }
 
-        if (controlsTarget instanceof THREE.Mesh) {
-            const oldMaterial = controlsTarget.material as THREE.Material;
+        if (target instanceof THREE.Mesh) {
+            const oldMaterial = target.material as THREE.Material;
             // mat.copy(oldMaterial)
-            controlsTarget.material = mat;
-            (controlsTarget.material as THREE.Material).needsUpdate = true;
+            target.material = mat;
+            (target.material as THREE.Material).needsUpdate = true;
             setMeshMaterial(mat)
             oldMaterial.dispose();
         }

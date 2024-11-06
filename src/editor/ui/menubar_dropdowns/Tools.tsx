@@ -15,7 +15,7 @@ import { useViewport } from "src/store/Viewport";
 
 export const Tools = observer(() => {
     const { addObject, activatePanel } = useEditor();
-    const { controlsTarget } = useViewport();
+    const { target } = useViewport();
     return (
         <>
             <Dropdown
@@ -31,8 +31,8 @@ export const Tools = observer(() => {
                                 label: 'Export from Selected Object',
                                 key: '2.1',
                                 onClick: () => {
-                                    if (controlsTarget) {
-                                        const animations = (controlsTarget as THREE.Object3D).animations;
+                                    if (target) {
+                                        const animations = (target as THREE.Object3D).animations;
                                         if (!animations || animations.length <= 0) {
                                             message.warning("The selected model has no animations!");
                                             return;
@@ -47,9 +47,9 @@ export const Tools = observer(() => {
                                 label: 'Import into Selected Object',
                                 key: '2.2',
                                 onClick: () => {
-                                    if (controlsTarget) {
+                                    if (target) {
                                         IMPORTER.doImportAnimationClip((clip) => {
-                                            (controlsTarget as THREE.Object3D).animations.push(clip);
+                                            (target as THREE.Object3D).animations.push(clip);
                                         })
                                     }
                                     else
