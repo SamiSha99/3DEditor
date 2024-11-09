@@ -5,6 +5,7 @@ import { createContext, useContext } from 'react';
 import { Editor } from '@orb_Editor';
 import { TransformControls, TransformControlsGizmo } from 'three/examples/jsm/controls/TransformControls';
 import { OrbitControls } from 'three/examples/jsm/Addons';
+import { translateOriginPoint } from '@orb_utils/Mesh';
 
 export const ViewportContext = createContext<Viewport>({} as any)
 export const useViewport = () => useContext(ViewportContext);
@@ -18,6 +19,8 @@ export class Viewport {
 
     /** Currently selected Objects */
     @observable target: THREE.Object3D | null = null;
+
+    targetLastPlace: THREE.Vector3 | null = null;
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
     cameraControls = new OrbitControls(this.camera);
@@ -76,15 +79,17 @@ export class Viewport {
         this.transforming = false;
         this.cameraControls.enabled = true;
         if (object) {
-
-            this.controls.attach(object);
-            if (this.controls.domElement)
-                this.controls.connect();
+            if (this.editor.hasFlag("geometry_tools")) {
+                const transHelper = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_DRAGGER");
+                transHelper && this.controls.attach(transHelper)
+            }
+            else
+                this.controls.attach(object);
+            if (this.controls.domElement) this.controls.connect();
         }
         else {
             this.controls.detach();
-            if (this.controls.domElement)
-                this.controls.disconnect();
+            if (this.controls.domElement) this.controls.disconnect();
         }
 
     }
@@ -141,22 +146,59 @@ export class Viewport {
 
         // Handles whether we should consider left click selection for tracing and selecting an object in the scene,
         // if transforming becomes true then we ignore onSelectObject
-        this.controls.addEventListener('dragging-changed', (e) => { this.cameraControls.enabled = !e.value; this.transforming = !!e.value; });
+        this.controls.addEventListener('dragging-changed', (e) => {
+            e.value ? this.onDragStart() : this.onDragEnd();
+        });
         this.cameraControls.addEventListener('start', () => this.cameraDragStart = true);
         this.cameraControls.addEventListener('change', () => this.cameraDragStart && !this.transforming && (this.transforming = true));
         this.cameraControls.addEventListener('end', () => { this.transforming = false; this.cameraDragStart = false; });
+    }
+
+    onDragStart = () => {
+        this.cameraControls.enabled = false;
+        this.transforming = true;
+        this.targetLastPlace = this.target?.position.clone() || null;
+    }
+
+    onDragEnd = () => {
+        this.cameraControls.enabled = true;
+        this.transforming = false;
+        if (this.target && this.target instanceof THREE.Mesh) {
+            if (!this.editor.hasFlag("drag_object")) {
+                const transHelper = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_DRAGGER");
+                if (!transHelper) return;
+                const draggerPos = transHelper.position;
+                translateOriginPoint(this.target, draggerPos);
+                draggerPos.set(0, 0, 0);
+                const originGroup = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
+                originGroup?.position.copy(this.target.position);
+            }
+            else {
+                if (!this.targetLastPlace) return;
+                if (!this.target) return;
+                this.target.position.copy(this.targetLastPlace);
+                const draggedTo = this.target.position.clone();
+                translateOriginPoint(this.target, draggedTo, true);
+            }
+        }
+        this.targetLastPlace = null;
     }
 
     update = (delta: number) => {
         this.cameraControls.update(delta);
     }
 
-    onAddFlag = (flag: string) => {
-
+    onAddFlag = (flags: string[]) => {
+        if (flags.includes("geometry_tools")) {
+            const transHelper = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_DRAGGER");
+            transHelper && this.controls.attach(transHelper);
+            console.log("tools enabled", transHelper)
+        }
     }
 
-    onRemoveFlag = (flag: string) => {
-
-
+    onRemoveFlag = (flags: string[]) => {
+        if (flags.includes("geometry_tools")) {
+            this.target && this.controls.attach(this.target);
+        }
     }
 }

@@ -74,36 +74,39 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
     const { flags } = useEditor();
-    const { gridEnabled, grid, viewHelperEnabled, controls } = useViewport();
+    const { gridEnabled, grid, viewHelperEnabled, controls, target } = useViewport();
 
-    let helper: THREE.WireframeGeometry | null = null;
+    // let helper: THREE.WireframeGeometry | null = null;
     if (controls.object instanceof THREE.Mesh) {
-        helper = new THREE.WireframeGeometry(controls.object.geometry)
+        // helper = new THREE.WireframeGeometry(controls.object.geometry)
     }
 
     return (
-        <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
-            {viewHelperEnabled && <GizmoHelper
-                alignment="top-right"
-                margin={[70, 70]}
-                children={<GizmoViewport disabled />} />}
-            <group visible={flags.includes("geometry_tools")} name="TRANSFORM_ORIGIN_WORLD_CENTER" renderOrder={0}>
-                {helper && <primitive object={helper} />}
-                <group name="TRANSFORM_ORIGIN_GROUP" position={controls.object.position}>
-                    <group name="TRANSFORM_ORIGIN_DRAGGER">
-                        <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
-                        <Line color={0xFF0000} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
-                        <Line color={0x00FF00} points={[[0, 0, 0], [0, 10, 0]]} lineWidth={5} />
-                        <Line color={0x0000FF} points={[[0, 0, 0], [0, 0, 10]]} lineWidth={5} />
-                        <Line dashed dashScale={10} color={0xFF0000} points={[[0, 0, 0], [-10, 0, 0]]} lineWidth={5} />
-                        <Line dashed dashScale={10} color={0x00FF00} points={[[0, 0, 0], [0, -10, 0]]} lineWidth={5} />
-                        <Line dashed dashScale={10} color={0x0000FF} points={[[0, 0, 0], [0, 0, -10]]} lineWidth={5} />
+        <>
+            <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
+                {viewHelperEnabled && <GizmoHelper
+                    alignment="top-right"
+                    margin={[70, 70]}
+                    children={<GizmoViewport disabled />} />}
+                {
+                    <group visible={flags.includes("geometry_tools")} name="TRANSFORM_ORIGIN_WORLD_CENTER">
+                        <group name="TRANSFORM_ORIGIN_GROUP" position={target?.position}>
+                            <group name="TRANSFORM_ORIGIN_DRAGGER">
+                                <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
+                                <Line color={0xFF0000} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
+                                <Line color={0x00FF00} points={[[0, 0, 0], [0, 10, 0]]} lineWidth={5} />
+                                <Line color={0x0000FF} points={[[0, 0, 0], [0, 0, 10]]} lineWidth={5} />
+                                <Line dashed dashScale={10} color={0xFF0000} points={[[0, 0, 0], [-10, 0, 0]]} lineWidth={5} />
+                                <Line dashed dashScale={10} color={0x00FF00} points={[[0, 0, 0], [0, -10, 0]]} lineWidth={5} />
+                                <Line dashed dashScale={10} color={0x0000FF} points={[[0, 0, 0], [0, 0, -10]]} lineWidth={5} />
+                            </group>
+                        </group>
                     </group>
-                </group>
+                }
+                <primitive object={controls.getHelper()} />
+                {gridEnabled && <primitive object={grid} />}
             </group>
-            <primitive object={controls.getHelper()} />
-            {gridEnabled && <primitive object={grid} />}
-        </group>
+        </>
     )
 })
 
@@ -136,8 +139,8 @@ const EditorControls = observer(() => {
                 <GizmoViewport labelColor="black" />
             </GizmoHelper>
             {
-                target &&
-                <group visible={isOriginPointMode} name="TRANSFORM_ORIGIN_WORLD_CENTER" renderOrder={-50}>
+
+                <group name="TRANSFORM_ORIGIN_WORLD_CENTER">
                     {helper && <primitive object={helper} />}
                     <group name="TRANSFORM_ORIGIN_GROUP" position={target?.position}>
                         <group ref={originDraggerRef} name="TRANSFORM_ORIGIN_DRAGGER">

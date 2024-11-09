@@ -58,8 +58,22 @@ export class Editor {
         }
     }
 
-    @action addFlag = (flag: string) => { this.flags.push(flag); this.onAddFlag(flag); }
-    @action removeFlag = (flag: string) => { this.flags = this.flags.filter(f => f != flag); this.onRemoveFlag(flag); }
+    @action flag = (flag: string | string[], remove: boolean) => {
+        remove ? this.removeFlag(flag) : this.addFlag(flag);
+    }
+
+    @action addFlag = (flag: string | string[]) => {
+        if (!Array.isArray(flag)) flag = [flag];
+        this.flags.push(...flag.filter(f => !this.flags.includes(f)));
+        this.onAddFlag(flag);
+    }
+
+    @action removeFlag = (flag: string | string[]) => {
+        if (!Array.isArray(flag)) flag = [flag];
+        this.flags = this.flags.filter(f => !flag.includes(f));
+        this.onRemoveFlag(flag);
+    }
+
     @action hasFlag = (flag: string) => { return this.flags.includes(flag) }
 
     @action removeActivePanel = (id: string) => {
@@ -139,11 +153,11 @@ export class Editor {
         })
     }
 
-    onAddFlag = (flag: string) => {
+    onAddFlag = (flag: string[]) => {
         this.viewport.onAddFlag(flag);
     }
 
-    onRemoveFlag = (flag: string) => {
+    onRemoveFlag = (flag: string[]) => {
         this.viewport.onRemoveFlag(flag);
     }
 }

@@ -87,25 +87,26 @@ export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = o
 export const Tools = observer(() => {
     const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "5px" }, block: true }
     const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
-    const { scene, addFlag, removeFlag } = useEditor();
+    const { scene, flag } = useEditor();
     const { target } = useViewport();
-    const [onConstraintObject, setOnConstraintObject] = useState(true);
+    const [onConstraintObject, setOnConstraintObject] = useState(false);
     const o = target;
 
     const setOriginPoint = (pos?: { x?: number, y?: number, z?: number }, center?: boolean) => {
-        if (!o) return;
-        if (o instanceof THREE.Mesh && o.geometry instanceof THREE.BufferGeometry) {
-            o.geometry.computeBoundingBox();
-            if (o.geometry.boundingBox) {
+        if (!target) return;
+        if (target instanceof THREE.Mesh && target.geometry instanceof THREE.BufferGeometry) {
+            const geometry = target.geometry;
+            geometry.computeBoundingBox();
+            if (geometry.boundingBox) {
                 const size = new THREE.Vector3();
                 const centerPos = new THREE.Vector3();
-                o.geometry.boundingBox.getCenter(centerPos);
-                o.geometry.boundingBox.getSize(size);
-                const min = o.geometry.boundingBox.min
-                const max = o.geometry.boundingBox.max
+                geometry.boundingBox.getCenter(centerPos);
+                geometry.boundingBox.getSize(size);
+                const min = geometry.boundingBox.min
+                const max = geometry.boundingBox.max
                 if (center) {
-                    o.geometry.center();
-                    !onConstraintObject && o.position.add(centerPos);
+                    target.geometry.center();
+                    !onConstraintObject && target.position.add(centerPos);
                 }
                 else if (pos) {
                     const transAdd = new THREE.Vector3();
@@ -126,38 +127,37 @@ export const Tools = observer(() => {
                         pos.z == 0 && objAdd.setZ(centerPos.z) && transAdd.setZ(-centerPos.z);
                     }
 
-                    o.geometry.translate(transAdd.x, transAdd.y, transAdd.z);
-                    !onConstraintObject && o.position.add(objAdd);
+                    geometry.translate(transAdd.x, transAdd.y, transAdd.z);
+                    !onConstraintObject && target.position.add(objAdd);
                 }
                 const originGroup = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
                 const originDragger = originGroup?.children[0];
-                originGroup?.position.copy(o.position);
+                originGroup?.position.copy(target.position);
                 originDragger?.position.set(0, 0, 0);
             }
         }
     }
 
-    useOnUnmount(() => { removeFlag("geometry_tools") }, [])
+    useOnUnmount(() => { flag(["geometry_tools", "drag_object"], true) }, [])
 
     return (
         <>
             <ItemBoolean object={{ enableTools: false }}
                 variable="enableTools"
                 labelInVariable
-                onChange={(v) => {
-                    v ? addFlag("geometry_tools") : removeFlag("geometry_tools");
-                }} />
-            <Form.Item label="lol">
+                onChange={(v) => { flag("geometry_tools", !v) }} />
+            <Form.Item label=" ">
                 <Space>
                     <Space.Compact block direction="vertical">
                         <Space.Compact {...spaceCompactProps}>
                             <Tooltip title="While enabled, moves the Object while keeping the origin point in place.">
                                 <Checkbox
-                                    disabled={!target}
+                                    // disabled={true}
                                     children={"Lock Origin Point"}
                                     defaultChecked={onConstraintObject}
                                     onChange={(e) => {
                                         setOnConstraintObject(e.target.checked);
+                                        flag("drag_object", !e.target.checked);
                                     }} />
                             </Tooltip>
                         </Space.Compact>
