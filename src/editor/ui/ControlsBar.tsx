@@ -4,7 +4,6 @@ import { useEditor } from "@orb_Editor"
 import { observer } from "mobx-react-lite"
 import { Button, Checkbox, Divider, Radio, RadioChangeEvent, Tooltip } from "antd";
 import { useHotkeys } from 'react-hotkeys-hook';
-import { isPanelActive } from "./panels/Panels";
 import { useViewport } from "src/store/Viewport";
 
 export const ControlsBar = observer(() => {
@@ -21,10 +20,8 @@ export const ControlsBar = observer(() => {
 
 const TranslationButton = observer(() => {
     const { setTransformControlsMode, transformControlsMode } = useViewport();
-    const isOriginPointMode = false;
 
     useHotkeys("space", () => {
-        if (isOriginPointMode) return;
         const newControlsMode = (() => {
             switch (transformControlsMode) {
                 case "translate": return "rotate";
@@ -39,10 +36,10 @@ const TranslationButton = observer(() => {
 
     return (
         <Tooltip title="Change between Translation, Rotation and Scale" placement="bottom">
-            <Radio.Group onChange={onChange} value={isOriginPointMode ? "translate" : transformControlsMode}>
+            <Radio.Group onChange={onChange} value={transformControlsMode}>
                 <Radio.Button value={"translate"} children={<DragOutlined />} />
-                <Radio.Button disabled={isOriginPointMode != undefined} value={"rotate"} children={<SyncOutlined />} />
-                <Radio.Button disabled={isOriginPointMode != undefined} value={"scale"} children={<ExpandAltOutlined />} />
+                <Radio.Button value={"rotate"} children={<SyncOutlined />} />
+                <Radio.Button value={"scale"} children={<ExpandAltOutlined />} />
             </Radio.Group>
         </Tooltip>
     )

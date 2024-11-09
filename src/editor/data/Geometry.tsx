@@ -1,15 +1,17 @@
 
 import { useEditor } from "@orb_Editor";
 import { useDeltaTime, useOnUnmount } from "@orb_Hooks";
-import { ItemBoolean, ItemCollapse, ItemGroup, ItemNumber, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
+import { ItemBoolean, ItemButton, ItemCollapse, ItemGroup, ItemNumber, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { Limit } from "@orb_UI/controller/items/Item";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from 'three'
 
-import { Row, Space, Button, Checkbox, Tooltip, Alert, Form } from "antd";
+import { Row, Space, Button, Checkbox, Tooltip, Alert, Form, Radio } from "antd";
 import { SpaceCompactProps } from "antd/es/space/Compact";
 import { useViewport } from "src/store/Viewport";
+import { TranslationButton } from "@orb_UI/ControlsBar";
+import Item from "antd/es/list/Item";
 
 const GEOMETRY_SEGMENTS_LIMIT = { min: 0, max: 100 } as Limit;
 const GEOMETRY_SEGMENTS_LIMIT_VECTOR_2 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMETRY_SEGMENTS_LIMIT };
@@ -88,9 +90,8 @@ export const Tools = observer(() => {
     const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "5px" }, block: true }
     const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
     const { scene, flag } = useEditor();
-    const { target } = useViewport();
+    const { target, transformControlsMode, setTransformControlsMode } = useViewport();
     const [onConstraintObject, setOnConstraintObject] = useState(false);
-    const o = target;
 
     const setOriginPoint = (pos?: { x?: number, y?: number, z?: number }, center?: boolean) => {
         if (!target) return;
@@ -146,6 +147,11 @@ export const Tools = observer(() => {
                 variable="enableTools"
                 labelInVariable
                 onChange={(v) => { flag("geometry_tools", !v) }} />
+            <ItemGroup label="Mode">
+                <ItemButton buttonName="Translate" onClick={() => setTransformControlsMode("translate")} />
+                <ItemButton buttonName="Rotate" onClick={() => setTransformControlsMode("rotate")} />
+                <ItemButton buttonName="Scale" onClick={() => setTransformControlsMode("scale")} />
+            </ItemGroup>
             <Form.Item label=" ">
                 <Space>
                     <Space.Compact block direction="vertical">
