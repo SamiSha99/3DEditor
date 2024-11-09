@@ -99,7 +99,7 @@ export const GeometryTools = observer(() => {
                 onChange={(v) => { flag("geometry_tools", !v) }} />
             <ItemRadioButton
                 label="Mode"
-                value={transformControlsMode}
+                defaultValue={transformControlsMode}
                 onClick={(v) => setTransformControlsMode(v as "translate" | "rotate" | "scale")}
                 props={[
                     { value: "translate", children: <><DragOutlined /> Translate</> },
