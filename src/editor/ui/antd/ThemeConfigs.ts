@@ -82,6 +82,12 @@ export const InspectorTheme: ThemeConfig = {
             defaultHoverBg: "#141414",
             defaultActiveBg: "#141414"
         },
+        Radio: {
+            colorBorderSecondary: "none",
+            colorPrimaryBorder: "none",
+            buttonBg: "rgb(0,0,0,0.2)",
+            colorBorder: "rgb(0,0,0,0)",
+        }
     }
 }
 

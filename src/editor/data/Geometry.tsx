@@ -1,7 +1,7 @@
 
 import { useEditor } from "@orb_Editor";
 import { useDeltaTime, useOnUnmount } from "@orb_Hooks";
-import { ItemBoolean, ItemButton, ItemCollapse, ItemGroup, ItemNumber, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
+import { ItemBoolean, ItemButton, ItemCollapse, ItemGroup, ItemNumber, ItemRadioButton, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { Limit } from "@orb_UI/controller/items/Item";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import * as THREE from 'three'
 import { Space, Button, Checkbox, Tooltip, Form, Divider } from "antd";
 import { SpaceCompactProps } from "antd/es/space/Compact";
 import { useViewport } from "src/store/Viewport";
+import { DragOutlined, ExpandAltOutlined, SyncOutlined } from "@ant-design/icons";
 
 const GEOMETRY_SEGMENTS_LIMIT = { min: 0, max: 100 } as Limit;
 const GEOMETRY_SEGMENTS_LIMIT_VECTOR_2 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMETRY_SEGMENTS_LIMIT };
@@ -96,11 +97,16 @@ export const GeometryTools = observer(() => {
                 variable="enable"
                 labelInVariable
                 onChange={(v) => { flag("geometry_tools", !v) }} />
-            <ItemGroup label="Mode">
-                <ItemButton buttonName="Translate" onClick={() => setTransformControlsMode("translate")} />
-                <ItemButton buttonName="Rotate" onClick={() => setTransformControlsMode("rotate")} />
-                <ItemButton buttonName="Scale" onClick={() => setTransformControlsMode("scale")} />
-            </ItemGroup>
+            <ItemRadioButton
+                label="Mode"
+                value={transformControlsMode}
+                onClick={(v) => setTransformControlsMode(v as "translate" | "rotate" | "scale")}
+                props={[
+                    { value: "translate", children: <><DragOutlined /> Translate</> },
+                    { value: "rotate", children: <><SyncOutlined /> Rotate</> },
+                    { value: "scale", children: <><ExpandAltOutlined /> Scale</> },
+                ]}
+            />
             {transformControlsMode == "translate" && <GeometryToolsTranslation />}
         </>
     )
