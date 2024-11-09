@@ -7,11 +7,9 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from 'three'
 
-import { Row, Space, Button, Checkbox, Tooltip, Alert, Form, Radio } from "antd";
+import { Space, Button, Checkbox, Tooltip, Form, Divider } from "antd";
 import { SpaceCompactProps } from "antd/es/space/Compact";
 import { useViewport } from "src/store/Viewport";
-import { TranslationButton } from "@orb_UI/ControlsBar";
-import Item from "antd/es/list/Item";
 
 const GEOMETRY_SEGMENTS_LIMIT = { min: 0, max: 100 } as Limit;
 const GEOMETRY_SEGMENTS_LIMIT_VECTOR_2 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMETRY_SEGMENTS_LIMIT };
@@ -60,7 +58,7 @@ export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = o
     return (
         <>
             <ItemCollapse label="Tools">
-                <Tools />
+                <GeometryTools />
             </ItemCollapse>
             <ItemCollapse label={"BufferGeometry"}>
                 <ItemSelect
@@ -86,12 +84,34 @@ export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = o
     );
 })
 
-export const Tools = observer(() => {
+export const GeometryTools = observer(() => {
+    const { flag } = useEditor();
+    const { transformControlsMode, setTransformControlsMode } = useViewport();
+
+    useOnUnmount(() => { flag(["geometry_tools", "drag_object"], true) }, [])
+
+    return (
+        <>
+            <ItemBoolean object={{ enable: false }}
+                variable="enable"
+                labelInVariable
+                onChange={(v) => { flag("geometry_tools", !v) }} />
+            <ItemGroup label="Mode">
+                <ItemButton buttonName="Translate" onClick={() => setTransformControlsMode("translate")} />
+                <ItemButton buttonName="Rotate" onClick={() => setTransformControlsMode("rotate")} />
+                <ItemButton buttonName="Scale" onClick={() => setTransformControlsMode("scale")} />
+            </ItemGroup>
+            {transformControlsMode == "translate" && <GeometryToolsTranslation />}
+        </>
+    )
+})
+
+const GeometryToolsTranslation = () => {
+    const { target } = useViewport();
+    const { scene, flag } = useEditor();
+    const [onConstraintObject, setOnConstraintObject] = useState(false);
     const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "5px" }, block: true }
     const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
-    const { scene, flag } = useEditor();
-    const { target, transformControlsMode, setTransformControlsMode } = useViewport();
-    const [onConstraintObject, setOnConstraintObject] = useState(false);
 
     const setOriginPoint = (pos?: { x?: number, y?: number, z?: number }, center?: boolean) => {
         if (!target) return;
@@ -139,19 +159,11 @@ export const Tools = observer(() => {
         }
     }
 
-    useOnUnmount(() => { flag(["geometry_tools", "drag_object"], true) }, [])
+    useOnUnmount(() => { flag(["drag_object"], true) }, [])
 
     return (
         <>
-            <ItemBoolean object={{ enableTools: false }}
-                variable="enableTools"
-                labelInVariable
-                onChange={(v) => { flag("geometry_tools", !v) }} />
-            <ItemGroup label="Mode">
-                <ItemButton buttonName="Translate" onClick={() => setTransformControlsMode("translate")} />
-                <ItemButton buttonName="Rotate" onClick={() => setTransformControlsMode("rotate")} />
-                <ItemButton buttonName="Scale" onClick={() => setTransformControlsMode("scale")} />
-            </ItemGroup>
+            <Divider children="Translate" orientation="left" />
             <Form.Item label=" ">
                 <Space>
                     <Space.Compact block direction="vertical">
@@ -190,7 +202,7 @@ export const Tools = observer(() => {
             </Form.Item>
         </>
     )
-})
+}
 
 export const ChildGeometry: React.FC<{ geometry: THREE.BufferGeometry, onChange: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onChange }) => {
 
