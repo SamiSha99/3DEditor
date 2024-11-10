@@ -15,8 +15,8 @@ export const ItemRadioButton: React.FC<RadioButtonInterface> = (
 ) => {
     return (
         <Form.Item label={label} tooltip={tooltip}>
-            <Radio.Group value={defaultValue} onChange={(e) => onClick && onClick(e.target.value)}>
-                {props.map((p) => <Radio.Button value={p.value} children={p.children} />)}
+            <Radio.Group style={{ display: "flex" }} value={defaultValue} onChange={(e) => onClick && onClick(e.target.value)}>
+                {props.map((p) => <Radio.Button style={{ flex: 1, textAlign: "center" }} value={p.value} children={p.children} />)}
             </Radio.Group>
         </Form.Item>
     )
