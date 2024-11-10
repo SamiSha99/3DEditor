@@ -112,18 +112,21 @@ const GeometryTools = observer(() => {
                         ]}
                     />
                     {transformControlsMode == "translate" && <GeometryToolsTranslation />}
+                    {transformControlsMode == "rotate" && <GeometryToolsRotate />}
+                    {transformControlsMode == "scale" && <GeometryToolsScale />}
                 </>
             }
         </>
     )
 })
 
+const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "5px" }, block: true }
+const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
+
 const GeometryToolsTranslation = () => {
     const { target } = useViewport();
     const { scene, flag } = useEditor();
     const [onConstraintObject, setOnConstraintObject] = useState(false);
-    const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "5px" }, block: true }
-    const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
 
     const setOriginPoint = (pos?: { x?: number, y?: number, z?: number }, center?: boolean) => {
         if (!target) return;
@@ -212,6 +215,71 @@ const GeometryToolsTranslation = () => {
                     </Space.Compact>
                 </Space>
             </Form.Item>
+        </>
+    )
+}
+
+const GeometryToolsRotate = () => {
+    const { target } = useViewport();
+
+    const doRotation = (rot?: { x?: number, y?: number, z?: number }) => {
+        console.log(rot);
+        rot?.x && (target as THREE.Mesh).geometry.rotateX(rot.x);
+        rot?.y && (target as THREE.Mesh).geometry.rotateY(rot.y);
+        rot?.z && (target as THREE.Mesh).geometry.rotateZ(rot.z);
+    }
+
+    return (
+        <>
+            <Divider children="Rotate" orientation="left" />
+            <Space.Compact {...spaceCompactProps}>
+                <Button disabled={!target} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => doRotation()} />
+            </Space.Compact>
+            <Space.Compact {...spaceCompactPropsButtons}>
+                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "10px 0 0 0" }} children={"-45 𝑋"} onClick={() => doRotation({ x: -Math.PI / 4 })} />
+                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 10px 0 0" }} children={"+45 𝑋"} onClick={() => doRotation({ x: Math.PI / 4 })} />
+            </Space.Compact>
+            <Space.Compact {...spaceCompactPropsButtons}>
+                <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"-45 𝑌"} onClick={() => doRotation({ y: -Math.PI / 4 })} />
+                <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"+45 𝑌"} onClick={() => doRotation({ y: Math.PI / 4 })} />
+            </Space.Compact>
+            <Space.Compact {...spaceCompactPropsButtons}>
+                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 0 10px" }} children={"-45 𝑍"} onClick={() => doRotation({ z: -Math.PI / 4 })} />
+                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 10px 0" }} children={"+45 𝑍"} onClick={() => doRotation({ z: Math.PI / 4 })} />
+            </Space.Compact>
+        </>
+    )
+}
+
+const GeometryToolsScale = () => {
+    const { target } = useViewport();
+
+    const doScale = (scal?: { x?: number, y?: number, z?: number }) => {
+        if (!scal) return;
+        if (scal.x == undefined) scal.x = 1;
+        if (scal.y == undefined) scal.y = 1;
+        if (scal.z == undefined) scal.z = 1;
+        (target as THREE.Mesh).geometry.scale(scal.x, scal.y, scal.z);
+    }
+
+    return (
+        <>
+            <Divider children="Scale" orientation="left" />
+            <Space.Compact {...spaceCompactProps}>
+                <Button disabled={!target} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => doScale()} />
+            </Space.Compact>
+            <Space.Compact {...spaceCompactPropsButtons}>
+                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "10px 0 0 0" }} children={"x0.5 𝑋"} onClick={() => doScale({ x: 0.5 })} />
+                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 10px 0 0" }} children={"x2 𝑋"} onClick={() => doScale({ x: 2 })} />
+            </Space.Compact>
+            <Space.Compact {...spaceCompactPropsButtons}>
+                <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"x0.5 𝑌"} onClick={() => doScale({ y: 0.5 })} />
+                <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"x2 𝑌"} onClick={() => doScale({ y: 2 })} />
+            </Space.Compact>
+            <Space.Compact {...spaceCompactPropsButtons}>
+                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 0 10px" }} children={"x0.5 𝑍"} onClick={() => doScale({ z: 0.5 })} />
+                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 10px 0" }} children={"x2 𝑍"} onClick={() => doScale({ z: 2 })} />
+            </Space.Compact>
         </>
     )
 }
