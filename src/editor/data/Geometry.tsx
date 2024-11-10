@@ -85,29 +85,35 @@ export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = o
     );
 })
 
-export const GeometryTools = observer(() => {
-    const { flag } = useEditor();
+const GeometryTools = observer(() => {
+    const { flag, hasFlag } = useEditor();
     const { transformControlsMode, setTransformControlsMode } = useViewport();
+    const [enabled, setEnabled] = useState(hasFlag("geometry_tools"));
 
     useOnUnmount(() => { flag(["geometry_tools", "drag_object"], true) }, [])
 
     return (
         <>
-            <ItemBoolean object={{ enable: false }}
-                variable="enable"
-                labelInVariable
-                onChange={(v) => { flag("geometry_tools", !v) }} />
-            <ItemRadioButton
-                label="Mode"
-                defaultValue={transformControlsMode}
-                onClick={(v) => setTransformControlsMode(v as "translate" | "rotate" | "scale")}
-                props={[
-                    { value: "translate", children: <><DragOutlined /> Translate</> },
-                    { value: "rotate", children: <><SyncOutlined /> Rotate</> },
-                    { value: "scale", children: <><ExpandAltOutlined /> Scale</> },
-                ]}
-            />
-            {transformControlsMode == "translate" && <GeometryToolsTranslation />}
+            <ItemBoolean object={{ bool: enabled }}
+                variable="bool"
+                label="Activate"
+                onChange={(v) => { flag("geometry_tools", !v), setEnabled(v) }} />
+            {
+                enabled &&
+                <>
+                    <ItemRadioButton
+                        label="Mode"
+                        defaultValue={transformControlsMode}
+                        onClick={(v) => setTransformControlsMode(v as "translate" | "rotate" | "scale")}
+                        props={[
+                            { value: "translate", children: <><DragOutlined /> Translate</> },
+                            { value: "rotate", children: <><SyncOutlined /> Rotate</> },
+                            { value: "scale", children: <><ExpandAltOutlined /> Scale</> },
+                        ]}
+                    />
+                    {transformControlsMode == "translate" && <GeometryToolsTranslation />}
+                </>
+            }
         </>
     )
 })
