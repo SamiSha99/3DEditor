@@ -179,41 +179,37 @@ const GeometryToolsTranslation = () => {
     return (
         <>
             <Divider children="Translate" orientation="left" />
-            <Form.Item label=" ">
-                <Space>
-                    <Space.Compact block direction="vertical">
-                        <Space.Compact {...spaceCompactProps}>
-                            <Tooltip title="While enabled, moves the Object while keeping the origin point in place.">
-                                <Checkbox
-                                    // disabled={true}
-                                    children={"Lock Origin Point"}
-                                    defaultChecked={onConstraintObject}
-                                    onChange={(e) => {
-                                        setOnConstraintObject(e.target.checked);
-                                        flag("drag_object", !e.target.checked);
-                                    }} />
-                            </Tooltip>
-                        </Space.Compact>
-                        <Space.Compact {...spaceCompactProps}>
-                            <Button disabled={!target} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
-                        </Space.Compact>
-                        <Space.Compact {...spaceCompactPropsButtons}>
-                            <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
-                            <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
-                            <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
-                        </Space.Compact>
-                        <Space.Compact {...spaceCompactPropsButtons}>
-                            <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
-                            <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
-                            <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
-                        </Space.Compact>
-                        <Space.Compact {...spaceCompactPropsButtons}>
-                            <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
-                            <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
-                            <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
-                        </Space.Compact>
-                    </Space.Compact>
-                </Space>
+            <Form.Item label="Controls">
+                <Space.Compact {...spaceCompactPropsButtons}>
+                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
+                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
+                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
+                </Space.Compact>
+                <Space.Compact {...spaceCompactPropsButtons}>
+                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
+                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
+                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
+                </Space.Compact>
+                <Space.Compact {...spaceCompactPropsButtons}>
+                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
+                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
+                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
+                </Space.Compact>
+                <Space.Compact {...spaceCompactProps}>
+                    <Tooltip title="While enabled, moves the Object while keeping the origin point in place.">
+                        <Checkbox
+                            // disabled={true}
+                            children={"Lock Origin Point"}
+                            defaultChecked={onConstraintObject}
+                            onChange={(e) => {
+                                setOnConstraintObject(e.target.checked);
+                                flag("drag_object", !e.target.checked);
+                            }} />
+                    </Tooltip>
+                </Space.Compact>
+                <Space.Compact {...spaceCompactProps}>
+                    <Button disabled={!target} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
+                </Space.Compact>
             </Form.Item>
         </>
     )
@@ -232,21 +228,20 @@ const GeometryToolsRotate = () => {
     return (
         <>
             <Divider children="Rotate" orientation="left" />
-            <Space.Compact {...spaceCompactProps}>
-                <Button disabled={!target} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => doRotation()} />
-            </Space.Compact>
-            <Space.Compact {...spaceCompactPropsButtons}>
-                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "10px 0 0 0" }} children={"-45 𝑋"} onClick={() => doRotation({ x: -Math.PI / 4 })} />
-                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 10px 0 0" }} children={"+45 𝑋"} onClick={() => doRotation({ x: Math.PI / 4 })} />
-            </Space.Compact>
-            <Space.Compact {...spaceCompactPropsButtons}>
-                <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"-45 𝑌"} onClick={() => doRotation({ y: -Math.PI / 4 })} />
-                <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"+45 𝑌"} onClick={() => doRotation({ y: Math.PI / 4 })} />
-            </Space.Compact>
-            <Space.Compact {...spaceCompactPropsButtons}>
-                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 0 10px" }} children={"-45 𝑍"} onClick={() => doRotation({ z: -Math.PI / 4 })} />
-                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 10px 0" }} children={"+45 𝑍"} onClick={() => doRotation({ z: Math.PI / 4 })} />
-            </Space.Compact>
+            <Form.Item label="Controls">
+                <Space.Compact {...spaceCompactPropsButtons}>
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "10px 0 0 0" }} children={"-45 𝑋"} onClick={() => doRotation({ x: -Math.PI / 4 })} />
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 10px 0 0" }} children={"+45 𝑋"} onClick={() => doRotation({ x: Math.PI / 4 })} />
+                </Space.Compact>
+                <Space.Compact {...spaceCompactPropsButtons}>
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"-45 𝑌"} onClick={() => doRotation({ y: -Math.PI / 4 })} />
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"+45 𝑌"} onClick={() => doRotation({ y: Math.PI / 4 })} />
+                </Space.Compact>
+                <Space.Compact {...spaceCompactPropsButtons}>
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 0 10px" }} children={"-45 𝑍"} onClick={() => doRotation({ z: -Math.PI / 4 })} />
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 10px 0" }} children={"+45 𝑍"} onClick={() => doRotation({ z: Math.PI / 4 })} />
+                </Space.Compact>
+            </Form.Item>
         </>
     )
 }
@@ -265,21 +260,20 @@ const GeometryToolsScale = () => {
     return (
         <>
             <Divider children="Scale" orientation="left" />
-            <Space.Compact {...spaceCompactProps}>
-                <Button disabled={!target} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => doScale()} />
-            </Space.Compact>
-            <Space.Compact {...spaceCompactPropsButtons}>
-                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "10px 0 0 0" }} children={"x0.5 𝑋"} onClick={() => doScale({ x: 0.5 })} />
-                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 10px 0 0" }} children={"x2 𝑋"} onClick={() => doScale({ x: 2 })} />
-            </Space.Compact>
-            <Space.Compact {...spaceCompactPropsButtons}>
-                <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"x0.5 𝑌"} onClick={() => doScale({ y: 0.5 })} />
-                <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"x2 𝑌"} onClick={() => doScale({ y: 2 })} />
-            </Space.Compact>
-            <Space.Compact {...spaceCompactPropsButtons}>
-                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 0 10px" }} children={"x0.5 𝑍"} onClick={() => doScale({ z: 0.5 })} />
-                <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 10px 0" }} children={"x2 𝑍"} onClick={() => doScale({ z: 2 })} />
-            </Space.Compact>
+            <Form.Item label="Controls">
+                <Space.Compact {...spaceCompactPropsButtons}>
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "10px 0 0 0" }} children={"x0.5 𝑋"} onClick={() => doScale({ x: 0.5 })} />
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 10px 0 0" }} children={"x2 𝑋"} onClick={() => doScale({ x: 2 })} />
+                </Space.Compact>
+                <Space.Compact {...spaceCompactPropsButtons}>
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"x0.5 𝑌"} onClick={() => doScale({ y: 0.5 })} />
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"x2 𝑌"} onClick={() => doScale({ y: 2 })} />
+                </Space.Compact>
+                <Space.Compact {...spaceCompactPropsButtons}>
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 0 10px" }} children={"x0.5 𝑍"} onClick={() => doScale({ z: 0.5 })} />
+                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 10px 0" }} children={"x2 𝑍"} onClick={() => doScale({ z: 2 })} />
+                </Space.Compact>
+            </Form.Item>
         </>
     )
 }
