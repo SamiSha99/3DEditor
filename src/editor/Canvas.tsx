@@ -89,7 +89,8 @@ const EditorHelpers = observer(() => {
                     margin={[70, 70]}
                     children={<GizmoViewport disabled />} />}
                 {
-                    <group visible={flags.includes("geometry_tools")} name="TRANSFORM_ORIGIN_WORLD_CENTER">
+                    flags.includes("geometry_tools") &&
+                    <group name="TRANSFORM_ORIGIN_WORLD_CENTER">
                         <group name="TRANSFORM_ORIGIN_GROUP" position={target?.position}>
                             <group name="TRANSFORM_ORIGIN_DRAGGER">
                                 <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />

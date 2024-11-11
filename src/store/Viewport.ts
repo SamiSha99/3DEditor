@@ -163,23 +163,42 @@ export class Viewport {
     onDragEnd = () => {
         this.cameraControls.enabled = true;
         this.transforming = false;
-        if (this.target && this.target instanceof THREE.Mesh) {
-            if (!this.editor.hasFlag("drag_object")) {
-                const transHelper = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_DRAGGER");
-                if (!transHelper) return;
-                const draggerPos = transHelper.position;
-                translateOriginPoint(this.target, draggerPos);
-                draggerPos.set(0, 0, 0);
-                const originGroup = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
-                originGroup?.position.copy(this.target.position);
+        if (this.editor.hasFlag("geometry_tools") && this.target && this.target instanceof THREE.Mesh) {
+
+            const originGroup = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
+            const transHelper = originGroup?.children[0];
+            if (!transHelper || !originGroup) return;
+            const geometry = this.target.geometry as THREE.BufferGeometry;
+            switch (this.transformControlsMode) {
+                case "translate":
+                    if (!this.editor.hasFlag("drag_object")) {
+                        const draggerPos = transHelper.position;
+                        translateOriginPoint(this.target, draggerPos);
+                        draggerPos.set(0, 0, 0);
+                        originGroup?.position.copy(this.target.position);
+                    }
+                    else {
+                        if (!this.targetLastPlace) return;
+                        if (!this.target) return;
+                        this.target.position.copy(this.targetLastPlace);
+                        const draggedTo = this.target.position.clone();
+                        translateOriginPoint(this.target, draggedTo, true);
+                    }
+                    break;
+                case "rotate":
+                    const draggerRot = transHelper.rotation;
+                    geometry.rotateX(draggerRot.x);
+                    geometry.rotateY(draggerRot.y);
+                    geometry.rotateZ(draggerRot.z);
+                    transHelper.rotation.set(0, 0, 0);
+                    break;
+                case "scale":
+                    const draggerScale = transHelper.scale;
+                    geometry.scale(draggerScale.x, draggerScale.y, draggerScale.z);
+                    transHelper.scale.set(1, 1, 1);
+                    break;
             }
-            else {
-                if (!this.targetLastPlace) return;
-                if (!this.target) return;
-                this.target.position.copy(this.targetLastPlace);
-                const draggedTo = this.target.position.clone();
-                translateOriginPoint(this.target, draggedTo, true);
-            }
+
         }
         this.targetLastPlace = null;
     }
