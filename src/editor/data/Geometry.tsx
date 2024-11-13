@@ -71,11 +71,11 @@ export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = o
                         const str = s as unknown as string;
                         instantiateGeometry(str)
                     }} />
-                <ItemGroup label="Attributes" sizes={["50%", "50%", "50%", "50%"]}>
-                    <ItemNumber addonBefore="Position" object={{ count: g.getAttribute("position").count }} variable="count" readonly />
-                    <ItemNumber addonBefore="Normal" object={{ count: g.getAttribute("normal").count }} variable="count" readonly />
-                    <ItemNumber addonBefore="UV" object={{ count: g.getAttribute("uv").count }} variable="count" readonly />
-                    <ItemNumber addonBefore="Index" object={{ count: g.index?.count }} variable="count" readonly />
+                <ItemGroup label="Attributes" sizes={Array(4).fill("50%")}>
+                    {g.getAttribute("position") && <ItemNumber addonBefore="Position" object={{ count: g.getAttribute("position").count }} variable="count" readonly />}
+                    {g.getAttribute("normal") && <ItemNumber addonBefore="Normal" object={{ count: g.getAttribute("normal").count }} variable="count" readonly />}
+                    {g.getAttribute("uv") &&  <ItemNumber addonBefore="UV" object={{ count: g.getAttribute("uv").count }} variable="count" readonly />}
+                    {g.index &&  <ItemNumber addonBefore="Index" object={{ count: g.index?.count }} variable="count" readonly />}
                 </ItemGroup>
             </ItemCollapse>
             <ItemCollapse label={g.type}>

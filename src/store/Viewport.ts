@@ -208,10 +208,15 @@ export class Viewport {
     }
 
     onAddFlag = (flags: string[]) => {
+        console.log(flags, flags.includes("geometry_tools"));
         if (flags.includes("geometry_tools")) {
-            const transHelper = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_DRAGGER");
-            transHelper && this.controls.attach(transHelper);
-            console.log("tools enabled", transHelper)
+            setTimeout(() => {
+                
+                const transHelper = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_DRAGGER");
+                transHelper && this.controls.attach(transHelper);
+                if (this.controls.domElement) this.controls.connect();
+            }, 10);
+            // console.log("tools enabled", transHelper)
         }
     }
 
