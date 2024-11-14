@@ -72,12 +72,7 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
     const { flags } = useEditor();
-    const { gridEnabled, grid, viewHelperEnabled, controls, target, targetBoundingBox } = useViewport();
-
-    // let helper: THREE.WireframeGeometry | null = null;
-    if (controls.object instanceof THREE.Mesh) {
-        // helper = new THREE.WireframeGeometry(controls.object.geometry)
-    }
+    const { gridEnabled, grid, viewHelperEnabled, controls, target, targetBoundingBox, boundingBoxEnabled } = useViewport();
 
     return (
         <>
@@ -102,7 +97,7 @@ const EditorHelpers = observer(() => {
                         </group>
                     </group>
                 }
-                {target instanceof THREE.Mesh && <box3Helper box={targetBoundingBox} />}
+                {boundingBoxEnabled && <box3Helper box={targetBoundingBox} />}
                 <primitive object={controls.getHelper()} />
                 {gridEnabled && <primitive object={grid} />}
             </group>

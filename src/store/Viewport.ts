@@ -20,7 +20,6 @@ export class Viewport {
     /** Currently selected Objects */
     @observable target: THREE.Object3D | null = null;
 
-    @observable targetBoundingBox: THREE.Box3 = new THREE.Box3();
 
     targetLastPlace: THREE.Vector3 | null = null;
 
@@ -41,6 +40,9 @@ export class Viewport {
         )
     )
 
+    @observable targetBoundingBox: THREE.Box3 = new THREE.Box3();
+
+    @observable boundingBoxEnabled: boolean = true;
     @observable gridEnabled: boolean = true;
     @observable fpsEnabled: boolean = false;
     @observable viewHelperEnabled: boolean = true;
@@ -114,6 +116,7 @@ export class Viewport {
     @action setGrid = (b: boolean) => { this.gridEnabled = b; }
     @action setFPS = (b: boolean) => { this.fpsEnabled = b; }
     @action setViewHelper = (b: boolean) => { this.viewHelperEnabled = b; }
+    @action setBoundingBox = (b: boolean) => { this.boundingBoxEnabled = b; }
 
     /** Runs when left clicking on the Canvas */
     onSelectObject = (e: MouseEvent) => {
