@@ -1,13 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { Canvas as ReactThreeFiberCanvas, useThree } from '@react-three/fiber';
+import { Canvas as ReactThreeFiberCanvas } from '@react-three/fiber';
 import { useEditor } from "@orb_Editor";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { GizmoHelper, GizmoViewport, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { GizmoHelper, GizmoViewport, Line, Sphere, StatsGl } from "@react-three/drei";
 import { useRef, useState } from "react";
 import React from "react";
-import { isPanelActive, panelHasFlag } from "@orb_UI/panels/Panels";
-import { translateOriginPoint } from "@orb_utils/Mesh";
 import { useViewport } from "src/store/Viewport";
 
 
@@ -74,7 +72,7 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
     const { flags } = useEditor();
-    const { gridEnabled, grid, viewHelperEnabled, controls, target } = useViewport();
+    const { gridEnabled, grid, viewHelperEnabled, controls, target, targetBoundingBox } = useViewport();
 
     // let helper: THREE.WireframeGeometry | null = null;
     if (controls.object instanceof THREE.Mesh) {
@@ -104,100 +102,12 @@ const EditorHelpers = observer(() => {
                         </group>
                     </group>
                 }
+                {target instanceof THREE.Mesh && <box3Helper box={targetBoundingBox} />}
                 <primitive object={controls.getHelper()} />
                 {gridEnabled && <primitive object={grid} />}
             </group>
         </>
     )
-})
-
-// to-do delete
-const EditorControls = observer(() => {
-    const { target } = useViewport();
-    const { transformControlsMode, transformControlsSpace } = useViewport();
-    const { camera, scene } = useThree();
-    const [lastObjPlace, setLastObjectPlace] = useState<THREE.Vector3 | undefined>(undefined);
-    const originDraggerRef = useRef<THREE.Group>(null);
-
-    const isOriginPointMode = !!isPanelActive(PANEL_ORIGIN_POINT);
-    let helper: THREE.BoxHelper | null = null;
-    if (target) {
-        helper = new THREE.BoxHelper(target, 0xFFFF00)
-    }
-    // reset references position if we change selected target
-    if (originDraggerRef.current) {
-        originDraggerRef.current.position.set(0, 0, 0);
-        if (target) {
-            originDraggerRef.current.parent?.position.copy(target.position)
-            transformControlsSpace == "local" ? originDraggerRef.current.rotation.copy(target.rotation) : target && originDraggerRef.current.rotation.set(0, 0, 0);
-        }
-    }
-
-    //to-do when launching origin point reset position of the origin point
-    return (
-        <>
-            <GizmoHelper renderPriority={1} alignment="top-right" margin={[70, 70]}>
-                <GizmoViewport labelColor="black" />
-            </GizmoHelper>
-            {
-
-                <group name="TRANSFORM_ORIGIN_WORLD_CENTER">
-                    {helper && <primitive object={helper} />}
-                    <group name="TRANSFORM_ORIGIN_GROUP" position={target?.position}>
-                        <group ref={originDraggerRef} name="TRANSFORM_ORIGIN_DRAGGER">
-                            <Sphere scale={[0.05, 0.05, 0.05]} material={new THREE.MeshPhongMaterial({ emissive: "black" })} />
-                            <Line color={0xFF0000} points={[[0, 0, 0], [10, 0, 0]]} lineWidth={5} />
-                            <Line color={0x00FF00} points={[[0, 0, 0], [0, 10, 0]]} lineWidth={5} />
-                            <Line color={0x0000FF} points={[[0, 0, 0], [0, 0, 10]]} lineWidth={5} />
-                            <Line dashed dashScale={10} color={0xFF0000} points={[[0, 0, 0], [-10, 0, 0]]} lineWidth={5} />
-                            <Line dashed dashScale={10} color={0x00FF00} points={[[0, 0, 0], [0, -10, 0]]} lineWidth={5} />
-                            <Line dashed dashScale={10} color={0x0000FF} points={[[0, 0, 0], [0, 0, -10]]} lineWidth={5} />
-                        </group>
-                    </group>
-                </group>
-            }
-            {
-
-                target &&
-                <TransformControlsDrei
-                    name='TRANSFORM_HELPER'
-                    //@ts-ignore
-                    object={isOriginPointMode && !panelHasFlag(PANEL_ORIGIN_POINT, "drag_object") ? originDraggerRef : target}
-                    mode={transformControlsMode}
-                    space={transformControlsSpace}
-                    camera={camera}
-                    onMouseUp={() => {
-                        if (isOriginPointMode) {
-                            if (target instanceof THREE.Mesh && target.geometry instanceof THREE.BufferGeometry) {
-                                const o = target;
-                                if (!panelHasFlag(PANEL_ORIGIN_POINT, "drag_object")) {
-                                    if (!originDraggerRef.current) return;
-                                    const draggerPos = originDraggerRef.current.position;
-                                    translateOriginPoint(o, draggerPos);
-                                    draggerPos.set(0, 0, 0);
-                                }
-                                else {
-                                    if (!lastObjPlace) return;
-                                    o.position.copy(lastObjPlace);
-                                    const draggedTo = o.position.clone();
-                                    translateOriginPoint(o, draggedTo, true);
-                                }
-                                // Reset helpers
-                                const origin = scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
-                                origin?.position.copy(o.position);
-                                helper?.update();
-                                helper?.position.copy(o.position);
-                            }
-                        }
-                        setLastObjectPlace(undefined);
-                    }}
-                    onMouseDown={() => {
-                        setLastObjectPlace(target.position.clone());
-                    }}
-                />
-            }
-        </>
-    );
 })
 
 export default Canvas;

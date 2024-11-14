@@ -20,6 +20,8 @@ export class Viewport {
     /** Currently selected Objects */
     @observable target: THREE.Object3D | null = null;
 
+    @observable targetBoundingBox: THREE.Box3 = new THREE.Box3();
+
     targetLastPlace: THREE.Vector3 | null = null;
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -76,6 +78,8 @@ export class Viewport {
             object = object.parent;
         }
         this.target = object;
+        this.target && this.targetBoundingBox.setFromObject(this.target);
+
         this.transforming = false;
         this.cameraControls.enabled = true;
         if (object) {
@@ -152,6 +156,8 @@ export class Viewport {
         this.cameraControls.addEventListener('start', () => this.cameraDragStart = true);
         this.cameraControls.addEventListener('change', () => this.cameraDragStart && !this.transforming && (this.transforming = true));
         this.cameraControls.addEventListener('end', () => { this.transforming = false; this.cameraDragStart = false; });
+        // Update boundingbox on drag
+        this.controls.addEventListener('change', () => { this.target && this.targetBoundingBox.setFromObject(this.target); });
     }
 
     onDragStart = () => {
@@ -163,6 +169,7 @@ export class Viewport {
     onDragEnd = () => {
         this.cameraControls.enabled = true;
         this.transforming = false;
+        this.target && this.targetBoundingBox.setFromObject(this.target);
         if (this.editor.hasFlag("geometry_tools") && this.target && this.target instanceof THREE.Mesh) {
 
             const originGroup = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_GROUP");
