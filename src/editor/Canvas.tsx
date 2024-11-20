@@ -1,13 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { Canvas as ReactThreeFiberCanvas, useThree } from '@react-three/fiber';
+import { Canvas as ReactThreeFiberCanvas } from '@react-three/fiber';
 import { useEditor } from "@orb_Editor";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { GizmoHelper, GizmoViewport, Line, Sphere, StatsGl, TransformControls as TransformControlsDrei } from "@react-three/drei";
+import { GizmoHelper, GizmoViewport, Line, Sphere, StatsGl } from "@react-three/drei";
 import { useRef, useState } from "react";
 import React from "react";
-import { isPanelActive, panelHasFlag } from "@orb_UI/panels/Panels";
-import { translateOriginPoint } from "@orb_utils/Mesh";
 import { useViewport } from "src/store/Viewport";
 
 
@@ -74,7 +72,7 @@ const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
     const { flags } = useEditor();
-    const { gridEnabled, grid, viewHelperEnabled, controls, target } = useViewport();
+    const { gridEnabled, grid, viewHelperEnabled, controls, target, targetBoundingBox, boundingBoxEnabled } = useViewport();
 
     return (
         <>
@@ -103,6 +101,7 @@ const EditorHelpers = observer(() => {
                         </group>
                     </group>
                 }
+                {boundingBoxEnabled && <box3Helper box={targetBoundingBox} />}
                 <primitive object={controls.getHelper()} />
                 {gridEnabled && <primitive object={grid} />}
             </group>
