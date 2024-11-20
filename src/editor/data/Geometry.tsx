@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from 'three'
 
-import { Space, Button, Checkbox, Tooltip, Form, Divider } from "antd";
+import { Space, Button, Checkbox, Tooltip, Form, Divider, Alert } from "antd";
 import { SpaceCompactProps } from "antd/es/space/Compact";
 import { useViewport } from "src/store/Viewport";
 import { DragOutlined, ExpandAltOutlined, SyncOutlined } from "@ant-design/icons";
@@ -17,6 +17,7 @@ const GEOMETRY_SEGMENTS_LIMIT_VECTOR_2 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMET
 const GEOMETRY_SEGMENTS_LIMIT_VECTOR_3 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMETRY_SEGMENTS_LIMIT, z: GEOMETRY_SEGMENTS_LIMIT };
 
 const GeometrySelect = [
+    { value: "undefined", label: "None" },
     { value: "BoxGeometry", label: "Box" },
     { value: "CylinderGeometry", label: "Cylinder" },
     { value: "ConeGeometry", label: "Cone" },
@@ -27,11 +28,49 @@ const GeometrySelect = [
 ] as { value: string, label: string }[];
 
 export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = observer(({ geometry }) => {
-    const { target } = useViewport();
     const [g, setG] = useState(geometry);
 
+    return (
+        <>
+            <ItemCollapse label="Tools">
+                <GeometryTools />
+            </ItemCollapse>
+            {
+                Object.keys(g.attributes).length != 0 &&
+                <ItemCollapse label={g.type}>
+                    <ChildGeometry geometry={g} onChange={(g) => setG(g)} />
+                </ItemCollapse>
+            }
+            <ItemCollapse label={"BufferGeometry"}>
+                <GeometrySetter geometry={geometry} onSet={(g) => setG(g)} />
+                {
+                    Object.keys(g.attributes).length == 0 &&
+                    <Alert type="info" showIcon message="Geometry Buffer is empty! Set a custom geometry!" />
+                }
+                {
+                    Object.keys(g.attributes).length != 0 &&
+                    <ItemGroup label="Attributes" sizes={Array(4).fill("50%")}>
+                        {g.getAttribute("position") && <ItemNumber addonBefore="Position" object={{ count: g.getAttribute("position").count }} variable="count" readonly />}
+                        {g.getAttribute("normal") && <ItemNumber addonBefore="Normal" object={{ count: g.getAttribute("normal").count }} variable="count" readonly />}
+                        {g.getAttribute("uv") && <ItemNumber addonBefore="UV" object={{ count: g.getAttribute("uv").count }} variable="count" readonly />}
+                        {g.index && <ItemNumber addonBefore="Index" object={{ count: g.index?.count }} variable="count" readonly />}
+                    </ItemGroup>
+                }
+            </ItemCollapse>
+        </>
+    );
+})
+
+type GeometrySetter = {
+    geometry: THREE.BufferGeometry,
+    allowNullType?: boolean,
+    onSet?: (geometry: THREE.BufferGeometry) => void,
+}
+
+export const GeometrySetter = observer<GeometrySetter>(({ geometry, allowNullType, onSet }) => {
+    const { target } = useViewport();
     const instantiateGeometry = (value: string) => {
-        let geo: THREE.BufferGeometry;
+        let geo: THREE.BufferGeometry | undefined;
         console.log(value);
         switch (value) {
             case "BoxGeometry": geo = new THREE.BoxGeometry(); break;
@@ -41,48 +80,32 @@ export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = o
             case "TorusGeometry": geo = new THREE.TorusGeometry(); break;
             case "ConeGeometry": geo = new THREE.ConeGeometry(); break;
             case "IcosahedronGeometry": geo = new THREE.IcosahedronGeometry(); break;
+            case "undefined": geo = new THREE.BufferGeometry(); break;
             default: return;
         }
 
         if (target instanceof THREE.Mesh) {
             target.geometry.dispose();
             target.geometry = undefined;
-            target.geometry = geo;
-            setG(geo)
+            if (geo) {
+                target.geometry = geo;
+                onSet && onSet(geo)
+            }
         }
     }
-
-    const [loopStop, loopStart, _isActive] = useDeltaTime(() => {
-
-    });
-
     return (
         <>
-            <ItemCollapse label="Tools">
-                <GeometryTools />
-            </ItemCollapse>
-            <ItemCollapse label={"BufferGeometry"}>
-                <ItemSelect
-                    object={{ Geometries: GeometrySelect }}
-                    variable="Geometries"
-                    label="Type"
-                    defaultValue={g ? g.type.replace("Geometry", "") : "None"}
-                    onChangeSelect={(s) => {
-                        const str = s as unknown as string;
-                        instantiateGeometry(str)
-                    }} />
-                <ItemGroup label="Attributes" sizes={Array(4).fill("50%")}>
-                    {g.getAttribute("position") && <ItemNumber addonBefore="Position" object={{ count: g.getAttribute("position").count }} variable="count" readonly />}
-                    {g.getAttribute("normal") && <ItemNumber addonBefore="Normal" object={{ count: g.getAttribute("normal").count }} variable="count" readonly />}
-                    {g.getAttribute("uv") &&  <ItemNumber addonBefore="UV" object={{ count: g.getAttribute("uv").count }} variable="count" readonly />}
-                    {g.index &&  <ItemNumber addonBefore="Index" object={{ count: g.index?.count }} variable="count" readonly />}
-                </ItemGroup>
-            </ItemCollapse>
-            <ItemCollapse label={g.type}>
-                <ChildGeometry geometry={g} onChange={(g) => setG(g)} />
-            </ItemCollapse>
+            <ItemSelect
+                object={{ Geometries: allowNullType ? GeometrySelect : GeometrySelect.filter(v => v.value != "undefined") }}
+                variable="Geometries"
+                label="Geometry"
+                defaultValue={geometry ? geometry.type.replace("Geometry", "") : "None"}
+                onChangeSelect={(s) => {
+                    const str = s as unknown as string;
+                    instantiateGeometry(str)
+                }} />
         </>
-    );
+    )
 })
 
 const GeometryTools = observer(() => {
