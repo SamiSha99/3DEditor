@@ -11,7 +11,7 @@ export const MenuBarStyle = styled.div`
 
 export const ControlsBarStyle = styled.div`
     position: absolute;
-    top: calc(1% + 24px);
+    top: calc(5% + 20px);
     left: 2%;
     background-color: #212121;
 `

@@ -25,8 +25,7 @@ const Canvas = observer(() => {
             <ReactThreeFiberCanvas
                 ref={canvasRef}
                 id="main"
-                style={{ bottom: 0, height: "calc(100vh - 32px)", width: loaded ? "100%" : "1px" }}
-
+                style={{ bottom: 0, height: "100%", width: loaded ? "100%" : "1px" }}
                 scene={scene}
                 camera={camera}
                 shadows

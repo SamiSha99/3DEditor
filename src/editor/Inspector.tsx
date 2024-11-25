@@ -17,11 +17,20 @@ export const Inspector = () => {
     return (
         <Splitter>
             <Splitter.Panel defaultSize={"70%"} min={"62.5%"} max={"77.5%"}>
-                <div style={{ display: "flex", position: "relative" }}>
-                    <Canvas />
-                    <ControlsBar />
-                    <Overlay />
-                </div>
+                <Splitter layout="vertical">
+                    <Splitter.Panel defaultSize={"75%"}>
+                        <Canvas />
+                        <ControlsBar />
+                        <Overlay />
+                    </Splitter.Panel>
+                    <Splitter.Panel>
+                        <div style={{ backgroundColor: "#696969", width: "100%", height: "100%", display: "flex", alignItems: "center", alignContent: "center" }}>
+                            <div style={{ margin: "auto", textAlign: "center", fontSize: 32, fontWeight: "bold" }}>
+                                You thought you will see assets here, but it is me, Duo!
+                            </div>
+                        </div >
+                    </Splitter.Panel>
+                </Splitter>
             </Splitter.Panel>
             <Splitter.Panel>
                 <div style={{ backgroundColor: "#212121", height: "100vh" }}>
