@@ -76,10 +76,14 @@ const EditorHelpers = observer(() => {
     return (
         <>
             <group renderOrder={1} ref={ref} name={"EDITOR_HELPER_DO_NOT_MODIFY_PLEASE"} userData={{ sceneHelpers: true }}>
-                {viewHelperEnabled && <GizmoHelper
-                    alignment="top-right"
-                    margin={[70, 70]}
-                    children={<GizmoViewport disabled />} />}
+                {
+                    viewHelperEnabled &&
+                    <GizmoHelper
+                        alignment="top-right"
+                        margin={[70, 70]}
+                        children={<GizmoViewport disabled />}
+                    />
+                }
                 {
                     flags.includes("geometry_tools") &&
                     <group name="TRANSFORM_ORIGIN_WORLD_CENTER">

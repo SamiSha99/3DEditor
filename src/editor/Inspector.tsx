@@ -1,7 +1,7 @@
 import { useEditor } from "@orb_Editor";
 import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
 import { InspectorScene } from "./data/Scene";
 import { InspectorObject3D } from "./data/Object3D";
@@ -12,6 +12,7 @@ import Canvas from './Canvas'
 import * as THREE from "three"
 import Overlay from "./Overlay";
 import { useViewport } from "src/store/Viewport";
+import { InspectorAnimation } from "./data/Animation";
 
 export const Inspector = () => {
     return (
@@ -71,6 +72,7 @@ export const HierarchyTree = observer(() => {
 export const SelectedObject: React.FC = observer(() => {
     const { target } = useViewport();
     const [tab, setTab] = useState(target ? "OBJECT" : "");
+
     return (
         <>
             {
@@ -81,6 +83,7 @@ export const SelectedObject: React.FC = observer(() => {
                         {
                             target && target instanceof THREE.Mesh &&
                             <>
+                                <Button disabled={!target.material} children={"ANIMATION"} onClick={() => setTab("ANIMATION")} />
                                 <Button disabled={!target.material} children={"GEOMETRY"} onClick={() => setTab("GEOMETRY")} />
                                 <Button disabled={!target.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
                             </>
@@ -99,6 +102,10 @@ export const SelectedObject: React.FC = observer(() => {
                                         {tab == "MATERIAL" && <InspectorMaterial material={target.material} />}
                                         {tab == "GEOMETRY" && <InspectorGeometry geometry={target.geometry} />}
                                     </>
+                                }
+                                {
+                                    tab == "ANIMATION" && target instanceof THREE.Object3D &&
+                                    <InspectorAnimation animations={target.animations} />
                                 }
                             </Form>
                         </div >

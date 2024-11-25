@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import { observer } from "mobx-react-lite";
 import { ItemBoolean, ItemButton, ItemCollapse, ItemNumber, ItemSelect, ItemTexture, ItemVector2, ItemGroup, ItemInput, ItemEuler } from '@orb_UI/controller/ControllerItems';
 import { LIMIT_01 } from '@orb_UI/controller/items/Item';
-import { useEditor } from '@orb_Editor';
 import { useState } from 'react';
 import { Divider } from 'antd';
 import { ItemColor } from '@orb_UI/controller/items/ItemColor';
@@ -27,46 +26,13 @@ export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observ
     const { target } = useViewport();
     const [meshMaterial, setMeshMaterial] = useState(material);
 
-    const instantiateMaterial = (value: string) => {
-        let mat: THREE.Material;
-        console.log(value);
-        switch (value) {
-            case "MeshBasicMaterial": mat = new THREE.MeshBasicMaterial(); break;
-            case "MeshStandardMaterial": mat = new THREE.MeshStandardMaterial(); break;
-            case "MeshPhongMaterial": mat = new THREE.MeshPhongMaterial(); break;
-            case "MeshToonMaterial": mat = new THREE.MeshToonMaterial(); break;
-            case "MeshDepthMaterial": mat = new THREE.MeshDepthMaterial(); break;
-            case "MeshDistanceMaterial": mat = new THREE.MeshDistanceMaterial(); break;
-            case "MeshLambertMaterial": mat = new THREE.MeshLambertMaterial(); break;
-            case "MeshMatcapMaterial": mat = new THREE.MeshMatcapMaterial(); break;
-            case "MeshNormalMaterial": mat = new THREE.MeshNormalMaterial(); break;
-            case "MeshPhysicalMaterial": mat = new THREE.MeshPhysicalMaterial(); break;
-            default: return;
-        }
 
-        if (target instanceof THREE.Mesh) {
-            const oldMaterial = target.material as THREE.Material;
-            // mat.copy(oldMaterial)
-            target.material = mat;
-            (target.material as THREE.Material).needsUpdate = true;
-            setMeshMaterial(mat)
-            oldMaterial.dispose();
-        }
-    }
 
     return (
         <>
             <ItemCollapse label={THREE.Material.name}>
                 {/* Change material type */}
-                <ItemSelect
-                    object={{ Materials: MaterialSelect }}
-                    variable="Materials"
-                    label="Type"
-                    defaultValue={material ? material.constructor.name.replace("Mesh", "").replace("Material", "") : "None"}
-                    onChangeSelect={(s) => {
-                        const str = s as unknown as string;
-                        instantiateMaterial(str)
-                    }} />
+                <MaterialSetter material={material} onSet={(m) => {setMeshMaterial(m)}}/>
                 {/* Material Properties */}
                 {
                     meshMaterial &&
@@ -93,6 +59,59 @@ export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observ
             }
         </>
     );
+})
+
+type MaterialSetter = {
+    material?: THREE.Material | THREE.Material[],
+    allowNullType?: boolean,
+    onSet?: (material?: THREE.Material) => void,
+}
+
+export const MaterialSetter = observer<MaterialSetter>(({ material, allowNullType, onSet }) => {
+    const { target } = useViewport();
+
+    const instantiateMaterial = (value: string) => {
+        let mat: THREE.Material | undefined;
+
+        switch (value) {
+            case "MeshBasicMaterial": mat = new THREE.MeshBasicMaterial(); break;
+            case "MeshStandardMaterial": mat = new THREE.MeshStandardMaterial(); break;
+            case "MeshPhongMaterial": mat = new THREE.MeshPhongMaterial(); break;
+            case "MeshToonMaterial": mat = new THREE.MeshToonMaterial(); break;
+            case "MeshDepthMaterial": mat = new THREE.MeshDepthMaterial(); break;
+            case "MeshDistanceMaterial": mat = new THREE.MeshDistanceMaterial(); break;
+            case "MeshLambertMaterial": mat = new THREE.MeshLambertMaterial(); break;
+            case "MeshMatcapMaterial": mat = new THREE.MeshMatcapMaterial(); break;
+            case "MeshNormalMaterial": mat = new THREE.MeshNormalMaterial(); break;
+            case "MeshPhysicalMaterial": mat = new THREE.MeshPhysicalMaterial(); break;
+            case "undefined": mat = new THREE.Material(); mat.name = "empty"; break;
+            default: return;
+        }
+
+        if (target instanceof THREE.Mesh) {
+            const oldMaterial = target.material as THREE.Material;
+            // mat.copy(oldMaterial)
+            target.material = mat;
+            if(target.material)
+                (target.material as THREE.Material).needsUpdate = true;
+            onSet && onSet(mat)
+            oldMaterial.dispose();
+        }
+    }
+
+    return (
+        <>
+            <ItemSelect
+                object={{ Materials: allowNullType ? MaterialSelect : MaterialSelect.filter(v => v.value != "undefined") }}
+                variable="Materials"
+                label="Material"
+                defaultValue={material && material.constructor.name != "Material" ?  material.constructor.name.replace("Mesh", "").replace("Material", "") : "None"}
+                onChangeSelect={(s) => {
+                    const str = s as unknown as string;
+                    instantiateMaterial(str)
+                }} />
+        </>
+    )
 })
 
 export const ChildMaterial: React.FC<{ material: THREE.Material }> = observer(({ material }) => {
