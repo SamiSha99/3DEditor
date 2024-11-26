@@ -9,6 +9,7 @@ import { InspectorMaterial } from "./data/Material";
 import { InspectorGeometry } from "./data/Geometry";
 import { ControlsBar } from "@orb_UI/ControlsBar";
 import Canvas from './Canvas'
+import AssetsMenu from './AssetsMenu'
 import * as THREE from "three"
 import Overlay from "./Overlay";
 import { useViewport } from "src/store/Viewport";
@@ -25,11 +26,7 @@ export const Inspector = () => {
                         <ControlsBar />
                     </Splitter.Panel>
                     <Splitter.Panel>
-                        <div style={{ backgroundColor: "#696969", width: "100%", height: "100%", display: "flex", alignItems: "center", alignContent: "center" }}>
-                            <div style={{ margin: "auto", textAlign: "center", fontSize: 32, fontWeight: "bold" }}>
-                                You thought you will see assets here, but it was me, Dio!
-                            </div>
-                        </div >
+                        <AssetsMenu />
                     </Splitter.Panel>
                 </Splitter>
             </Splitter.Panel>
