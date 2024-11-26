@@ -9,7 +9,9 @@ export const Overlay = observer(() => {
 
     return (
         <ConfigProvider theme={PanelsThemeConfig}>
-            {activePanels.length > 0 && activePanels.map(child => child.panel)}
+            <div id="overlay" style={{ display: "flex", width: "100%", height: "100%", position: "absolute", pointerEvents: "none" }}>
+                {activePanels.length > 0 && activePanels.map(child => child.panel)}
+            </div>
         </ConfigProvider>
     )
 })

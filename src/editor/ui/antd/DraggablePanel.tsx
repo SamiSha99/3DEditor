@@ -56,7 +56,7 @@ export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ nam
                 // console.log("event:", e, "\n", "data:", d)
             }}
         >
-            <div ref={ref} style={{ position: "absolute", width: width, height: height }}>
+            <div ref={ref} style={{ position: "absolute", width: width, height: height, pointerEvents: "all" }}>
                 <Card
                     classNames={{ header: "handle" }}
                     styles={{ header: { cursor: "all-scroll" }, title: { marginRight: 20 } }}
