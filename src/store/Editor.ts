@@ -3,6 +3,8 @@ import { makeObservable, observable, action } from "mobx";
 import { Panel, isPanelActive } from "@orb_UI/panels/Panels";
 import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
+import { IModelFileResponse } from './Interfaces';
+import { DEBUG_STORAGE_MODALS_TEST } from './Data';
 
 export const EditorContext = createContext<Editor>({} as any)
 export const useEditor = () => useContext(EditorContext);
@@ -31,6 +33,9 @@ export class Editor {
     @observable activePanels: Panel[] = []
 
     @observable flags: string[] = [];
+
+    /** Metadata of models from the storage. */
+    @observable storageModels: IModelFileResponse[] = DEBUG_STORAGE_MODALS_TEST;
 
     /** Handles all related controls in the Canvas scene. */
     @observable viewport = new Viewport(this);

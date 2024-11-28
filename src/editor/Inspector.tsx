@@ -20,12 +20,12 @@ export const Inspector = () => {
         <Splitter>
             <Splitter.Panel defaultSize={"70%"} min={"62.5%"} max={"77.5%"}>
                 <Splitter layout="vertical">
-                    <Splitter.Panel defaultSize={"75%"} style={{ display: "flex", position: "relative" }}>
+                    <Splitter.Panel defaultSize={"75%"} style={{ display: "flex", position: "relative", overflow: "hidden" }}>
                         <Canvas />
                         <Overlay />
                         <ControlsBar />
                     </Splitter.Panel>
-                    <Splitter.Panel>
+                    <Splitter.Panel style={{ backgroundColor: "#212121" }}>
                         <AssetsMenu />
                     </Splitter.Panel>
                 </Splitter>
