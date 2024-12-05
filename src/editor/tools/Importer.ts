@@ -227,6 +227,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
             reader.addEventListener('load', async function (event) {
                 const contents = event.target?.result as string | ArrayBuffer;
                 const loader = createGLTFLoader();
+                console.log(contents);
                 loader.parse(contents, '', function (result) {
 
                     const scene = result.scene;

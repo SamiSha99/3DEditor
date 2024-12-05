@@ -97,8 +97,9 @@ export class Editor {
     }
 
     /** Adds object to the scene, returns the added object */
-    @action addObject = (object: THREE.Object3D) => {
+    @action addObject = (object: THREE.Object3D, select: boolean = false) => {
         this.sceneObjects.push(object);
+        select && this.viewport.setTarget(object);
         return object;
     }
 

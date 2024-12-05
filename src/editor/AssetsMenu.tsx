@@ -1,6 +1,8 @@
 import { observer } from "mobx-react-lite"
-import { Image } from "antd";
+import { Dropdown, Image, MenuProps, message } from "antd";
 import { useEditor } from "@orb_Editor";
+import { IModelFileResponse } from "src/store/Interfaces";
+import { doImportFile } from "@orb_tools/Importer";
 
 const AssetsMenu = observer(() => {
     const { storageModels } = useEditor();
@@ -9,29 +11,83 @@ const AssetsMenu = observer(() => {
 
     return (
         <div style={{ width: "90%", margin: "auto", height: "100%" }}>
-            Assets
+            <h1>Asset</h1>
             <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
-                <div style={{ width: "100%", display: "flex", justifyContent: "start", flexWrap: "wrap", border: "2px solid grey", marginTop: "10px" }}>
-                    {
-                        storageModels.map((model) => {
-                            return (
-                                <div style={{ width: 64, height: 64, padding: "0.5%" }}>
-                                    <Image
-                                        style={{
-                                            border: "3px solid white",
-                                            boxShadow: "5px 5px 2px 1px rgba(0, 0, 0, 0.2)",
-                                            backgroundColor: "#696969"
-                                        }}
-                                        src={model.fileThumbnail}
-                                        typeof="png"
-                                        preview={false}
-                                    />
-                                </div>
-                            )
-                        })
-                    }
+                <div style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "start",
+                    flexWrap: "wrap",
+                    // border: "2px solid grey",
+                    marginTop: "10px"
+                }}>
+                    {storageModels.map((asset) => { return <Asset asset={asset} /> })}
                 </div>
             </div>
+        </div>
+    )
+})
+
+const Asset = observer<{ asset: IModelFileResponse }>(({ asset }) => {
+    const { addObject } = useEditor();
+
+    const getFileFromURL = async (url: string, type: "glb" | "usdz") => {
+        const response = await fetch(url);
+        const data = await response.blob();
+        const file = new File([data], type == "glb" ? asset.metadataAndroid.displayName : asset.metadata.displayName);
+        return file;
+    }
+
+    const items: MenuProps['items'] = [
+        {
+            label: 'Import GLB',
+            key: '1',
+            onClick: async () => {
+                const file = await getFileFromURL(asset.fileUrlAndroid, "glb");
+                doImportFile(file, (result) => {
+                    console.log(result);
+                    addObject(result, true);
+                    message.success("Imported GLB to Scene!");
+                });
+            }
+        },
+        {
+            label: 'Import USDZ',
+            key: '2',
+            onClick: async () => {
+                const file = await getFileFromURL(asset.fileUrl, "usdz");
+                doImportFile(file, (result) => {
+                    console.log(result);
+                    addObject(result, true);
+                    message.success("Imported USDZ to Scene!");
+                });
+            }
+        },
+        {
+            label: 'Duplicate',
+            key: '3',
+            onClick: () => {
+
+            }
+        }
+    ];
+
+    return (
+        <div style={{ padding: "5px max(5px, 0.5%)" }}>
+            <Dropdown menu={{ items }} trigger={['contextMenu']}>
+                <div style={{ width: 64, height: 64 }}>
+                    <Image
+                        style={{
+                            border: "3px solid white",
+                            boxShadow: "5px 5px 3px 1px rgba(0, 0, 0, 0.4)",
+                            backgroundColor: "#696969"
+                        }}
+                        src={asset.fileThumbnail}
+                        typeof="png"
+                        preview={false}
+                    />
+                </div>
+            </Dropdown>
         </div>
     )
 })
