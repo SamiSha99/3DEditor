@@ -77,10 +77,10 @@ export const SelectedObject: React.FC = observer(() => {
                     <Row style={{ marginTop: 24 }}>
                         <Button children={"SCENE"} onClick={() => setTab("SCENE")} />
                         <Button disabled={target == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
+                        <Button disabled={target == null} children={"ANIMATION"} onClick={() => setTab("ANIMATION")} />
                         {
                             target && target instanceof THREE.Mesh &&
                             <>
-                                <Button disabled={!target.material} children={"ANIMATION"} onClick={() => setTab("ANIMATION")} />
                                 <Button disabled={!target.material} children={"GEOMETRY"} onClick={() => setTab("GEOMETRY")} />
                                 <Button disabled={!target.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
                             </>
