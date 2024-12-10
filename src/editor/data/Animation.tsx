@@ -1,9 +1,13 @@
 import * as THREE from 'three';
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
-import { Button, Divider } from 'antd';
+import { Button, Collapse, Divider, List, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
+import { ItemCollapse } from '@orb_UI/controller/ControllerItems';
+import Panel from 'antd/es/splitter/Panel';
+import ButtonGroup from 'antd/es/button/button-group';
+import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 
 type AnimatorInterface = {
     mixer?: THREE.AnimationMixer | null,
@@ -36,6 +40,10 @@ export const InspectorAnimation: React.FC<{ animations: THREE.AnimationClip[] }>
         loopStart();
     }
 
+    const stopAnimation = () => {
+        animator.action?.stop();
+    }
+
     const [_loopStop, loopStart, _isActive] = useDeltaTime((d) => {
         animator.mixer?.update(d);
     })
@@ -47,16 +55,39 @@ export const InspectorAnimation: React.FC<{ animations: THREE.AnimationClip[] }>
         }
     }, []);
 
+    const dataSource = !animations ? undefined : animations.map((ani, i) => {
+        return {
+            key: i,
+            index: i,
+            name: ani.name,
+            actions: (
+                <ButtonGroup>
+                    <Button icon={<CaretRightOutlined />} onClick={() => playAnimation(ani)} />
+                    <Button icon={<PauseOutlined />} onClick={() => stopAnimation()} />
+                </ButtonGroup>
+            )
+        }
+    })
+
     return (
         <>
-            <div style={{ color: "yellow" }}>
-                TO-DO: Showcase clips, maybe even modify them?
-            </div>
             <Divider children="Clips" orientation="left" />
             {
-                animations && animations.map((anim) => {
-                    return <Button children={anim.name} onClick={() => playAnimation(anim)} />;
-                })
+                animations.length &&
+                <Table
+                    style={{ border: "1px solid grey", width: "95%", margin: "auto" }}
+                    size='small'
+                    showHeader={false}
+                    pagination={false}
+                    columns={[
+                        { dataIndex: 'index', width: "0px" },
+                        { dataIndex: 'name' },
+                        { dataIndex: 'actions', width: "0px" }
+                    ]}
+                    dataSource={dataSource}
+                >
+
+                </Table>
             }
             {
                 !animations.length && <i>No animations found...</i>

@@ -1,19 +1,23 @@
 import { Collapse } from "antd"
+import { SizeType } from "antd/es/config-provider/SizeContext"
 
 type ItemCollapseInterface = {
-    label: string,
-    children?: React.ReactNode
-    collapsed?: boolean;
+    label: React.ReactNode,
+    children?: React.ReactNode,
+    collapsed?: boolean,
+    size?: SizeType,
+    extra?: React.ReactNode
 }
 
 export const ItemCollapse: React.FC<ItemCollapseInterface> = (
-    { label, children, collapsed }
+    { label, children, collapsed, size, extra }
 ) => {
     return (
         <Collapse
             defaultActiveKey={!collapsed ? ["1"] : undefined}
             style={{ width: "100%" }}
-            items={[{ label: label, key: "1", children: <div>{children}</div> }]}
+            size={size}
+            items={[{ label: label, key: "1", children: <div>{children}</div>, extra: extra }]}
         />
     )
 }
