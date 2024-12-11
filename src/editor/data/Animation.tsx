@@ -11,20 +11,24 @@ import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 
 type AnimatorInterface = {
     mixer?: THREE.AnimationMixer | null,
-    action?: THREE.AnimationAction | null,
+    actions?: THREE.AnimationAction[] | null,
     clips?: THREE.AnimationClip[] | null
 }
 
-const animator: AnimatorInterface = { mixer: null, action: null, clips: null };
+const animator: AnimatorInterface = { mixer: null, actions: null, clips: null };
 
 const initialize = (obj: THREE.Object3D, clips: THREE.AnimationClip[]) => {
 
     // Cleanup hack when switching between objects while the animation tab open
-    if (animator.action) {
-        animator.action.stop();
-        animator.action = null;
+    if (animator.actions) {
+        animator.actions.forEach((action) => { action.stop(); })
+        animator.actions = null;
     }
     animator.mixer = new THREE.AnimationMixer(obj);
+    animator.actions = [];
+    clips.forEach((clip) => {
+        animator.actions!.push(animator.mixer!.clipAction(clip));
+    });
     animator.clips = clips;
 }
 
@@ -33,47 +37,47 @@ export const InspectorAnimation: React.FC<{ animations: THREE.AnimationClip[] }>
 
     initialize(target!, animations);
 
-    const playAnimation = (clip: THREE.AnimationClip) => {
-        animator.action && animator.action.isRunning() && animator.action.stop();
-        animator.action = animator.mixer?.clipAction(clip);
-        animator.action?.play();
+    const play = (clip: THREE.AnimationClip) => {
+        animator.actions?.forEach((action) => {
+            if (action.getClip() == clip) {
+                action.isRunning() && action.stop();
+                action.play();
+            }
+        })
         loopStart();
     }
-
-    const stopAnimation = () => {
-        animator.action?.stop();
-    }
+    const stop = (clip: THREE.AnimationClip) => { animator.actions?.forEach((action) => { action.getClip() == clip && action.isRunning() && action.stop() }) }
+    const stopAll = () => { animator.actions?.forEach((action) => { action.isRunning() && action.stop() }) }
 
     const [_loopStop, loopStart, _isActive] = useDeltaTime((d) => {
         animator.mixer?.update(d);
     })
 
     useOnUnmount(() => {
-        if (animator.action) {
-            animator.action.stop();
-            animator.action = null;
+        if (animator.actions) {
+            stopAll();
+            animator.actions = null;
         }
     }, []);
 
-    const dataSource = !animations ? undefined : animations.map((ani, i) => {
+    const dataSource = animations ? animations.map((ani, i) => {
         return {
             key: i,
             index: i,
             name: ani.name,
             actions: (
                 <ButtonGroup>
-                    <Button icon={<CaretRightOutlined />} onClick={() => playAnimation(ani)} />
-                    <Button icon={<PauseOutlined />} onClick={() => stopAnimation()} />
+                    <Button icon={<CaretRightOutlined />} onClick={() => play(ani)} />
+                    <Button icon={<PauseOutlined />} onClick={() => stop(ani)} />
                 </ButtonGroup>
             )
         }
-    })
+    }) : undefined;
 
     return (
         <>
             <Divider children="Clips" orientation="left" />
             {
-                animations.length &&
                 <Table
                     style={{ border: "1px solid grey", width: "95%", margin: "auto" }}
                     size='small'
@@ -85,12 +89,7 @@ export const InspectorAnimation: React.FC<{ animations: THREE.AnimationClip[] }>
                         { dataIndex: 'actions', width: "0px" }
                     ]}
                     dataSource={dataSource}
-                >
-
-                </Table>
-            }
-            {
-                !animations.length && <i>No animations found...</i>
+                />
             }
         </>
     );
