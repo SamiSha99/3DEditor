@@ -1,35 +1,28 @@
 import * as THREE from 'three';
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
-import { Button, Collapse, Divider, List, Table } from 'antd';
-import { useEffect, useState } from 'react';
+import { Button, Divider, Table } from 'antd';
 import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
-import { ItemCollapse } from '@orb_UI/controller/ControllerItems';
-import Panel from 'antd/es/splitter/Panel';
 import ButtonGroup from 'antd/es/button/button-group';
 import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 
 type AnimatorInterface = {
     mixer?: THREE.AnimationMixer | null,
-    actions?: THREE.AnimationAction[] | null,
-    clips?: THREE.AnimationClip[] | null
+    actions?: { [key: string]: THREE.AnimationAction } | null
 }
 
-const animator: AnimatorInterface = { mixer: null, actions: null, clips: null };
+const animator: AnimatorInterface = { mixer: null, actions: null };
 
 const initialize = (obj: THREE.Object3D, clips: THREE.AnimationClip[]) => {
 
     // Cleanup hack when switching between objects while the animation tab open
     if (animator.actions) {
-        animator.actions.forEach((action) => { action.stop(); })
+        // animator.actions.forEach((action) => { action.stop(); })
         animator.actions = null;
     }
     animator.mixer = new THREE.AnimationMixer(obj);
-    animator.actions = [];
-    clips.forEach((clip) => {
-        animator.actions!.push(animator.mixer!.clipAction(clip));
-    });
-    animator.clips = clips;
+    animator.actions = {};
+    Object.assign(animator.actions, ...clips.map((c) => { return { [c.uuid]: animator.mixer!.clipAction(c) } }));
 }
 
 export const InspectorAnimation: React.FC<{ animations: THREE.AnimationClip[] }> = observer(({ animations }) => {
@@ -38,20 +31,23 @@ export const InspectorAnimation: React.FC<{ animations: THREE.AnimationClip[] }>
     initialize(target!, animations);
 
     const play = (clip: THREE.AnimationClip) => {
-        animator.actions?.forEach((action) => {
-            if (action.getClip() == clip) {
-                action.isRunning() && action.stop();
-                action.play();
-            }
-        })
-        loopStart();
+        if (!animator.actions) return;
+        const action = animator.actions[clip.uuid];
+        action.isRunning() && action.stop();
+        action.play();
+        !isActive() && loopStart();
     }
-    const stop = (clip: THREE.AnimationClip) => { animator.actions?.forEach((action) => { action.getClip() == clip && action.isRunning() && action.stop() }) }
-    const stopAll = () => { animator.actions?.forEach((action) => { action.isRunning() && action.stop() }) }
-
-    const [_loopStop, loopStart, _isActive] = useDeltaTime((d) => {
-        animator.mixer?.update(d);
-    })
+    const stop = (clip: THREE.AnimationClip) => {
+        if (!animator.actions) return;
+        const action = animator.actions[clip.uuid];
+        action.isRunning() && action.stop();
+    }
+    const stopAll = () => {
+        if (!animator.actions) return;
+        Object.keys(animator.actions).forEach((key) => stop(animator.actions![key].getClip()))
+        isActive() && loopStop();
+    }
+    const [loopStop, loopStart, isActive] = useDeltaTime((d) => { animator.mixer?.update(d); })
 
     useOnUnmount(() => {
         if (animator.actions) {
