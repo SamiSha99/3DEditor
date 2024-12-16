@@ -35,7 +35,6 @@
     "react-use": "^17.5.1",
     "styled-components": "^6.1.11",
     "three": "^0.169.0",
-    "three-usdz-loader": "^1.0.7",
     "tsc-alias": "^1.8.10",
     "tweakpane": "^4.0.3",
     "valtio": "^1.13.2",
