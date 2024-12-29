@@ -1,5 +1,5 @@
 import { useEditor } from "@orb_Editor";
-import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tree, TreeDataNode, TreeProps } from "antd";
+import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tooltip, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
@@ -14,6 +14,7 @@ import * as THREE from "three"
 import Overlay from "./Overlay";
 import { useViewport } from "src/store/Viewport";
 import { InspectorAnimation } from "./data/Animation";
+import { IconAnimation, IconGeometry, IconMaterial, IconObject, IconScene } from "src/assets/icons";
 
 export const Inspector = () => {
     return (
@@ -75,14 +76,24 @@ export const SelectedObject: React.FC = observer(() => {
             {
                 <>
                     <Row style={{ marginTop: 24 }}>
-                        <Button children={"SCENE"} onClick={() => setTab("SCENE")} />
-                        <Button disabled={target == null} children={"OBJECT"} onClick={() => setTab("OBJECT")} />
-                        <Button disabled={target == null} children={"ANIMATION"} onClick={() => setTab("ANIMATION")} />
+                        <Tooltip title="Scene">
+                            <Button children={<IconScene />} onClick={() => setTab("SCENE")} />
+                        </Tooltip>
+                        <Tooltip title="Object">
+                            <Button disabled={target == null} children={<IconObject />} onClick={() => setTab("OBJECT")} />
+                        </Tooltip>
+                        <Tooltip title="Animation">
+                            <Button disabled={target == null} children={<IconAnimation />} onClick={() => setTab("ANIMATION")} />
+                        </Tooltip>
                         {
                             target && target instanceof THREE.Mesh &&
                             <>
-                                <Button disabled={!target.material} children={"GEOMETRY"} onClick={() => setTab("GEOMETRY")} />
-                                <Button disabled={!target.material} children={"MATERIAL"} onClick={() => setTab("MATERIAL")} />
+                                <Tooltip title="Geometry">
+                                    <Button disabled={!target.material} children={<IconGeometry />} onClick={() => setTab("GEOMETRY")} />
+                                </Tooltip>
+                                <Tooltip title="Material">
+                                    <Button disabled={!target.material} children={<IconMaterial />} onClick={() => setTab("MATERIAL")} />
+                                </Tooltip>
                             </>
                         }
                         <Divider style={{ margin: 0 }} />
