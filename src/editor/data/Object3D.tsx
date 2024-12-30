@@ -1,4 +1,3 @@
-import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { ItemBoolean, ItemCollapse, ItemEuler, ItemInput, ItemNumber, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
@@ -22,7 +21,7 @@ export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(
                 <ItemVector3 object={object} variable="position" labelInVariable />
                 <ItemEuler object={object} variable="rotation" isDegree labelInVariable />
                 <ItemVector3 object={object} variable="scale" labelInVariable />
-                <ItemBoolean object={object} variable="visible" /*icons={{ on: <EyeOutlined />, off: <EyeInvisibleOutlined /> }}*/ labelInVariable />
+                <ItemBoolean object={object} variable="visible" labelInVariable />
                 <ItemNumber object={object} variable="renderOrder" label="Order" />
             </ItemCollapse>
         </>
