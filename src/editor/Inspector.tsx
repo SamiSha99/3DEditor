@@ -71,6 +71,8 @@ export const SelectedObject: React.FC = observer(() => {
     const { target } = useViewport();
     const [tab, setTab] = useState(target ? "OBJECT" : "");
 
+    const tabCSS: React.CSSProperties = { width: "50%" };
+
     return (
         <>
             {
@@ -78,25 +80,20 @@ export const SelectedObject: React.FC = observer(() => {
                     <Row style={{ marginTop: 24, background: "#212121", height: "100%" }}>
                         <Col span={2} style={{ paddingRight: 10 }}>
                             <Tooltip title="Scene" placement="left">
-                                <Button style={{ width: "50%" }} children={<IconScene />} onClick={() => setTab("SCENE")} />
+                                <Button style={tabCSS} children={<IconScene />} onClick={() => setTab("SCENE")} />
                             </Tooltip>
                             <Tooltip title="Object" placement="left">
-                                <Button style={{ width: "50%" }} disabled={target == null} children={<IconObject />} onClick={() => setTab("OBJECT")} />
+                                <Button style={tabCSS} disabled={target == null} children={<IconObject />} onClick={() => setTab("OBJECT")} />
                             </Tooltip>
                             <Tooltip title="Animation" placement="left">
-                                <Button style={{ width: "50%" }} disabled={target == null} children={<IconAnimation />} onClick={() => setTab("ANIMATION")} />
+                                <Button style={tabCSS} disabled={target == null} children={<IconAnimation />} onClick={() => setTab("ANIMATION")} />
                             </Tooltip>
-                            {
-                                target && target instanceof THREE.Mesh &&
-                                <>
-                                    <Tooltip title="Geometry" placement="left">
-                                        <Button style={{ width: "50%" }} disabled={!target.material} children={<IconGeometry />} onClick={() => setTab("GEOMETRY")} />
-                                    </Tooltip>
-                                    <Tooltip title="Material" placement="left">
-                                        <Button style={{ width: "50%" }} disabled={!target.material} children={<IconMaterial />} onClick={() => setTab("MATERIAL")} />
-                                    </Tooltip>
-                                </>
-                            }
+                            <Tooltip title="Geometry" placement="left">
+                                <Button style={tabCSS} disabled={target == null || !(target instanceof THREE.Mesh) || !target.geometry} children={<IconGeometry />} onClick={() => setTab("GEOMETRY")} />
+                            </Tooltip>
+                            <Tooltip title="Material" placement="left">
+                                <Button style={tabCSS} disabled={target == null || !(target instanceof THREE.Mesh) || !target.material} children={<IconMaterial />} onClick={() => setTab("MATERIAL")} />
+                            </Tooltip>
                         </Col>
                         {
                             tab &&
