@@ -1,7 +1,7 @@
 import { useEditor } from "@orb_Editor";
-import { Button, ConfigProvider, Divider, Form, Row, Splitter, Tooltip, Tree, TreeDataNode, TreeProps } from "antd";
+import { Button, Col, ConfigProvider, Form, Row, Splitter, Tooltip, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
 import { InspectorScene } from "./data/Scene";
 import { InspectorObject3D } from "./data/Object3D";
@@ -37,7 +37,7 @@ export const Inspector = () => {
                         <div style={{ height: "25%", padding: "0 10px" }}>
                             <HierarchyTree />
                         </div>
-                        <div style={{ height: "calc(75% - 32px)", padding: "0 10px" }}>
+                        <div style={{ height: "calc(75% - 32px)", padding: "0 0" }}>
                             <SelectedObject />
                         </div>
                     </ConfigProvider>
@@ -75,49 +75,52 @@ export const SelectedObject: React.FC = observer(() => {
         <>
             {
                 <>
-                    <Row style={{ marginTop: 24 }}>
-                        <Tooltip title="Scene">
-                            <Button children={<IconScene />} onClick={() => setTab("SCENE")} />
-                        </Tooltip>
-                        <Tooltip title="Object">
-                            <Button disabled={target == null} children={<IconObject />} onClick={() => setTab("OBJECT")} />
-                        </Tooltip>
-                        <Tooltip title="Animation">
-                            <Button disabled={target == null} children={<IconAnimation />} onClick={() => setTab("ANIMATION")} />
-                        </Tooltip>
+                    <Row style={{ marginTop: 24, background: "#212121", height: "100%" }}>
+                        <Col span={2} style={{ paddingRight: 10 }}>
+                            <Tooltip title="Scene" placement="left">
+                                <Button style={{ width: "50%" }} children={<IconScene />} onClick={() => setTab("SCENE")} />
+                            </Tooltip>
+                            <Tooltip title="Object" placement="left">
+                                <Button style={{ width: "50%" }} disabled={target == null} children={<IconObject />} onClick={() => setTab("OBJECT")} />
+                            </Tooltip>
+                            <Tooltip title="Animation" placement="left">
+                                <Button style={{ width: "50%" }} disabled={target == null} children={<IconAnimation />} onClick={() => setTab("ANIMATION")} />
+                            </Tooltip>
+                            {
+                                target && target instanceof THREE.Mesh &&
+                                <>
+                                    <Tooltip title="Geometry" placement="left">
+                                        <Button style={{ width: "50%" }} disabled={!target.material} children={<IconGeometry />} onClick={() => setTab("GEOMETRY")} />
+                                    </Tooltip>
+                                    <Tooltip title="Material" placement="left">
+                                        <Button style={{ width: "50%" }} disabled={!target.material} children={<IconMaterial />} onClick={() => setTab("MATERIAL")} />
+                                    </Tooltip>
+                                </>
+                            }
+                        </Col>
                         {
-                            target && target instanceof THREE.Mesh &&
-                            <>
-                                <Tooltip title="Geometry">
-                                    <Button disabled={!target.material} children={<IconGeometry />} onClick={() => setTab("GEOMETRY")} />
-                                </Tooltip>
-                                <Tooltip title="Material">
-                                    <Button disabled={!target.material} children={<IconMaterial />} onClick={() => setTab("MATERIAL")} />
-                                </Tooltip>
-                            </>
+                            tab &&
+                            <Col span={22} style={{ paddingLeft: 10, height: "100%" }}>
+                                <div style={{ height: "calc(100% - 48px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarGutter: "auto" }}>
+                                    <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} colon={false} labelWrap>
+                                        {tab == "SCENE" && <InspectorScene />}
+                                        {tab == "OBJECT" && target && <InspectorObject3D object={target} />}
+                                        {
+                                            target instanceof THREE.Mesh &&
+                                            <>
+                                                {tab == "MATERIAL" && <InspectorMaterial material={target.material} />}
+                                                {tab == "GEOMETRY" && <InspectorGeometry geometry={target.geometry} />}
+                                            </>
+                                        }
+                                        {
+                                            tab == "ANIMATION" && target instanceof THREE.Object3D &&
+                                            <InspectorAnimation animations={target.animations} />
+                                        }
+                                    </Form>
+                                </div>
+                            </Col>
                         }
-                        <Divider style={{ margin: 0 }} />
                     </Row>
-                    {
-                        tab &&
-                        <div style={{ height: "calc(100% - 72px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarGutter: "auto" }}>
-                            <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} colon={false} labelWrap>
-                                {tab == "SCENE" && <InspectorScene />}
-                                {tab == "OBJECT" && target && <InspectorObject3D object={target} />}
-                                {
-                                    target instanceof THREE.Mesh &&
-                                    <>
-                                        {tab == "MATERIAL" && <InspectorMaterial material={target.material} />}
-                                        {tab == "GEOMETRY" && <InspectorGeometry geometry={target.geometry} />}
-                                    </>
-                                }
-                                {
-                                    tab == "ANIMATION" && target instanceof THREE.Object3D &&
-                                    <InspectorAnimation animations={target.animations} />
-                                }
-                            </Form>
-                        </div >
-                    }
                 </>
             }
         </>
