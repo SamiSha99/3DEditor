@@ -63,10 +63,10 @@ export const InspectorAnimation = observer<{ animations: THREE.AnimationClip[] }
                     pagination={false}
                     tableLayout="auto"
                     columns={[
-                        { dataIndex: 'index', minWidth: 25 },
-                        { dataIndex: 'name', width: "75%" },
-                        { dataIndex: 'time', minWidth: 100 },
-                        { dataIndex: 'actions', minWidth: 50 }
+                        { dataIndex: 'index' },
+                        { dataIndex: 'name', width: "100%" },
+                        { dataIndex: 'time', minWidth: 85 },
+                        { dataIndex: 'actions' }
                     ]}
                     dataSource={dataSource}
                 />
@@ -83,7 +83,7 @@ export const ActionControls = observer<{ action: THREE.AnimationAction }>(({ act
         <ButtonGroup>
             {!playing && !started && <Button icon={<CaretRightOutlined />} onClick={() => { play(action); setPlaying(true); !started && setStarted(true) }} />}
             {started && <Button icon={playing ? <PauseOutlined /> : <CaretRightOutlined />} onClick={() => { pause(action); setPlaying(false); }} />}
-            {started && <Button icon={<StopOutlined />} onClick={() => { stop(action); setPlaying(false); setStarted(false) }} />}
+            {<Button disabled={!started} icon={<StopOutlined />} onClick={() => { stop(action); setPlaying(false); setStarted(false) }} />}
         </ButtonGroup>
     )
 })
