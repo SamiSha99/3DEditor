@@ -6,6 +6,7 @@ import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
 import ButtonGroup from 'antd/es/button/button-group';
 import Icon, { CaretRightOutlined, PauseOutlined, StopFilled, StopOutlined } from '@ant-design/icons';
 import { useState } from 'react';
+import { ItemCollapse } from '@orb_UI/controller/ControllerItems';
 
 type AnimatorInterface = {
     mixer?: THREE.AnimationMixer | null,
@@ -54,24 +55,23 @@ export const InspectorAnimation = observer<{ animations: THREE.AnimationClip[] }
     }) : undefined;
 
     return (
-        <>
-            <Divider children="Clips" orientation="left" />
+        <ItemCollapse label={"Animation"}>
             {
                 <Table
                     style={{ border: "1px solid grey", width: "95%", margin: "auto" }}
-                    size='small'
                     showHeader={false}
                     pagination={false}
+                    tableLayout="auto"
                     columns={[
-                        { dataIndex: 'index', width: "0px" },
-                        { dataIndex: 'name' },
-                        { dataIndex: 'time' },
-                        { dataIndex: 'actions', width: "0px" }
+                        { dataIndex: 'index', minWidth: 25 },
+                        { dataIndex: 'name', width: "75%" },
+                        { dataIndex: 'time', minWidth: 100 },
+                        { dataIndex: 'actions', minWidth: 50 }
                     ]}
                     dataSource={dataSource}
                 />
             }
-        </>
+        </ItemCollapse>
     );
 })
 
