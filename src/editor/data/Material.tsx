@@ -3,9 +3,12 @@ import { observer } from "mobx-react-lite";
 import { ItemBoolean, ItemButton, ItemCollapse, ItemNumber, ItemSelect, ItemTexture, ItemVector2, ItemGroup, ItemInput, ItemEuler } from '@orb_UI/controller/ControllerItems';
 import { LIMIT_01 } from '@orb_UI/controller/items/Item';
 import { useState } from 'react';
-import { Divider } from 'antd';
+import { Alert, Button, Divider, Table } from 'antd';
 import { ItemColor } from '@orb_UI/controller/items/ItemColor';
 import { useViewport } from 'src/store/Viewport';
+import { useEditor } from '@orb_Editor';
+import { action } from 'mobx';
+import { EyeOutlined } from '@ant-design/icons';
 
 const needsUpdate = (m: THREE.Material) => { m.needsUpdate = true; }
 
@@ -23,16 +26,52 @@ const MaterialSelect = [
 ] as { value: string, label: string }[];
 
 export const InspectorMaterial: React.FC<{ material?: THREE.Material }> = observer(({ material }) => {
-    const { target } = useViewport();
+    const { target, setTarget } = useViewport();
+    const { scene } = useEditor();
     const [meshMaterial, setMeshMaterial] = useState(material);
+    const references: THREE.Object3D[] = [];
+    scene.traverse((o) => {
+        if (o instanceof THREE.Mesh) {
+            if (Array.isArray(o.material) && o.material.includes(material))
+                references.push(o);
+            else if (o.material == material) {
+                references.push(o);
+            }
+        }
+    });
 
+    const dataSource = references ? references.map((r, i) => {
+        return {
+            index: r.id,
+            name: r.name,
+            typeClass: r.constructor.name,
+            action: <Button disabled={target == r} icon={< EyeOutlined />} onClick={() => { setTarget(r) }} />
+        }
+    }) : undefined;
 
 
     return (
         <>
+            <ItemCollapse label={"References"} collapsed={true}>
+                <Alert showIcon type="info" message={"Material is referenced in " + references.length + " Objects."} />
+                <br />
+                <Table
+                    style={{ border: "1px solid grey", width: "95%", margin: "auto" }}
+                    showHeader={false}
+                    pagination={false}
+                    tableLayout="auto"
+                    columns={[
+                        { dataIndex: 'index' },
+                        { dataIndex: 'name', width: "100%" },
+                        { dataIndex: 'typeClass' },
+                        { dataIndex: 'action' }
+                    ]}
+                    dataSource={dataSource}
+                />
+            </ItemCollapse>
             <ItemCollapse label={THREE.Material.name}>
                 {/* Change material type */}
-                <MaterialSetter material={material} onSet={(m) => {setMeshMaterial(m)}}/>
+                <MaterialSetter material={material} onSet={(m) => { setMeshMaterial(m) }} />
                 {/* Material Properties */}
                 {
                     meshMaterial &&
@@ -92,7 +131,7 @@ export const MaterialSetter = observer<MaterialSetter>(({ material, allowNullTyp
             const oldMaterial = target.material as THREE.Material;
             // mat.copy(oldMaterial)
             target.material = mat;
-            if(target.material)
+            if (target.material)
                 (target.material as THREE.Material).needsUpdate = true;
             onSet && onSet(mat)
             oldMaterial.dispose();
@@ -105,7 +144,7 @@ export const MaterialSetter = observer<MaterialSetter>(({ material, allowNullTyp
                 object={{ Materials: allowNullType ? MaterialSelect : MaterialSelect.filter(v => v.value != "undefined") }}
                 variable="Materials"
                 label="Material"
-                defaultValue={material && material.constructor.name != "Material" ?  material.constructor.name.replace("Mesh", "").replace("Material", "") : "None"}
+                defaultValue={material && material.constructor.name != "Material" ? material.constructor.name.replace("Mesh", "").replace("Material", "") : "None"}
                 onChangeSelect={(s) => {
                     const str = s as unknown as string;
                     instantiateMaterial(str)
