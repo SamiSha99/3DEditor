@@ -37,12 +37,12 @@ let lastFogExp2: THREE.FogExp2 | null;
 export const InspectorScene = observer(() => {
 
     return (
-        <>
-            <Alert style={{ marginTop: 10, marginBottom: 10 }} type="info" showIcon message="Scene options don't impact the export of the modal." />
+        <ItemCollapse label={"Scene"}>
+            <Alert style={{ marginBottom: 10 }} type="info" showIcon message="Scene options don't impact the export of the modal." />
             <Background />
             <Environment />
             <Fog />
-        </>
+        </ItemCollapse>
     );
 })
 
