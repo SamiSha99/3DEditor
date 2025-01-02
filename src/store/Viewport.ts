@@ -13,7 +13,6 @@ export const useViewport = () => useContext(ViewportContext);
 // This controls all related content that allows the user to interact with the scene
 export class Viewport {
 
-    // @ts-ignore
     private editor: Editor;
     static _instance: Viewport;
 
