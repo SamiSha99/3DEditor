@@ -435,7 +435,7 @@ const Roughness = observer<{ material: THREE.Material }>(({ material }) => {
     return (
         <>
             <Divider children="Roughness" orientation="left" />
-            <ItemTexture object={material} variable="roughnessMap" label="map" />
+            <ItemTexture object={material} variable="roughnessMap" label="Map" />
             <ItemNumber object={material} variable="roughness" label="Intensity" />
         </>
     )
