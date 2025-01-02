@@ -2,8 +2,6 @@ import { ItemBoolean, ItemButton, ItemCollapse, ItemEuler, ItemGroup, ItemInput,
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
 import * as THREE from 'three';
-import { GeometrySetter } from "./Geometry";
-import { MaterialSetter } from "./Material";
 import { EyeOutlined } from "@ant-design/icons";
 import { message } from "antd";
 
@@ -17,7 +15,7 @@ export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(
                     <ChildObject3D object={target} />
                 </ItemCollapse>
             }
-            <ItemCollapse label={THREE.Object3D.name}>
+            <ItemCollapse label={"Object3D"}>
                 <ItemInput object={object} variable="name" labelInVariable />
                 <ItemNumber object={{ id: object.id }} variable="id" label="ID" readonly />
                 <ItemVector3 object={object} variable="position" labelInVariable />
