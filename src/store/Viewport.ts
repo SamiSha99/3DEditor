@@ -131,6 +131,9 @@ export class Viewport {
         raycaster.setFromCamera(pointer, this.camera);
         const intersects = raycaster.intersectObjects([...this.editor.sceneObjects, ...this.editor.sceneHelpers], true);
 
+        console.log("onSelectObject()::intersections.faces = \n", ...intersects.map((i) => i.face));
+        console.log("onSelectObject()::intersections.geometry data = \n", ...intersects.map((i) => { if (i.object instanceof THREE.Mesh) return i.object; }).map((i) => i && i.geometry));
+
         if (intersects.length <= 0) return;
 
         let hit = intersects[0].object;
