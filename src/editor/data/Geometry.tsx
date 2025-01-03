@@ -19,6 +19,7 @@ const GEOMETRY_SEGMENTS_LIMIT_VECTOR_3 = { x: GEOMETRY_SEGMENTS_LIMIT, y: GEOMET
 const GeometrySelect = [
     { value: "undefined", label: "None" },
     { value: "BoxGeometry", label: "Box" },
+    { value: "SphereGeometry", label: "Sphere" },
     { value: "CylinderGeometry", label: "Cylinder" },
     { value: "ConeGeometry", label: "Cone" },
     { value: "PlaneGeometry", label: "Plane" },
@@ -79,6 +80,7 @@ export const GeometrySetter = observer<GeometrySetter>(({ geometry, allowNullTyp
             case "CapsuleGeometry": geo = new THREE.CapsuleGeometry(); break;
             case "TorusGeometry": geo = new THREE.TorusGeometry(); break;
             case "ConeGeometry": geo = new THREE.ConeGeometry(); break;
+            case "SphereGeometry": geo = new THREE.SphereGeometry(); break;
             case "IcosahedronGeometry": geo = new THREE.IcosahedronGeometry(); break;
             case "undefined": geo = new THREE.BufferGeometry(); break;
             default: return;
@@ -305,6 +307,7 @@ export const ChildGeometry: React.FC<{ geometry: THREE.BufferGeometry, onChange:
 
     switch (geometry.constructor) {
         case THREE.BoxGeometry: return <InspectorBoxGeometry geometry={geometry as THREE.BoxGeometry} onNewGeometry={onChange} />;
+        case THREE.SphereGeometry: return <InspectorSphereGeometry geometry={geometry as THREE.SphereGeometry} onNewGeometry={onChange} />;
         case THREE.CylinderGeometry: return <InspectorCylinderGeometry geometry={geometry as THREE.CylinderGeometry} onNewGeometry={onChange} />;
         case THREE.ConeGeometry: return <InspectorCylinderGeometry geometry={geometry as THREE.ConeGeometry} onNewGeometry={onChange} />;
         case THREE.PlaneGeometry: return <InspectorPlaneGeometry geometry={geometry as THREE.PlaneGeometry} onNewGeometry={onChange} />;
@@ -359,6 +362,79 @@ export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry, onNew
                 labelVector={{ x: "Width", y: "Height", z: "Depth" }}
                 onChange={(v) => {
                     onChange({ wS: v.x, hS: v.y, dS: v.z });
+                }}
+            />
+        </>
+    )
+})
+
+export const InspectorSphereGeometry: React.FC<{ geometry: THREE.SphereGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
+    const { target } = useViewport();
+
+    const radius = geometry.parameters.radius;
+    const widthSegments = geometry.parameters.widthSegments;
+    const heightSegments = geometry.parameters.heightSegments;
+    const phiStart = geometry.parameters.phiStart;
+    const phiLength = geometry.parameters.phiLength;
+    const thetaStart = geometry.parameters.thetaStart;
+    const thetaLength = geometry.parameters.thetaLength;
+
+    const onChange = (p: { r?: number, wS?: number, hS?: number, pS?: number, pL?: number, tS?: number, tL?: number }) => {
+        if (target instanceof THREE.Mesh) {
+            const old = (target.geometry as THREE.SphereGeometry).parameters;
+            target.geometry.dispose();
+            switch (geometry.constructor) {
+                case THREE.SphereGeometry:
+                    target.geometry = new THREE.SphereGeometry(
+                        p.r != undefined ? p.r : old.radius,
+                        p.wS != undefined ? p.wS : old.widthSegments,
+                        p.hS != undefined ? p.hS : old.heightSegments,
+                        p.pS != undefined ? p.pS : old.phiStart,
+                        p.pL != undefined ? p.pL : old.phiLength,
+                        p.tS != undefined ? p.tS : old.thetaStart,
+                        p.tL != undefined ? p.tL : old.thetaLength
+                    );
+                    break;
+            }
+            onNewGeometry(target.geometry);
+        }
+    }
+
+    return (
+        <>
+            <ItemNumber
+                object={{ radius: radius }}
+                variable="radius"
+                labelInVariable
+                onChange={(v) => onChange({ h: v })}
+            />
+            <ItemVector2
+                object={{ segments: new THREE.Vector2(widthSegments, heightSegments) }}
+                variable="segments"
+                labelInVariable
+                limit={GEOMETRY_SEGMENTS_LIMIT_VECTOR_2}
+                labelVector={{ x: "Width", y: "Height" }}
+                onChange={(v) => {
+                    onChange({ wS: v.x, hS: v.y });
+                }}
+            />
+            <ItemVector2
+                object={{ phi: new THREE.Vector2(phiStart, phiLength) }}
+                variable="phi"
+                labelInVariable
+                limit={GEOMETRY_SEGMENTS_LIMIT_VECTOR_2}
+                labelVector={{ x: "Start", y: "Length" }}
+                onChange={(v) => {
+                    onChange({ wS: v.x, hS: v.y });
+                }}
+            />
+            <ItemVector2
+                object={{ theta: new THREE.Vector2(thetaStart, thetaLength) }}
+                variable="theta"
+                labelInVariable
+                labelVector={{ x: "Start", y: "Length" }}
+                onChange={(v) => {
+                    onChange({ tS: v.x, tL: v.y });
                 }}
             />
         </>
