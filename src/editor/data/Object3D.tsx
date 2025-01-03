@@ -1,51 +1,65 @@
-import { ItemBoolean, ItemButton, ItemCollapse, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemVector3 } from "@orb_UI/controller/ControllerItems";
+import { ItemBoolean, ItemButton, ItemCollapse, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemTable, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { observer } from "mobx-react-lite";
 import * as THREE from 'three';
-import { EyeOutlined } from "@ant-design/icons";
-import { Alert, message } from "antd";
+import { EyeOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { Alert, message, Tooltip } from "antd";
 import { useViewport } from "src/store/Viewport";
+import { useEditor } from "@orb_Editor";
 
 export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
+    const { scene } = useEditor();
     const { setTarget } = useViewport();
 
-    const children = object.children.map((child) => {
+    const children = object.children.map((child, i) => {
         return {
-            info: <ItemInput
-                object={{ o: `${child.name}::${child.id}` }}
-                variable="o"
-                readonly />,
-            action: <ItemButton size="small" buttonName={<EyeOutlined />} onClick={() => { setTarget(child) }} />
+            key: i,
+            index: i,
+            name: `${child.name}`,
+            id: `${child.id}`,
+            actions: <ItemButton size="small" buttonName={<EyeOutlined />} onClick={() => { setTarget(child) }} />
         }
     })
 
     return (
         <>
-            <ItemCollapse label="Relationships">
-                <ItemGroup label="Parent" sizes={["85%", "15%"]}>
-                    <ItemInput
-                        object={{
-                            o: (object.parent instanceof THREE.Scene || !object.parent) ?
-                                "undefined" :
-                                (object.parent.name + "::" + object.parent.id)
-                        }}
-                        variable="o"
-                        readonly />
-                    <ItemButton size="small" buttonName={<EyeOutlined />} onClick={() => { setTarget(object.parent) }} disabled={object.parent instanceof THREE.Scene || !object.parent} />
-                </ItemGroup>
+            <ItemCollapse label="Relations" collapsed>
+                {
+                    object.parent && !(object.parent instanceof THREE.Scene) &&
+                    <ItemTable
+                        object={{ parent: undefined }}
+                        variable="parent"
+                        label="Parent"
+                        dataSource={[{ name: `${object.parent.name}`, id: `${object.parent.id}`, action: <ItemButton size="small" buttonName={<EyeOutlined />} onClick={() => { setTarget(object.parent) }} /> }]}
+                        columns={[
+                            { dataIndex: 'id', title: 'id', width: 0 },
+                            { dataIndex: 'name', title: 'parent', width: "85%" },
+                            { dataIndex: 'action', title: 'view', width: "15%" }
+                        ]} />
+                }
+                {
+                    object.parent == scene &&
+                    <ItemGroup label="Parent" sizes={["100%"]}>
+                        <Alert type="info" showIcon message={<>Object is attached to the current Scene. <Tooltip title={"All objects are placed inside a scene, the top of each object's parent is always attached to the Scene."} children={<QuestionCircleOutlined />} /></>} />
+                    </ItemGroup>
+                }
+                {
+                    object.parent == null &&
+                    <ItemGroup label="Parent" sizes={["100%"]}>
+                        <Alert type="warning" showIcon message={`Object isn't attached to the active Scene!`} />
+                    </ItemGroup>
+                }
                 {
                     object.children.length > 0 &&
-                    <ItemGroup label="Children" sizes={["85%", "15%"]}>
-                        {children.map((child) => {
-                            const info = child.info
-                            const action = child.action
-                            return (
-                                <>
-                                    {info}
-                                    {action}
-                                </>
-                            )
-                        })}
-                    </ItemGroup>
+                    <ItemTable
+                        object={{ children: undefined }}
+                        variable="children"
+                        label="Children"
+                        dataSource={children}
+                        columns={[
+                            { dataIndex: 'id', title: 'id', width: 0 },
+                            { dataIndex: 'name', title: 'child', width: "85%" },
+                            { dataIndex: 'actions', title: 'view', width: "15%" }
+                        ]} />
                 }
                 {
                     object.children.length == 0 &&
@@ -54,7 +68,7 @@ export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(
                     </ItemGroup>
                 }
 
-            </ItemCollapse>
+            </ItemCollapse >
             <ItemCollapse label={"Object3D"} alwaysOpen>
                 <ItemInput object={object} variable="name" labelInVariable />
                 <ItemNumber object={{ id: object.id }} variable="id" label="ID" readonly />

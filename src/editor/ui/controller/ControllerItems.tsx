@@ -10,3 +10,4 @@ export { ItemGroup } from "./items/ItemGroup";
 export { ItemCollapse } from "./items/ItemCollapse";
 export { ItemButton } from "./items/ItemButton"
 export { ItemRadioButton } from "./items/ItemRadioButton"
+export { ItemTable } from "./items/ItemTable"
