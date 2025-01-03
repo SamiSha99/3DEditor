@@ -421,6 +421,7 @@ export const InspectorSphereGeometry: React.FC<{ geometry: THREE.SphereGeometry,
             <ItemVector2
                 object={{ phi: new THREE.Vector2(phiStart, phiLength) }}
                 variable="phi"
+                tooltip="The horizontal starting angle and its sweep (length)."
                 labelInVariable
                 limit={GEOMETRY_SEGMENTS_LIMIT_VECTOR_2}
                 labelVector={{ x: "Start", y: "Length" }}
@@ -431,6 +432,7 @@ export const InspectorSphereGeometry: React.FC<{ geometry: THREE.SphereGeometry,
             <ItemVector2
                 object={{ theta: new THREE.Vector2(thetaStart, thetaLength) }}
                 variable="theta"
+                tooltip="The vertical starting angle and its sweep (length)."
                 labelInVariable
                 labelVector={{ x: "Start", y: "Length" }}
                 onChange={(v) => {
