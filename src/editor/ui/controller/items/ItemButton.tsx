@@ -19,7 +19,7 @@ export const ItemButton: React.FC<ButtonInterface> = (
 
     return (
         <Form.Item label={label} tooltip={tooltip}>
-            <Button size={size} block style={{ width: "100%" }} onClick={() => { onClick && onClick() }} children={buttonName} disabled={disabled} />
+            <Button size={size ? size : "small"} block style={{ width: "100%" }} onClick={() => { onClick && onClick() }} children={buttonName} disabled={disabled} />
         </Form.Item>
     )
 }

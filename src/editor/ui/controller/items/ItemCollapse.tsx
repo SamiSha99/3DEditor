@@ -6,18 +6,20 @@ type ItemCollapseInterface = {
     children?: React.ReactNode,
     collapsed?: boolean,
     size?: SizeType,
-    extra?: React.ReactNode
+    extra?: React.ReactNode,
+    alwaysOpen?: boolean
 }
 
 export const ItemCollapse: React.FC<ItemCollapseInterface> = (
-    { label, children, collapsed, size, extra }
+    { label, children, collapsed, size, extra, alwaysOpen }
 ) => {
     return (
         <Collapse
             defaultActiveKey={!collapsed ? ["1"] : undefined}
             style={{ width: "100%" }}
             size={size}
-            items={[{ label: label, key: "1", children: <div>{children}</div>, extra: extra }]}
+            collapsible={alwaysOpen ? "icon" : undefined}
+            items={[{ label: label, key: "1", children: <div>{children}</div>, extra: extra, showArrow: !alwaysOpen }]}
         />
     )
 }

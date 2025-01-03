@@ -19,7 +19,7 @@ export const ItemGroup: React.FC<ItemGroupInterface> = (
         }
         return (
             <Form.Item label={label} tooltip={tooltip}>
-                {children?.map((c, index) => <Form.Item style={{ display: 'inline-block', width: sizes![index] }}>{c}</Form.Item>)}
+                {children?.map((c, index) => <Form.Item style={{ display: 'inline-block', width: sizes![index], margin: "-5px 0px" }}>{c}</Form.Item>)}
             </Form.Item>
         )
     }

@@ -1,23 +1,67 @@
-import { ItemBoolean, ItemButton, ItemCollapse, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemSelect, ItemVector3 } from "@orb_UI/controller/ControllerItems";
+import { ItemBoolean, ItemButton, ItemCollapse, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { observer } from "mobx-react-lite";
-import { useViewport } from "src/store/Viewport";
 import * as THREE from 'three';
 import { EyeOutlined } from "@ant-design/icons";
-import { message } from "antd";
+import { Alert, message } from "antd";
+import { useViewport } from "src/store/Viewport";
 
 export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
-    const { target } = useViewport();
+    const { setTarget } = useViewport();
+
+    const children = object.children.map((child) => {
+        return {
+            info: <ItemInput
+                object={{ o: `${child.name}::${child.id}` }}
+                variable="o"
+                readonly />,
+            action: <ItemButton size="small" buttonName={<EyeOutlined />} onClick={() => { setTarget(child) }} />
+        }
+    })
+
     return (
         <>
-            {
-                target && target.constructor != THREE.Object3D &&
-                <ItemCollapse label={target.constructor.name}>
-                    <ChildObject3D object={target} />
-                </ItemCollapse>
-            }
-            <ItemCollapse label={"Object3D"}>
+            <ItemCollapse label="Relationships">
+                <ItemGroup label="Parent" sizes={["85%", "15%"]}>
+                    <ItemInput
+                        object={{
+                            o: (object.parent instanceof THREE.Scene || !object.parent) ?
+                                "undefined" :
+                                (object.parent.name + "::" + object.parent.id)
+                        }}
+                        variable="o"
+                        readonly />
+                    <ItemButton size="small" buttonName={<EyeOutlined />} onClick={() => { setTarget(object.parent) }} disabled={object.parent instanceof THREE.Scene || !object.parent} />
+                </ItemGroup>
+                {
+                    object.children.length > 0 &&
+                    <ItemGroup label="Children" sizes={["85%", "15%"]}>
+                        {children.map((child) => {
+                            const info = child.info
+                            const action = child.action
+                            return (
+                                <>
+                                    {info}
+                                    {action}
+                                </>
+                            )
+                        })}
+                    </ItemGroup>
+                }
+                {
+                    object.children.length == 0 &&
+                    <ItemGroup label="Children" sizes={["100%"]}>
+                        <Alert type="info" showIcon message={`No children attached to object "${object.name}".`} />
+                    </ItemGroup>
+                }
+
+            </ItemCollapse>
+            <ItemCollapse label={"Object3D"} alwaysOpen>
                 <ItemInput object={object} variable="name" labelInVariable />
                 <ItemNumber object={{ id: object.id }} variable="id" label="ID" readonly />
+                <ItemGroup label="UUID" sizes={["85%", "15%"]}>
+                    <ItemInput object={object} variable="uuid" readonly />
+                    <ItemButton buttonName="Regenerate" onClick={() => { object.uuid = THREE.MathUtils.generateUUID() }} size='small' />
+                </ItemGroup>
                 <ItemVector3 object={object} variable="position" labelInVariable />
                 <ItemEuler object={object} variable="rotation" isDegree labelInVariable />
                 <ItemVector3 object={object} variable="scale" labelInVariable />
