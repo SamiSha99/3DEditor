@@ -33,7 +33,7 @@ interface Vector2Interface extends Item {
 }
 
 export const ItemVector2: React.FC<Vector2Interface> = (
-    { label, labelInVariable, precision, object, variable, labelVector, limit, onChange }
+    { label, labelInVariable, precision, object, variable, labelVector, limit, onChange, tooltip }
 ) => {
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
@@ -48,7 +48,7 @@ export const ItemVector2: React.FC<Vector2Interface> = (
 
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
+        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
                 <InputNumber
                     {...vector2Props}
