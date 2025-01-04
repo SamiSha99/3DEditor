@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import HelvetikerFont from "three/examples/fonts/helvetiker_regular.typeface.json";
-import { FontLoader, TextGeometry } from 'three/examples/jsm/Addons';
+import { FontLoader } from 'three/examples/jsm/Addons';
 
 export function computeVertexNormals(o: THREE.Object3D) {
     if (o instanceof THREE.Mesh && o.geometry instanceof THREE.BufferGeometry) {
@@ -38,15 +38,18 @@ const font = fl.parse(HelvetikerFont);
  *  
  * to-do: FIX MEMORY LEAK WHEN REFRESHING THE PAGE (maybe window.onbeforeunload?).
  */
-export function positionToText(info: { index: number, position: THREE.Vector3 | THREE.Vector3Like, setPosition?: boolean }) {
+export function positionToText(info: { index: number, position: THREE.Vector3 | THREE.Vector3Like, setPosition?: boolean, showPosition?: boolean }) {
     const DEFAULT_SIZE = 0.05;
 
-    const shapes = font.generateShapes(`(${info.index}) = (${info.position.x},${info.position.y},${info.position.z})`, 1);
+    const shapes = font.generateShapes("(" + info.index + ")" + (info.showPosition ? ` = (${info.position.x},${info.position.y},${info.position.z})` : ""), 1);
     const geometry = new THREE.ShapeGeometry(shapes, 1);
     const material = new THREE.MeshBasicMaterial();
     material.side = THREE.DoubleSide;
     material.color.setRGB(1, 0, 1);
+    // For clarity 
+    material.depthTest = false;
     const textGeometry = new THREE.Mesh(geometry, material);
+    textGeometry.name = "" + info.index;
     textGeometry.scale.multiplyScalar(DEFAULT_SIZE);
     info.setPosition && textGeometry.position.copy(info.position);
     geometry.computeBoundingBox();
@@ -61,14 +64,18 @@ export function geometryVertexPositionToText(geometry: THREE.BufferGeometry) {
         console.warn(`Passed geometry has no position attribute (vertices).`)
         return null;
     }
+    console.log("ATTRIBUTES", geometry.attributes);
+    console.log("INDEX", geometry.index);
+    // console.log(positionAttribute);
     const positionAttribute = geometry.getAttribute('position');
     const vertex = new THREE.Vector3();
     const group = new THREE.Group();
-    for (let i = 0; i < positionAttribute.count / 3; i++) {
+    group.name = "debug_vertices_group";
+    for (let i = 0; i < positionAttribute.count; i++) {
         vertex.fromBufferAttribute(positionAttribute, i);
-        group.add(positionToText({ index: i, position: vertex, setPosition: true }));
+        group.add(positionToText({ index: i, position: vertex, setPosition: true, showPosition: false }));
     }
-    group.renderOrder = 2;
+    group.renderOrder = 0;
     return group;
 }
 
