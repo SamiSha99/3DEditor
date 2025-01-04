@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import HelvetikerFont from "three/examples/fonts/helvetiker_regular.typeface.json";
-import { FontLoader } from 'three/examples/jsm/Addons';
+import { BufferGeometryUtils, FontLoader } from 'three/examples/jsm/Addons';
+import { sleep } from './Main';
+import { message } from 'antd';
 
 export function computeVertexNormals(o: THREE.Object3D) {
     if (o instanceof THREE.Mesh && o.geometry instanceof THREE.BufferGeometry) {
@@ -36,10 +38,13 @@ const font = fl.parse(HelvetikerFont);
 /** 
  * Converts a position into ShapeGeometry text to showcase their vertex index and position.
  *  
+ * Duplicate vertices must be accounted and might be different between engines, ergo blender and WebGL 
+ * https://discourse.threejs.org/t/incorrect-vertex-count/29096/4
+ * 
  * to-do: FIX MEMORY LEAK WHEN REFRESHING THE PAGE (maybe window.onbeforeunload?).
  */
 export function positionToText(info: { index: number, position: THREE.Vector3 | THREE.Vector3Like, setPosition?: boolean, showPosition?: boolean }) {
-    const DEFAULT_SIZE = 0.05;
+    const DEFAULT_SIZE = 0.01;
 
     const shapes = font.generateShapes("(" + info.index + ")" + (info.showPosition ? ` = (${info.position.x},${info.position.y},${info.position.z})` : ""), 1);
     const geometry = new THREE.ShapeGeometry(shapes, 1);
@@ -50,7 +55,7 @@ export function positionToText(info: { index: number, position: THREE.Vector3 | 
     material.depthTest = false;
     const textGeometry = new THREE.Mesh(geometry, material);
     textGeometry.name = "" + info.index;
-    textGeometry.scale.multiplyScalar(DEFAULT_SIZE);
+    textGeometry.scale.multiplyScalar(DEFAULT_SIZE * 5);
     info.setPosition && textGeometry.position.copy(info.position);
     geometry.computeBoundingBox();
     info.setPosition && geometry.translate(-geometry.boundingBox!.max.x / 2 + 0.01 * Math.random(), 0.01 * Math.random(), 0.01 * Math.random());
@@ -67,16 +72,26 @@ export function geometryVertexPositionToText(geometry: THREE.BufferGeometry) {
     console.log("ATTRIBUTES", geometry.attributes);
     console.log("INDEX", geometry.index);
     // console.log(positionAttribute);
+    geometry.computeVertexNormals();
     const positionAttribute = geometry.getAttribute('position');
     const vertex = new THREE.Vector3();
     const group = new THREE.Group();
     group.name = "debug_vertices_group";
+    message.info(`[DEBUGGIN] => count = ${positionAttribute.count} | size = ${positionAttribute.itemSize}`)
     for (let i = 0; i < positionAttribute.count; i++) {
-        vertex.fromBufferAttribute(positionAttribute, i);
-        group.add(positionToText({ index: i, position: vertex, setPosition: true, showPosition: false }));
+        setTimeout(() => {
+            vertex.fromBufferAttribute(positionAttribute, i);
+            group.add(positionToText({ index: i, position: vertex, setPosition: true, showPosition: false }));
+        }, 10 * i);
     }
     group.renderOrder = 0;
     return group;
+}
+/** Merge vertices by tolerance of a geometry, does pre-attribute clean-up. */
+export function mergeVertices(geometry: THREE.BufferGeometry, tolerance?: number) {
+    geometry.deleteAttribute('normal');
+    geometry.deleteAttribute('uv');
+    return BufferGeometryUtils.mergeVertices(geometry, tolerance);
 }
 
 /**
