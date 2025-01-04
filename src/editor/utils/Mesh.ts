@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import HelvetikerFont from "three/examples/fonts/helvetiker_regular.typeface.json";
+import { FontLoader, TextGeometry } from 'three/examples/jsm/Addons';
 
 export function computeVertexNormals(o: THREE.Object3D) {
     if (o instanceof THREE.Mesh && o.geometry instanceof THREE.BufferGeometry) {
@@ -27,6 +29,47 @@ export function invertGeometry(geometry: THREE.BufferGeometry) {
         index[i * 3 + 2] = x
     }
     geometry.index.needsUpdate = true
+}
+
+const fl = new FontLoader();
+const font = fl.parse(HelvetikerFont);
+/** 
+ * Converts a position into ShapeGeometry text to showcase their vertex index and position.
+ *  
+ * to-do: FIX MEMORY LEAK WHEN REFRESHING THE PAGE (maybe window.onbeforeunload?).
+ */
+export function positionToText(info: { index: number, position: THREE.Vector3 | THREE.Vector3Like, setPosition?: boolean }) {
+    const DEFAULT_SIZE = 0.05;
+
+    const shapes = font.generateShapes(`(${info.index}) = (${info.position.x},${info.position.y},${info.position.z})`, 1);
+    const geometry = new THREE.ShapeGeometry(shapes, 1);
+    const material = new THREE.MeshBasicMaterial();
+    material.side = THREE.DoubleSide;
+    material.color.setRGB(1, 0, 1);
+    const textGeometry = new THREE.Mesh(geometry, material);
+    textGeometry.scale.multiplyScalar(DEFAULT_SIZE);
+    info.setPosition && textGeometry.position.copy(info.position);
+    geometry.computeBoundingBox();
+    info.setPosition && geometry.translate(-geometry.boundingBox!.max.x / 2 + 0.01 * Math.random(), 0.01 * Math.random(), 0.01 * Math.random());
+    return textGeometry;
+}
+
+/** Shows coordinates of every geometry's vertex */
+export function geometryVertexPositionToText(geometry: THREE.BufferGeometry) {
+
+    if (!geometry.hasAttribute('position')) {
+        console.warn(`Passed geometry has no position attribute (vertices).`)
+        return null;
+    }
+    const positionAttribute = geometry.getAttribute('position');
+    const vertex = new THREE.Vector3();
+    const group = new THREE.Group();
+    for (let i = 0; i < positionAttribute.count / 3; i++) {
+        vertex.fromBufferAttribute(positionAttribute, i);
+        group.add(positionToText({ index: i, position: vertex, setPosition: true }));
+    }
+    group.renderOrder = 2;
+    return group;
 }
 
 /**

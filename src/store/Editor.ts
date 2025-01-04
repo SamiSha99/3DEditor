@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { makeObservable, observable, action } from "mobx";
-import { Panel, isPanelActive } from "@orb_UI/panels/Panels";
+import { Panel } from "@orb_UI/panels/Panels";
 import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
 import { IModelFileResponse } from './Interfaces';
