@@ -17,7 +17,7 @@ const Canvas = observer(() => {
 
     return (
         <>
-            <div style={{ backgroundColor: "#696969", width: "100%", height: "calc(100vh - 32px)", display: loaded ? "none" : "flex", alignItems: "center", alignContent: "center" }}>
+            <div style={{ backgroundColor: "#696969", width: "100%", height: "100%", display: loaded ? "none" : "flex", alignItems: "center", alignContent: "center" }}>
                 <div style={{ margin: "auto", textAlign: "center", fontSize: 32, fontWeight: "bold" }}>
                     Loading Scene, please wait.
                 </div>
