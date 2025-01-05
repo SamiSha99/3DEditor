@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import HelvetikerFont from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { BufferGeometryUtils, FontLoader } from 'three/examples/jsm/Addons';
-import { sleep } from './Main';
 import { message } from 'antd';
 
 export function computeVertexNormals(o: THREE.Object3D) {
@@ -44,7 +43,7 @@ const font = fl.parse(HelvetikerFont);
  * to-do: FIX MEMORY LEAK WHEN REFRESHING THE PAGE (maybe window.onbeforeunload?).
  */
 export function positionToText(info: { index: number, position: THREE.Vector3 | THREE.Vector3Like, setPosition?: boolean, showPosition?: boolean }) {
-    const DEFAULT_SIZE = 0.01;
+    const DEFAULT_SIZE = 0.007;
 
     const shapes = font.generateShapes("(" + info.index + ")" + (info.showPosition ? ` = (${info.position.x},${info.position.y},${info.position.z})` : ""), 1);
     const geometry = new THREE.ShapeGeometry(shapes, 1);
