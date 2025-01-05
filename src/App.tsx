@@ -20,7 +20,7 @@ const initScene = async () => {
     false && setTimeout(() => {
         (b.geometry as THREE.BufferGeometry) = mergeVertices(b.geometry);
         const group = geometryVertexPositionToText((box as THREE.Mesh).geometry)
-        group && editor.addObject(group);
+        group && editor.addHelper(group);
     }, 5000);
 }
 initScene();
