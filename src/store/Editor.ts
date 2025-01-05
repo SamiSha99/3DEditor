@@ -154,6 +154,14 @@ export class Editor {
     update = (delta = this.clock.getDelta()) => {
         this.viewport.update(delta);
         this.sceneHelpers.map((helper) => {
+            if (helper.name == "debug_indexing") {
+                helper.traverse((o) => {
+                    if (!(o instanceof THREE.Group)) {
+                        o.lookAt(this.viewport.camera.position);
+                    }
+
+                });
+            }
             if (helper instanceof THREE.SpotLightHelper)
                 helper.update();
         })

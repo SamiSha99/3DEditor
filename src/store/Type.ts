@@ -2,8 +2,12 @@ type Enumerate<N extends number, Acc extends number[] = []> = Acc['length'] exte
     ? Acc[number]
     : Enumerate<N, [...Acc, Acc['length']]>
 
-/** Constraints numbers into a range of values, exclusive to true numbers. Limited to 1000 range. */
-export type Range<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>
+/** 
+ * Constraints numbers into a range of values, exclusive to true numbers. Limited to 1000 range. 
+ * 
+ * Range is Min to (Max-1);
+ * */
+export type Range<Min extends number, Max extends number> = Exclude<Enumerate<Max>, Enumerate<Min>>
 
 export const transformModes = ['translate', 'rotate', 'scale'] as const;
 export type TransformModes = typeof transformModes[number];

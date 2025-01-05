@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import HelvetikerFont from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { BufferGeometryUtils, FontLoader } from 'three/examples/jsm/Addons';
 import { message } from 'antd';
+import { Range } from '@orb_types';
 
 export function computeVertexNormals(o: THREE.Object3D) {
     if (o instanceof THREE.Mesh && o.geometry instanceof THREE.BufferGeometry) {
@@ -42,19 +43,20 @@ const font = fl.parse(HelvetikerFont);
  * 
  * to-do: FIX MEMORY LEAK WHEN REFRESHING THE PAGE (maybe window.onbeforeunload?).
  */
-export function positionToText(info: { index: number, position: THREE.Vector3 | THREE.Vector3Like, setPosition?: boolean, showPosition?: boolean }) {
-    const DEFAULT_SIZE = 0.007;
+export function positionToText(info: { index: number, position: THREE.Vector3 | THREE.Vector3Like, setPosition?: boolean, showPosition?: boolean, color?: THREE.Color }) {
+    const DEFAULT_SIZE = 0.05;
 
     const shapes = font.generateShapes("(" + info.index + ")" + (info.showPosition ? ` = (${info.position.x},${info.position.y},${info.position.z})` : ""), 1);
     const geometry = new THREE.ShapeGeometry(shapes, 1);
     const material = new THREE.MeshBasicMaterial();
     material.side = THREE.DoubleSide;
-    material.color.setRGB(1, 0, 1);
+    !info.color && (info.color = new THREE.Color(0xFF00FF));
+    material.color = info.color;
     // For clarity 
     material.depthTest = false;
     const textGeometry = new THREE.Mesh(geometry, material);
     textGeometry.name = "" + info.index;
-    textGeometry.scale.multiplyScalar(DEFAULT_SIZE * 5);
+    textGeometry.scale.multiplyScalar(DEFAULT_SIZE);
     info.setPosition && textGeometry.position.copy(info.position);
     geometry.computeBoundingBox();
     info.setPosition && geometry.translate(-geometry.boundingBox!.max.x / 2 + 0.01 * Math.random(), 0.01 * Math.random(), 0.01 * Math.random());
@@ -63,10 +65,10 @@ export function positionToText(info: { index: number, position: THREE.Vector3 | 
 
 /** Shows coordinates of every geometry's vertex */
 export function geometryVertexPositionToText(geometry: THREE.BufferGeometry) {
-
+    const group = new THREE.Group();
     if (!geometry.hasAttribute('position')) {
         console.warn(`Passed geometry has no position attribute (vertices).`)
-        return null;
+        return group;
     }
     console.log("ATTRIBUTES", geometry.attributes);
     console.log("INDEX", geometry.index);
@@ -74,8 +76,6 @@ export function geometryVertexPositionToText(geometry: THREE.BufferGeometry) {
     geometry.computeVertexNormals();
     const positionAttribute = geometry.getAttribute('position');
     const vertex = new THREE.Vector3();
-    const group = new THREE.Group();
-    group.name = "debug_vertices_group";
     message.info(`[DEBUGGIN] => count = ${positionAttribute.count} | size = ${positionAttribute.itemSize}`)
     for (let i = 0; i < positionAttribute.count; i++) {
         setTimeout(() => {
@@ -84,8 +84,10 @@ export function geometryVertexPositionToText(geometry: THREE.BufferGeometry) {
         }, 10 * i);
     }
     group.renderOrder = 0;
+    group.name = "debug_vertices (" + positionAttribute.count + ")";
     return group;
 }
+
 /** Merge vertices by tolerance of a geometry, does pre-attribute clean-up. */
 export function mergeVertices(geometry: THREE.BufferGeometry, tolerance?: number) {
     geometry.deleteAttribute('normal');
@@ -93,6 +95,51 @@ export function mergeVertices(geometry: THREE.BufferGeometry, tolerance?: number
     return BufferGeometryUtils.mergeVertices(geometry, tolerance);
 }
 
+export function geometryFacePositionToText(geometry: THREE.BufferGeometry) {
+    const group = new THREE.Group();
+    if (!geometry.hasAttribute('position')) {
+        console.warn(`Passed geometry has no position attribute (vertices) to find their faces.`)
+        return group;
+    }
+    const positionAttribute = geometry.getAttribute('position');
+    const indexAttribute = geometry.index!.array;
+    const vertex = new THREE.Vector3();
+    const face = new THREE.Vector3();
+    for (let i = 0; i < indexAttribute.length / 3; i++) {
+        setTimeout(() => {
+            face.set(0, 0, 0);
+            const i3 = i * 3;
+            face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3]));
+            face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3 + 1]));
+            face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3 + 2]));
+            face.divideScalar(3);
+            group.add(positionToText({ index: i, position: face, setPosition: true, showPosition: false, color: new THREE.Color(0xFF4D01) }));
+        }, 10 * i);
+    }
+    group.renderOrder = 0;
+    group.name = "debug_faces (" + indexAttribute.length / 3 + ")";
+    return group;
+}
+/** 
+ * Gives an index of vertices or faces or both, positioned on each of them.
+ * 0 = Vertices
+ * 1 = Faces
+ * 2 = Both
+ */
+export function geometryPositionToText(geometry: THREE.BufferGeometry, mode: Range<0, 3>) {
+    switch (mode) {
+        case 0:
+            return geometryVertexPositionToText(geometry);
+        case 1:
+            return geometryFacePositionToText(geometry);
+        case 2:
+            const group = new THREE.Group();
+            group.add(geometryVertexPositionToText(geometry))
+            group.add(geometryFacePositionToText(geometry))
+            group.name = "debug_indexing";
+            return group;
+    }
+}
 /**
 * Returns an additive value to Translate Geometry and its Object3D, Returns Vectors as [Geometry, Object] | 
 * o - the Object we want to translate |
