@@ -139,11 +139,6 @@ export class Editor {
         this.useRootSelection = b;
     }
 
-    @action setGL = (gl: THREE.WebGLRenderer) => {
-        this.gl = gl;
-        gl.setAnimationLoop(this.update);
-    }
-
     onLoad = (canvas: HTMLCanvasElement, gl: THREE.WebGLRenderer) => {
         this.canvas = canvas;
         this.gl = gl;
