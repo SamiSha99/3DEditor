@@ -4,8 +4,6 @@ import { MainTheme } from '@orb_UI/antd/ThemeConfigs.ts'
 import { Editor } from '@orb_Editor'
 import { MenuBar, Inspector } from './editor/EditorComponents'
 import { EditorProvider, ViewportProvider } from './store/Providers'
-import { geometryPositionToText, mergeVertices } from '@orb_utils/Mesh';
-import * as THREE from 'three';
 
 const editor = new Editor();
 
