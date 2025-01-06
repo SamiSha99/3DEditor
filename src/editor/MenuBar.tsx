@@ -1,8 +1,8 @@
-import File from "./ui/menubar/File";
-import Add from "./ui/menubar/Add";
-import Tools from "./ui/menubar/Tools";
-import View from "./ui/menubar/View"
-import { MenuBarStyle } from "./ui/style";
+import File from "@orb_UI/menubar/File";
+import Add from "@orb_UI/menubar/Add";
+import Tools from "@orb_UI/menubar/Tools";
+import View from "@orb_UI/menubar/View"
+import { MenuBarStyle } from "@orb_UI/style";
 
 export const Menubar = () => {
     return (
