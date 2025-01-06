@@ -78,10 +78,8 @@ export function geometryVertexPositionToText(geometry: THREE.BufferGeometry) {
     const vertex = new THREE.Vector3();
     message.info(`[DEBUGGIN] => count = ${positionAttribute.count} | size = ${positionAttribute.itemSize}`)
     for (let i = 0; i < positionAttribute.count; i++) {
-        setTimeout(() => {
-            vertex.fromBufferAttribute(positionAttribute, i);
-            group.add(positionToText({ index: i, position: vertex, setPosition: true, showPosition: false }));
-        }, 10 * i);
+        vertex.fromBufferAttribute(positionAttribute, i);
+        group.add(positionToText({ index: i, position: vertex, setPosition: true, showPosition: false }));
     }
     group.renderOrder = 0;
     group.name = "debug_vertices (" + positionAttribute.count + ")";
@@ -106,7 +104,6 @@ export function geometryFacePositionToText(geometry: THREE.BufferGeometry) {
     const vertex = new THREE.Vector3();
     const face = new THREE.Vector3();
     for (let i = 0; i < indexAttribute.length / 3; i++) {
-        setTimeout(() => {
             face.set(0, 0, 0);
             const i3 = i * 3;
             face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3]));
@@ -114,7 +111,6 @@ export function geometryFacePositionToText(geometry: THREE.BufferGeometry) {
             face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3 + 2]));
             face.divideScalar(3);
             group.add(positionToText({ index: i, position: face, setPosition: true, showPosition: false, color: new THREE.Color(0xFF4D01) }));
-        }, 10 * i);
     }
     group.renderOrder = 0;
     group.name = "debug_faces (" + indexAttribute.length / 3 + ")";

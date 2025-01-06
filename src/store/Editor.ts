@@ -43,6 +43,18 @@ export class Editor {
     constructor() {
         makeObservable(this)
         Editor._instance = this;
+        // Init starter scene
+        (async () => {
+            const { Box } = await import("@orb_tools/create/Primitive");
+            const { loadEnvironmentSample } = await import("@orb_utils/Samples.ts");
+            const { geometryPositionToText } = await import("@orb_utils/Mesh.ts");
+            const b = Box();
+            const box = this.addObject(b);
+            loadEnvironmentSample('city').then((o) => o && this.setEnvironment(o.data))
+            this.viewport.setTarget(box);
+            const group = geometryPositionToText(b.geometry, 2)
+            group && this.addHelper(group);
+        })();
     }
 
     public static get Instance() {

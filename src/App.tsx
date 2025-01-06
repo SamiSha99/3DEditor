@@ -9,23 +9,6 @@ import * as THREE from 'three';
 
 const editor = new Editor();
 
-const initScene = async () => {
-    const { Sphere } = await import("@orb_tools/create/Primitive");
-    const { loadEnvironmentSample } = await import("@orb_utils/Samples.ts");
-    const b = Sphere();
-    const box = editor.addObject(b);
-
-    loadEnvironmentSample('city').then((o) => o && editor.setEnvironment(o.data))
-    editor.viewport.setTarget(box);
-    true && setTimeout(() => {
-        true && ((b.geometry as THREE.BufferGeometry) = mergeVertices(b.geometry));
-        b.geometry.computeVertexNormals();
-        const group = geometryPositionToText(b.geometry, 2)
-        group && editor.addHelper(group);
-    }, 1000);
-}
-initScene();
-
 function App() {
 
     return (
