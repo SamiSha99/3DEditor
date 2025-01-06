@@ -4,7 +4,7 @@ import Tools from "./ui/menubar_dropdowns/Tools";
 import View from "./ui/menubar_dropdowns/View"
 import { MenuBarStyle } from "./ui/style";
 
-export const MenuBar = () => {
+export const Menubar = () => {
     return (
         <MenuBarStyle>
             <File />
@@ -15,4 +15,4 @@ export const MenuBar = () => {
     )
 }
 
-export default MenuBar;
+export default Menubar;

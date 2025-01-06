@@ -3,7 +3,7 @@ import { ConfigProvider } from 'antd'
 import { MainTheme } from '@orb_UI/antd/ThemeConfigs.ts'
 import { Editor } from '@orb_Editor'
 import { EditorProvider, ViewportProvider } from './store/Providers'
-import MenuBar from './editor/MenuBar'
+import Menubar from './editor/Menubar'
 import Inspector from './editor/Inspector'
 
 const editor = new Editor();
@@ -14,7 +14,7 @@ function App() {
             <ViewportProvider viewport={editor.viewport}>
                 <ConfigProvider theme={MainTheme}>
                     <div style={{ display: "flex", flexWrap: "wrap", height: "100vh", width: "100vw", overflow: "hidden" }}>
-                        <MenuBar />
+                        <Menubar />
                         <Inspector />
                     </div>
                 </ConfigProvider>
