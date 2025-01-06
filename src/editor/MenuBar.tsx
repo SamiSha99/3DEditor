@@ -1,7 +1,7 @@
-import File from "./ui/menubar_dropdowns/File";
-import Add from "./ui/menubar_dropdowns/Add";
-import Tools from "./ui/menubar_dropdowns/Tools";
-import View from "./ui/menubar_dropdowns/View"
+import File from "./ui/menubar/File";
+import Add from "./ui/menubar/Add";
+import Tools from "./ui/menubar/Tools";
+import View from "./ui/menubar/View"
 import { MenuBarStyle } from "./ui/style";
 
 export const Menubar = () => {
