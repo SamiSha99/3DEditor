@@ -30,6 +30,7 @@
       "@orb_App": ["./src/App.tsx"],
       "@orb_Editor": ["src/store/Editor.ts"],
       "@orb_tools/*": ["./src/editor/tools/*"],
+      "@orb_data/*": ["./src/editor/data/*"],
       "@orb_types" : ["src/store/Type.ts"],
       "@orb_UI/*": ["./src/editor/ui/*"],
       "@orb_utils/*": ["./src/editor/utils/*"],

@@ -1,16 +1,16 @@
+import * as THREE from "three"
 import { useEditor } from "@orb_Editor";
 import { Button, Col, ConfigProvider, Form, Row, Splitter, Tooltip, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
 import { InspectorScene } from "./data/Scene";
-import { InspectorObject3D } from "./data/Object3D";
-import { InspectorMaterial } from "./data/Material";
-import { InspectorGeometry } from "./data/Geometry";
+import { InspectorObject3D } from "@orb_data/Object3D";
+import { InspectorMaterial } from "@orb_data/Material";
+import { InspectorGeometry } from "@orb_data/Geometry";
 import { ControlsBar } from "@orb_UI/ControlsBar";
 import Canvas from './Canvas'
 import AssetsMenu from './AssetsMenu'
-import * as THREE from "three"
 import Overlay from "./Overlay";
 import { useViewport } from "src/store/Viewport";
 import { InspectorAnimation } from "./data/Animation";

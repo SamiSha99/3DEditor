@@ -2,13 +2,13 @@ import './App.css'
 import { ConfigProvider } from 'antd'
 import { MainTheme } from '@orb_UI/antd/ThemeConfigs.ts'
 import { Editor } from '@orb_Editor'
-import { MenuBar, Inspector } from './editor/EditorComponents'
 import { EditorProvider, ViewportProvider } from './store/Providers'
+import MenuBar from './editor/MenuBar'
+import Inspector from './editor/Inspector'
 
 const editor = new Editor();
 
 function App() {
-
     return (
         <EditorProvider editor={editor}>
             <ViewportProvider viewport={editor.viewport}>
