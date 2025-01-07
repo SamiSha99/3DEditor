@@ -1,5 +1,7 @@
 import { Dropdown, Button } from "antd"
 import { observer } from "mobx-react-lite";
+import { useState } from "react";
+import { Check, X } from "src/assets/icons";
 import { useViewport } from "src/store/Viewport";
 export const View = observer(() => {
     const {
@@ -9,32 +11,45 @@ export const View = observer(() => {
         setBoundingBox, boundingBoxEnabled
     } = useViewport();
 
+    const [open, setOpen] = useState(true);
+    const checkedIcon = (b: boolean) => b ? <Check /> : <X />;
+
     return (
         <>
-            <Dropdown trigger={["click"]} children={<Button children={"View"} />}
+            <Dropdown
+                open={open}
+                trigger={["click"]}
+                children={<Button children={"View"} />}
+                onOpenChange={(b) => { setOpen(true) }}
                 menu={{
                     items: [
                         {
                             key: "0",
-                            label: !gridEnabled ? "Show Grid" : "Hide Grid",
+                            label: "Grid",
+                            icon: checkedIcon(gridEnabled),
                             onClick: () => { setGrid(!gridEnabled) }
                         },
                         {
                             key: "1",
-                            label: !fpsEnabled ? "Show FPS" : "Hide FPS",
+                            label: "FPS",
+                            icon: checkedIcon(fpsEnabled),
                             onClick: () => { setFPS(!fpsEnabled) }
                         },
                         {
                             key: "2",
-                            label: !viewHelperEnabled ? "Show View Helper" : "Hide View Helper",
-                            onClick: () => { setViewHelper(!viewHelperEnabled) }
+                            label: "Helper",
+                            icon: checkedIcon(viewHelperEnabled),
+                            onClick: () => { setViewHelper(!viewHelperEnabled) },
                         },
                         {
                             key: "3",
-                            label: !boundingBoxEnabled ? "Show Bounding Box" : "Hide Bounding Box",
+                            label: "Bounding Box",
+                            icon: checkedIcon(boundingBoxEnabled),
                             onClick: () => { setBoundingBox(!boundingBoxEnabled) }
                         }
-                    ]
+                    ],
+                    onClick: () => { setOpen(true) },
+                    onMouseLeave: () => { setOpen(false) }
                 }} />
         </>
     )
