@@ -1,4 +1,4 @@
-import { Form, InputNumber, InputNumberProps, Tooltip } from "antd";
+import { Form, InputNumberProps, Tooltip } from "antd";
 import { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
@@ -6,10 +6,11 @@ import * as THREE from "three";
 import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, Limit, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
+import { InputNumberStyle } from "./style";
 
 const defaultProps: InputNumberProps<number> = {
     size: "small",
-    controls: true,
+    controls: false,
     changeOnWheel: true,
     formatter: (v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` },
     parser: (v) => v as unknown as number,
@@ -49,7 +50,7 @@ export const ItemVector2 = (props: Vector2Interface) => {
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <InputNumber
+                <InputNumberStyle
                     {...vector2Props}
                     onFocus={loopStop}
                     onBlur={loopStart}
@@ -74,7 +75,7 @@ export const ItemVector2 = (props: Vector2Interface) => {
                 />
             </Tooltip>
             <Tooltip title={toFixedStripped(y, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
-                <InputNumber
+                <InputNumberStyle
                     {...vector2Props}
                     onFocus={loopStop}
                     onBlur={loopStart}
@@ -126,7 +127,7 @@ export const ItemVector3 = (props: Vector3Interface) => {
 
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
-            <InputNumber
+            <InputNumberStyle
                 {...vector3Props}
                 onFocus={loopStop}
                 onBlur={loopStart}
@@ -149,7 +150,7 @@ export const ItemVector3 = (props: Vector3Interface) => {
                     onChange && onChange(object[variable]);
                 }}
             />
-            <InputNumber
+            <InputNumberStyle
                 {...vector3Props}
                 onFocus={loopStop}
                 onBlur={loopStart}
@@ -175,7 +176,7 @@ export const ItemVector3 = (props: Vector3Interface) => {
                     onChange && onChange(object[variable]);
                 }}
             />
-            <InputNumber
+            <InputNumberStyle
                 {...vector3Props}
                 onFocus={loopStop}
                 onBlur={loopStart}

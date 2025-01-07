@@ -7,6 +7,7 @@ import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
 import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, PRECISION_AMOUNT } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
+import { InputNumberStyle } from "./style";
 
 const orderOptions = [
     { value: "XYZ", label: "XYZ" },
@@ -60,7 +61,7 @@ export const ItemEuler = (props: EulerInterface) => {
 
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
-            <InputNumber
+            <InputNumberStyle
                 {...eulerProps}
                 {...inputNumberProps}
                 value={isDegree ? radToDeg(x) : x}
@@ -85,7 +86,7 @@ export const ItemEuler = (props: EulerInterface) => {
                     onChange && onChange(object[variable]);
                 }}
             />
-            <InputNumber
+            <InputNumberStyle
                 {...eulerProps}
                 {...inputNumberProps}
                 value={isDegree ? radToDeg(y) : y}
@@ -110,7 +111,7 @@ export const ItemEuler = (props: EulerInterface) => {
                     onChange && onChange(object[variable]);
                 }}
             />
-            <InputNumber
+            <InputNumberStyle
                 {...eulerProps}
                 {...inputNumberProps}
                 value={isDegree ? radToDeg(z) : z}

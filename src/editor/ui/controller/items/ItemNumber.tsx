@@ -4,6 +4,7 @@ import { PRECISION_AMOUNT, Item, Limit, labelFromVariable } from "./Item";
 import { useDeltaTime } from "src/store/Hooks";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 import { toFixedStripped } from "@orb_utils/Main";
+import { InputNumberStyle } from "./style";
 
 interface InputNumberInterface extends Item {
     limit?: Limit,
@@ -42,7 +43,8 @@ export const ItemNumber = (props: InputNumberInterface) => {
                 />
 
             }
-            <InputNumber
+            <InputNumberStyle
+                controls={false}
                 style={{ display: limit ? 'inline-block' : '', width: limit ? "20%" : "100%" }}
                 onFocus={loopStop}
                 onBlur={loopStart}
