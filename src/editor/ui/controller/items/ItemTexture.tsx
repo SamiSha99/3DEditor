@@ -1,5 +1,5 @@
 import { Button, Form, Image, Popconfirm } from "antd";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DataTexture, Material, MeshBasicMaterial, Texture, WebGLRenderer } from "three";
@@ -23,9 +23,8 @@ type TextureObject = {
     type: string
 }
 
-export const ItemTexture: React.FC<TextureInterface> = (
-    { label, labelInVariable, object, variable, hdr, readonly, size, onChange }
-) => {
+export const ItemTexture = (props: TextureInterface) => {
+    let { label, labelInVariable, object, variable, hdr, readonly, size, onChange } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [textureObject, setTextureObject] = useState<TextureObject | undefined>(undefined);
     const [hoverUploadIcon, setHoverUploadIcon] = useState(false);

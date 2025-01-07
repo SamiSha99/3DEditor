@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { Check, X } from "src/assets/icons";
 import { useViewport } from "src/store/Viewport";
+
 export const View = observer(() => {
     const {
         setGrid, gridEnabled,
@@ -11,7 +12,7 @@ export const View = observer(() => {
         setBoundingBox, boundingBoxEnabled
     } = useViewport();
 
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const checkedIcon = (b: boolean) => b ? <Check /> : <X />;
 
     return (
@@ -20,7 +21,7 @@ export const View = observer(() => {
                 open={open}
                 trigger={["click"]}
                 children={<Button children={"View"} />}
-                onOpenChange={(b) => { setOpen(true) }}
+                onOpenChange={() => { setOpen(true) }}
                 menu={{
                     items: [
                         {
@@ -50,6 +51,7 @@ export const View = observer(() => {
                     ],
                     onClick: () => { setOpen(true) },
                     onMouseLeave: () => { setOpen(false) }
+
                 }} />
         </>
     )

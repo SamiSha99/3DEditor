@@ -12,9 +12,8 @@ interface InputInterface extends Item {
     textArea?: boolean,
 }
 
-export const ItemInput: React.FC<InputInterface> = (
-    { label, labelInVariable, object, variable, readonly, onChange, tooltip, addonBefore, addonAfter, textArea }
-) => {
+export const ItemInput = (props: InputInterface) => {
+    let { label, labelInVariable, object, variable, readonly, onChange, tooltip, addonBefore, addonAfter, textArea } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<string>(object[variable]);
 

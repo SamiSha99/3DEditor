@@ -51,7 +51,8 @@ interface CanvasInfo {
     canvas: HTMLCanvasElement
 }
 
-const Scene: React.FC<CanvasInfo> = observer(({ canvas }) => {
+const Scene = observer((props: CanvasInfo) => {
+    let { canvas } = props;
     const { sceneObjects, sceneHelpers, removeObject } = useEditor();
     const { setTarget, target } = useViewport();
     // the passed ref is null at load time! 

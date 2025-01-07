@@ -5,9 +5,8 @@ import { TableProps } from "antd/es/table";
 
 interface TableInterface extends Omit<TableProps, 'children'>, Item { };
 
-export const ItemTable: React.FC<TableInterface> = (
-    { label, labelInVariable, object, variable, tooltip, columns, dataSource, showHeader, style }
-) => {
+export const ItemTable = (props: TableInterface) => {
+    let { label, labelInVariable, object, variable, tooltip, columns, dataSource, showHeader, style } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
 
     return (

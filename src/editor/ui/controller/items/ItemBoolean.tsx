@@ -9,9 +9,8 @@ interface BooleanInterface extends Item {
     icons?: { on?: React.ReactNode, off?: React.ReactNode }
 }
 
-export const ItemBoolean: React.FC<BooleanInterface> = (
-    { label, labelInVariable, object, variable, icons, onChange, tooltip }
-) => {
+export const ItemBoolean = (props: BooleanInterface) => {
+    let { label, labelInVariable, object, variable, icons, onChange, tooltip } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<boolean>(object[variable]);
 

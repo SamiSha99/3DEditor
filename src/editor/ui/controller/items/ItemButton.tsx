@@ -13,9 +13,8 @@ interface ButtonInterface {
     disabled?: boolean
 }
 
-export const ItemButton: React.FC<ButtonInterface> = (
-    { label, size, buttonName, onClick, tooltip, disabled }
-) => {
+export const ItemButton = (props: ButtonInterface) => {
+    let { label, size, buttonName, onClick, tooltip, disabled } = props;
 
     return (
         <Form.Item label={label} tooltip={tooltip}>

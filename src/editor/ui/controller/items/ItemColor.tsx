@@ -1,11 +1,11 @@
 import { ColorPicker, Form } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { Color } from "three";
 import { AggregationColor } from "antd/es/color-picker/color";
 
-interface ColorInterface extends Item {
+export interface ColorInterface extends Item {
     onChange?: (value: Color) => void,
     onChangeComplete?: (value: Color) => void,
     onClear?: () => void,
@@ -16,9 +16,8 @@ interface ColorInterface extends Item {
 
 let timeoutActive: boolean = false;
 
-export const ItemColor: React.FC<ColorInterface> = (
-    { label, labelInVariable, object, variable, disabled, disabledAlpha, allowClear, defaultColor, onChange, onChangeComplete, onClear, tooltip }
-) => {
+export const ItemColor = (props: ColorInterface) => {
+    const { label, labelInVariable, object, variable, disabled, disabledAlpha, allowClear, defaultColor, onChange, onChangeComplete, onClear, tooltip } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<Color>(object[variable]);
 

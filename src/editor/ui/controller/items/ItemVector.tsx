@@ -1,5 +1,5 @@
 import { Form, InputNumber, InputNumberProps, Tooltip } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
@@ -32,9 +32,8 @@ interface Vector2Interface extends Item {
     onChange?: (value: THREE.Vector2) => void
 }
 
-export const ItemVector2: React.FC<Vector2Interface> = (
-    { label, labelInVariable, precision, object, variable, labelVector, limit, onChange, tooltip }
-) => {
+export const ItemVector2 = (props: Vector2Interface) => {
+    let { label, labelInVariable, precision, object, variable, labelVector, limit, onChange, tooltip } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
     const [y, setY] = useState<number>(object[variable].y);
@@ -111,9 +110,8 @@ interface Vector3Interface extends Item {
     onChange?: (value: THREE.Vector3) => void
 }
 
-export const ItemVector3: React.FC<Vector3Interface> = (
-    { label, labelInVariable, object, variable, precision, labelVector, limit, onChange, tooltip }
-) => {
+export const ItemVector3 = (props: Vector3Interface) => {
+    let { label, labelInVariable, object, variable, precision, labelVector, limit, onChange, tooltip } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
     const [y, setY] = useState<number>(object[variable].y);

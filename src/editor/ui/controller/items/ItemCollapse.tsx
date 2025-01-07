@@ -10,9 +10,8 @@ type ItemCollapseInterface = {
     alwaysOpen?: boolean
 }
 
-export const ItemCollapse: React.FC<ItemCollapseInterface> = (
-    { label, children, collapsed, size, extra, alwaysOpen }
-) => {
+export const ItemCollapse = (props: ItemCollapseInterface) => {
+    let { label, children, collapsed, size, extra, alwaysOpen } = props;
     return (
         <Collapse
             defaultActiveKey={!collapsed ? ["1"] : undefined}

@@ -14,9 +14,8 @@ interface InputNumberInterface extends Item {
     onChange?: (value: number) => void
 }
 
-export const ItemNumber: React.FC<InputNumberInterface> = (
-    { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, tooltip, addonBefore, addonAfter }
-) => {
+export const ItemNumber = (props: InputNumberInterface) => {
+    let { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, tooltip, addonBefore, addonAfter } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
 

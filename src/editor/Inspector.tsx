@@ -67,7 +67,7 @@ export const HierarchyTree = observer(() => {
     )
 })
 
-export const SelectedObject: React.FC = observer(() => {
+export const SelectedObject = observer(() => {
     const { target } = useViewport();
     const [tab, setTab] = useState(target ? "OBJECT" : "");
     const tabCSS: React.CSSProperties = { width: "50%" };

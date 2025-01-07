@@ -6,7 +6,7 @@ import { useRef } from "react";
 const DEFAULT_TRIGGER_SIZE = 10;
 const DEFAULT_STEP = 1;
 
-const props: ButtonProps = {
+const buttonProps: ButtonProps = {
     tabIndex: -1,
     size: "small",
     // a hack to remove all inner padding of the button by making an empty icon
@@ -22,9 +22,8 @@ type DraggableButtonControllerInterface = {
     onDragEnd?: () => void
 }
 
-export const DraggableButtonController: React.FC<DraggableButtonControllerInterface> = (
-    { step, triggerSize, onStep, onDragEnd }
-) => {
+export const DraggableButtonController = (props: DraggableButtonControllerInterface) => {
+    let { step, triggerSize, onStep, onDragEnd } = props;
     if (!triggerSize) triggerSize = DEFAULT_TRIGGER_SIZE
     if (!step) step = DEFAULT_STEP;
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -49,7 +48,7 @@ export const DraggableButtonController: React.FC<DraggableButtonControllerInterf
     return (
         <Button
             ref={buttonRef}
-            {...props}
+            {...buttonProps}
             onMouseDown={(e) => {
                 document.addEventListener("mousemove", handleMouseMove);
                 document.addEventListener("mouseup", () => {

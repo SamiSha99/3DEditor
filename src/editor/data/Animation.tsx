@@ -27,7 +27,12 @@ const pause = (action: THREE.AnimationAction) => { action.paused = !action.pause
 const stop = (action: THREE.AnimationAction) => { action.stop(); }
 const stopAll = () => { animator.actions && Object.keys(animator.actions).forEach((key) => stop(animator.actions![key])) }
 
-export const InspectorAnimation = observer<{ animations: THREE.AnimationClip[] }>(({ animations }) => {
+interface Animation {
+    animations: THREE.AnimationClip[]
+}
+
+export const InspectorAnimation = observer((props: Animation) => {
+    const { animations } = props;
     const { target } = useViewport();
     initialize(target!, animations);
 
@@ -75,7 +80,12 @@ export const InspectorAnimation = observer<{ animations: THREE.AnimationClip[] }
     );
 })
 
-export const ActionControls = observer<{ action: THREE.AnimationAction }>(({ action }) => {
+interface AnimationAction {
+    action: THREE.AnimationAction
+}
+
+export const ActionControls = observer((props: AnimationAction) => {
+    const { action } = props;
     const [playing, setPlaying] = useState(action.isRunning());
     const [started, setStarted] = useState(false);
 
@@ -88,7 +98,8 @@ export const ActionControls = observer<{ action: THREE.AnimationAction }>(({ act
     )
 })
 
-export const ActionTime = observer<{ action: THREE.AnimationAction }>(({ action }) => {
+export const ActionTime = observer((props: AnimationAction) => {
+    const { action } = props;
     const [time, setTime] = useState(action.time);
     const clip = action.getClip();
     const [_loopStop, _loopStart, _isActive] = useDeltaTime(() => { setTime(action.time) })

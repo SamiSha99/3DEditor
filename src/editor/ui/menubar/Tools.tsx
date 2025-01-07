@@ -16,11 +16,14 @@ import { useViewport } from "src/store/Viewport";
 export const Tools = observer(() => {
     const { addObject, activatePanel } = useEditor();
     const { target } = useViewport();
+    const [open, setOpen] = useState(false);
     return (
         <>
             <Dropdown
+                open={open}
                 trigger={["click"]}
                 children={<Button children={"Tools"} />}
+                onOpenChange={() => { setOpen(true) }}
                 menu={{
                     items: [
                         {
@@ -97,7 +100,9 @@ export const Tools = observer(() => {
                                 activatePanel(PANEL_SCREENSHOT);
                             }
                         }
-                    ]
+                    ],
+                    onClick: () => { setOpen(true) },
+                    onMouseLeave: () => { setOpen(false) }
                 }} />
         </>
     )
@@ -128,11 +133,12 @@ type ConvertModalInterface = {
 
 const exportSettings = { name: "myExport", type: exportOptions[0].value, textureSize: 1024 }
 
-export const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, onSubmit }) => {
+export const ConvertModal = (props: ConvertModalInterface) => {
+    const { open, onCancel, onSubmit } = props;
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const { Dragger } = Upload;
 
-    const props: UploadProps = {
+    const uploadProps: UploadProps = {
         name: 'file',
         multiple: true,
         maxCount: 32,
@@ -170,7 +176,7 @@ export const ConvertModal: React.FC<ConvertModalInterface> = ({ open, onCancel, 
                 <ItemSelect object={{ exportOptions: exportOptions }} variable="exportOptions" labelInVariable defaultValue={exportOptions[0].value} onChangeSelect={(s) => { exportSettings.type = s as EXPORTER.ExportType }} />
                 <ItemSelect object={{ textureSize: textureSizeOptions }} variable="textureSize" labelInVariable defaultValue={textureSizeOptions[0].value} onChangeSelect={(s) => { exportSettings.textureSize = parseFloat("" + s) }} />
                 <ItemInput object={exportSettings} variable="name" labelInVariable />
-                <Dragger {...props}>
+                <Dragger {...uploadProps}>
                     <p className="ant-upload-drag-icon">
                         <ICONS.InboxOutlined />
                     </p>

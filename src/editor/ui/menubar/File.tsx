@@ -72,7 +72,14 @@ const exportOptions = [
 
 const exportSettings = { name: "exportName", type: exportOptions[0].value, exportSelection: false, textureSize: 1024 }
 
-const ExportModal: React.FC<{ open: boolean, onSubmit: () => void, onCancel: () => void }> = ({ open, onSubmit, onCancel }) => {
+interface ExportModal {
+    open: boolean,
+    onSubmit: () => void,
+    onCancel: () => void
+}
+
+const ExportModal = (props: ExportModal) => {
+    const { open, onSubmit, onCancel } = props;
     const { sceneObjects } = useEditor();
     const { target } = useViewport();
 

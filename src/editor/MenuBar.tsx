@@ -5,6 +5,7 @@ import View from "@orb_UI/menubar/View"
 import { MenuBarStyle } from "@orb_UI/style";
 
 export const Menubar = () => {
+
     return (
         <MenuBarStyle>
             <File />

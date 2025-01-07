@@ -1,5 +1,5 @@
 import { Form, Select, InputNumber, InputNumberProps } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
@@ -21,7 +21,7 @@ const eulerProps: InputNumberProps<number> = {
     precision: PRECISION_AMOUNT,
     controls: false,
     changeOnWheel: true,
-    formatter: (v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}°` },
+    formatter: (v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` }, // °
     parser: (v) => v as unknown as number,
     style: { width: 'calc(100%/3 - ' + DRAGGABLE_CONTROLLER_WIDTH + ')' },
     size: "small"
@@ -34,9 +34,8 @@ interface EulerInterface extends Item {
     onChange?: (value: THREE.Euler) => void
 }
 
-export const ItemEuler: React.FC<EulerInterface> = (
-    { variable, object, label, labelInVariable, labelEuler, showOrder, isDegree, onChange, tooltip }
-) => {
+export const ItemEuler = (props: EulerInterface) => {
+    const { variable, object, label, labelInVariable, labelEuler, showOrder, isDegree, onChange, tooltip } = props;
 
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
 
@@ -51,7 +50,7 @@ export const ItemEuler: React.FC<EulerInterface> = (
         z != object[variable].z && setZ(object[variable].z)
     });
 
-    const props: InputNumberProps<number> = {
+    const inputNumberProps: InputNumberProps<number> = {
         min: isDegree ? -180 : -Math.PI,
         max: isDegree ? 180 : Math.PI,
         step: isDegree ? 180 / 32 : Math.PI / 32,
@@ -63,7 +62,7 @@ export const ItemEuler: React.FC<EulerInterface> = (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <InputNumber
                 {...eulerProps}
-                {...props}
+                {...inputNumberProps}
                 value={isDegree ? radToDeg(x) : x}
                 addonBefore={labelEuler?.x ? labelEuler.x : "X"}
                 onChange={(v: number | null) => {
@@ -74,7 +73,7 @@ export const ItemEuler: React.FC<EulerInterface> = (
                     onChange && onChange(object[variable]);
                 }} />
             <DraggableButtonController
-                step={props.step as number}
+                step={inputNumberProps.step as number}
                 onStep={(value, _rate, direction) => {
                     let clamped = 0;
                     if (isDegree)
@@ -88,7 +87,7 @@ export const ItemEuler: React.FC<EulerInterface> = (
             />
             <InputNumber
                 {...eulerProps}
-                {...props}
+                {...inputNumberProps}
                 value={isDegree ? radToDeg(y) : y}
                 addonBefore={labelEuler?.y ? labelEuler.y : "Y"}
                 onChange={(v: number | null) => {
@@ -99,7 +98,7 @@ export const ItemEuler: React.FC<EulerInterface> = (
                     onChange && onChange(object[variable]);
                 }} />
             <DraggableButtonController
-                step={props.step as number}
+                step={inputNumberProps.step as number}
                 onStep={(value, _rate, direction) => {
                     let clamped = 0;
                     if (isDegree)
@@ -113,7 +112,7 @@ export const ItemEuler: React.FC<EulerInterface> = (
             />
             <InputNumber
                 {...eulerProps}
-                {...props}
+                {...inputNumberProps}
                 value={isDegree ? radToDeg(z) : z}
                 addonBefore={labelEuler?.z ? labelEuler.z : "Z"}
                 onChange={(v: number | null) => {
@@ -124,7 +123,7 @@ export const ItemEuler: React.FC<EulerInterface> = (
                     onChange && onChange(object[variable]);
                 }} />
             <DraggableButtonController
-                step={props.step as number}
+                step={inputNumberProps.step as number}
                 onStep={(value, _rate, direction) => {
                     let clamped = 0;
                     if (isDegree)

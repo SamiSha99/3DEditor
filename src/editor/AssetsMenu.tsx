@@ -28,7 +28,12 @@ const AssetsMenu = observer(() => {
     )
 })
 
-const Asset = observer<{ asset: IModelFileResponse }>(({ asset }) => {
+interface Asset {
+    asset: IModelFileResponse
+}
+
+const Asset = observer((props: Asset) => {
+    const { asset } = props;
     const { addObject } = useEditor();
 
     const getFileFromURL = async (url: string, type: "glb" | "usdz") => {

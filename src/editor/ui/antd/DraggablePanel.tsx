@@ -25,7 +25,8 @@ const getCanvasBounds = (width?: number, height?: number) => {
     return draggableBounds;
 }
 // to-do this should not hard lock to as the bound and its position should be handled accordingly when canvas changes too
-export const DraggablePanel: React.FC<DraggablePanelInterface> = observer(({ name, identifier, width, height, startingPositionNormalized, children, onClose }) => {
+export const DraggablePanel = observer((props: DraggablePanelInterface) => {
+    const { name, identifier, width, height, startingPositionNormalized, children, onClose } = props;
     const { removeActivePanel } = useEditor();
     const ref = useRef<HTMLDivElement>(null);
     const w = width ? width : ref.current?.offsetWidth;

@@ -1,7 +1,7 @@
 
 import { useEditor } from "@orb_Editor";
-import { useDeltaTime, useOnUnmount } from "@orb_Hooks";
-import { ItemBoolean, ItemButton, ItemCollapse, ItemGroup, ItemNumber, ItemRadioButton, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
+import { useOnUnmount } from "@orb_Hooks";
+import { ItemBoolean, ItemCollapse, ItemGroup, ItemNumber, ItemRadioButton, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { Limit } from "@orb_UI/controller/items/Item";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
@@ -28,7 +28,8 @@ const GeometrySelect = [
     { value: "IcosahedronGeometry", label: "Icosahedron" }
 ] as { value: string, label: string }[];
 
-export const InspectorGeometry: React.FC<{ geometry: THREE.BufferGeometry }> = observer(({ geometry }) => {
+export const InspectorGeometry = observer((props: { geometry: THREE.BufferGeometry }) => {
+    const { geometry } = props;
     const [g, setG] = useState(geometry);
 
     return (
@@ -68,7 +69,8 @@ type GeometrySetter = {
     onSet?: (geometry: THREE.BufferGeometry) => void,
 }
 
-export const GeometrySetter = observer<GeometrySetter>(({ geometry, allowNullType, onSet }) => {
+export const GeometrySetter = observer((props: GeometrySetter) => {
+    const { geometry, allowNullType, onSet } = props;
     const { target } = useViewport();
     const instantiateGeometry = (value: string) => {
         let geo: THREE.BufferGeometry | undefined;
@@ -303,8 +305,13 @@ const GeometryToolsScale = () => {
     )
 }
 
-export const ChildGeometry: React.FC<{ geometry: THREE.BufferGeometry, onChange: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onChange }) => {
+interface ChildGeometry {
+    geometry: THREE.BufferGeometry,
+    onChange: (geometry: THREE.BufferGeometry) => void
+}
 
+export const ChildGeometry = observer((props: ChildGeometry) => {
+    const { geometry, onChange } = props;
     switch (geometry.constructor) {
         case THREE.BoxGeometry: return <InspectorBoxGeometry geometry={geometry as THREE.BoxGeometry} onNewGeometry={onChange} />;
         case THREE.SphereGeometry: return <InspectorSphereGeometry geometry={geometry as THREE.SphereGeometry} onNewGeometry={onChange} />;
@@ -317,7 +324,13 @@ export const ChildGeometry: React.FC<{ geometry: THREE.BufferGeometry, onChange:
     }
 })
 
-export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
+interface BoxGeometry {
+    geometry: THREE.BoxGeometry,
+    onNewGeometry: (geometry: THREE.BufferGeometry) => void
+}
+
+export const InspectorBoxGeometry = observer((props: BoxGeometry) => {
+    const { geometry, onNewGeometry } = props;
     const { target } = useViewport();
 
     const width = geometry.parameters.width;
@@ -368,7 +381,13 @@ export const InspectorBoxGeometry: React.FC<{ geometry: THREE.BoxGeometry, onNew
     )
 })
 
-export const InspectorSphereGeometry: React.FC<{ geometry: THREE.SphereGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
+interface SphereGeometry {
+    geometry: THREE.SphereGeometry,
+    onNewGeometry: (geometry: THREE.BufferGeometry) => void
+}
+
+export const InspectorSphereGeometry = observer((props: SphereGeometry) => {
+    const { geometry, onNewGeometry } = props;
     const { target } = useViewport();
 
     const radius = geometry.parameters.radius;
@@ -406,7 +425,7 @@ export const InspectorSphereGeometry: React.FC<{ geometry: THREE.SphereGeometry,
                 object={{ radius: radius }}
                 variable="radius"
                 labelInVariable
-                onChange={(v) => onChange({ h: v })}
+                onChange={(v) => onChange({ r: v })}
             />
             <ItemVector2
                 object={{ segments: new THREE.Vector2(widthSegments, heightSegments) }}
@@ -443,8 +462,14 @@ export const InspectorSphereGeometry: React.FC<{ geometry: THREE.SphereGeometry,
     )
 })
 
+interface CylinderGeometry {
+    geometry: THREE.CylinderGeometry | THREE.ConeGeometry,
+    onNewGeometry: (geometry: THREE.BufferGeometry) => void
+}
+
 // Cone is a child of Cylinder
-export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeometry | THREE.ConeGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
+export const InspectorCylinderGeometry = observer((props: CylinderGeometry) => {
+    const { geometry, onNewGeometry } = props;
     const { target } = useViewport();
 
     const radiusTop = geometry instanceof THREE.ConeGeometry ? 0 : geometry.parameters.radiusTop;
@@ -556,7 +581,13 @@ export const InspectorCylinderGeometry: React.FC<{ geometry: THREE.CylinderGeome
     )
 })
 
-export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
+interface PlaneGeometry {
+    geometry: THREE.PlaneGeometry,
+    onNewGeometry: (geometry: THREE.BufferGeometry) => void
+}
+
+export const InspectorPlaneGeometry = observer((props: PlaneGeometry) => {
+    const { geometry, onNewGeometry } = props;
     const { target } = useViewport();
 
     const width = geometry.parameters.width;
@@ -603,7 +634,13 @@ export const InspectorPlaneGeometry: React.FC<{ geometry: THREE.PlaneGeometry, o
     )
 })
 
-export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
+interface CapsuleGeometry {
+    geometry: THREE.CapsuleGeometry,
+    onNewGeometry: (geometry: THREE.BufferGeometry) => void
+}
+
+export const InspectorCapsuleGeometry = observer((props: CapsuleGeometry) => {
+    let { geometry, onNewGeometry } = props;
     const { target } = useViewport();
 
     const radius = geometry.parameters.radius;
@@ -653,7 +690,13 @@ export const InspectorCapsuleGeometry: React.FC<{ geometry: THREE.CapsuleGeometr
     )
 })
 
-export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
+interface TorusGeometry {
+    geometry: THREE.TorusGeometry,
+    onNewGeometry: (geometry: THREE.BufferGeometry) => void
+}
+
+export const InspectorTorusGeometry = observer((props: TorusGeometry) => {
+    const { geometry, onNewGeometry } = props;
     const { target } = useViewport();
 
     const radius = geometry.parameters.radius;
@@ -712,7 +755,13 @@ export const InspectorTorusGeometry: React.FC<{ geometry: THREE.TorusGeometry, o
     )
 })
 
-export const InspectorIcosahedronGeometry: React.FC<{ geometry: THREE.IcosahedronGeometry, onNewGeometry: (geometry: THREE.BufferGeometry) => void }> = observer(({ geometry, onNewGeometry }) => {
+interface IcosahedronGeometry {
+    geometry: THREE.IcosahedronGeometry,
+    onNewGeometry: (geometry: THREE.BufferGeometry) => void
+}
+
+export const InspectorIcosahedronGeometry = observer((props: IcosahedronGeometry) => {
+    const { geometry, onNewGeometry } = props;
     const { target } = useViewport();
 
     const radius = geometry.parameters.radius;

@@ -8,9 +8,8 @@ type ItemGroupInterface = {
     tooltip?: LabelTooltipType
 }
 
-export const ItemGroup: React.FC<ItemGroupInterface> = (
-    { label, sizes, children, tooltip }
-) => {
+export const ItemGroup = (props: ItemGroupInterface) => {
+    let { label, sizes, children, tooltip } = props
     if (!Array.isArray(children)) children = [children];
     if (Array.isArray(children)) {
         if (!sizes) {

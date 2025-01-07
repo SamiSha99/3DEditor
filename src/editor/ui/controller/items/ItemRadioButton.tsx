@@ -10,9 +10,8 @@ interface RadioButtonInterface {
     props: { value: string, children: React.ReactNode }[]
 }
 
-export const ItemRadioButton: React.FC<RadioButtonInterface> = (
-    { label, onClick, tooltip, props, defaultValue }
-) => {
+export const ItemRadioButton = (radioProps: RadioButtonInterface) => {
+    let { label, onClick, tooltip, props, defaultValue } = radioProps;
     return (
         <Form.Item label={label} tooltip={tooltip}>
             <Radio.Group style={{ display: "flex" }} value={defaultValue} onChange={(e) => onClick && onClick(e.target.value)}>

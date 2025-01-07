@@ -6,7 +6,12 @@ import { Alert, message, Tooltip } from "antd";
 import { useViewport } from "src/store/Viewport";
 import { useEditor } from "@orb_Editor";
 
-export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
+interface Object3D {
+    object: THREE.Object3D
+}
+
+export const InspectorObject3D = observer((props: Object3D) => {
+    const { object } = props;
     const { scene } = useEditor();
     const { setTarget } = useViewport();
 
@@ -86,15 +91,20 @@ export const InspectorObject3D: React.FC<{ object: THREE.Object3D }> = observer(
     );
 })
 
-export const ChildObject3D: React.FC<{ object: THREE.Object3D }> = observer(({ object }) => {
+export const ChildObject3D = observer((props: Object3D) => {
+    const { object } = props;
     switch (object.constructor) {
         case THREE.Mesh: return <Mesh object={object as THREE.Mesh} />
         default: return <>{object.constructor.name}</>;
     }
 })
 
+interface Mesh {
+    object: THREE.Mesh
+}
 
-export const Mesh: React.FC<{ object: THREE.Mesh }> = observer(({ object }) => {
+export const Mesh = observer((props: Mesh) => {
+    const { object } = props;
     return (
         <>
             <ItemGroup label="Geometry" sizes={["85%", "15%"]}>

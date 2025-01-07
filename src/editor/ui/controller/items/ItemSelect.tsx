@@ -12,9 +12,8 @@ interface SelectInterface extends Item {
     onChangeSelect?: (select: { value: string, label: string } | string | number) => void;
 }
 
-export const ItemSelect: React.FC<SelectInterface> = (
-    { label, labelInVariable, object, variable, disabled, defaultValue, labelInValue, onChangeSelect, tooltip }
-) => {
+export const ItemSelect = (props: SelectInterface) => {
+    let { label, labelInVariable, object, variable, disabled, defaultValue, labelInValue, onChangeSelect, tooltip } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const list = object[variable] as DefaultOptionType[];
 
