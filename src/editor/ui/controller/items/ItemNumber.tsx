@@ -1,4 +1,4 @@
-import { Form, InputNumber, Slider } from "antd";
+import { Form, Slider } from "antd";
 import React, { useState } from "react";
 import { PRECISION_AMOUNT, Item, Limit, labelFromVariable } from "./Item";
 import { useDeltaTime } from "src/store/Hooks";
@@ -41,12 +41,7 @@ export const ItemNumber = (props: InputNumberInterface) => {
                     min={limit?.min}
                     max={limit?.max}
                     step={stepSlider == undefined ? 0.01 : stepSlider}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        setValue(v)
-                        object[variable] = v;
-                        onChange && onChange(v);
-                    }}
+                    onChange={(v) => onChangeNumber(v as number)}
                     value={v}
                 />
 
@@ -78,9 +73,8 @@ export const ItemNumber = (props: InputNumberInterface) => {
                 readOnly={readonly}
                 step={step == undefined ? 0.1 : step}
                 disabled={readonly}
-                onChange={(v) => {
-                    onChangeNumber(v as number);
-                }} />
+                onChange={(v) => onChangeNumber(v as number)}
+            />
         </Form.Item>
     )
 }

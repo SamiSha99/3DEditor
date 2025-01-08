@@ -7,12 +7,13 @@ import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, Limit, MOUSE_ENTER
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 import { InputNumberStyle } from "./style";
+import { evaluateFormula } from "@orb_utils/Math";
 
 const defaultProps: InputNumberProps<number> = {
     size: "small",
     controls: false,
     changeOnWheel: true,
-    formatter: (v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` },
+    formatter: (v: any) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` },
     parser: (v) => v as unknown as number,
 }
 
@@ -45,8 +46,15 @@ export const ItemVector2 = (props: Vector2Interface) => {
         y != object[variable].y && setY(object[variable].y)
     });
 
-
-
+    const onChangeVector2 = (v: { x?: number, y?: number }) => {
+        (object[variable] as THREE.Vector2).set(
+            v.x != undefined ? v.x : x,
+            v.y != undefined ? v.y : y
+        );
+        v.x != undefined && setX(v.x);
+        v.y != undefined && setY(v.y);
+        onChange && onChange(object[variable]);
+    }
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <Tooltip title={toFixedStripped(x, 3)} mouseEnterDelay={MOUSE_ENTER_DELAY}>
@@ -54,23 +62,24 @@ export const ItemVector2 = (props: Vector2Interface) => {
                     {...vector2Props}
                     onFocus={loopStop}
                     onBlur={loopStart}
+                    onKeyDown={(e) => {
+                        if (e.code == "Enter") {
+                            const v = evaluateFormula((e.target as HTMLInputElement).value);
+                            v != null && onChangeVector2({ x: v });
+                        }
+                    }}
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     value={x}
                     min={limit?.x?.min}
                     max={limit?.x?.max}
                     addonBefore={labelVector?.x ? labelVector.x : "X"}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        (object[variable] as THREE.Vector2).setX(v);
-                        setX(v);
-                        onChange && onChange(object[variable]);
-                    }} />
+                    onChange={(v) => { v != undefined && onChangeVector2({ x: v }) }}
+                />
                 <DraggableButtonController
                     onStep={(value, _rate, direction) => {
                         const newVal = (object[variable] as THREE.Vector2).x + value * direction;
                         const res = (object[variable] as THREE.Vector2).setX(newVal).x;
-                        setX(res);
-                        onChange && onChange(object[variable]);
+                        onChangeVector2({ x: res as number });
                     }}
                 />
             </Tooltip>
@@ -79,23 +88,24 @@ export const ItemVector2 = (props: Vector2Interface) => {
                     {...vector2Props}
                     onFocus={loopStop}
                     onBlur={loopStart}
+                    onKeyDown={(e) => {
+                        if (e.code == "Enter") {
+                            const v = evaluateFormula((e.target as HTMLInputElement).value);
+                            v != null && onChangeVector2({ y: v });
+                        }
+                    }}
                     precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                     value={y}
                     min={limit?.y?.min}
                     max={limit?.y?.max}
                     addonBefore={labelVector?.y ? labelVector.y : "Y"}
-                    onChange={(v: number | null) => {
-                        if (v == null) return;
-                        (object[variable] as THREE.Vector2).setY(v);
-                        setY(v);
-                        onChange && onChange(object[variable]);
-                    }} />
+                    onChange={(v) => { v != undefined && onChangeVector2({ y: v }) }}
+                />
                 <DraggableButtonController
                     onStep={(value, _rate, direction) => {
                         const newVal = (object[variable] as THREE.Vector2).y + value * direction;
                         const res = (object[variable] as THREE.Vector2).setY(newVal).y;
-                        setY(res);
-                        onChange && onChange(object[variable]);
+                        onChangeVector2({ y: res as number });
                     }}
                 />
             </Tooltip>
@@ -125,78 +135,102 @@ export const ItemVector3 = (props: Vector3Interface) => {
         z != object[variable].z && setZ(object[variable].z)
     });
 
+    const onChangeVector3 = (v: { x?: number, y?: number, z?: number }) => {
+        (object[variable] as THREE.Vector3).set(
+            v.x != undefined ? v.x : x,
+            v.y != undefined ? v.y : y,
+            v.z != undefined ? v.z : z
+        );
+        v.x != undefined && setX(v.x);
+        v.y != undefined && setY(v.y);
+        v.z != undefined && setZ(v.z);
+        onChange && onChange(object[variable]);
+    }
+
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <InputNumberStyle
                 {...vector3Props}
                 onFocus={loopStop}
-                onBlur={loopStart}
+                onBlur={(e) => {
+                    loopStart();
+                    const v = evaluateFormula(e.target.value);
+                    v != null && onChangeVector3({ x: v });
+                }}
+                onKeyDown={(e) => {
+                    if (e.code == "Enter") {
+                        const v = evaluateFormula((e.target as HTMLInputElement).value);
+                        v != null && onChangeVector3({ x: v });
+                    }
+                }}
                 precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                 value={x}
                 min={limit?.x?.min}
                 max={limit?.x?.max}
                 addonBefore={labelVector?.x ? labelVector.x : "X"}
-                onChange={(v: number | null) => {
-                    if (v == null) return;
-                    (object[variable] as THREE.Vector3).setX(v);
-                    setX(v);
-                    onChange && onChange(object[variable]);
-                }} />
+                onChange={(v) => v != undefined && onChangeVector3({ x: v })}
+            />
             <DraggableButtonController
                 onStep={(value, _rate, direction) => {
                     const newVal = (object[variable] as THREE.Vector3).x + value * direction;
                     const res = (object[variable] as THREE.Vector3).setX(newVal).x;
-                    setX(res);
-                    onChange && onChange(object[variable]);
+                    onChangeVector3({ x: res });
                 }}
             />
             <InputNumberStyle
                 {...vector3Props}
                 onFocus={loopStop}
-                onBlur={loopStart}
+                onBlur={(e) => {
+                    loopStart();
+                    const v = evaluateFormula(e.target.value);
+                    v != null && onChangeVector3({ y: v });
+                }}
+                onKeyDown={(e) => {
+                    if (e.code == "Enter") {
+                        const v = evaluateFormula((e.target as HTMLInputElement).value);
+                        v != null && onChangeVector3({ y: v });
+                    }
+                }}
                 precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                 value={y}
                 min={limit?.y?.min}
                 max={limit?.y?.max}
                 addonBefore={labelVector?.y ? labelVector.y : "Y"}
-                onChange={(v: number | null) => {
-                    if (v == null) return;
-                    (object[variable] as THREE.Vector3).setY(v);
-                    setY(v);
-                    onChange && onChange(object[variable]);
-                }} />
+                onChange={(v) => v != undefined && onChangeVector3({ y: v })}
+            />
             <DraggableButtonController
                 onStep={(value, _rate, direction) => {
                     const newVal = (object[variable] as THREE.Vector3).y + value * direction;
                     const res = (object[variable] as THREE.Vector3).setY(newVal).y;
-                    setY(res);
-                    onChange && onChange(object[variable]);
-                }}
-                onDragEnd={() => {
-                    onChange && onChange(object[variable]);
+                    onChangeVector3({ y: res });
                 }}
             />
             <InputNumberStyle
                 {...vector3Props}
                 onFocus={loopStop}
-                onBlur={loopStart}
+                onBlur={(e) => {
+                    loopStart();
+                    const v = evaluateFormula(e.target.value);
+                    v != null && onChangeVector3({ z: v });
+                }}
+                onKeyDown={(e) => {
+                    if (e.code == "Enter") {
+                        const v = evaluateFormula((e.target as HTMLInputElement).value);
+                        v != null && onChangeVector3({ z: v });
+                    }
+                }}
                 precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
                 value={z}
                 min={limit?.z?.min}
                 max={limit?.z?.max}
                 addonBefore={labelVector?.z ? labelVector.z : "Z"}
-                onChange={(v: number | null) => {
-                    if (v == null) return;
-                    (object[variable] as THREE.Vector3).setZ(v);
-                    setZ(v);
-                    onChange && onChange(object[variable]);
-                }} />
+                onChange={(v) => v != undefined && onChangeVector3({ z: v })}
+            />
             <DraggableButtonController
                 onStep={(value, _rate, direction) => {
                     const newVal = (object[variable] as THREE.Vector3).z + value * direction;
                     const res = (object[variable] as THREE.Vector3).setZ(newVal).z;
-                    setZ(res);
-                    onChange && onChange(object[variable]);
+                    onChangeVector3({ z: res });
                 }}
             />
         </Form.Item >
