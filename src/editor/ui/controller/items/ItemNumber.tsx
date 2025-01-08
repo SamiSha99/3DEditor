@@ -5,6 +5,7 @@ import { useDeltaTime } from "src/store/Hooks";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 import { toFixedStripped } from "@orb_utils/Main";
 import { InputNumberStyle } from "./style";
+import { evaluateFormula } from "@orb_utils/Math";
 
 interface InputNumberInterface extends Item {
     limit?: Limit,
@@ -23,6 +24,13 @@ export const ItemNumber = (props: InputNumberInterface) => {
     const [loopStop, loopStart, _isActive] = useDeltaTime(() => {
         v != object[variable] && setValue(object[variable]);
     });
+
+    const onChangeNumber = (v: number | null) => {
+        if (v == null) return;
+        setValue(v)
+        object[variable] = v;
+        onChange && onChange(v);
+    }
 
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
@@ -47,7 +55,17 @@ export const ItemNumber = (props: InputNumberInterface) => {
                 controls={false}
                 style={{ display: limit ? 'inline-block' : '', width: limit ? "20%" : "100%" }}
                 onFocus={loopStop}
-                onBlur={loopStart}
+                onKeyDown={(e) => {
+                    if (e.code == "Enter") {
+                        const v = evaluateFormula((e.target as HTMLInputElement).value);
+                        v != null && onChangeNumber(v);
+                    }
+                }}
+                onBlur={(e) => {
+                    loopStart();
+                    const v = evaluateFormula(e.target.value);
+                    v != null && onChangeNumber(v);
+                }}
                 value={v}
                 min={limit?.min}
                 max={limit?.max}
@@ -60,11 +78,8 @@ export const ItemNumber = (props: InputNumberInterface) => {
                 readOnly={readonly}
                 step={step == undefined ? 0.1 : step}
                 disabled={readonly}
-                onChange={(v: number | null) => {
-                    if (v == null) return;
-                    setValue(v)
-                    object[variable] = v;
-                    onChange && onChange(v);
+                onChange={(v) => {
+                    onChangeNumber(v as number);
                 }} />
         </Form.Item>
     )

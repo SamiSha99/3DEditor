@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite"
-import { Dropdown, Image, MenuProps, message } from "antd";
+import { Dropdown, Image, MenuProps, message, Tooltip } from "antd";
 import { useEditor } from "@orb_Editor";
 import { IModelFileResponse } from "src/store/Interfaces";
 import { doImportFile } from "@orb_tools/Importer";
+import { useState } from "react";
 
 const AssetsMenu = observer(() => {
     const { storageModels } = useEditor();
@@ -11,14 +12,13 @@ const AssetsMenu = observer(() => {
 
     return (
         <div style={{ width: "90%", margin: "auto", height: "100%" }}>
-            <h1>Asset</h1>
+            <h1>Assets</h1>
             <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
                 <div style={{
                     width: "100%",
                     display: "flex",
                     justifyContent: "start",
                     flexWrap: "wrap",
-                    // border: "2px solid grey",
                     marginTop: "10px"
                 }}>
                     {storageModels.map((asset) => { return <Asset asset={asset} /> })}
@@ -35,6 +35,7 @@ interface Asset {
 const Asset = observer((props: Asset) => {
     const { asset } = props;
     const { addObject } = useEditor();
+    const [open, setOpen] = useState(false);
 
     const getFileFromURL = async (url: string, type: "glb" | "usdz") => {
         const response = await fetch(url);
@@ -67,19 +68,12 @@ const Asset = observer((props: Asset) => {
                     message.success("Imported USDZ to Scene!");
                 });
             }
-        },
-        {
-            label: 'Duplicate',
-            key: '3',
-            onClick: () => {
-
-            }
         }
     ];
 
     return (
         <div style={{ padding: "5px max(5px, 0.5%)" }}>
-            <Dropdown menu={{ items }} trigger={['contextMenu']}>
+            <Dropdown menu={{ items }} trigger={['contextMenu']} onOpenChange={(b) => setOpen(b)}>
                 <div style={{ width: 64, height: 64 }}>
                     <Image
                         style={{
@@ -91,6 +85,11 @@ const Asset = observer((props: Asset) => {
                         typeof="png"
                         preview={false}
                     />
+                    <Tooltip title={open ? "" : asset.fileName}>
+                        <div style={{ width: "100%", textOverflow: "ellipsis", overflow: "hidden" }}>
+                            {asset.fileName}
+                        </div>
+                    </Tooltip>
                 </div>
             </Dropdown>
         </div>

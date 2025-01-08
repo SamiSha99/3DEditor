@@ -249,14 +249,24 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
 
                 const contents = event.target?.result as string | ArrayBuffer;
 
-                const group = new USDZLoader(manager).parse(contents);
-                if (group.children.length <= 0)
-                    message.error("Failed to load USDZ model.");
-                else {
+                try {
+                    const group = new USDZLoader(manager).parse(contents);
                     group.name = file.name;
                     onImport(group);
                 }
+                catch (e) {
+                    const s = "" + e;
+                    // console.log(e);
+                    if (s.includes(".usdc"))
+                        message.error("USD Crate types not supported.");
+                    else
+                        message.error("Failed to load USDZ model.");
+                }
 
+            }, false);
+            reader.addEventListener('error', async function (event) {
+
+                message.error("" + event.target);
             }, false);
             reader.readAsArrayBuffer(file);
             break;

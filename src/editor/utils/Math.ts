@@ -1,4 +1,27 @@
 import * as THREE from 'three';
+import { create, all } from 'mathjs'
+
+const math = create(all)
+/**
+ * Takes inputs of a string and then evaluate, extremely limited to avoid code injection
+ */
+export const evaluateFormula = math.evaluate
+
+math.import({
+    // most important (hardly any functional impact)
+    'import': function () { throw new Error('Function import is disabled') },
+    'createUnit': function () { throw new Error('Function createUnit is disabled') },
+    'reviver': function () { throw new Error('Function reviver is disabled') },
+
+    // extra (has functional impact)
+    'evaluate': function () { throw new Error('Function evaluate is disabled') },
+    'parse': function () { throw new Error('Function parse is disabled') },
+    'simplify': function () { throw new Error('Function simplify is disabled') },
+    'derivative': function () { throw new Error('Function derivative is disabled') },
+    'resolve': function () { throw new Error('Function resolve is disabled') },
+    'zeros': function () { throw new Error('Function zeros is disabled') },
+}, { override: true })
+
 
 /** Returns a normalized vector in Quaternion form, good for direction vectors. */
 export const quaternionFromNormal = (normal: THREE.Vector3Like) => {
