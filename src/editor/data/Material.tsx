@@ -22,7 +22,7 @@ const MaterialSelect = [
     { value: "MeshLambertMaterial", label: "Lambert" },
     { value: "MeshMatcapMaterial", label: "Matcap" },
     { value: "MeshNormalMaterial", label: "Normal" },
-    // { value: "MeshPhysicalMaterial", label: "Physical" },
+    { value: "MeshPhysicalMaterial", label: "Physical" },
 ] as { value: string, label: string }[];
 
 interface Material {
@@ -374,6 +374,7 @@ interface MeshPhysicalMaterial {
 
 const PhysicalMaterial = observer((props: MeshPhysicalMaterial) => {
     const { material } = props;
+    material.transmission = 1;
     return (
         <>
             <StandardMaterial material={material} />

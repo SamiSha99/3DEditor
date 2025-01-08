@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Canvas as ReactThreeFiberCanvas } from '@react-three/fiber';
+import { Canvas as R3FC } from '@react-three/fiber';
 import { useEditor } from "@orb_Editor";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
@@ -7,7 +7,7 @@ import { GizmoHelper, GizmoViewport, Line, Sphere, StatsGl } from "@react-three/
 import { useRef, useState } from "react";
 import React from "react";
 import { useViewport } from "src/store/Viewport";
-
+import { Perf } from 'r3f-perf'
 
 const Canvas = observer(() => {
     const { scene, onLoad } = useEditor()
@@ -22,7 +22,7 @@ const Canvas = observer(() => {
                     Loading Scene, please wait.
                 </div>
             </div >
-            <ReactThreeFiberCanvas
+            <R3FC
                 ref={canvasRef}
                 id="main"
                 style={{ bottom: 0, height: "100%", width: loaded ? "100%" : "1px" }}
@@ -41,8 +41,8 @@ const Canvas = observer(() => {
                         <EditorHelpers />
                     </>
                 }
-                {fpsEnabled && <StatsGl className="fps" />}
-            </ReactThreeFiberCanvas>
+                {fpsEnabled && <Perf colorBlind position="bottom-left" style={{ position: "absolute" }} />}
+            </R3FC>
         </>
     )
 })
