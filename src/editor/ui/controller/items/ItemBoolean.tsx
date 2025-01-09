@@ -20,16 +20,18 @@ export const ItemBoolean = (props: BooleanInterface) => {
 
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
-            <Switch
-                style={{ margin: "2px 5px" }}
-                defaultChecked={object[variable]}
-                checkedChildren={icons?.on}
-                unCheckedChildren={icons?.off}
-                onChange={(e) => {
-                    setValue(e);
-                    object[variable] = e;
-                    onChange && onChange(e);
-                }} />
+            <div style={{ float: "right" }}>
+                <Switch
+                    style={{ margin: "2px 5px" }}
+                    defaultChecked={object[variable]}
+                    checkedChildren={icons?.on}
+                    unCheckedChildren={icons?.off}
+                    onChange={(e) => {
+                        setValue(e);
+                        object[variable] = e;
+                        onChange && onChange(e);
+                    }} />
+            </div>
         </Form.Item>
     )
 }

@@ -1,11 +1,12 @@
 import { Form, Slider } from "antd";
 import React, { useState } from "react";
-import { PRECISION_AMOUNT, Item, Limit, labelFromVariable } from "./Item";
+import { PRECISION_AMOUNT, Item, Limit, labelFromVariable, DRAGGABLE_CONTROLLER_WIDTH } from "./Item";
 import { useDeltaTime } from "src/store/Hooks";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 import { toFixedStripped } from "@orb_utils/Main";
 import { InputNumberStyle } from "./style";
 import { evaluateFormula } from "@orb_utils/Math";
+import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 
 interface InputNumberInterface extends Item {
     limit?: Limit,
@@ -17,7 +18,7 @@ interface InputNumberInterface extends Item {
 }
 
 export const ItemNumber = (props: InputNumberInterface) => {
-    let { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, tooltip, addonBefore, addonAfter } = props;
+    let { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, tooltip, addonBefore, addonAfter, } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
 
@@ -46,35 +47,48 @@ export const ItemNumber = (props: InputNumberInterface) => {
                 />
 
             }
-            <InputNumberStyle
-                controls={false}
-                style={{ display: limit ? 'inline-block' : '', width: limit ? "20%" : "100%" }}
-                onFocus={loopStop}
-                onKeyDown={(e) => {
-                    if (e.code == "Enter") {
-                        const v = evaluateFormula((e.target as HTMLInputElement).value);
+            <div style={{ display: limit ? 'inline-block' : '', width: limit ? "33.333%" : "33.333%", float: "right" }}>
+                <InputNumberStyle
+                    style={{ width: readonly ? "100%" : `calc(100% - ${DRAGGABLE_CONTROLLER_WIDTH})` }}
+                    controls={false}
+                    onFocus={loopStop}
+                    onKeyDown={(e) => {
+                        if (e.code == "Enter") {
+                            const v = evaluateFormula((e.target as HTMLInputElement).value);
+                            v != null && onChangeNumber(v);
+                        }
+                    }}
+                    onBlur={(e) => {
+                        loopStart();
+                        const v = evaluateFormula(e.target.value);
                         v != null && onChangeNumber(v);
-                    }
-                }}
-                onBlur={(e) => {
-                    loopStart();
-                    const v = evaluateFormula(e.target.value);
-                    v != null && onChangeNumber(v);
-                }}
-                value={v}
-                min={limit?.min}
-                max={limit?.max}
-                precision={PRECISION_AMOUNT}
-                formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` }}
-                parser={(v) => v as unknown as number}
-                addonBefore={addonBefore}
-                addonAfter={addonAfter}
-                changeOnWheel
-                readOnly={readonly}
-                step={step == undefined ? 0.1 : step}
-                disabled={readonly}
-                onChange={(v) => onChangeNumber(v as number)}
-            />
+                    }}
+                    value={v}
+                    min={limit?.min}
+                    max={limit?.max}
+                    precision={PRECISION_AMOUNT}
+                    formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` }}
+                    parser={(v) => v as unknown as number}
+                    addonBefore={addonBefore}
+                    addonAfter={addonAfter}
+                    changeOnWheel
+                    readOnly={readonly}
+                    step={step == undefined ? 0.1 : step}
+                    disabled={readonly}
+                    onChange={(v) => onChangeNumber(v as number)}
+                />
+                {
+                    !readonly &&
+                    <DraggableButtonController
+                        onStep={(value, _rate, direction) => {
+                            const newVal = object[variable] as number + value * direction;
+                            object[variable] = newVal;
+                            const res = newVal;
+                            onChangeNumber(res);
+                        }}
+                    />
+                }
+            </div>
         </Form.Item>
     )
 }

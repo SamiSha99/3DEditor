@@ -1,4 +1,4 @@
-import { Button, Form, Image, Popconfirm } from "antd";
+import { Button, Form, Image, Popconfirm, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { Item, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
@@ -78,7 +78,38 @@ export const ItemTexture = (props: TextureInterface) => {
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
             <div style={{ display: "flex" }}>
-                <div style={{ width: size.width, height: size.height, flexShrink: 0, backgroundColor: "#303030", outline: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}
+                {
+                    !readonly &&
+                    <div style={{ width: "100%", padding: "0 5px" }}>
+                        <div style={{ float: "right", backgroundColor: "#303030", border: "2px solid #404040" }}>
+                            <Tooltip title="Upload Texture">
+                                <Button icon={<CloudUploadOutlined />} onClick={requestUploadTexture} />
+                            </Tooltip>
+                            <Tooltip title="Download Texture">
+                                <Button icon={<DownloadOutlined />} disabled={!object[variable]} onClick={requestDownloadTexture} />
+                            </Tooltip>
+
+                            <Popconfirm
+                                title="Remove Texture"
+                                description="This cannot be undone."
+                                onConfirm={() => {
+                                    const t = object[variable] as Texture;
+                                    t.dispose();
+                                    object[variable] = undefined;
+                                    if (!hdr)
+                                        (object as Material).needsUpdate = true;
+                                    setTextureObject(undefined);
+                                    onChange && onChange(undefined);
+                                }}
+                                okText="Yes"
+                                cancelText="No"
+                            >
+                                <Button danger={object[variable]} disabled={!object[variable]} icon={<DeleteOutlined />} />
+                            </Popconfirm>
+                        </div>
+                    </div>
+                }
+                <div style={{ width: size.width, height: size.height, flexShrink: 0, backgroundColor: "#303030", border: "2px solid #404040", display: "flex", alignItems: "center", justifyContent: "center" }}
                     onMouseEnter={() => !textureObject && !readonly && setHoverUploadIcon(true)}
                     onMouseLeave={() => !textureObject && !readonly && setHoverUploadIcon(false)}>
                     {
@@ -96,30 +127,6 @@ export const ItemTexture = (props: TextureInterface) => {
                         />
                     }
                 </div>
-                {
-                    !readonly &&
-                    <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
-                        <Button icon={<CloudUploadOutlined />} onClick={requestUploadTexture} />
-                        <Button icon={<DownloadOutlined />} disabled={!object[variable]} onClick={requestDownloadTexture} />
-                        <Popconfirm
-                            title="Remove Texture"
-                            description="This cannot be undone."
-                            onConfirm={() => {
-                                const t = object[variable] as Texture;
-                                t.dispose();
-                                object[variable] = undefined;
-                                if (!hdr)
-                                    (object as Material).needsUpdate = true;
-                                setTextureObject(undefined);
-                                onChange && onChange(undefined);
-                            }}
-                            okText="Yes"
-                            cancelText="No"
-                        >
-                            <Button danger={object[variable]} disabled={!object[variable]} icon={<DeleteOutlined />} />
-                        </Popconfirm>
-                    </div>
-                }
             </div>
         </Form.Item >
     )

@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
-import { Button, Divider, Table } from 'antd';
+import { Button } from 'antd';
 import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
 import ButtonGroup from 'antd/es/button/button-group';
-import Icon, { CaretRightOutlined, PauseOutlined, StopFilled, StopOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, PauseOutlined, StopOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import { ItemCollapse } from '@orb_UI/controller/ControllerItems';
+import { ItemCollapse, ItemTable } from '@orb_UI/controller/ControllerItems';
 
 type AnimatorInterface = {
     mixer?: THREE.AnimationMixer | null,
@@ -62,7 +62,8 @@ export const InspectorAnimation = observer((props: Animation) => {
     return (
         <ItemCollapse label={"Animation"}>
             {
-                <Table
+                <ItemTable
+                    label={"Clips"}
                     style={{ border: "1px solid grey", width: "95%", margin: "auto" }}
                     showHeader={false}
                     pagination={false}
