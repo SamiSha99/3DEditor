@@ -1,9 +1,10 @@
 import { Button, Form } from "antd";
 import React from "react";
 import { SizeType } from "antd/es/config-provider/SizeContext";
+import { ItemObjectless } from "./Item";
 
 
-interface ButtonInterface {
+interface ButtonInterface extends ItemObjectless {
     onClick?: () => void,
     buttonName: string | React.ReactNode,
     icons?: { on?: React.ReactNode, off?: React.ReactNode }

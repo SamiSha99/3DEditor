@@ -1,23 +1,23 @@
 import { Form, Table } from "antd";
-import { Item, labelFromVariable } from "./Item";
-import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
+import { ItemObjectless } from "./Item";
 import { TableProps } from "antd/es/table";
 
-interface TableInterface extends Omit<TableProps, 'children'>, Item { };
+interface TableInterface extends Omit<TableProps, 'children'>, ItemObjectless { };
 
 export const ItemTable = (props: TableInterface) => {
-    let { label, labelInVariable, object, variable, tooltip, columns, dataSource, showHeader, style } = props;
-    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+    let { label, tooltip, columns, dataSource, showHeader, style, scroll } = props;
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
+        <Form.Item label={label} tooltip={tooltip}>
             <Table
                 style={style}
                 showHeader={showHeader}
                 pagination={false}
                 tableLayout="auto"
                 columns={columns}
-                dataSource={dataSource} />
+                dataSource={dataSource}
+                scroll={scroll}
+            />
         </Form.Item>
     )
 }

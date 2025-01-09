@@ -1,7 +1,8 @@
 import { Form, Radio } from "antd";
 import React from "react";
+import { ItemObjectless } from "./Item";
 
-interface RadioButtonInterface {
+interface RadioButtonInterface extends ItemObjectless {
     onClick?: (value: string) => void,
     tooltip?: string,
     label?: string,

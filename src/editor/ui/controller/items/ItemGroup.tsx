@@ -1,7 +1,8 @@
 import { Alert, Form } from "antd"
 import { LabelTooltipType } from "antd/es/form/FormItemLabel"
+import { ItemObjectless } from "./Item"
 
-type ItemGroupInterface = {
+interface ItemGroupInterface extends ItemObjectless {
     label?: string,
     children: React.ReactNode | React.ReactNode[]
     sizes?: string[]
