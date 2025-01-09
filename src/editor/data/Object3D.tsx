@@ -31,8 +31,6 @@ export const InspectorObject3D = observer((props: Object3D) => {
                 {
                     object.parent && !(object.parent instanceof THREE.Scene) &&
                     <ItemTable
-                        object={{ parent: undefined }}
-                        variable="parent"
                         label="Parent"
                         dataSource={[{ name: `${object.parent.name}`, id: `${object.parent.id}`, action: <ItemButton size="small" buttonName={<EyeOutlined />} onClick={() => { setTarget(object.parent) }} /> }]}
                         columns={[
@@ -56,8 +54,6 @@ export const InspectorObject3D = observer((props: Object3D) => {
                 {
                     object.children.length > 0 &&
                     <ItemTable
-                        object={{ children: undefined }}
-                        variable="children"
                         label="Children"
                         dataSource={children}
                         columns={[
@@ -77,7 +73,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
             <ItemCollapse label={"Object3D"} alwaysOpen>
                 <ItemInput object={object} variable="name" labelInVariable />
                 <ItemNumber object={{ id: object.id }} variable="id" label="ID" readonly />
-                <ItemGroup label="UUID" sizes={["85%", "15%"]}>
+                <ItemGroup label="UUID" sizes={["66.666%", "33.334%"]}>
                     <ItemInput object={object} variable="uuid" readonly />
                     <ItemButton buttonName="Regenerate" onClick={() => { object.uuid = THREE.MathUtils.generateUUID() }} size='small' />
                 </ItemGroup>
