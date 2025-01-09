@@ -9,8 +9,11 @@ export const labelFromVariable = (variable: string) => {
     return title.charAt(0).toUpperCase() + title.slice(1);
 }
 
+export interface ItemObjectless extends Omit<Item, 'variable' | 'object' | 'labelInVariable'> { }
+
 export interface Item extends FormItemProps {
     object: { [key: string]: any }
+    default?: any
     variable: string
     label?: string | false,
     labelInVariable?: boolean
