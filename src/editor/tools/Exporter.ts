@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { GLTFExporter, OBJExporter, PLYExporter, STLExporter, USDZExporter } from 'three/examples/jsm/Addons.js';
+import { GLTFExporter, GLTFExporterOptions, OBJExporter, PLYExporter, PLYExporterOptions, STLExporter, STLExporterOptions, USDZExporter, USDZExporterOptions } from 'three/examples/jsm/Addons.js';
 
 export type OnExport = (result: Blob) => void;
 
 export type USDZExporterAnchoringTypes = "plane" | "image" | "face" | "none"
 
-export type ExportType = "gltf" | "glb" | "usdz" | "obj" | "ply" | "stl"
+export type ExportType = "gltf" | "usdz" | "obj" | "ply" | "stl"
 
 export type ExportOptions = {
     type: ExportType,
@@ -15,11 +15,19 @@ export type ExportOptions = {
     binary?: boolean // only GLTF, GLB, PLY, STL
 }
 
+type ExportParameters = GLTFExporterOptions | USDZExporterOptions | PLYExporterOptions | STLExporterOptions
+
+export interface ExportOptionsNew {
+    type: ExportType,
+    selectionOnly: boolean,
+    name?: string,
+    parameters?: ExportParameters
+}
+
 export function doExport(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
 
     switch (options.type) {
-        case "gltf": exportGLTF(scene, options, onExport); break;
-        case "glb": exportGLB(scene, options, onExport); break;
+        case "gltf": options.binary ? exportGLB(scene, options, onExport) : exportGLTF(scene, options, onExport); break;
         case "usdz": exportUSDZ(scene, options, onExport); break;
         case "obj": exportOBJ(scene, onExport); break;
         case "stl": exportSTL(scene, options, onExport); break;
