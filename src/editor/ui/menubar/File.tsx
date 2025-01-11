@@ -4,10 +4,11 @@ import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
 import * as THREE from "three";
 import { useEditor } from "@orb_Editor";
 import { doImport } from "@orb_tools/Importer";
-import { ExportType, doExport, save } from "@orb_tools/Exporter";
+import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, ExportOptions, ExportType, doExport, save } from "@orb_tools/Exporter";
 import { ItemBoolean, ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { ConvertModal, textureSizeOptions } from "./Tools";
 import { useViewport } from "src/store/Viewport";
+import { GLTFExporterOptions } from "three/examples/jsm/Addons";
 
 export const File = () => {
     const { setScene, addObject } = useEditor();
@@ -62,7 +63,6 @@ export const File = () => {
 }
 
 const exportOptions = [
-    { value: 'glb', label: 'GLB' },
     { value: 'gltf', label: 'GLTF' },
     { value: 'usdz', label: 'USDZ' },
     { value: 'obj', label: 'OBJ' },
@@ -70,7 +70,7 @@ const exportOptions = [
     { value: 'stl', label: 'STL' }
 ]
 
-const exportSettings = { name: "exportName", type: exportOptions[0].value, exportSelection: false, textureSize: 1024 }
+const exportSettings: ExportOptions = { name: "exportName", type: "gltf", selectionOnly: false, parameters: { ...DEFAULT_GLTF_EXPORTER_OPTIONS } }
 
 interface ExportModal {
     open: boolean,
@@ -82,12 +82,13 @@ const ExportModal = (props: ExportModal) => {
     const { open, onSubmit, onCancel } = props;
     const { sceneObjects } = useEditor();
     const { target } = useViewport();
+    const [type, setType] = useState(exportSettings.type);
 
     const doDownload = () => {
-        const res = exportSettings;
-        console.log("Export settings:\n", res);
+        const arg = exportSettings;
+        console.log("Export settings:\n", arg);
         let selection: THREE.Object3D | null;
-        if (res.exportSelection)
+        if (arg.selectionOnly)
             selection = target;
         else {
             const sceneExport = new THREE.Scene();
@@ -97,7 +98,7 @@ const ExportModal = (props: ExportModal) => {
         }
         if (!selection) message.warning('No selection detected with "export selection", make sure you are selecting an Object before export.')
 
-        doExport(selection as THREE.Object3D, { type: res.type as ExportType, name: res.name, maxTextureSize: res.textureSize }, (blob) => save(blob, res.name + "." + res.type));
+        doExport(selection as THREE.Object3D, exportSettings, (blob) => save(blob, arg.name + "." + (arg.type == "gltf" && (arg.parameters as GLTFExporterOptions).binary ? "glb" : "gltf")));
         onSubmit();
     }
 
@@ -105,10 +106,36 @@ const ExportModal = (props: ExportModal) => {
         <Modal title={"Export..."} open={open} onOk={doDownload} onCancel={onCancel}>
             <Form>
                 <ItemInput object={exportSettings} variable="name" labelInVariable />
-                <ItemBoolean object={exportSettings} variable="exportSelection" labelInVariable />
-                <ItemSelect object={{ options: exportOptions }} variable={"options"} defaultValue={exportOptions[0].label} label="Type" onChangeSelect={(select) => exportSettings.type = select as string} />
-                <Divider />
-                <ItemSelect object={{ textureSizes: textureSizeOptions }} variable="textureSizes" label="Size of Textures" defaultValue={textureSizeOptions[0].value} onChangeSelect={(value) => exportSettings.textureSize = parseFloat("" + value)} />
+                <ItemBoolean object={exportSettings} variable="selectionOnly" labelInVariable />
+                <ItemSelect
+                    object={{ options: exportOptions }}
+                    variable={"options"}
+                    defaultValue={exportOptions[0].label}
+                    label="Type"
+                    onChangeSelect={(select) => {
+                        exportSettings.type = select as ExportType
+                        switch (exportSettings.type) {
+                            case "gltf": exportSettings.parameters = { ...DEFAULT_GLTF_EXPORTER_OPTIONS }; break;
+                            case "usdz": exportSettings.parameters = { ...DEFAULT_USDZ_EXPORTER_OPTIONS }; break;
+                            case "obj": exportSettings.parameters = undefined; break;
+                            case "ply": exportSettings.parameters = { ...DEFAULT_PLY_EXPORTER_OPTIONS }; break;
+                            case "stl": exportSettings.parameters = { ...DEFAULT_STL_EXPORTER_OPTIONS }; break;
+                        }
+                        setType(exportSettings.type);
+                    }}
+                />
+                {
+                    exportSettings.parameters &&
+                    <>
+                        <Divider />
+                        {
+                            type == "gltf" &&
+                            <>
+                                <ItemBoolean variable="binary" object={exportSettings.parameters} />
+                            </>
+                        }
+                    </>
+                }
             </Form>
         </Modal>
     )

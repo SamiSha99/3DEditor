@@ -7,27 +7,58 @@ export type USDZExporterAnchoringTypes = "plane" | "image" | "face" | "none"
 
 export type ExportType = "gltf" | "usdz" | "obj" | "ply" | "stl"
 
-export type ExportOptions = {
-    type: ExportType,
-    name?: string,
-    animations?: boolean, // only GLTF, GLB and (maybe?) USDZ
-    maxTextureSize?: number, // only GLTF, GLB and USDZ
-    binary?: boolean // only GLTF, GLB, PLY, STL
-}
-
-type ExportParameters = GLTFExporterOptions | USDZExporterOptions | PLYExporterOptions | STLExporterOptions
-
-export interface ExportOptionsNew {
+export interface ExportOptions {
     type: ExportType,
     selectionOnly: boolean,
     name?: string,
     parameters?: ExportParameters
 }
 
+export type ExportParameters = GLTFExporterOptions | USDZExporterOptions | PLYExporterOptions | STLExporterOptions
+
+// ################################
+// # BEGIN DEFAULT EXPORT OPTIONS #
+// ################################
+
+export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions> = {
+    trs: false,
+    onlyVisible: true,
+    truncateDrawRange: true,
+    binary: true,
+    embedImages: true,
+    maxTextureSize: Infinity,
+    animations: undefined,
+    forceIndices: false
+};
+
+export const DEFAULT_USDZ_EXPORTER_OPTIONS: Readonly<USDZExporterOptions> = {
+    ar: {
+        anchoring: { type: 'plane' },
+        planeAnchoring: { alignment: 'horizontal' }
+    },
+    includeAnchoringProperties: true,
+    quickLookCompatible: false,
+    maxTextureSize: 1024
+};
+
+export const DEFAULT_PLY_EXPORTER_OPTIONS: Readonly<PLYExporterOptions> = {
+    binary: false,
+    excludeAttributes: [], // normal, uv, color and/or index
+    littleEndian: false
+};
+
+export const DEFAULT_STL_EXPORTER_OPTIONS: Readonly<STLExporterOptions> = {
+    binary: false
+};
+
+// ##############################
+// # END DEFAULT EXPORT OPTIONS #
+// ##############################
+
 export function doExport(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
 
     switch (options.type) {
-        case "gltf": options.binary ? exportGLB(scene, options, onExport) : exportGLTF(scene, options, onExport); break;
+        case "gltf": exportGLTF(scene, options, onExport); break;
         case "usdz": exportUSDZ(scene, options, onExport); break;
         case "obj": exportOBJ(scene, onExport); break;
         case "stl": exportSTL(scene, options, onExport); break;
@@ -36,6 +67,10 @@ export function doExport(scene: THREE.Object3D, options: ExportOptions, onExport
 }
 
 export function exportGLTF(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+    if ((options.parameters as GLTFExporterOptions).binary) {
+        exportGLB(scene, options, onExport);
+        return;
+    }
     const exporter = new GLTFExporter();
 
     const animations = getAnimations(scene);
