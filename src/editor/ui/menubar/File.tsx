@@ -4,9 +4,9 @@ import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
 import * as THREE from "three";
 import { useEditor } from "@orb_Editor";
 import { doImport } from "@orb_tools/Importer";
-import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS_AR, ExportOptions, ExportParameters, ExportType, USDZExporterAlignmentTypes, USDZExporterAnchoringTypes, doExport, save } from "@orb_tools/Exporter";
+import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, ExportOptions, ExportParameters, ExportType, USDZExporterAlignmentTypes, doExport, save } from "@orb_tools/Exporter";
 import { ItemBoolean, ItemInput, ItemNumber, ItemSelect } from "@orb_UI/controller/ControllerItems";
-import { ConvertModal, textureSizeOptions } from "./Tools";
+import { ConvertModal } from "./Tools";
 import { useViewport } from "src/store/Viewport";
 import { GLTFExporterOptions, USDZExporterOptions } from "three/examples/jsm/Addons";
 
