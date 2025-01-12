@@ -4,14 +4,15 @@ import { GLTFExporter, GLTFExporterOptions, OBJExporter, PLYExporter, PLYExporte
 export type OnExport = (result: Blob) => void;
 
 export type USDZExporterAnchoringTypes = "plane" | "image" | "face" | "none"
+export type USDZExporterAlignmentTypes = "horizontal" | "vertical" | "any"
 
 export type ExportType = "gltf" | "usdz" | "obj" | "ply" | "stl"
 
-export interface ExportOptions {
+export interface ExportOptions<T extends ExportParameters> {
     type: ExportType,
     selectionOnly: boolean,
     name?: string,
-    parameters?: ExportParameters
+    parameters?: T
 }
 
 export type ExportParameters = GLTFExporterOptions | USDZExporterOptions | PLYExporterOptions | STLExporterOptions
@@ -24,6 +25,7 @@ export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions> = {
     trs: false,
     onlyVisible: true,
     truncateDrawRange: true,
+    // small note: this is false in the default but we want to encourage the usage of the binary format so it will be on for everyone
     binary: true,
     embedImages: true,
     maxTextureSize: Infinity,
@@ -31,11 +33,13 @@ export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions> = {
     forceIndices: false
 };
 
+export const DEFAULT_USDZ_EXPORTER_OPTIONS_AR = {
+    anchoring: { type: 'plane' as "plane" },
+    planeAnchoring: { alignment: 'horizontal' as "horizontal" | "vertical" | "any" }
+}
+
 export const DEFAULT_USDZ_EXPORTER_OPTIONS: Readonly<USDZExporterOptions> = {
-    ar: {
-        anchoring: { type: 'plane' },
-        planeAnchoring: { alignment: 'horizontal' }
-    },
+    ar: { ...DEFAULT_USDZ_EXPORTER_OPTIONS_AR },
     includeAnchoringProperties: true,
     quickLookCompatible: false,
     maxTextureSize: 1024
@@ -55,18 +59,18 @@ export const DEFAULT_STL_EXPORTER_OPTIONS: Readonly<STLExporterOptions> = {
 // # END DEFAULT EXPORT OPTIONS #
 // ##############################
 
-export function doExport(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+export function doExport(scene: THREE.Object3D, options: ExportOptions<ExportParameters>, onExport?: OnExport) {
 
     switch (options.type) {
-        case "gltf": exportGLTF(scene, options, onExport); break;
-        case "usdz": exportUSDZ(scene, options, onExport); break;
+        case "gltf": exportGLTF(scene, options as ExportOptions<GLTFExporterOptions>, onExport); break;
+        case "usdz": exportUSDZ(scene, options as ExportOptions<USDZExporterOptions>, onExport); break;
+        case "stl": exportSTL(scene, options as ExportOptions<STLExporterOptions>, onExport); break;
+        case "ply": exportPLY(scene, options as ExportOptions<PLYExporterOptions>, onExport); break;
         case "obj": exportOBJ(scene, onExport); break;
-        case "stl": exportSTL(scene, options, onExport); break;
-        case "ply": exportPLY(scene, options, onExport); break;
     }
 }
 
-export function exportGLTF(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+export function exportGLTF(scene: THREE.Object3D, options: ExportOptions<GLTFExporterOptions>, onExport?: OnExport) {
     if ((options.parameters as GLTFExporterOptions).binary) {
         exportGLB(scene, options, onExport);
         return;
@@ -75,6 +79,7 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions, onExpo
 
     const animations = getAnimations(scene);
     const optimizedAnims = optimizeAnimations(animations);
+    options.parameters!.animations = optimizedAnims;
 
     exporter.parse(
         scene,
@@ -84,15 +89,15 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions, onExpo
             onExport && onExport(blob);
         },
         (error) => { console.warn(error) },
-        { binary: false, maxTextureSize: options.maxTextureSize || Infinity, animations: optimizedAnims }
+        options.parameters
     );
 }
 
-export function exportGLB(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+export function exportGLB(scene: THREE.Object3D, options: ExportOptions<GLTFExporterOptions>, onExport?: OnExport) {
     const exporter = new GLTFExporter();
     const animations = getAnimations(scene);
     const optimizedAnims = optimizeAnimations(animations);
-
+    options.parameters!.animations = optimizedAnims;
     exporter.parse(
         scene,
         (result) => {
@@ -100,7 +105,7 @@ export function exportGLB(scene: THREE.Object3D, options: ExportOptions, onExpor
             onExport && onExport(blob);
         },
         (error) => { console.warn(error) },
-        { binary: true, maxTextureSize: options.maxTextureSize || Infinity, animations: optimizedAnims, }
+        options.parameters
     );
 }
 
@@ -111,7 +116,7 @@ export function exportOBJ(scene: THREE.Object3D, onExport?: OnExport) {
 }
 
 /** Exported type is always USDA, if we want to support USDC we need to go for a WASM solution which requires implementation that is even way larger than threejs!!! */
-export async function exportUSDZ(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+export async function exportUSDZ(scene: THREE.Object3D, options: ExportOptions<USDZExporterOptions>, onExport?: OnExport) {
     const exporter = new USDZExporter();
     // let computing: boolean = false;
 
@@ -129,7 +134,7 @@ export async function exportUSDZ(scene: THREE.Object3D, options: ExportOptions, 
         }
     })
 
-    exporter.parseAsync(scene, { quickLookCompatible: true, maxTextureSize: options.maxTextureSize || Infinity }).then(
+    exporter.parseAsync(scene, options.parameters).then(
         result => {
             const buffer = result.buffer.slice(result.byteOffset, result.byteLength + result.byteOffset);
             const blob = saveArrayBuffer(buffer);
@@ -139,24 +144,21 @@ export async function exportUSDZ(scene: THREE.Object3D, options: ExportOptions, 
     )
 }
 
-export function exportPLY(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+export function exportPLY(scene: THREE.Object3D, options: ExportOptions<PLYExporterOptions>, onExport?: OnExport) {
     const exporter = new PLYExporter();
-    const binary = options.binary || false;
     exporter.parse(scene,
         result => {
-            const blob = binary ? saveArrayBuffer(result as ArrayBuffer) : saveString(result as string);
+            const blob = options.parameters?.binary ? saveArrayBuffer(result as ArrayBuffer) : saveString(result as string);
             onExport && onExport(blob);
         },
-        { binary: binary }
+        options.parameters
     );
 }
 
-export function exportSTL(scene: THREE.Object3D, options: ExportOptions, onExport?: OnExport) {
+export function exportSTL(scene: THREE.Object3D, options: ExportOptions<STLExporterOptions>, onExport?: OnExport) {
     const exporter = new STLExporter();
-    const binary = options.binary || false;
-
-    const result = exporter.parse(scene, { binary: binary });
-    const blob = binary ? saveArrayBuffer(result as any as ArrayBuffer) : saveString(result as string);
+    const result = exporter.parse(scene, options.parameters);
+    const blob = options.parameters?.binary ? saveArrayBuffer(result as any as ArrayBuffer) : saveString(result as string);
     onExport && onExport(blob);
 }
 

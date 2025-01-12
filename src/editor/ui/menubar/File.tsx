@@ -4,11 +4,11 @@ import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
 import * as THREE from "three";
 import { useEditor } from "@orb_Editor";
 import { doImport } from "@orb_tools/Importer";
-import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, ExportOptions, ExportType, doExport, save } from "@orb_tools/Exporter";
-import { ItemBoolean, ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
+import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS_AR, ExportOptions, ExportParameters, ExportType, USDZExporterAlignmentTypes, USDZExporterAnchoringTypes, doExport, save } from "@orb_tools/Exporter";
+import { ItemBoolean, ItemInput, ItemNumber, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { ConvertModal, textureSizeOptions } from "./Tools";
 import { useViewport } from "src/store/Viewport";
-import { GLTFExporterOptions } from "three/examples/jsm/Addons";
+import { GLTFExporterOptions, USDZExporterOptions } from "three/examples/jsm/Addons";
 
 export const File = () => {
     const { setScene, addObject } = useEditor();
@@ -63,14 +63,28 @@ export const File = () => {
 }
 
 const exportOptions = [
-    { value: 'gltf', label: 'GLTF' },
+    { value: 'gltf', label: 'GLTF / GLB' },
     { value: 'usdz', label: 'USDZ' },
     { value: 'obj', label: 'OBJ' },
     { value: 'ply', label: 'PLY' },
     { value: 'stl', label: 'STL' }
 ]
 
-const exportSettings: ExportOptions = { name: "exportName", type: "gltf", selectionOnly: false, parameters: { ...DEFAULT_GLTF_EXPORTER_OPTIONS } }
+const USDZAlignmentSelect = [
+    { value: "horizontal", label: "horizontal" },
+    { value: "vertical", label: "vertical" },
+    { value: "any", label: "any" }
+] as { value: string, label: string }[];
+
+// @ts-ignore
+const USDZAnchoringSelect = [
+    { value: "plane", label: "plane" },
+    { value: "image", label: "image" },
+    { value: "face", label: "face" },
+    { value: "none", label: "none" }
+] as { value: string, label: string }[];
+
+const exportSettings: ExportOptions<ExportParameters> = { name: "exportName", type: "gltf", selectionOnly: false, parameters: { ...DEFAULT_GLTF_EXPORTER_OPTIONS } }
 
 interface ExportModal {
     open: boolean,
@@ -115,11 +129,21 @@ const ExportModal = (props: ExportModal) => {
                     onChangeSelect={(select) => {
                         exportSettings.type = select as ExportType
                         switch (exportSettings.type) {
-                            case "gltf": exportSettings.parameters = { ...DEFAULT_GLTF_EXPORTER_OPTIONS }; break;
-                            case "usdz": exportSettings.parameters = { ...DEFAULT_USDZ_EXPORTER_OPTIONS }; break;
-                            case "obj": exportSettings.parameters = undefined; break;
-                            case "ply": exportSettings.parameters = { ...DEFAULT_PLY_EXPORTER_OPTIONS }; break;
-                            case "stl": exportSettings.parameters = { ...DEFAULT_STL_EXPORTER_OPTIONS }; break;
+                            case "gltf":
+                                exportSettings.parameters = { ...DEFAULT_GLTF_EXPORTER_OPTIONS };
+                                break;
+                            case "usdz":
+                                exportSettings.parameters = { ...DEFAULT_USDZ_EXPORTER_OPTIONS };
+                                break;
+                            case "obj":
+                                exportSettings.parameters = undefined;
+                                break;
+                            case "ply":
+                                exportSettings.parameters = { ...DEFAULT_PLY_EXPORTER_OPTIONS };
+                                break;
+                            case "stl":
+                                exportSettings.parameters = { ...DEFAULT_STL_EXPORTER_OPTIONS };
+                                break;
                         }
                         setType(exportSettings.type);
                     }}
@@ -127,12 +151,49 @@ const ExportModal = (props: ExportModal) => {
                 {
                     exportSettings.parameters &&
                     <>
-                        <Divider />
+                        <Divider children="Parameters" />
                         {
                             type == "gltf" &&
                             <>
-                                <ItemBoolean variable="binary" object={exportSettings.parameters} />
+                                <ItemBoolean variable="binary" label="Binary" tooltip="Export in binary (.glb) format instead of .gltf" object={exportSettings.parameters} />
+                                <ItemBoolean variable="trs" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="onlyVisible" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="truncateDrawRange" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="embedImages" object={exportSettings.parameters} labelInVariable />
+                                <ItemNumber variable="maxTextureSize" object={exportSettings.parameters} labelInVariable />
+                                {/* to-do maybe make it so users can select animations, for now it will export all animations off of what the model has */}
+                                {/* <ItemBoolean variable="animations" object={exportSettings.parameters} /> */}
+                                <ItemBoolean variable="forceIndices" object={exportSettings.parameters} labelInVariable />
                             </>
+                        }
+                        {
+                            type == "usdz" &&
+                            <>
+                                <ItemBoolean variable="includeAnchoringProperties" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="quickLookCompatible" object={exportSettings.parameters} labelInVariable />
+                                <ItemNumber variable="maxTextureSize" object={exportSettings.parameters} labelInVariable />
+                                <ItemSelect
+                                    disabled={!(exportSettings.parameters as USDZExporterOptions).includeAnchoringProperties}
+                                    object={{ alignment: USDZAlignmentSelect }}
+                                    defaultValue="horizontal"
+                                    variable="alignment" label="Anchor Alignment"
+                                    onChangeSelect={(s) => {
+                                        const p = (exportSettings.parameters as USDZExporterOptions)
+                                        p.ar!.planeAnchoring.alignment = s as USDZExporterAlignmentTypes;
+                                    }}
+                                />
+                            </>
+                        }
+                        {
+                            type == "ply" &&
+                            <>
+                                <ItemBoolean variable="binary" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="littleEndian" object={exportSettings.parameters} labelInVariable />
+                            </>
+                        }
+                        {
+                            type == "stl" &&
+                            <ItemBoolean variable="binary" object={exportSettings.parameters} labelInVariable />
                         }
                     </>
                 }
