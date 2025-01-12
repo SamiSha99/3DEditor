@@ -3,7 +3,8 @@ import { GLTFExporter, GLTFExporterOptions, OBJExporter, PLYExporter, PLYExporte
 
 export type OnExport = (result: Blob) => void;
 
-export type USDZExporterAnchoringTypes = "plane" | "image" | "face" | "none"
+// to-do, is there anything that documents these anchoring types? can we change those?
+export type USDZExporterAnchoringTypes = "plane" | "image" //| "object" // apparently object not supported
 export type USDZExporterAlignmentTypes = "horizontal" | "vertical" | "any"
 
 export type ExportType = "gltf" | "usdz" | "obj" | "ply" | "stl"
