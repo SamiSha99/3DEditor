@@ -33,11 +33,14 @@ export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions> = {
     forceIndices: false
 };
 
+// Based on default source code 
+// https://github.com/mrdoob/three.js/blob/86c3bd390f623005f2fae07b3dca23f904102e05/examples/jsm/exporters/USDZExporter.js#L34-L42
 export const DEFAULT_USDZ_EXPORTER_OPTIONS_AR = {
     anchoring: { type: 'plane' as "plane" },
     planeAnchoring: { alignment: 'horizontal' as "horizontal" | "vertical" | "any" }
 }
 
+// Ditto above
 export const DEFAULT_USDZ_EXPORTER_OPTIONS: Readonly<USDZExporterOptions> = {
     ar: { ...DEFAULT_USDZ_EXPORTER_OPTIONS_AR },
     includeAnchoringProperties: true,
