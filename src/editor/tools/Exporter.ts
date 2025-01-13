@@ -26,8 +26,7 @@ export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions> = {
     trs: false,
     onlyVisible: true,
     truncateDrawRange: true,
-    // small note: this is false in the default but we want to encourage the usage of the binary format so it will be on for everyone
-    binary: true,
+    binary: true, // note: by default false but we want to encourage the usage of the binary format so it will be on for everyone
     embedImages: true,
     maxTextureSize: Infinity,
     animations: undefined,
