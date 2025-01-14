@@ -152,7 +152,7 @@ const ExportModal = (props: ExportModal) => {
                 {
                     exportSettings.parameters &&
                     <>
-                        <Divider children="Parameters" />
+                        <Divider children="Options" />
                         {
                             type == "gltf" &&
                             <>
@@ -199,6 +199,7 @@ const ExportModal = (props: ExportModal) => {
                             type == "stl" &&
                             <ItemBoolean variable="binary" object={exportSettings.parameters} labelInVariable />
                         }
+                        <Divider />
                     </>
                 }
             </Form>
