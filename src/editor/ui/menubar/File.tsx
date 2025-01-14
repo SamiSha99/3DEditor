@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { EditOutlined, ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
+import { EditOutlined, ExportOutlined, ImportOutlined, ReloadOutlined, SwapOutlined } from "@ant-design/icons";
 import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
 import * as THREE from "three";
 import { useEditor } from "@orb_Editor";
 import { doImport } from "@orb_tools/Importer";
 import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, ExportOptions, ExportParameters, ExportType, USDZExporterAlignmentTypes, doExport, save } from "@orb_tools/Exporter";
-import { ItemBoolean, ItemInput, ItemNumber, ItemSelect } from "@orb_UI/controller/ControllerItems";
+import { ItemBoolean, ItemButton, ItemGroup, ItemInput, ItemNumber, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { ConvertModal } from "./Tools";
 import { useViewport } from "src/store/Viewport";
 import { GLTFExporterOptions, USDZExporterOptions } from "three/examples/jsm/Addons";
@@ -97,6 +97,7 @@ const ExportModal = (props: ExportModal) => {
     const { sceneObjects } = useEditor();
     const { target } = useViewport();
     const [type, setType] = useState(exportSettings.type);
+    const [changed, setChanged] = useState(false);
 
     const doDownload = () => {
         const arg = exportSettings;
@@ -118,7 +119,7 @@ const ExportModal = (props: ExportModal) => {
 
     return (
         <Modal title={"Export..."} open={open} onOk={doDownload} onCancel={onCancel}>
-            <Form>
+            <Form colon={false}>
                 <ItemInput object={exportSettings} variable="name" labelInVariable />
                 <ItemBoolean object={exportSettings} variable="selectionOnly" labelInVariable />
                 <ItemSelect
@@ -156,14 +157,17 @@ const ExportModal = (props: ExportModal) => {
                             type == "gltf" &&
                             <>
                                 <ItemBoolean variable="binary" label="Binary" tooltip="Export in binary (.glb) format instead of .gltf" object={exportSettings.parameters} />
-                                <ItemBoolean variable="trs" object={exportSettings.parameters} labelInVariable />
-                                <ItemBoolean variable="onlyVisible" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="trs" object={exportSettings.parameters} label="Transformation" tooltip="Export position, rotation and scale instead of matrix per node." />
+                                <ItemBoolean variable="onlyVisible" object={exportSettings.parameters} label="Visible Only" />
                                 <ItemBoolean variable="truncateDrawRange" object={exportSettings.parameters} labelInVariable />
-                                <ItemBoolean variable="embedImages" object={exportSettings.parameters} labelInVariable />
-                                <ItemNumber variable="maxTextureSize" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="forceIndices" object={exportSettings.parameters} labelInVariable />
+                                <Divider children="Animations" />
+                                <ItemBoolean variable="optimizeAnimations" object={exportSettings.parameters} labelInVariable onChange={() => console.log(exportSettings.parameters)} />
+                                <Divider children="Images" />
+                                <ItemBoolean variable="embedImages" object={exportSettings.parameters} label="Enabled" onChange={() => setChanged(!changed)} />
+                                <ItemNumber variable="maxTextureSize" object={exportSettings.parameters} readonly={!(exportSettings.parameters as GLTFExporterOptions).embedImages} label="Max Size" tooltip="Restricts the image maximum size (both width and height) to the given value. This option works only if Embed Images is true." />
                                 {/* to-do maybe make it so users can select animations, for now it will export all animations off of what the model has */}
                                 {/* <ItemBoolean variable="animations" object={exportSettings.parameters} /> */}
-                                <ItemBoolean variable="forceIndices" object={exportSettings.parameters} labelInVariable />
                             </>
                         }
                         {

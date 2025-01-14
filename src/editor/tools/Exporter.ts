@@ -22,7 +22,11 @@ export type ExportParameters = GLTFExporterOptions | USDZExporterOptions | PLYEx
 // # BEGIN DEFAULT EXPORT OPTIONS #
 // ################################
 
-export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions> = {
+export interface AnimationParameters {
+    optimizeAnimations: boolean,
+}
+
+export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions> | AnimationParameters = {
     trs: false,
     onlyVisible: true,
     truncateDrawRange: true,
@@ -30,7 +34,8 @@ export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions> = {
     embedImages: true,
     maxTextureSize: Infinity,
     animations: undefined,
-    forceIndices: false
+    forceIndices: false,
+    optimizeAnimations: false
 };
 
 // Based on default source code 
@@ -80,9 +85,15 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions<GLTFExp
     }
     const exporter = new GLTFExporter();
 
-    const animations = getAnimations(scene);
-    const optimizedAnims = optimizeAnimations(animations);
-    options.parameters!.animations = optimizedAnims;
+    if (options.parameters) {
+        // undefined? ok, export all of them inside the object
+        // not undefined? ok export what is inside the options.parameters.animations
+        if (options.parameters.animations == undefined)
+            options.parameters.animations = getAnimations(scene);
+
+        if ((options.parameters as AnimationParameters).optimizeAnimations)
+            options.parameters.animations = optimizeAnimations(options.parameters.animations);
+    }
 
     exporter.parse(
         scene,
