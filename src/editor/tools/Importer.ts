@@ -266,7 +266,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                         const group = new THREE.Group();
                         // Load your file. File is of type File
                         const loadedModel = (await loader.loadFile(file, group)).getGroup();
-                        console.log(loadedModel);
+                        console.log("USDC", loadedModel);
                         onImport(loadedModel)
                     }
                     else
