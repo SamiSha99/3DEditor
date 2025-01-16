@@ -64,6 +64,7 @@ const Asset = observer((props: Asset) => {
                 const file = await getFileFromURL(asset.fileUrl, "usdz");
                 doImportFile(file, (result) => {
                     console.log(result);
+                    if (result.name == "") result.name = file.name;
                     addObject(result, true);
                     message.success("Imported USDZ to Scene!");
                 });
@@ -84,6 +85,7 @@ const Asset = observer((props: Asset) => {
                         src={asset.fileThumbnail}
                         typeof="png"
                         preview={false}
+                    // crossOrigin=""
                     />
                     <Tooltip title={open ? "" : asset.fileName}>
                         <div style={{ width: "100%", textOverflow: "ellipsis", overflow: "hidden" }}>

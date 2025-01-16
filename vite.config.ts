@@ -13,7 +13,10 @@ export default defineConfig({
             name: "configure-response-headers",
             configureServer: (server) => {
                 server.middlewares.use((_req, res, next) => {
+                    res.setHeader("Cross-Origin-Embedder-Policy", "credentialless"); // to-do, is this unsafe?
+                    res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
                     res.setHeader("Access-Control-Allow-Origin", "https://storage.googleapis.com/arplatform-99ab9.appspot.com/");
+                    res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
                     next();
                 });
             },

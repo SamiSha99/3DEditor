@@ -4,7 +4,7 @@ import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, 
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 import { isFileImage } from '@orb_utils/Main';
-
+import { USDZLoader as USDCTest } from "three-usdz-loader";
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 
@@ -257,8 +257,18 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                 catch (e) {
                     const s = "" + e;
                     // console.log(e);
-                    if (s.includes(".usdc"))
-                        message.error("USD Crate types not supported.");
+                    if (s.includes(".usdc")) {
+                        // message.error("USD Crate types not supported.");
+                        message.warning("USD Crate detected. We recommend USD Ascii (USDA) for better results.");
+                        const loader = new USDCTest();
+
+                        // Create a ThreeJs Group in which the loaded USDZ model will be placed
+                        const group = new THREE.Group();
+                        // Load your file. File is of type File
+                        const loadedModel = (await loader.loadFile(file, group)).getGroup();
+                        console.log(loadedModel);
+                        onImport(loadedModel)
+                    }
                     else
                         message.error("Failed to load USDZ model.");
                 }
