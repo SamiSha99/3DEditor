@@ -19,9 +19,10 @@ import { IconAnimation, IconGeometry, IconMaterial, IconObject, IconScene } from
 export const Inspector = () => {
     return (
         <Splitter>
-            <Splitter.Panel defaultSize={"70%"} min={"62.5%"} max={"77.5%"}>
+            {/* disabled being resizable */}
+            <Splitter.Panel resizable={false} defaultSize={"70%"} min={"62.5%"} max={"77.5%"}>
                 <Splitter layout="vertical">
-                    <Splitter.Panel defaultSize={"75%"} style={{ display: "flex", position: "relative", overflow: "hidden" }}>
+                    <Splitter.Panel resizable={false} defaultSize={"75%"} style={{ display: "flex", position: "relative", overflow: "hidden" }}>
                         <Canvas />
                         <Overlay />
                         <ControlsBar />
