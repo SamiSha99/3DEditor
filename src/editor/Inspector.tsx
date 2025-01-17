@@ -75,6 +75,9 @@ export const SelectedObject = observer(() => {
 
     useEffect(() => { target && setTab("OBJECT"); !target && setTab(""); }, [target]);
 
+    const isMesh = target != null && (target instanceof THREE.Mesh || (target.constructor.name == "Mesh" && (target as THREE.Mesh).isMesh));
+    const material = (target as THREE.Mesh).material as THREE.Material;
+    const geometry = (target as THREE.Mesh).geometry;
     return (
         <>
             {
@@ -91,10 +94,10 @@ export const SelectedObject = observer(() => {
                                 <Button style={tabCSS} disabled={target == null} children={<IconAnimation />} onClick={() => setTab("ANIMATION")} />
                             </Tooltip>
                             <Tooltip title="Geometry" placement="left">
-                                <Button style={tabCSS} disabled={target == null || !(target instanceof THREE.Mesh) || !target.geometry} children={<IconGeometry />} onClick={() => setTab("GEOMETRY")} />
+                                <Button style={tabCSS} disabled={!isMesh || !geometry} children={<IconGeometry />} onClick={() => setTab("GEOMETRY")} />
                             </Tooltip>
                             <Tooltip title="Material" placement="left">
-                                <Button style={tabCSS} disabled={target == null || !(target instanceof THREE.Mesh) || !target.material} children={<IconMaterial />} onClick={() => setTab("MATERIAL")} />
+                                <Button style={tabCSS} disabled={!isMesh || !material} children={<IconMaterial />} onClick={() => setTab("MATERIAL")} />
                             </Tooltip>
                         </Col>
                         <Col span={23} style={{ maxWidth: "calc(100% - 40px)" }}>
@@ -103,10 +106,10 @@ export const SelectedObject = observer(() => {
                                     {tab == "SCENE" && <InspectorScene />}
                                     {tab == "OBJECT" && target && <InspectorObject3D object={target} />}
                                     {
-                                        target instanceof THREE.Mesh &&
+                                        isMesh &&
                                         <>
-                                            {tab == "MATERIAL" && <InspectorMaterial material={target.material} />}
-                                            {tab == "GEOMETRY" && <InspectorGeometry geometry={target.geometry} />}
+                                            {tab == "MATERIAL" && <InspectorMaterial material={material} />}
+                                            {tab == "GEOMETRY" && <InspectorGeometry geometry={geometry} />}
                                         </>
                                     }
                                     {

@@ -39,7 +39,7 @@
     "react-hotkeys-hook": "^4.5.0",
     "react-use": "^17.5.1",
     "styled-components": "^6.1.11",
-    "three": "^0.169.0",
+    "three": "^0.172.0",
     "three-usdz-loader": "^1.0.9",
     "tsc-alias": "^1.8.10",
     "tweakpane": "^4.0.3",

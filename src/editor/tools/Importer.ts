@@ -263,11 +263,11 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                         const loader = new USDCTest();
 
                         // Create a ThreeJs Group in which the loaded USDZ model will be placed
-                        const group = new THREE.Group();
                         // Load your file. File is of type File
-                        const loadedModel = (await loader.loadFile(file, group)).getGroup();
-                        console.log("USDC", loadedModel);
-                        onImport(loadedModel)
+                        const loadedModel = (await loader.loadFile(file, new THREE.Group()));
+                        const group = loadedModel.getGroup().clone(true);
+                        // loadedModel.clear();
+                        onImport(group)
                     }
                     else
                         message.error("Failed to load USDZ model.");

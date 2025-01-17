@@ -71,6 +71,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
 
             </ItemCollapse >
             <ItemCollapse label={"Object3D"} alwaysOpen>
+                <ItemInput object={{ type: object.constructor.name }} variable="type" labelInVariable readonly />
                 <ItemInput object={object} variable="name" labelInVariable />
                 <ItemNumber object={{ id: object.id }} variable="id" label="ID" readonly />
                 <ItemGroup label="UUID" sizes={["66.666%", "33.334%"]}>
