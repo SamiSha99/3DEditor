@@ -268,13 +268,14 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                         const loader = new USDC_Loader();
                         const loadedModel = (await loader.loadFile(file, new THREE.Group()));
                         const group = loadedModel.getGroup().clone(true);
+
                         // wait a little for textures/materials to be loaded
                         await sleep(50);
                         // convert object result
                         doExport(group, {
-                            type: "usdz"
+                            type: "gltf", parameters: { binary: true }
                         }, (b) => {
-                            const filydummy = new File([b], file.name);
+                            const filydummy = new File([b], file.name + ".glb");
                             doImportFile(filydummy, (o) => { o.name = file.name; onImport(o) });
                             loadedModel.clear();
                         })

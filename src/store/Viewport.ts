@@ -81,6 +81,8 @@ export class Viewport {
         this.target = object;
         this.target && this.targetBoundingBox.setFromObject(this.target);
 
+        console.log("new target =>", this.target);
+
         this.transforming = false;
         this.cameraControls.enabled = true;
         if (object) {
