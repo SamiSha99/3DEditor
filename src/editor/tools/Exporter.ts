@@ -11,7 +11,7 @@ export type ExportType = "gltf" | "usdz" | "obj" | "ply" | "stl"
 
 export interface ExportOptions<T extends ExportParameters> {
     type: ExportType,
-    selectionOnly: boolean,
+    selectionOnly?: boolean,
     name?: string,
     parameters?: T
 }

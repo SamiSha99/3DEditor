@@ -3,8 +3,11 @@ import { message } from 'antd';
 import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader, RGBELoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
-import { isFileImage } from '@orb_utils/Main';
-import { USDZLoader as USDCTest } from "three-usdz-loader";
+import { isFileImage, sleep } from '@orb_utils/Main';
+import { USDZLoader as USDC_Loader } from "three-usdz-loader";
+import { doConvert } from './Converter';
+import { doExport } from './Exporter';
+import { blob } from 'stream/consumers';
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 
@@ -244,30 +247,37 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
             break;
         case ".usdz":
         case ".usda":
+        case ".usdc":
         case ".usd":
             reader.addEventListener('load', async function (event) {
 
                 const contents = event.target?.result as string | ArrayBuffer;
-
                 try {
                     const group = new USDZLoader(manager).parse(contents);
                     group.name = file.name;
                     onImport(group);
                 }
-                catch (e) {
-                    const s = "" + e;
-                    // console.log(e);
-                    if (s.includes(".usdc")) {
-                        // message.error("USD Crate types not supported.");
-                        message.warning("USD Crate detected. We recommend USD Ascii (USDA) for better results.");
-                        const loader = new USDCTest();
-
-                        // Create a ThreeJs Group in which the loaded USDZ model will be placed
-                        // Load your file. File is of type File
+                catch (err) {
+                    // A hack to avoid massive amount of inexplainable bugs that I don't want to tackle with
+                    // Loads the file via a three-usdz-loader fork that syncs with threejs version
+                    // waits 0.05 seconds for textures/materials to load
+                    // then convert it to USD ASCII type and import it immediatly
+                    // nothing of the model should be lost
+                    if (("" + err).includes(".usdc")) {
+                        message.warning("Crate type detected (USDC). We recommend USD ASCII (USDA) whenever possible for better results!", 5);
+                        const loader = new USDC_Loader();
                         const loadedModel = (await loader.loadFile(file, new THREE.Group()));
                         const group = loadedModel.getGroup().clone(true);
-                        // loadedModel.clear();
-                        onImport(group)
+                        // wait a little for textures/materials to be loaded
+                        await sleep(50);
+                        // convert object result
+                        doExport(group, {
+                            type: "usdz"
+                        }, (b) => {
+                            const filydummy = new File([b], file.name);
+                            doImportFile(filydummy, (o) => { o.name = file.name; onImport(o) });
+                            loadedModel.clear();
+                        })
                     }
                     else
                         message.error("Failed to load USDZ model.");
