@@ -231,16 +231,20 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                 const contents = event.target?.result as string | ArrayBuffer;
                 const loader = createGLTFLoader();
                 console.log(contents);
-                loader.parse(contents, '', function (result) {
+                loader.parse(contents, '',
+                    (result) => {
 
-                    const scene = result.scene;
-                    scene.name = file.name;
-                    scene.userData = result.userData;
-                    scene.animations.push(...result.animations);
-                    loader.dracoLoader?.dispose();
-                    onImport(scene);
-                    return scene;
-                });
+                        const scene = result.scene;
+                        scene.name = file.name;
+                        scene.userData = result.userData;
+                        scene.animations.push(...result.animations);
+                        loader.dracoLoader?.dispose();
+                        onImport(scene);
+                        return scene;
+                    },
+                    (error) => {
+                        message.error("Failed to load .glb file. [" + error + "]");
+                    });
 
             }, false);
             reader.readAsArrayBuffer(file);
@@ -250,7 +254,6 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
         case ".usdc":
         case ".usd":
             reader.addEventListener('load', async function (event) {
-
                 const contents = event.target?.result as string | ArrayBuffer;
                 try {
                     const group = new USDZLoader(manager).parse(contents);
@@ -261,8 +264,8 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                     // A hack to avoid massive amount of inexplainable bugs that I don't want to tackle with
                     // Loads the file via a three-usdz-loader fork that syncs with threejs version
                     // waits 0.05 seconds for textures/materials to load
-                    // then convert it to USD ASCII type and import it immediatly
-                    // nothing of the model should be lost
+                    // then convert it to GLB and import it immediatly
+                    // nothing of the model should be technically lost
                     if (("" + err).includes(".usdc")) {
                         message.warning("Crate type detected (USDC). We recommend USD ASCII (USDA) whenever possible for better results!", 5);
                         const loader = new USDC_Loader();
@@ -272,30 +275,22 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                         // wait a little for textures/materials to be loaded
                         await sleep(50);
                         // convert object result
-                        doExport(group, {
-                            type: "gltf", parameters: { binary: true }
-                        }, (b) => {
-                            const filydummy = new File([b], file.name + ".glb");
-                            doImportFile(filydummy, (o) => { o.name = file.name; onImport(o) });
-                            loadedModel.clear();
-                        })
+                        doExport(group, { type: "gltf", parameters: { binary: true } },
+                            (b) => {
+                                const filydummy = new File([b], file.name + ".glb");
+                                doImportFile(filydummy, (o) => { o.name = file.name; onImport(o) });
+                                loadedModel.clear();
+                            })
                     }
                     else
                         message.error("Failed to load USDZ model.");
                 }
-
-            }, false);
-            reader.addEventListener('error', async function (event) {
-
-                message.error("" + event.target);
             }, false);
             reader.readAsArrayBuffer(file);
             break;
         case ".obj":
             reader.addEventListener('load', async function (event) {
-
                 const contents = event.target?.result as string;
-
                 const group = new OBJLoader().parse(contents);
                 group.name = file.name;
                 if (group.children.length <= 0)
