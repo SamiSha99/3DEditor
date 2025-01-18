@@ -101,7 +101,7 @@ const EditorHelpers = observer(() => {
                         </group>
                     </group>
                 }
-                {boundingBoxEnabled && <box3Helper box={targetBoundingBox} />}
+                {boundingBoxEnabled && target && <box3Helper box={targetBoundingBox} />}
                 <primitive object={controls.getHelper()} />
                 {gridEnabled && <primitive object={grid} />}
             </group>
