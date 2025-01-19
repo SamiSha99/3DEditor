@@ -19,7 +19,6 @@ export class Viewport {
     /** Currently selected Objects */
     @observable target: THREE.Object3D | null = null;
 
-
     targetLastPlace: THREE.Vector3 | null = null;
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -34,7 +33,7 @@ export class Viewport {
     grid = new THREE.Group().add(
         new THREE.GridHelper(100, 100, 0x2080ff, 0x2080ff),
         new THREE.Mesh(
-            new THREE.BoxGeometry(0.5, 0.0005, 0.5),
+            new THREE.BoxGeometry(0.25, 0.0005, 0.25),
             new THREE.MeshBasicMaterial({ color: "red" })
         )
     )
