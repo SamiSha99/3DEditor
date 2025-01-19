@@ -6,7 +6,7 @@ import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 import { isFileImage, sleep } from '@orb_utils/Main';
 import { USDZLoader as USDC_Loader } from "three-usdz-loader";
 import { doConvert } from './Converter';
-import { doExport } from './Exporter';
+import { doExport, save } from './Exporter';
 import { blob } from 'stream/consumers';
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
@@ -271,14 +271,18 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                         const loader = new USDC_Loader("wasm");
                         const loadedModel = (await loader.loadFile(file, new THREE.Group()));
                         const group = loadedModel.getGroup().clone(true);
-
-                        // wait a little for textures/materials to be loaded
                         await sleep(50);
-                        // convert object result
                         doExport(group, { type: "gltf", parameters: { binary: true } },
                             (b) => {
                                 const filydummy = new File([b], file.name + ".glb");
-                                doImportFile(filydummy, (o) => { o.name = file.name; onImport(o) });
+                                doImportFile(filydummy, (o) => {
+                                    o.name = file.name;
+                                    onImport(o)
+                                    doExport(o, { type: "usdz", parameters: { maxTextureSize: 512 } }, (b) => {
+
+                                        save(b, "burger_but_ascii_x512.usdz");
+                                    })
+                                });
                                 loadedModel.clear();
                             })
                     }

@@ -38,6 +38,7 @@
     "react-use": "^17.5.1",
     "styled-components": "^6.1.11",
     "three": "^0.172.0",
+    "three-subdivide": "^1.1.5",
     "three-usdz-loader": "github:samisha99/three-usdz-loader",
     "tsc-alias": "^1.8.10",
     "vite-plugin-top-level-await": "^1.4.1",
