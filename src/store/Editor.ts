@@ -5,7 +5,6 @@ import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
 import { IModelFileResponse } from './Interfaces';
 import { DEBUG_STORAGE_MODALS_TEST } from './Data';
-import { evaluateFormula } from '@orb_utils/Math';
 
 export const EditorContext = createContext<Editor>({} as any)
 export const useEditor = () => useContext(EditorContext);
@@ -52,7 +51,7 @@ export class Editor {
             const DEBUGGING = false;
             const b = Box();
             const box = this.addObject(b);
-            loadEnvironmentSample('city').then((o) => o && this.setEnvironment(o.data))
+            loadEnvironmentSample('sky').then((o) => o && this.setEnvironment(o.data))
             this.viewport.setTarget(box);
             if (DEBUGGING) {
                 const group = geometryPositionToText(b.geometry, 2)

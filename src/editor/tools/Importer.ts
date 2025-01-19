@@ -268,7 +268,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                     // nothing of the model should be technically lost
                     if (("" + err).includes(".usdc")) {
                         message.warning("Crate type detected (USDC). We recommend USD ASCII (USDA) whenever possible for better results!", 5);
-                        const loader = new USDC_Loader();
+                        const loader = new USDC_Loader("wasm");
                         const loadedModel = (await loader.loadFile(file, new THREE.Group()));
                         const group = loadedModel.getGroup().clone(true);
 
