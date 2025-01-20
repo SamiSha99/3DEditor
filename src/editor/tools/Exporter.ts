@@ -16,7 +16,7 @@ export interface ExportOptions<T extends ExportParameters> {
     parameters?: T
 }
 
-export type ExportParameters = GLTFExporterOptions | USDZExporterOptions | PLYExporterOptions | STLExporterOptions
+export type ExportParameters = GLTFExporterOptions & AnimationParameters | USDZExporterOptions | PLYExporterOptions | STLExporterOptions
 
 // ################################
 // # BEGIN DEFAULT EXPORT OPTIONS #
