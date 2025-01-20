@@ -368,10 +368,11 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
     for (const path in zip) {
         const file = zip[path];
         const manager = new THREE.LoadingManager();
+
         manager.setURLModifier((url) => {
             const file = zip[url];
             if (file) {
-                const blob = new Blob([file.buffer], { type: 'application/octet-stream' });
+                const blob = new Blob([file.buffer as ArrayBuffer], { type: 'application/octet-stream' });
                 return URL.createObjectURL(blob);
             }
             return url;
@@ -383,14 +384,14 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
 
             case ".fbx": {
                 const loader = new FBXLoader(manager);
-                const object = loader.parse(file.buffer, path);
+                const object = loader.parse(file.buffer as ArrayBuffer, path);
                 onImport(object);
                 break;
             }
 
             case ".glb": {
                 const loader = createGLTFLoader();
-                loader.parse(file.buffer, '', result => {
+                loader.parse(file.buffer as ArrayBuffer, '', result => {
                     const scene = result.scene;
                     scene.animations.push(...result.animations);
                     onImport(scene);
@@ -465,7 +466,7 @@ function createFilesMap(files: File[]) {
 }
 
 function createGLTFLoader(manager: THREE.LoadingManager | undefined = undefined) {
-    const dracoLoader = new DRACOLoader();
+    const dracoLoader = new DRACOLoader(manager);
     dracoLoader.setDecoderPath('../examples/jsm/libs/draco/gltf/');
 
     const ktx2Loader = new KTX2Loader(manager);
