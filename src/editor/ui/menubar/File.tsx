@@ -113,7 +113,7 @@ const ExportModal = (props: ExportModal) => {
         }
         if (!selection) message.warning('No selection detected with "export selection", make sure you are selecting an Object before export.')
 
-        doExport(selection as THREE.Object3D, exportSettings, (blob) => save(blob, arg.name + "." + (arg.type == "gltf" && (arg.parameters as GLTFExporterOptions).binary ? "glb" : "gltf")));
+        doExport(selection as THREE.Object3D, exportSettings, (blob) => save(blob, arg.name + "." + (arg.type == "gltf" && (arg.parameters as GLTFExporterOptions).binary ? "glb" : arg.type)));
         onSubmit();
     }
 
