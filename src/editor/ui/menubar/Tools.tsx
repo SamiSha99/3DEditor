@@ -160,7 +160,7 @@ export const ConvertModal = (props: ConvertModalInterface) => {
         const list = fileList as any as FileList;
         const res = exportSettings;
         if (fileList) {
-            CONVERTER.doConvertFileList(list, { type: res.type as EXPORTER.ExportType, name: res.name, maxTextureSize: res.textureSize }, (blob) => {
+            CONVERTER.doConvertFileList(list, { type: res.type as EXPORTER.ExportType, name: res.name /*, maxTextureSize: res.textureSize*/ }, (blob) => {
                 EXPORTER.save(blob, (res.name || "export") + "." + res.type)
             });
         }
