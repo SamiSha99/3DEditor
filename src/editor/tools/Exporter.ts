@@ -26,7 +26,13 @@ export interface AnimationParameters {
     optimizeAnimations: boolean,
 }
 
-export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions> | AnimationParameters = {
+export interface GeometryParameters {
+    // to-do
+}
+
+export interface GLTFExporterOptionsNew extends GLTFExporterOptions, AnimationParameters { }
+
+export const DEFAULT_GLTF_EXPORTER_OPTIONS: Readonly<GLTFExporterOptions & AnimationParameters> = {
     trs: false,
     onlyVisible: true,
     truncateDrawRange: true,
