@@ -50,7 +50,7 @@ export class Editor {
             const DEBUGGING = false;
             const b = Box();
             const box = this.addObject(b);
-            loadEnvironmentSample('forest').then((o) => o && this.setEnvironment(o.data))
+            loadEnvironmentSample('forest').then((o) => o && this.setEnvironment(o.data));
             this.viewport.setTarget(box);
             if (DEBUGGING) {
                 const { geometryPositionToText } = await import("@orb_utils/Mesh.ts");
