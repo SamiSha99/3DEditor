@@ -81,7 +81,7 @@ export function Dodecahedron(
     material = new THREE.MeshStandardMaterial()
 ) {
     const mesh = new THREE.Mesh(new THREE.DodecahedronGeometry(radius, detail), material);
-    mesh.name = "Tetrahedron";
+    mesh.name = "Dodecahedron";
     return mesh;
 }
 
@@ -90,7 +90,7 @@ export function Octahedron(
     material = new THREE.MeshStandardMaterial()
 ) {
     const mesh = new THREE.Mesh(new THREE.OctahedronGeometry(radius, detail), material);
-    mesh.name = "Tetrahedron";
+    mesh.name = "Octahedron";
     return mesh;
 }
 
