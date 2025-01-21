@@ -5,9 +5,7 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 import { isFileImage, sleep } from '@orb_utils/Main';
 import { USDZLoader as USDC_Loader } from "three-usdz-loader";
-import { doConvert } from './Converter';
 import { doExport, save } from './Exporter';
-import { blob } from 'stream/consumers';
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 
