@@ -275,11 +275,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                                 const filydummy = new File([b], file.name + ".glb");
                                 doImportFile(filydummy, (o) => {
                                     o.name = file.name;
-                                    onImport(o)
-                                    doExport(o, { type: "usdz", parameters: { maxTextureSize: 512 } }, (b) => {
-
-                                        save(b, "burger_but_ascii_x512.usdz");
-                                    })
+                                    onImport(o);
                                 });
                                 loadedModel.clear();
                             })
