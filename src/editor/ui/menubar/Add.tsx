@@ -37,8 +37,11 @@ export const Add = () => {
                             { label: 'Pyramid', key: 'Pyramid', onClick: () => onCreate(GEOMETRY.Pyramid()) },
                             { label: 'Plane', key: 'Plane', onClick: () => onCreate(GEOMETRY.Plane()) },
                             { label: 'Capsule', key: 'Capsule', onClick: () => onCreate(GEOMETRY.Capsule()) },
+                            { label: 'Torus', key: 'Torus', onClick: () => onCreate(GEOMETRY.Torus()) },
+                            { label: 'Tetrahedron', key: 'Tetrahedron', onClick: () => onCreate(GEOMETRY.Tetrahedron()) },
+                            { label: 'Dodecahedron', key: 'Dodecahedron', onClick: () => onCreate(GEOMETRY.Dodecahedron()) },
+                            { label: 'Octahedron', key: 'Octahedron', onClick: () => onCreate(GEOMETRY.Octahedron()) },
                             { label: 'Icosahedron', key: 'Icosahedron', onClick: () => onCreate(GEOMETRY.Icosahedron()) },
-                            { label: 'Torus', key: 'Torus', onClick: () => onCreate(GEOMETRY.Torus()) }
                         ]
                     },
                     {

@@ -69,9 +69,8 @@ export const Tools = observer(() => {
                             icon: <ICONS.CloudOutlined />,
                             onClick: () => {
                                 IMPORTER.doImportTexture((res) => {
-
                                     const mat = new THREE.MeshStandardMaterial({ map: res });
-                                    const sphere = Sphere({ heightSegments: 32 }, mat);
+                                    const sphere = Sphere([, , 32], mat);
                                     sphere.name = "Skydome"
                                     invertGeometry(sphere.geometry);
 
