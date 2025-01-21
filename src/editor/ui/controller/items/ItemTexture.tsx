@@ -57,6 +57,7 @@ export const ItemTexture = (props: TextureInterface) => {
 
     const requestUploadTexture = () => {
         doImportTexture((texture) => {
+            !hdr && (texture.flipY = false);
             object[variable] = texture;
             (object[variable] as Texture).needsUpdate = true;
             if (object[variable])
