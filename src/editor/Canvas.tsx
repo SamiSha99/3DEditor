@@ -3,9 +3,8 @@ import { Canvas as R3FC } from '@react-three/fiber';
 import { useEditor } from "@orb_Editor";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { GizmoHelper, GizmoViewport, Line, Sphere, StatsGl } from "@react-three/drei";
+import { GizmoHelper, GizmoViewport, Line, Sphere } from "@react-three/drei";
 import { useRef, useState } from "react";
-import React from "react";
 import { useViewport } from "src/store/Viewport";
 import { Perf } from 'r3f-perf'
 
