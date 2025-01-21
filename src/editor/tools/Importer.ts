@@ -80,7 +80,7 @@ export function importTexture(file: File, onImport: OnImport<THREE.Texture>) {
             url,
             (res) => {
                 res.colorSpace = THREE.SRGBColorSpace;
-                res.flipY = true;
+                // res.flipY = true;
                 res.needsUpdate = true;
                 onImport(res);
                 URL.revokeObjectURL(url);
@@ -270,7 +270,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                         const loadedModel = (await loader.loadFile(file, new THREE.Group()));
                         const group = loadedModel.getGroup().clone(true);
                         await sleep(50);
-                        doExport(group, { type: "gltf", parameters: { binary: true } },
+                        doExport(group.children[0], { type: "gltf", parameters: { binary: true } },
                             (b) => {
                                 const filydummy = new File([b], file.name + ".glb");
                                 doImportFile(filydummy, (o) => {
