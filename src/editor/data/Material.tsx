@@ -10,6 +10,7 @@ import { useEditor } from '@orb_Editor';
 import { action } from 'mobx';
 import { EyeOutlined } from '@ant-design/icons';
 import { passParameters } from '@orb_utils/Material';
+import { computeAllVertexNormals } from '@orb_utils/Mesh';
 
 const needsUpdate = (m: THREE.Material) => { m.needsUpdate = true; }
 
@@ -138,8 +139,7 @@ export const MaterialSetter = observer((props: MaterialSetter) => {
             const oldMaterial = target.material as THREE.Material;
             passParameters(oldMaterial, mat);
             target.material = mat;
-            if (target.material)
-                (target.material as THREE.Material).needsUpdate = true;
+            needsUpdate(mat);
             onSet && onSet(mat)
             oldMaterial.dispose();
         }
