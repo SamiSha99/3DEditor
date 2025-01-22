@@ -20,4 +20,5 @@ export const passParameters = (from: THREE.Material, to: THREE.Material) => {
             (to as any)[c] = (from as any)[c];
         }
     });
+    to.needsUpdate = true;
 }
