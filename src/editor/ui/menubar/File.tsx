@@ -103,8 +103,9 @@ const ExportModal = (props: ExportModal) => {
         const arg = exportSettings;
         console.log("Export settings:\n", arg);
         let selection: THREE.Object3D | null;
-        if (arg.selectionOnly)
+        if (arg.selectionOnly) {
             selection = target;
+        }
         else {
             const sceneExport = new THREE.Scene();
             if (sceneObjects)

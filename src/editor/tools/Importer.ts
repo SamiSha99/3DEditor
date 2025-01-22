@@ -231,7 +231,6 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                 console.log(contents);
                 loader.parse(contents, '',
                     (result) => {
-
                         const scene = result.scene;
                         scene.name = file.name;
                         scene.userData = result.userData;
@@ -386,6 +385,7 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
             case ".glb": {
                 const loader = createGLTFLoader();
                 loader.parse(file.buffer as ArrayBuffer, '', result => {
+                    console.log("test", result);
                     const scene = result.scene;
                     scene.animations.push(...result.animations);
                     onImport(scene);

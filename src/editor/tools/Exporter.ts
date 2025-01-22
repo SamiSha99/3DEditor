@@ -115,9 +115,17 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions<GLTFExp
 
 export function exportGLB(scene: THREE.Object3D, options: ExportOptions<GLTFExporterOptions>, onExport?: OnExport) {
     const exporter = new GLTFExporter();
-    const animations = getAnimations(scene);
-    const optimizedAnims = optimizeAnimations(animations);
-    options.parameters!.animations = optimizedAnims;
+
+    if (options.parameters) {
+        // undefined? ok, export all of them inside the object
+        // not undefined? ok export what is inside the options.parameters.animations
+        if (options.parameters.animations == undefined)
+            options.parameters.animations = getAnimations(scene);
+
+        if ((options.parameters as AnimationParameters).optimizeAnimations)
+            options.parameters.animations = optimizeAnimations(options.parameters.animations);
+    }
+
     exporter.parse(
         scene,
         (result) => {
