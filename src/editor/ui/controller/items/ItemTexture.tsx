@@ -33,7 +33,7 @@ export const ItemTexture = (props: TextureInterface) => {
 
     const makeImageObject = (t: Texture) => {
         const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         ctx?.clearRect(0, 0, canvas.width, canvas.height);
         if (!t) return;
         const width = t.image.width;
@@ -144,7 +144,7 @@ function renderToCanvas(texture: DataTexture) {
 
     (fsQuad.material as MeshBasicMaterial).map = texture;
     fsQuad.render(renderer);
-
+    fsQuad.dispose();
     return renderer.domElement;
 
 }
