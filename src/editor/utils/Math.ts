@@ -40,8 +40,8 @@ export const quaternionFromNormal = (normal: THREE.Vector3Like) => {
     return quaternion;
 }
 
-type QuatToVector3Direction = "forward" | "up" | "left";
-/** Returns the vector of the passed quaternion */
+type QuatToVector3Direction = "up" | "forward" | "left";
+/** Returns the vector of the passed quaternion via direction, default direction is "up" */
 export const quaternionToVector3 = (q: THREE.Quaternion, direction: QuatToVector3Direction = "up") => {
     const v = new THREE.Vector3();
 

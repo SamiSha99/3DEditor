@@ -45,7 +45,7 @@ export const InspectorMaterial = observer((props: Material) => {
         }
     });
 
-    const dataSource = references ? references.map((r, i) => {
+    const dataSource = references ? references.map((r, _i) => {
         return {
             index: r.id,
             name: r.name,

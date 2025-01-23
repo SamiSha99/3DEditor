@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import HelvetikerFont from "three/examples/fonts/helvetiker_regular.typeface.json";
 import { BufferGeometryUtils, FontLoader } from 'three/examples/jsm/Addons';
-import { message } from 'antd';
 import { Range } from '@orb_types';
 
 export function computeVertexNormals(o: THREE.Object3D) {
@@ -70,17 +69,15 @@ export function geometryVertexPositionToText(geometry: THREE.BufferGeometry) {
         console.warn(`Passed geometry has no position attribute (vertices).`)
         return group;
     }
-    console.log("ATTRIBUTES", geometry.attributes);
-    console.log("INDEX", geometry.index);
-    // console.log(positionAttribute);
+
     geometry.computeVertexNormals();
     const positionAttribute = geometry.getAttribute('position');
     const vertex = new THREE.Vector3();
-    message.info(`[DEBUGGIN] => count = ${positionAttribute.count} | size = ${positionAttribute.itemSize}`)
     for (let i = 0; i < positionAttribute.count; i++) {
         vertex.fromBufferAttribute(positionAttribute, i);
         group.add(positionToText({ index: i, position: vertex, setPosition: true, showPosition: false }));
     }
+
     group.renderOrder = 0;
     group.name = "debug_vertices (" + positionAttribute.count + ")";
     return group;
@@ -96,7 +93,7 @@ export function mergeVertices(geometry: THREE.BufferGeometry, tolerance?: number
 export function geometryFacePositionToText(geometry: THREE.BufferGeometry) {
     const group = new THREE.Group();
     if (!geometry.hasAttribute('position')) {
-        console.warn(`Passed geometry has no position attribute (vertices) to find their faces.`)
+        console.warn(`Passed geometry has no position attribute (vertices) to find their faces.`);
         return group;
     }
     const positionAttribute = geometry.getAttribute('position');
@@ -104,13 +101,13 @@ export function geometryFacePositionToText(geometry: THREE.BufferGeometry) {
     const vertex = new THREE.Vector3();
     const face = new THREE.Vector3();
     for (let i = 0; i < indexAttribute.length / 3; i++) {
-            face.set(0, 0, 0);
-            const i3 = i * 3;
-            face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3]));
-            face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3 + 1]));
-            face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3 + 2]));
-            face.divideScalar(3);
-            group.add(positionToText({ index: i, position: face, setPosition: true, showPosition: false, color: new THREE.Color(0xFF4D01) }));
+        face.set(0, 0, 0);
+        const i3 = i * 3;
+        face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3]));
+        face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3 + 1]));
+        face.add(vertex.fromBufferAttribute(positionAttribute, indexAttribute[i3 + 2]));
+        face.divideScalar(3);
+        group.add(positionToText({ index: i, position: face, setPosition: true, showPosition: false, color: new THREE.Color(0xFF4D01) }));
     }
     group.renderOrder = 0;
     group.name = "debug_faces (" + indexAttribute.length / 3 + ")";
