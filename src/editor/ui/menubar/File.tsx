@@ -1,23 +1,20 @@
 import { useState } from "react";
-import { EditOutlined, ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
+import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
 import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
 import * as THREE from "three";
 import { useEditor } from "@orb_Editor";
 import { doImport } from "@orb_tools/Importer";
 import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, ExportOptions, ExportParameters, ExportType, USDZExporterAlignmentTypes, doExport, save } from "@orb_tools/Exporter";
 import { ItemBoolean, ItemInput, ItemNumber, ItemSelect } from "@orb_UI/controller/ControllerItems";
-import { ConvertModal } from "./Tools";
 import { useViewport } from "src/store/Viewport";
 import { GLTFExporterOptions, USDZExporterOptions } from "three/examples/jsm/Addons";
 
 export const File = () => {
     const { setScene, addObject } = useEditor();
     const [modalExport, toggleModalExport] = useState(false);
-    const [modalConvert, toggleModalConvert] = useState(false);
     return (
         <>
             <ExportModal open={modalExport} onSubmit={() => toggleModalExport(false)} onCancel={() => toggleModalExport(false)} />
-            <ConvertModal open={modalConvert} onCancel={() => toggleModalConvert(false)} onSubmit={() => toggleModalConvert(false)} />
             <Dropdown
                 trigger={["click"]}
                 children={<Button children={"File"} />}
@@ -50,12 +47,12 @@ export const File = () => {
                             icon: <ExportOutlined />,
                             onClick: () => toggleModalExport(true)
                         },
-                        {
-                            label: 'Convert...',
-                            key: '3',
-                            icon: <EditOutlined />,
-                            onClick: () => toggleModalConvert(true)
-                        },
+                        // {
+                        //     label: 'Convert...',
+                        //     key: '3',
+                        //     icon: <EditOutlined />,
+                        //     onClick: () => toggleModalConvert(true)
+                        // },
                     ]
                 }} />
         </>
