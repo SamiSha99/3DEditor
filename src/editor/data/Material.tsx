@@ -7,10 +7,8 @@ import { Alert, Button, Divider, Table } from 'antd';
 import { ItemColor } from '@orb_UI/controller/items/ItemColor';
 import { useViewport } from 'src/store/Viewport';
 import { useEditor } from '@orb_Editor';
-import { action } from 'mobx';
 import { EyeOutlined } from '@ant-design/icons';
 import { passParameters } from '@orb_utils/Material';
-import { computeAllVertexNormals } from '@orb_utils/Mesh';
 
 const needsUpdate = (m: THREE.Material) => { m.needsUpdate = true; }
 
