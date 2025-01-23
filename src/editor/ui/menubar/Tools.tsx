@@ -8,7 +8,7 @@ import * as EXPORTER from '@orb_tools/Exporter'
 import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
 import { Sphere } from "@orb_tools/create/Primitive";
-import { invertGeometry } from "src/editor/utils/Mesh";
+import { invertGeometry } from "@orb_utils/Geometry";
 import { PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { useViewport } from "src/store/Viewport";

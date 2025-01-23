@@ -53,7 +53,7 @@ export class Editor {
             loadEnvironmentSample('forest').then((o) => o && this.setEnvironment(o.data));
             this.viewport.setTarget(box);
             if (DEBUGGING) {
-                const { geometryPositionToText } = await import("@orb_utils/Mesh.ts");
+                const { geometryPositionToText } = await import("@orb_utils/Geometry");
                 const group = geometryPositionToText(b.geometry, 2)
                 group && this.addHelper(group);
             }
