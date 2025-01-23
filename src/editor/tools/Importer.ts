@@ -6,6 +6,7 @@ import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 import { isFileImage, sleep } from '@orb_utils/Main';
 import { USDZLoader as USDC_Loader } from "three-usdz-loader";
 import { doExport, save } from './Exporter';
+import { computeAllVertexNormals } from '@orb_utils/Mesh';
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 
@@ -255,6 +256,11 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                 try {
                     const group = new USDZLoader(manager).parse(contents);
                     group.name = file.name;
+                    // this isn't normal, no pun intended
+                    // material result requires vertex normals to be computed to look normal? why?
+                    // same problem on https://threejs.org/editor/ ... why?????
+                    // :peeposad:
+                    computeAllVertexNormals(group);
                     onImport(group);
                 }
                 catch (err) {

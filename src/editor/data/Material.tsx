@@ -95,6 +95,8 @@ export const InspectorMaterial = observer((props: Material) => {
                         <ItemBoolean object={meshMaterial} variable="transparent" labelInVariable onChange={() => { needsUpdate(meshMaterial) }} />
                         <ItemNumber object={meshMaterial} variable="opacity" labelInVariable limit={LIMIT_01} />
                         <ItemBoolean object={meshMaterial} variable="visible" labelInVariable />
+                        <ItemBoolean object={meshMaterial} variable="vertexColors" labelInVariable onChange={() => { needsUpdate(meshMaterial) }} />
+
                     </>
                 }
             </ItemCollapse>
@@ -375,11 +377,10 @@ interface MeshPhysicalMaterial {
 
 const PhysicalMaterial = observer((props: MeshPhysicalMaterial) => {
     const { material } = props;
-    material.transmission = 1;
+    // material.transmission = 1;
     return (
         <>
             <StandardMaterial material={material} />
-            {/* to-do add physical material */}
         </>
     )
 })
