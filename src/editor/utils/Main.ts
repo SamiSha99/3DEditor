@@ -1,17 +1,20 @@
 /** Asynched sleep. */
 export const sleep = (delay: number) => new Promise((resolve) => setTimeout(resolve, delay));
-/** Returns a number with X amount of decimals, stripped from unnecessary 0s */
+/** Returns a number with X amount of decimals, stripped from unnecessary 0s. */
 export const toFixedStripped = (value: number | string, fractionDigits: number) => { return parseFloat((typeof value == 'string' ? parseFloat(value) : value).toFixed(fractionDigits)).toString(); }
-
+/** Checks if the file is an image. */
 export const isFileImage = (file: File) => { return file && file['type'].split('/')[0] === 'image' };
 
 /** 
- * Returns a list of keys that are found in both objects 
+ * Returns a list of keys that are found in both objects/classes 
  * 
  * Both parameters should be a list of keys
 */
-export const commonKeys = (obj1Keys: string[], obj2Keys: string[]) => obj1Keys.filter((key) => obj2Keys.includes(key));
+export const commonKeys = (keyList1: string[], keyList2: string[]) => keyList1.filter((key) => keyList2.includes(key));
 
+/**
+ * Similar to Object.keys() but works for Class types, returns a list of property names.
+ */
 export const getAllPropertyNames = (obj: any): string[] => {
     let props: string[] = [];
     do {
