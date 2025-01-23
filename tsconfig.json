@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
 
-    "types": ["@types/wicg-file-system-access", "jest"],
+    "types": ["@types/wicg-file-system-access"],
     
     /* Bundler mode */
     "moduleResolution": "Node",
