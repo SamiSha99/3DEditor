@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { commonKeys, getAllPropertyNames } from './Main';
 
 /** 
- * Passes common parameters from two different material classes
+ * Passes matching parameters from two different material classes
  * 
  * e.g. A "MeshStandardMaterial" passing its parameters to "MeshBasicMaterial".
  */
