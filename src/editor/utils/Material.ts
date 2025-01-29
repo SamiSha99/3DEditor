@@ -6,12 +6,13 @@ import { commonKeys, getAllPropertyNames } from './Main';
  * 
  * e.g. A "MeshStandardMaterial" passing its parameters to "MeshBasicMaterial".
  */
-export const passParameters = (from: THREE.Material, to: THREE.Material) => {
+export const passParameters = (from: THREE.Material, to: THREE.Material, ignore: string[] = []) => {
     const fromProps = getAllPropertyNames(from);
     const toProps = getAllPropertyNames(to);
-    console.log(fromProps, toProps);
     const common = commonKeys(fromProps, toProps);
-    common.forEach(c => {
+    let res = common;
+    if(ignore) res = res.filter(r => !ignore.includes(r));
+    res.forEach(c => {
         const toDescriptor = Object.getOwnPropertyDescriptor(to, c);
         const fromDescriptor = Object.getOwnPropertyDescriptor(from, c);
         if (toDescriptor && fromDescriptor && toDescriptor.writable) {
