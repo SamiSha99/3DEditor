@@ -21,21 +21,21 @@ export class Editor {
     /** All instatiated Objects in the scene */
     @observable scene: THREE.Scene = new THREE.Scene();
     /** All objects that can be modified */
-    @observable sceneObjects: THREE.Object3D[] = [];
+    @observable sceneObjects = observable.array<THREE.Object3D>();
     /**
      * These need to be in the root of the scene else they will cause a lot of bugs
      * When intersected their userData returns the reference for the object from sceneObjects
     */
-    @observable sceneHelpers: THREE.Object3D[] = [];
+    @observable sceneHelpers = observable.array<THREE.Object3D>();
 
     @observable useRootSelection: boolean = false;
 
-    @observable activePanels: Panel[] = []
+    @observable activePanels = observable.array<Panel>()
 
-    @observable flags: string[] = [];
+    @observable flags = observable.array<string>();
 
     /** Metadata of models from the storage. */
-    @observable storageModels: IModelFileResponse[] = DEBUG_STORAGE_MODALS_TEST;
+    @observable storageModels = observable.array<IModelFileResponse>(DEBUG_STORAGE_MODALS_TEST);
 
     /** Handles all related controls in the Canvas scene. */
     @observable viewport = new Viewport(this);
@@ -70,12 +70,9 @@ export class Editor {
 
     @action activatePanel = (value: Panel) => {
         if (this.activePanels.find(x => x.id == value.id))
-            console.warn("Panel is already active, ignoring... ID:", value.id)
-        else {
-            const obj = Object.assign({}, value);
-            if (!obj.flags) obj.flags = [];
-            this.activePanels.push(obj);
-        }
+            console.warn("Panel is already active, ignoring... ID:", value.id);
+        else
+            this.activePanels.push(value);
     }
 
     @action flag = (flag: string | string[], remove: boolean) => {
@@ -90,7 +87,7 @@ export class Editor {
 
     @action removeFlag = (flag: string | string[]) => {
         if (!Array.isArray(flag)) flag = [flag];
-        this.flags = this.flags.filter(f => !flag.includes(f));
+        flag.forEach(f => { this.flags.remove(f); });
         this.onRemoveFlag(flag);
     }
 
@@ -107,8 +104,8 @@ export class Editor {
     // to-do this needs to reinitialize the entirety of viewport again, probably.
     @action setScene = (objects: THREE.Object3D[] = [], helpers: THREE.Object3D[] = []) => {
         this.viewport.setTarget(null);
-        this.sceneObjects = objects;
-        this.sceneHelpers = helpers;
+        this.sceneObjects.replace(objects);
+        this.sceneHelpers.replace(helpers);
     }
 
     /** Adds object to the scene, returns the added object */
@@ -128,26 +125,16 @@ export class Editor {
     /** Removes object from the scene, returns the removed object */
     @action removeObject = (object: THREE.Object3D) => {
         this.viewport.setTarget(null);
-        const indx = this.sceneObjects.findIndex(obj => obj.uuid == object.uuid);
-        if (indx != -1) {
-            if (object.userData.helper) {
-                const helper = object.userData.helper as THREE.Object3D;
-                const helperIndx = this.sceneHelpers.findIndex(hlp => hlp.uuid == helper.uuid);
-                this.sceneHelpers.splice(helperIndx, 1);
-            }
-            this.sceneObjects.splice(indx, 1);
-            console.log(this.sceneObjects);
+        // remove the helper first
+        if (object.userData.helper) {
+            const helper = object.userData.helper as THREE.Object3D;
+            this.sceneHelpers.remove(helper);
         }
-        else {
+        // not inside sceneObjects? remove from parent probably
+        if (!this.sceneObjects.remove(object)) {
             object.removeFromParent();
         }
-
-        // Cleanup helpers
-        if ("helper" in object.userData) {
-            const helper = object.userData.helper as THREE.Object3D;
-            const helperIndx = this.sceneHelpers.findIndex(hlp => hlp.uuid == helper.uuid);
-            this.sceneHelpers.splice(helperIndx, 1);
-        }
+        console.log(this.sceneObjects, this.sceneHelpers);
     }
 
     @action setRootSelection = (b: boolean) => {
