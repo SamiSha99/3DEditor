@@ -184,9 +184,12 @@ export class Viewport {
         this.controls.addEventListener('change', () => {
             if (this.target instanceof THREE.Mesh) {
                 this.targetBoundingBox.setFromObject(this.target);
-                this.targetWireframeHelper?.position.copy(this.target.position);
-                this.targetWireframeHelper?.rotation.copy(this.target.rotation);
-                this.targetWireframeHelper?.scale.copy(this.target.scale);
+                /** Bugged wtih Skinned Mesh */
+                if(this.targetWireframeHelper) {
+                    this.target.getWorldPosition(this.targetWireframeHelper.position)
+                    this.target.getWorldQuaternion(this.targetWireframeHelper.quaternion)
+                    this.target.getWorldScale(this.targetWireframeHelper.scale)
+                }
             }
         });
     }
@@ -202,7 +205,6 @@ export class Viewport {
         this.transforming = false;
         if (this.target instanceof THREE.Mesh) {
             this.targetBoundingBox.setFromObject(this.target);
-            this.targetWireframeHelper?.position.copy(this.target.position);
         }
         if (this.editor.hasFlag("geometry_tools") && this.target && this.target instanceof THREE.Mesh) {
 
