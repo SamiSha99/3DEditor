@@ -3,7 +3,7 @@ import { Canvas as R3FC } from '@react-three/fiber';
 import { useEditor } from "@orb_Editor";
 import { useHotkeys } from "react-hotkeys-hook";
 import * as THREE from "three";
-import { GizmoHelper, GizmoViewport, Line, Sphere } from "@react-three/drei";
+import { GizmoHelper, GizmoViewport, Line, Sphere, Wireframe } from "@react-three/drei";
 import { useRef, useState } from "react";
 import { useViewport } from "src/store/Viewport";
 import { Perf } from 'r3f-perf'
@@ -71,7 +71,7 @@ const Scene = observer((props: CanvasInfo) => {
 const EditorHelpers = observer(() => {
     const ref = useRef<THREE.Group>(null!);
     const { flags } = useEditor();
-    const { gridEnabled, grid, viewHelperEnabled, controls, target, targetBoundingBox, boundingBoxEnabled } = useViewport();
+    const { gridEnabled, grid, viewHelperEnabled, controls, target, targetBoundingBox, boundingBoxEnabled, targetWireframeHelper } = useViewport();
 
     return (
         <>
@@ -102,6 +102,8 @@ const EditorHelpers = observer(() => {
                 }
                 {boundingBoxEnabled && target && <box3Helper box={targetBoundingBox} />}
                 <primitive object={controls.getHelper()} />
+                {targetWireframeHelper && <primitive object={targetWireframeHelper} />}
+                {/* <Line segments={true}/> */}
                 {gridEnabled && <primitive object={grid} />}
             </group>
         </>
