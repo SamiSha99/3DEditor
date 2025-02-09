@@ -25,7 +25,7 @@ export class Viewport {
     cameraControls = new OrbitControls(this.camera);
 
     /** True when moving/rotating/scaling */
-    @observable transforming: boolean = false;
+    transforming: boolean = false;
     @observable transformControlsMode: TYPE.TransformModes = "translate";
     @observable transformControlsSpace: TYPE.TransformSpaces = "world";
     controls = new TransformControls(this.camera);
@@ -37,11 +37,12 @@ export class Viewport {
             new THREE.MeshBasicMaterial({ color: "red" })
         )
     )
-
-    @observable targetBoundingBox: THREE.Box3 = new THREE.Box3();
-    @observable targetWireframeHelper?: THREE.LineSegments;
-
+    
     @observable boundingBoxEnabled: boolean = true;
+    targetBoundingBox: THREE.Box3 = new THREE.Box3();
+
+    targetWireframeHelper?: THREE.LineSegments;
+
     @observable gridEnabled: boolean = true;
     @observable fpsEnabled: boolean = false;
     @observable viewHelperEnabled: boolean = true;
@@ -49,7 +50,7 @@ export class Viewport {
     private cameraDragStart: boolean = false;
 
     constructor(editor: Editor) {
-        makeObservable(this)
+        makeObservable(this);
         Viewport._instance = this;
         this.editor = editor;
         this.camera.position.set(2.5, 1.5, 2.5);
@@ -85,8 +86,6 @@ export class Viewport {
         }
         else
             this.setWireframeHelper(undefined);
-
-        console.log("new target =>", this.target);
 
         this.transforming = false;
         this.cameraControls.enabled = true;
@@ -139,16 +138,12 @@ export class Viewport {
         if (this.transforming) return;
         // Left Click only
         if (e.button != 0) return;
-        console.log("selecting an object...")
         // Bounds are used to calculate an offseted AND/OR resized canvas that doesn't take the entire screen due to inspector.
         const bounds = this.editor.gl.domElement.getBoundingClientRect();
         const pointer = new THREE.Vector2(((e.clientX - bounds.left) / (bounds.right - bounds.left)) * 2 - 1, -((e.clientY - bounds.top) / (bounds.bottom - bounds.top)) * 2 + 1);
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(pointer, this.camera);
         const intersects = raycaster.intersectObjects([...this.editor.sceneObjects, ...this.editor.sceneHelpers], true);
-
-        console.log("onSelectObject()::intersections.faces = \n", ...intersects.map((i) => i.face));
-        console.log("onSelectObject()::intersections.geometry data = \n", ...intersects.map((i) => { if (i.object instanceof THREE.Mesh) return i.object; }).map((i) => i && i.geometry));
 
         if (intersects.length <= 0) return;
 
@@ -185,7 +180,7 @@ export class Viewport {
             if (this.target instanceof THREE.Mesh) {
                 this.targetBoundingBox.setFromObject(this.target);
                 /** Bugged wtih Skinned Mesh */
-                if(this.targetWireframeHelper) {
+                if (this.targetWireframeHelper) {
                     this.target.getWorldPosition(this.targetWireframeHelper.position)
                     this.target.getWorldQuaternion(this.targetWireframeHelper.quaternion)
                     this.target.getWorldScale(this.targetWireframeHelper.scale)
@@ -251,7 +246,6 @@ export class Viewport {
     }
 
     onAddFlag = (flags: string[]) => {
-        console.log(flags, flags.includes("geometry_tools"));
         if (flags.includes("geometry_tools")) {
             // VERY BAD!!!
             setTimeout(() => {
