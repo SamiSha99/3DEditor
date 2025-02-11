@@ -1,8 +1,7 @@
 
 import { Alert, Form } from "antd";
-import { Item } from "./Item";
 
-export const ItemInvalidAlert = (props: Item) => {
+export const ItemInvalidAlert = (props: { object: Record<string, any>, variable: string }) => {
     let { variable, object } = props;
 
     console.error("Failed to get the key from variable! variable =>", variable, "\nObject:\n", object);

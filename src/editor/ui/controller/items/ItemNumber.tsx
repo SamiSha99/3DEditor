@@ -1,14 +1,15 @@
 import { Form, Slider } from "antd";
 import React, { useState } from "react";
-import { PRECISION_AMOUNT, Item, Limit, labelFromVariable, DRAGGABLE_CONTROLLER_WIDTH } from "./Item";
+import { PRECISION_AMOUNT, Limit, labelFromVariable, DRAGGABLE_CONTROLLER_WIDTH, ItemObject } from "./Item";
 import { useDeltaTime } from "src/store/Hooks";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 import { toFixedStripped } from "@orb_utils/Main";
 import { InputNumberStyle } from "./style";
 import { evaluateFormula } from "@orb_utils/Math";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
+import { KeyToValueOfType } from "@orb_types";
 
-interface InputNumberInterface extends Item {
+interface InputNumberInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, number>> extends ItemObject<T, K> {
     limit?: Limit,
     step?: number,
     stepSlider?: number
@@ -17,7 +18,7 @@ interface InputNumberInterface extends Item {
     onChange?: (value: number) => void
 }
 
-export const ItemNumber = (props: InputNumberInterface) => {
+export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOfType<T, number>>(props: InputNumberInterface<T, K>) => {
     let { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, tooltip, addonBefore, addonAfter, } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
@@ -29,7 +30,7 @@ export const ItemNumber = (props: InputNumberInterface) => {
     const onChangeNumber = (v: number | null) => {
         if (v == null) return;
         setValue(v)
-        object[variable] = v;
+        object[variable] = v as T[K];
         onChange && onChange(v);
     }
 
@@ -82,7 +83,7 @@ export const ItemNumber = (props: InputNumberInterface) => {
                     <DraggableButtonController
                         onStep={(value, _rate, direction) => {
                             const newVal = object[variable] as number + value * direction;
-                            object[variable] = newVal;
+                            object[variable] = newVal as T[K];
                             const res = newVal;
                             onChangeNumber(res);
                         }}

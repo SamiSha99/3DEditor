@@ -9,16 +9,21 @@ export const labelFromVariable = (variable: string) => {
     return title.charAt(0).toUpperCase() + title.slice(1);
 }
 
-export interface ItemObjectless extends Omit<Item, 'variable' | 'object' | 'labelInVariable'> { }
-
-export interface Item extends FormItemProps {
-    object: { [key: string]: any }
+export interface ItemBase extends FormItemProps {
     default?: any
-    variable: string
     label?: string | false,
-    labelInVariable?: boolean
     disabled?: boolean,
     readonly?: boolean
+}
+
+export interface Item extends ItemBase {
+    default?: any
+    labelInVariable?: boolean
+}
+
+export interface ItemObject<T extends Record<string, any>, K> extends Item {
+    object: T,
+    variable: K
 }
 
 export type Limit = { min?: number, max?: number }

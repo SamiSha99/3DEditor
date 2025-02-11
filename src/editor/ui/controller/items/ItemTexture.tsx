@@ -1,6 +1,6 @@
 import { Button, Form, Image, Popconfirm, Tooltip } from "antd";
 import { useEffect, useState } from "react";
-import { Item, labelFromVariable } from "./Item";
+import { ItemObject, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DataTexture, Material, MeshBasicMaterial, Texture, WebGLRenderer } from "three";
 import { saveLink } from "@orb_tools/Exporter";
@@ -8,8 +8,12 @@ import { CloudUploadOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined } fr
 import { doImportTexture } from "@orb_tools/Importer";
 import { useOnUnmount } from "src/store/Hooks";
 import { FullScreenQuad } from "three/examples/jsm/Addons";
+import { KeyToValueOfType } from "@orb_types";
 
-interface TextureInterface extends Item {
+// IDK if its necessary to make this sensitive to the type of Texture, so I added a nullable and none-nullable type.
+type TextureTypes = (Texture | null) | Texture;
+
+interface TextureInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, TextureTypes>> extends ItemObject<T, K> {
     hdr?: boolean,
     size?: { width: number, height: number }
     onChange?: (value?: Texture) => void
@@ -23,7 +27,7 @@ type TextureObject = {
     type: string
 }
 
-export const ItemTexture = (props: TextureInterface) => {
+export const ItemTexture = <T extends Record<string, any>, K extends KeyToValueOfType<T, TextureTypes>>(props: TextureInterface<T, K>) => {
     let { label, labelInVariable, object, variable, hdr, readonly, size, onChange } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [textureObject, setTextureObject] = useState<TextureObject | undefined>(undefined);
@@ -31,7 +35,8 @@ export const ItemTexture = (props: TextureInterface) => {
 
     if (!size) size = DEFAULT_SIZE;
 
-    const makeImageObject = (t: Texture) => {
+    const makeImageObject = (t?: Texture | null) => {
+        if (!t) return;
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext('2d');
         ctx?.clearRect(0, 0, canvas.width, canvas.height);
@@ -58,10 +63,10 @@ export const ItemTexture = (props: TextureInterface) => {
     const requestUploadTexture = () => {
         doImportTexture((texture) => {
             !hdr && (texture.flipY = false);
-            object[variable] = texture;
+            object[variable] = texture as T[K];
             (object[variable] as Texture).needsUpdate = true;
-            if (object[variable])
-                (object as Material).needsUpdate = true;
+            if (object instanceof Material && object[variable])
+                object.needsUpdate = true;
             makeImageObject(object[variable]);
             onChange && onChange(texture);
             setHoverUploadIcon(false);
@@ -72,7 +77,7 @@ export const ItemTexture = (props: TextureInterface) => {
         textureObject && saveLink(textureObject.url, variable, textureObject.type)
     }
 
-    useEffect(() => { object[variable] instanceof Texture && makeImageObject(object[variable]) }, []);
+    useEffect(() => { makeImageObject(object[variable]) }, []);
     // clean up 
     useOnUnmount(() => textureObject && URL.revokeObjectURL(textureObject.url), [textureObject])
 
@@ -96,9 +101,9 @@ export const ItemTexture = (props: TextureInterface) => {
                                 onConfirm={() => {
                                     const t = object[variable] as Texture;
                                     t.dispose();
-                                    object[variable] = undefined;
-                                    if (!hdr)
-                                        (object as Material).needsUpdate = true;
+                                    object[variable] = undefined as T[K];
+                                    if (!hdr && object instanceof Material)
+                                        object.needsUpdate = true;
                                     setTextureObject(undefined);
                                     onChange && onChange(undefined);
                                 }}

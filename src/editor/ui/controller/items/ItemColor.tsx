@@ -1,11 +1,12 @@
 import { ColorPicker, Form } from "antd";
 import { useState } from "react";
-import { Item, labelFromVariable } from "./Item";
+import { ItemObject, labelFromVariable } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { Color } from "three";
 import { AggregationColor } from "antd/es/color-picker/color";
+import { KeyToValueOfType } from "@orb_types";
 
-export interface ColorInterface extends Item {
+export interface ColorInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, Color>> extends ItemObject<T, K> {
     onChange?: (value: Color) => void,
     onChangeComplete?: (value: Color) => void,
     onClear?: () => void,
@@ -16,7 +17,7 @@ export interface ColorInterface extends Item {
 
 let timeoutActive: boolean = false;
 
-export const ItemColor = (props: ColorInterface) => {
+export const ItemColor = <T extends Record<string, any>, K extends KeyToValueOfType<T, Color>>(props: ColorInterface<T, K>) => {
     const { label, labelInVariable, object, variable, disabled, disabledAlpha, allowClear, defaultColor, onChange, onChangeComplete, onClear, tooltip } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<Color>(object[variable]);
