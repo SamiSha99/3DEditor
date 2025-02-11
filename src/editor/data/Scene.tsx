@@ -55,7 +55,7 @@ export const Background = observer(() => {
             // Adjust Color
             case 1:
                 lastBackgroundColor && setBackground(lastBackgroundColor);
-                return <ItemColor object={{ background: scene.background }} variable="background" label="Color" disabledAlpha
+                return <ItemColor object={{ background: scene.background as THREE.Color }} variable="background" label="Color" disabledAlpha
                     onChange={(c) => {
                         lastBackgroundColor = c;
                         setBackground(c);
@@ -65,7 +65,7 @@ export const Background = observer(() => {
             case 2:
                 lastBackgroundTexture && setBackground(lastBackgroundTexture);
                 return <>
-                    <ItemTexture object={scene} variable="background" label="Map"
+                    <ItemTexture object={{background: scene.background as THREE.Texture}} variable="background" label="Map"
                         onChange={(v) => {
                             if (v) {
                                 setBackground(v);

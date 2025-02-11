@@ -1,13 +1,14 @@
-import { Form, Select, InputNumber, InputNumberProps } from "antd";
+import { Form, Select, InputNumberProps } from "antd";
 import { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
 import { clamp, degToRad, radToDeg } from "three/src/math/MathUtils";
-import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, PRECISION_AMOUNT } from "./Item";
+import { DRAGGABLE_CONTROLLER_WIDTH, ItemObject, labelFromVariable, PRECISION_AMOUNT } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 import { InputNumberStyle } from "./style";
+import { KeyToValueOfType } from "@orb_types";
 
 const orderOptions = [
     { value: "XYZ", label: "XYZ" },
@@ -28,14 +29,14 @@ const eulerProps: InputNumberProps<number> = {
     size: "small"
 }
 
-interface EulerInterface extends Item {
+interface EulerInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, THREE.Euler>> extends ItemObject<T, K> {
     labelEuler?: { x?: string, y?: string, z?: string },
     showOrder?: boolean
     isDegree?: boolean,
     onChange?: (value: THREE.Euler) => void
 }
 
-export const ItemEuler = (props: EulerInterface) => {
+export const ItemEuler = <T extends Record<string, any>, K extends KeyToValueOfType<T, THREE.Euler>>(props: EulerInterface<T, K>) => {
     const { variable, object, label, labelInVariable, labelEuler, showOrder, isDegree, onChange, tooltip } = props;
 
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;

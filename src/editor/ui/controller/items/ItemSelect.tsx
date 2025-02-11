@@ -1,9 +1,12 @@
 import { Form, Select } from "antd";
-import { Item, labelFromVariable } from "./Item";
+import { ItemObject, labelFromVariable } from "./Item";
 import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
 import { DefaultOptionType } from "antd/es/select";
+import { KeyToValueOfType } from "@orb_types";
 
-interface SelectInterface extends Item {
+type SelectType = DefaultOptionType[]
+
+interface SelectInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, SelectType>> extends ItemObject<T, K> {
     disabled?: boolean
     defaultValue?: string
     labelInValue?: boolean
@@ -12,7 +15,7 @@ interface SelectInterface extends Item {
     onChangeSelect?: (select: { value: string, label: string } | string | number) => void;
 }
 
-export const ItemSelect = (props: SelectInterface) => {
+export const ItemSelect = <T extends Record<string, any>, K extends KeyToValueOfType<T, SelectType>>(props: SelectInterface<T, K>) => {
     let { label, labelInVariable, object, variable, disabled, defaultValue, labelInValue, onChangeSelect, tooltip } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const list = object[variable] as DefaultOptionType[];

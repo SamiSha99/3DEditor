@@ -1,8 +1,8 @@
 import { Form, Table } from "antd";
-import { ItemObjectless } from "./Item";
+import { ItemBase } from "./Item";
 import { TableProps } from "antd/es/table";
 
-interface TableInterface extends Omit<TableProps, 'children'>, ItemObjectless { };
+interface TableInterface extends Omit<TableProps, 'children'>, ItemBase { };
 
 export const ItemTable = (props: TableInterface) => {
     let { label, tooltip, columns, dataSource, showHeader, style, scroll } = props;

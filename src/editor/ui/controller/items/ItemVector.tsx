@@ -3,11 +3,12 @@ import { useState } from "react";
 import { toFixedStripped } from "@orb_utils/Main";
 import { useDeltaTime } from "src/store/Hooks";
 import * as THREE from "three";
-import { DRAGGABLE_CONTROLLER_WIDTH, Item, labelFromVariable, Limit, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./Item";
+import { DRAGGABLE_CONTROLLER_WIDTH, ItemObject, labelFromVariable, Limit, MOUSE_ENTER_DELAY, PRECISION_AMOUNT } from "./Item";
 import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 import { InputNumberStyle } from "./style";
 import { evaluateFormula } from "@orb_utils/Math";
+import { KeyToValueOfType } from "@orb_types";
 
 const defaultProps: InputNumberProps<number> = {
     size: "small",
@@ -27,14 +28,14 @@ const vector3Props: InputNumberProps<number> = {
     ...defaultProps
 }
 
-interface Vector2Interface extends Item {
+interface Vector2Interface<T extends Record<string, any>, K extends KeyToValueOfType<T, THREE.Vector2>> extends ItemObject<T, K> {
     precision?: number | false,
     labelVector?: { x?: string, y?: string },
     limit?: { x?: Limit, y?: Limit }
     onChange?: (value: THREE.Vector2) => void
 }
 
-export const ItemVector2 = (props: Vector2Interface) => {
+export const ItemVector2 = <T extends Record<string, any>, K extends KeyToValueOfType<T, THREE.Vector2>>(props: Vector2Interface<T, K>) => {
     let { label, labelInVariable, precision, object, variable, labelVector, limit, onChange, tooltip } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
@@ -114,14 +115,14 @@ export const ItemVector2 = (props: Vector2Interface) => {
     )
 }
 
-interface Vector3Interface extends Item {
+interface Vector3Interface<T extends Record<string, any>, K extends KeyToValueOfType<T, THREE.Vector3>> extends ItemObject<T, K> {
     precision?: number | false,
     labelVector?: { x?: string, y?: string, z?: string },
     limit?: { x?: Limit, y?: Limit, z?: Limit }
     onChange?: (value: THREE.Vector3) => void
 }
 
-export const ItemVector3 = (props: Vector3Interface) => {
+export const ItemVector3 = <T extends Record<string, any>, K extends KeyToValueOfType<T, THREE.Vector3>>(props: Vector3Interface<T, K>) => {
     let { label, labelInVariable, object, variable, precision, labelVector, limit, onChange, tooltip } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [x, setX] = useState<number>(object[variable].x);
