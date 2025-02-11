@@ -40,7 +40,7 @@ export const ItemTexture = <T extends Record<string, any>, K extends KeyToValueO
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext('2d');
         ctx?.clearRect(0, 0, canvas.width, canvas.height);
-        if (!t) return;
+        if (!t.image) return;
         const width = t.image.width;
         const height = t.image.height;
         canvas.width = width;
@@ -62,7 +62,8 @@ export const ItemTexture = <T extends Record<string, any>, K extends KeyToValueO
 
     const requestUploadTexture = () => {
         doImportTexture((texture) => {
-            !hdr && (texture.flipY = false);
+            // to-do idk but maybe not?
+            // !hdr && (texture.flipY = false);
             object[variable] = texture as T[K];
             (object[variable] as Texture).needsUpdate = true;
             if (object instanceof Material && object[variable])
