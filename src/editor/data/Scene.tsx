@@ -191,8 +191,8 @@ export const Fog = observer(() => {
                 return (
                     <>
                         <ItemColor key="linear" object={scene.fog!} variable="color" labelInVariable />
-                        <ItemNumber object={scene.fog!} variable="near" labelInVariable />
-                        <ItemNumber object={scene.fog!} variable="far" labelInVariable />
+                        <ItemNumber object={lastFogLinear} variable="near" labelInVariable />
+                        <ItemNumber object={lastFogLinear} variable="far" labelInVariable />
                     </>
                 )
 
@@ -201,8 +201,8 @@ export const Fog = observer(() => {
                 setFog(lastFogExp2);
                 return (
                     <>
-                        <ItemColor key="exponential" object={scene.fog!} variable="color" labelInVariable />
-                        <ItemNumber object={scene.fog!} variable="density" labelInVariable />
+                        <ItemColor key="exponential" object={lastFogExp2} variable="color" labelInVariable />
+                        <ItemNumber object={lastFogExp2} variable="density" labelInVariable />
                     </>
                 )
             // Off
