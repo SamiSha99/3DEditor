@@ -5,6 +5,7 @@ import { EyeOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Alert, message, Tooltip } from "antd";
 import { useViewport } from "src/store/Viewport";
 import { useEditor } from "@orb_Editor";
+import { ItemQuaternion } from "@orb_UI/controller/items/ItemQuaternion";
 
 interface Object3D {
     object: THREE.Object3D
@@ -76,11 +77,12 @@ export const InspectorObject3D = observer((props: Object3D) => {
                 <ItemNumber object={{ id: object.id }} variable="id" label="ID" readonly />
                 <ItemGroup label="UUID" sizes={["66.666%", "33.334%"]}>
                     <ItemInput object={object} variable="uuid" readonly />
-                    <ItemButton buttonName="Regenerate" onClick={() => { object.uuid = THREE.MathUtils.generateUUID() }} size='small' />
+                    <ItemButton buttonName="Generate" onClick={() => { object.uuid = THREE.MathUtils.generateUUID() }} size='small' />
                 </ItemGroup>
                 <ItemVector3 object={object} variable="position" labelInVariable />
-                <ItemEuler object={object} variable="rotation" isDegree labelInVariable />
+                <ItemEuler object={object} variable="rotation" isDegree labelInVariable tooltip="Syncs with Quaternion." />
                 <ItemVector3 object={object} variable="scale" labelInVariable />
+                <ItemQuaternion object={object} variable="quaternion" labelInVariable limit={{ x: { min: -1, max: 1 }, y: { min: -1, max: 1 }, z: { min: -1, max: 1 }, w: { min: -1, max: 1 } }} tooltip="Syncs with Rotation, clamped between [-1, 1]." />
                 <ItemBoolean object={object} variable="visible" labelInVariable />
                 <ItemNumber object={object} variable="renderOrder" label="Order" />
             </ItemCollapse>
