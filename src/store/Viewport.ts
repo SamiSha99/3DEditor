@@ -127,7 +127,7 @@ export class Viewport {
         this.targetWireframeHelper = geometry ? new THREE.LineSegments(new THREE.WireframeGeometry(geometry)) : undefined;
         if (this.targetWireframeHelper) {
             (this.targetWireframeHelper.material as THREE.Material).dispose();
-            const material = new THREE.LineBasicMaterial({ color: 0xFF00FF, linecap: 'round', linejoin: 'round', linewidth: 3, transparent: true, depthTest: false, opacity: 0.5 });
+            const material = new THREE.LineBasicMaterial({ color: 0xFFFFFF, linecap: 'round', linejoin: 'round', linewidth: 1, transparent: true, depthTest: false, opacity: 0.5 });
             this.targetWireframeHelper.material = material;
         }
     }
