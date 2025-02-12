@@ -360,55 +360,61 @@ const PhysicalMaterial = observer((props: MeshPhysicalMaterial) => {
     return (
         <>
             <Divider children="General" orientation="left" />
-            <ItemNumber object={material} variable="ior" />
-            <ItemNumber object={material} variable="reflectivity" />
-            <ItemNumber object={material} variable="dispersion" />
-            <ItemNumber object={material} variable="thickness" />
-            <ItemTexture object={material} variable="thicknessMap" />
+            <ItemNumber object={material} variable="ior" label="IOR" tooltip="Index Of Refraction" />
+            {/**
+            * Related to IOR! 
+            * https://github.com/mrdoob/three.js/blob/master/src/materials/MeshPhysicalMaterial.js#L34-L45 
+            * to-do maybe implement a fake sync to IOR?
+            */}
+            {/* <ItemNumber object={material} variable="reflectivity" label="Reflectivity" /> */}
+            <ItemNumber object={material} variable="dispersion" label="Dispersion" />
+            <ItemNumber object={material} variable="thickness" label="Thickness" />
+            <ItemTexture object={material} variable="thicknessMap" label="Thickness Map" />
 
             <Divider children="Anisotropy" orientation="left" />
-            <ItemNumber object={material} variable="anisotropy" />
-            <ItemBoolean object={material} variable="isMeshPhysicalMaterial" />
-            <ItemNumber object={material} variable="anisotropyRotation" />
-            <ItemTexture object={material} variable="anisotropyMap" />
+            <ItemNumber object={material} variable="anisotropy" label="Anisotropy" />
+            <ItemNumber object={material} variable="anisotropyRotation" label="Rotation" />
+            <ItemTexture object={material} variable="anisotropyMap" label="Map" />
 
             <Divider children="Clearcoat" orientation="left" />
-            <ItemNumber object={material} variable="clearcoat" />
-            <ItemTexture object={material} variable="clearcoatMap" />
-            <ItemNumber object={material} variable="clearcoatRoughness" />
-            <ItemTexture object={material} variable="clearcoatRoughnessMap" />
-            <ItemVector2 object={material} variable="clearcoatNormalScale" />
-            <ItemTexture object={material} variable="clearcoatNormalMap" />
+            <ItemNumber object={material} variable="clearcoat" label="Clearcoat" />
+            <ItemNumber object={material} variable="clearcoatRoughness" label="Roughness" />
+            <ItemVector2 object={material} variable="clearcoatNormalScale" label="Normal Scale" />
+            <ItemTexture object={material} variable="clearcoatMap" label="Map" />
+            <ItemTexture object={material} variable="clearcoatRoughnessMap" label="Roughness Map" />
+            <ItemTexture object={material} variable="clearcoatNormalMap" label="Normal Map" />
 
             <Divider children="Iridescence" orientation="left" />
-            <ItemNumber object={material} variable="iridescence" />
-            <ItemTexture object={material} variable="iridescenceMap" />
-            <ItemNumber object={material} variable="iridescenceIOR" />
+            <ItemNumber object={material} variable="iridescence" label="Iridescence" />
+            <ItemNumber object={material} variable="iridescenceIOR" label="IOR" tooltip="Iridescence's Index Of Refraction" />
+            <ItemTexture object={material} variable="iridescenceMap" label="Map" />
             {/* Bad [number, number]! Won't work with Vector2 */}
             {/* <ItemNumber object={material} variable="iridescenceThicknessRange" /> */}
-            <ItemTexture object={material} variable="iridescenceMap" />
 
             <Divider children="Sheen" orientation="left" />
-            <ItemNumber object={material} variable="sheen" />
-            <ItemColor object={material} variable="sheenColor" />
-            <ItemTexture object={material} variable="sheenColorMap" />
-            <ItemNumber object={material} variable="sheenRoughness" />
-            <ItemTexture object={material} variable="sheenRoughnessMap" />
+            <ItemNumber object={material} variable="sheen" label="Sheen" />
+            <ItemColor object={material} variable="sheenColor" label="Color" />
+            <ItemNumber object={material} variable="sheenRoughness" label="Roughness" />
+            <ItemTexture object={material} variable="sheenColorMap" label="Color Map" />
+            <ItemTexture object={material} variable="sheenRoughnessMap" label="Roughness Map" />
 
             <Divider children="Attenuation" orientation="left" />
-            <ItemNumber object={material} variable="attenuationDistance" />
-            <ItemColor object={material} variable="attenuationColor" />
+            <ItemNumber object={material} variable="attenuationDistance" label="Distance" />
+            <ItemColor object={material} variable="attenuationColor" label="Color" />
 
             <Divider children="Specular" orientation="left" />
-            <ItemNumber object={material} variable="specularIntensity" />
-            <ItemTexture object={material} variable="specularIntensityMap" />
-            <ItemColor object={material} variable="specularColor" />
-            <ItemTexture object={material} variable="specularColorMap" />
+            <ItemNumber object={material} variable="specularIntensity" label="Intensity" />
+            <ItemColor object={material} variable="specularColor" label="Color" />
+            <ItemTexture object={material} variable="specularIntensityMap" label="Intensity Map" />
+            <ItemTexture object={material} variable="specularColorMap" label="Color Map" />
 
             <Divider children="Transmission" orientation="left" />
-            <ItemNumber object={material} variable="transmission" />
-            <ItemTexture object={material} variable="transmissionMap" />
-            <StandardMaterial material={material} />
+            <ItemNumber object={material} variable="transmission" label="Transmission" />
+            <ItemTexture object={material} variable="transmissionMap" label="Map" />
+
+            <ItemCollapse label={"MeshStandardMaterial"}>
+                <StandardMaterial material={material} />
+            </ItemCollapse>
         </>
     )
 })

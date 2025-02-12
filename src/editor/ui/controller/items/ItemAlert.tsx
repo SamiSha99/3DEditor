@@ -9,5 +9,5 @@ export const ItemInvalidAlert = (props: { object: Record<string, any>, variable:
 }
 
 export const invalidVariable = (object: { [key: string]: any; }, variable: string) => {
-    return !Object.keys(object).find(key => key == variable);
+    return !Object.keys(object).find(key => key == variable || key == "_" + variable); // some keys have "_" at the beginning
 }

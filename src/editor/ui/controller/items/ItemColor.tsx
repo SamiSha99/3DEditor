@@ -24,34 +24,37 @@ export const ItemColor = <T extends Record<string, any>, K extends KeyToValueOfT
 
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
-            <ColorPicker
-                defaultValue={defaultColor ? defaultColor : v.getHexString()}
-                disabled={disabled}
-                disabledAlpha={disabledAlpha}
-                allowClear={allowClear}
-                onChange={(value: AggregationColor) => {
-                    if (!timeoutActive) {
-                        timeoutActive = true
-                        setTimeout(() => {
-                            timeoutActive = false;
-                            const color = object[variable] as Color;
-                            color.set(value.toHexString());
-                            setValue(color);
-                            onChange && onChange(color);
-                        }, 33);
-                    }
-                }}
-                onChangeComplete={(value) => {
-                    const color = object[variable] as Color;
-                    color.set(value.toHexString());
-                    setValue(color);
-                    onChangeComplete && onChangeComplete(color);
-                }}
-                onClear={() => {
-                    (object[variable] as Color).set(0x000000);
-                    onClear && onClear();
-                }}
-            />
+            <div style={{ width: "100%", display: "inline-block" }}>
+                <ColorPicker
+                    style={{ float: "right" }}
+                    defaultValue={defaultColor ? defaultColor : v.getHexString()}
+                    disabled={disabled}
+                    disabledAlpha={disabledAlpha}
+                    allowClear={allowClear}
+                    onChange={(value: AggregationColor) => {
+                        if (!timeoutActive) {
+                            timeoutActive = true
+                            setTimeout(() => {
+                                timeoutActive = false;
+                                const color = object[variable] as Color;
+                                color.set(value.toHexString());
+                                setValue(color);
+                                onChange && onChange(color);
+                            }, 33);
+                        }
+                    }}
+                    onChangeComplete={(value) => {
+                        const color = object[variable] as Color;
+                        color.set(value.toHexString());
+                        setValue(color);
+                        onChangeComplete && onChangeComplete(color);
+                    }}
+                    onClear={() => {
+                        (object[variable] as Color).set(0x000000);
+                        onClear && onClear();
+                    }}
+                />
+            </div>
         </Form.Item>
     )
 }
