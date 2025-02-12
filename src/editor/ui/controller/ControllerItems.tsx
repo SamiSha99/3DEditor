@@ -2,7 +2,7 @@ export { ItemSelect } from "./items/ItemSelect";
 export { ItemColor } from "./items/ItemColor"
 export { ItemInput } from './items/ItemInput';
 export { ItemNumber } from './items/ItemNumber'
-export { ItemVector2, ItemVector3 } from "./items/ItemVector";
+export { ItemVector2, ItemVector3, ItemVector4 } from "./items/ItemVector";
 export { ItemEuler } from "./items/ItemEuler";
 export { ItemBoolean } from "./items/ItemBoolean";
 export { ItemTexture } from "./items/ItemTexture";
