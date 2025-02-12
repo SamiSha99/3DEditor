@@ -9,7 +9,9 @@ import { evaluateFormula } from "@orb_utils/Math";
 import { DraggableButtonController } from "@orb_UI/antd/DraggableButtonController";
 import { KeyToValueOfType } from "@orb_types";
 
-interface InputNumberInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, number>> extends ItemObject<T, K> {
+type NumberTypes = number | undefined;
+
+interface InputNumberInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, NumberTypes>> extends ItemObject<T, K> {
     limit?: Limit,
     step?: number,
     stepSlider?: number
@@ -18,7 +20,7 @@ interface InputNumberInterface<T extends Record<string, any>, K extends KeyToVal
     onChange?: (value: number) => void
 }
 
-export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOfType<T, number>>(props: InputNumberInterface<T, K>) => {
+export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOfType<T, NumberTypes>>(props: InputNumberInterface<T, K>) => {
     let { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, tooltip, addonBefore, addonAfter, } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);

@@ -10,8 +10,7 @@ import { useOnUnmount } from "src/store/Hooks";
 import { FullScreenQuad } from "three/examples/jsm/Addons";
 import { KeyToValueOfType } from "@orb_types";
 
-// IDK if its necessary to make this sensitive to the type of Texture, so I added a nullable and none-nullable type.
-type TextureTypes = (Texture | null) | Texture;
+type TextureTypes = Texture | null | undefined;
 
 interface TextureInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, TextureTypes>> extends ItemObject<T, K> {
     hdr?: boolean,

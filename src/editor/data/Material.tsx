@@ -25,9 +25,24 @@ const MaterialSelect = [
     { value: "MeshPhysicalMaterial", label: "Physical" },
 ] as { value: string, label: string }[];
 
-interface Material {
-    material?: THREE.Material
-}
+// ################### //
+// MATERIAL INTERFACES //
+// ################### //
+
+interface Material { material?: THREE.Material }
+interface MeshStandardMaterial { material: THREE.MeshStandardMaterial }
+interface MeshBasicMaterial { material: THREE.MeshBasicMaterial }
+interface MeshPhongMaterial { material: THREE.MeshPhongMaterial }
+interface MeshToonMaterial { material: THREE.MeshToonMaterial }
+interface MeshDepthMaterial { material: THREE.MeshDepthMaterial }
+interface MeshLambertMaterial { material: THREE.MeshLambertMaterial }
+interface MeshMatcapMaterial { material: THREE.MeshMatcapMaterial }
+interface MeshNormalMaterial { material: THREE.MeshNormalMaterial }
+interface MeshPhysicalMaterial { material: THREE.MeshPhysicalMaterial }
+
+// ### //
+// END //
+// ### //
 
 export const InspectorMaterial = observer((props: Material) => {
     const { material } = props;
@@ -175,9 +190,7 @@ export const ChildMaterial = observer((props: Material) => {
     }
 })
 
-interface MeshStandardMaterial {
-    material: THREE.MeshStandardMaterial
-}
+
 
 const StandardMaterial = observer((props: MeshStandardMaterial) => {
     const { material } = props;
@@ -203,9 +216,7 @@ const StandardMaterial = observer((props: MeshStandardMaterial) => {
     )
 })
 
-interface MeshBasicMaterial {
-    material: THREE.MeshBasicMaterial
-}
+
 
 const BasicMaterial = observer((props: MeshBasicMaterial) => {
     const { material } = props;
@@ -226,10 +237,6 @@ const BasicMaterial = observer((props: MeshBasicMaterial) => {
         </>
     )
 })
-
-interface MeshPhongMaterial {
-    material: THREE.MeshPhongMaterial
-}
 
 const PhongMaterial = observer((props: MeshPhongMaterial) => {
     const { material } = props;
@@ -256,10 +263,6 @@ const PhongMaterial = observer((props: MeshPhongMaterial) => {
     )
 })
 
-interface MeshToonMaterial {
-    material: THREE.MeshToonMaterial
-}
-
 const ToonMaterial = observer((props: MeshToonMaterial) => {
     const { material } = props;
     return (
@@ -285,10 +288,6 @@ const ToonMaterial = observer((props: MeshToonMaterial) => {
     )
 })
 
-interface MeshDepthMaterial {
-    material: THREE.MeshDepthMaterial
-}
-
 const DepthMaterial = observer((props: MeshDepthMaterial) => {
     const { material } = props;
     return (
@@ -305,11 +304,6 @@ const DepthMaterial = observer((props: MeshDepthMaterial) => {
         </>
     )
 })
-
-interface MeshLambertMaterial {
-    material: THREE.MeshLambertMaterial
-}
-
 
 const LambertMaterial = observer((props: MeshLambertMaterial) => {
     const { material } = props;
@@ -332,10 +326,6 @@ const LambertMaterial = observer((props: MeshLambertMaterial) => {
     )
 })
 
-interface MeshMatcapMaterial {
-    material: THREE.MeshMatcapMaterial
-}
-
 const MatCapMaterial = observer((props: MeshMatcapMaterial) => {
     const { material } = props;
     return (
@@ -353,10 +343,6 @@ const MatCapMaterial = observer((props: MeshMatcapMaterial) => {
     )
 })
 
-interface MeshNormalMaterial {
-    material: THREE.MeshNormalMaterial
-}
-
 const NormalMaterial = observer((props: MeshNormalMaterial) => {
     const { material } = props;
     return (
@@ -369,28 +355,80 @@ const NormalMaterial = observer((props: MeshNormalMaterial) => {
     )
 })
 
-interface MeshPhysicalMaterial {
-    material: THREE.MeshPhysicalMaterial
-}
-
 const PhysicalMaterial = observer((props: MeshPhysicalMaterial) => {
     const { material } = props;
-    // material.transmission = 1;
     return (
         <>
+            <Divider children="General" orientation="left" />
+            <ItemNumber object={material} variable="ior" />
+            <ItemNumber object={material} variable="reflectivity" />
+            <ItemNumber object={material} variable="dispersion" />
+            <ItemNumber object={material} variable="thickness" />
+            <ItemTexture object={material} variable="thicknessMap" />
+
+            <Divider children="Anisotropy" orientation="left" />
+            <ItemNumber object={material} variable="anisotropy" />
+            <ItemBoolean object={material} variable="isMeshPhysicalMaterial" />
+            <ItemNumber object={material} variable="anisotropyRotation" />
+            <ItemTexture object={material} variable="anisotropyMap" />
+
+            <Divider children="Clearcoat" orientation="left" />
+            <ItemNumber object={material} variable="clearcoat" />
+            <ItemTexture object={material} variable="clearcoatMap" />
+            <ItemNumber object={material} variable="clearcoatRoughness" />
+            <ItemTexture object={material} variable="clearcoatRoughnessMap" />
+            <ItemVector2 object={material} variable="clearcoatNormalScale" />
+            <ItemTexture object={material} variable="clearcoatNormalMap" />
+
+            <Divider children="Iridescence" orientation="left" />
+            <ItemNumber object={material} variable="iridescence" />
+            <ItemTexture object={material} variable="iridescenceMap" />
+            <ItemNumber object={material} variable="iridescenceIOR" />
+            {/* Bad [number, number]! Won't work with Vector2 */}
+            {/* <ItemNumber object={material} variable="iridescenceThicknessRange" /> */}
+            <ItemTexture object={material} variable="iridescenceMap" />
+
+            <Divider children="Sheen" orientation="left" />
+            <ItemNumber object={material} variable="sheen" />
+            <ItemColor object={material} variable="sheenColor" />
+            <ItemTexture object={material} variable="sheenColorMap" />
+            <ItemNumber object={material} variable="sheenRoughness" />
+            <ItemTexture object={material} variable="sheenRoughnessMap" />
+
+            <Divider children="Attenuation" orientation="left" />
+            <ItemNumber object={material} variable="attenuationDistance" />
+            <ItemColor object={material} variable="attenuationColor" />
+
+            <Divider children="Specular" orientation="left" />
+            <ItemNumber object={material} variable="specularIntensity" />
+            <ItemTexture object={material} variable="specularIntensityMap" />
+            <ItemColor object={material} variable="specularColor" />
+            <ItemTexture object={material} variable="specularColorMap" />
+
+            <Divider children="Transmission" orientation="left" />
+            <ItemNumber object={material} variable="transmission" />
+            <ItemTexture object={material} variable="transmissionMap" />
             <StandardMaterial material={material} />
         </>
     )
 })
 
-// ###################### //
-// BEGIN GROUP COMPONENTS //
-// ###################### //
+// ################ //
+// GROUP COMPONENTS //
+// ################ //
 
-interface Alpha {
-    material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial |
-    THREE.MeshDepthMaterial | THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial
-}
+// Every material implements these differently, so we make sure to constraint it for typescript sake.
+interface Alpha { material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshDepthMaterial | THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial }
+interface AmbientOcclusion { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshBasicMaterial }
+interface Bump { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial }
+interface Displacement { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshDepthMaterial | THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial }
+interface Emissive { material: THREE.MeshStandardMaterial | THREE.MeshLambertMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial }
+interface Environment { material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshLambertMaterial }
+interface Light { material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshLambertMaterial }
+interface Normal { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial | THREE.MeshLambertMaterial | THREE.MeshToonMaterial }
+interface Roughness { material: THREE.MeshStandardMaterial }
+interface Specular { material: THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshLambertMaterial }
+interface Reflectivity { material: THREE.MeshPhongMaterial | THREE.MeshBasicMaterial }
 
 const Alpha = observer((props: Alpha) => {
     const { material } = props;
@@ -401,10 +439,6 @@ const Alpha = observer((props: Alpha) => {
         </>
     )
 })
-
-interface AmbientOcclusion {
-    material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshBasicMaterial
-}
 
 const AmbientOcclusion = observer((props: AmbientOcclusion) => {
     const { material } = props;
@@ -417,11 +451,6 @@ const AmbientOcclusion = observer((props: AmbientOcclusion) => {
     )
 })
 
-interface Bump {
-    material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial |
-    THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial
-}
-
 const Bump = observer((props: Bump) => {
     const { material } = props;
     return (
@@ -432,11 +461,6 @@ const Bump = observer((props: Bump) => {
         </>
     )
 })
-
-interface Displacement {
-    material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshDepthMaterial |
-    THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial
-}
 
 const Displacement = observer((props: Displacement) => {
     const { material } = props;
@@ -450,10 +474,6 @@ const Displacement = observer((props: Displacement) => {
     )
 })
 
-interface Emissive {
-    material: THREE.MeshStandardMaterial | THREE.MeshLambertMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial
-}
-
 const Emissive = observer((props: Emissive) => {
     const { material } = props;
     return (
@@ -465,10 +485,6 @@ const Emissive = observer((props: Emissive) => {
         </>
     )
 })
-
-interface Environment {
-    material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshLambertMaterial
-}
 
 const Environment = observer((props: Environment) => {
     const { material } = props;
@@ -482,11 +498,6 @@ const Environment = observer((props: Environment) => {
     )
 })
 
-interface Light {
-    material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial |
-    THREE.MeshToonMaterial | THREE.MeshLambertMaterial
-}
-
 const Light = observer((props: Light) => {
     const { material } = props;
     return (
@@ -497,11 +508,6 @@ const Light = observer((props: Light) => {
         </>
     )
 })
-
-interface Normal {
-    material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshMatcapMaterial |
-    THREE.MeshNormalMaterial | THREE.MeshLambertMaterial | THREE.MeshToonMaterial
-}
 
 const Normal = observer((props: Normal) => {
     const { material } = props;
@@ -527,10 +533,6 @@ const Normal = observer((props: Normal) => {
     )
 })
 
-interface Roughness {
-    material: THREE.MeshStandardMaterial
-}
-
 const Roughness = observer((props: Roughness) => {
     const { material } = props;
     return (
@@ -541,10 +543,6 @@ const Roughness = observer((props: Roughness) => {
         </>
     )
 })
-
-interface Specular {
-    material: THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshLambertMaterial
-}
 
 const Specular = observer((props: Specular) => {
     const { material } = props;
@@ -563,10 +561,6 @@ const Specular = observer((props: Specular) => {
         </>
     )
 })
-
-interface Reflectivity {
-    material: THREE.MeshPhongMaterial | THREE.MeshBasicMaterial;
-}
 
 const Reflectivity = observer((props: Reflectivity) => {
     const { material } = props;
