@@ -456,10 +456,10 @@ export function modifyMap(input: string, key: string, value: string) {
 }
 
 function createFilesMap(files: File[]) {
-    const map = {};
+    const map = {} as Record<string, any>;
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        Object.assign(map, { [file.name]: file });
+        map[file.name] = file;
     }
     return map;
 
