@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { message } from 'antd';
-import { GLTFLoader, DRACOLoader, KTX2Loader, OBJLoader, USDZLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader, RGBELoader } from 'three/examples/jsm/Addons.js';
-import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { OBJLoader, USDZLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader, RGBELoader } from 'three/examples/jsm/Addons.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 import { isFileImage, sleep } from '@orb_utils/Main';
 import { USDZLoader as USDC_Loader } from "three-usdz-loader";
@@ -208,7 +207,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
         case ".gltf":
             reader.addEventListener('load', async function (event) {
                 const contents = event.target?.result as string | ArrayBuffer;
-                const loader = createGLTFLoader(manager);
+                const loader = await createGLTFLoader(manager);
                 loader.parse(contents, '',
                     (result) => {
                         const scene = result.scene;
@@ -226,9 +225,9 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
             reader.readAsArrayBuffer(file);
             break;
         case ".glb":
-            reader.addEventListener('load', async function (event) {
-                const contents = event.target?.result as string | ArrayBuffer;
-                const loader = createGLTFLoader();
+            reader.addEventListener('load', async (event) => {
+                const contents = event.target?.result as ArrayBuffer;
+                const loader = await createGLTFLoader();
                 console.log(contents);
                 loader.parse(contents, '',
                     (result) => {
@@ -236,8 +235,9 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                         scene.name = file.name;
                         scene.userData = result.userData;
                         scene.animations.push(...result.animations);
-                        loader.dracoLoader?.dispose();
                         onImport(scene);
+                        loader.dracoLoader?.dispose();
+                        loader.ktx2Loader?.dispose();
                         return scene;
                     },
                     (error) => {
@@ -356,7 +356,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
     }
 }
 
-function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnImport<THREE.Object3D>) {
+async function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnImport<THREE.Object3D>) {
     if (!data) {
         message.error("ZIP data returned " + data);
         return;
@@ -389,7 +389,7 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
             }
 
             case ".glb": {
-                const loader = createGLTFLoader();
+                const loader = await createGLTFLoader();
                 loader.parse(file.buffer as ArrayBuffer, '', result => {
                     console.log("test", result);
                     const scene = result.scene;
@@ -401,7 +401,7 @@ function handleZIP(data: string | ArrayBuffer | null | undefined, onImport: OnIm
             }
 
             case ".gltf": {
-                const loader = createGLTFLoader(manager);
+                const loader = await createGLTFLoader(manager);
                 loader.parse(strFromU8(file), '', result => {
                     const scene = result.scene;
                     scene.animations.push(...result.animations);
@@ -465,7 +465,11 @@ function createFilesMap(files: File[]) {
 
 }
 
-function createGLTFLoader(manager: THREE.LoadingManager | undefined = undefined) {
+async function createGLTFLoader(manager: THREE.LoadingManager | undefined = undefined) {
+    const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+    const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader.js');
+    const { KTX2Loader } = await import('three/examples/jsm/loaders/KTX2Loader.js');
+    const { MeshoptDecoder } = await import('three/examples/jsm/libs/meshopt_decoder.module.js');
     const dracoLoader = new DRACOLoader(manager);
     dracoLoader.setDecoderPath('../examples/jsm/libs/draco/gltf/');
 
