@@ -24,9 +24,7 @@ export function doImport(onImport: OnImport<THREE.Object3D>) {
                 message.error("No files were selected.");
                 return;
             }
-            let files: File[] = [];
             for (let i = 0; i < filelist.length; i++) {
-                files.push(filelist[i]);
                 if (isFileImage(filelist[i])) {
                     importTexture(filelist[i], (res) => {
                         const mat = new THREE.MeshStandardMaterial({ map: res });
@@ -36,7 +34,7 @@ export function doImport(onImport: OnImport<THREE.Object3D>) {
                     })
                 }
             }
-            handleFiles(files, onImport);
+            handleFiles(filelist, onImport);
         }
         else
             message.error("FileList returned null.");
@@ -141,18 +139,6 @@ export function doImportAnimationClip(onImport: OnImport<THREE.AnimationClip>) {
     })
 }
 
-export function doImportFileList(filelist: FileList, onImport: OnImport<THREE.Object3D>) {
-
-    if (filelist.length <= 0) {
-        message.error("No files were selected.");
-        return;
-    }
-
-    let files: File[] = [];
-    for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
-    handleFiles(files, onImport);
-}
-
 export function doImportFile(file: File, onImport: OnImport<THREE.Object3D>) {
     if (!file) {
         message.error("No files were selected.");
@@ -161,15 +147,7 @@ export function doImportFile(file: File, onImport: OnImport<THREE.Object3D>) {
     handleFiles([file], onImport);
 }
 
-export function doImportFiles(files: File[], onImport: OnImport<THREE.Object3D>) {
-    if (files.length <= 0) {
-        message.error("No files were selected.");
-        return;
-    }
-    handleFiles(files, onImport);
-}
-
-function handleFiles(files: File[], onImport: OnImport<THREE.Object3D>) {
+function handleFiles(files: File[] | FileList, onImport: OnImport<THREE.Object3D>) {
     const manager = new THREE.LoadingManager();
     const filesMap = createFilesMap(files) as { [name: string]: File };
 
@@ -182,8 +160,7 @@ function handleFiles(files: File[], onImport: OnImport<THREE.Object3D>) {
         }
         return url;
     });
-
-    files.forEach((file) => handleFile(file, manager, onImport));
+    for (let i = 0; i < files.length; i++) handleFile(files[i], manager, onImport);
 }
 
 function handleFile(file: File, manager: THREE.LoadingManager | null = null, onImport: OnImport<THREE.Object3D>) {
@@ -202,11 +179,16 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
     }
 
     const reader = new FileReader();
+    reader.addEventListener('progress', function (event) {
+        const size = '(' + new Intl.NumberFormat('en-us', { useGrouping: true }).format(Math.floor(event.total / 1000)) + ' KB)';
+        const progress = Math.floor((event.loaded / event.total) * 100) + '%';
+        console.log('Loading', file.name, size, progress);
+    });
 
     switch (type) {
         case ".gltf":
             reader.addEventListener('load', async function (event) {
-                const contents = event.target?.result as string | ArrayBuffer;
+                const contents = event.target!.result!;
                 const loader = await createGLTFLoader(manager);
                 loader.parse(contents, '',
                     (result) => {
@@ -218,6 +200,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                         return scene;
                     },
                     (error) => {
+                        console.error(error);
                         message.error("Failed to load .gltf file. [" + error + "]");
                     });
 
@@ -226,7 +209,8 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
             break;
         case ".glb":
             reader.addEventListener('load', async (event) => {
-                const contents = event.target?.result as ArrayBuffer;
+                console.log("loading!")
+                const contents = event.target!.result!;
                 const loader = await createGLTFLoader();
                 console.log(contents);
                 loader.parse(contents, '',
@@ -236,11 +220,11 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
                         scene.userData = result.userData;
                         scene.animations.push(...result.animations);
                         onImport(scene);
-                        loader.dracoLoader?.dispose();
-                        loader.ktx2Loader?.dispose();
+
                         return scene;
                     },
                     (error) => {
+                        console.error(error);
                         message.error("Failed to load .glb file. [" + error + "]");
                     });
 
@@ -252,7 +236,7 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
         case ".usdc":
         case ".usd":
             reader.addEventListener('load', async function (event) {
-                const contents = event.target?.result as string | ArrayBuffer;
+                const contents = event.target!.result as string | ArrayBuffer;
                 try {
                     const group = new USDZLoader(manager).parse(contents);
                     group.name = file.name;
@@ -390,7 +374,7 @@ async function handleZIP(data: string | ArrayBuffer | null | undefined, onImport
 
             case ".glb": {
                 const loader = await createGLTFLoader();
-                loader.parse(file.buffer as ArrayBuffer, '', result => {
+                loader.parse(file.buffer as ArrayBuffer | string, '', result => {
                     console.log("test", result);
                     const scene = result.scene;
                     scene.animations.push(...result.animations);
@@ -455,7 +439,7 @@ export function modifyMap(input: string, key: string, value: string) {
     return res;
 }
 
-function createFilesMap(files: File[]) {
+function createFilesMap(files: FileList | File[]) {
     const map = {} as Record<string, any>;
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -465,7 +449,7 @@ function createFilesMap(files: File[]) {
 
 }
 
-async function createGLTFLoader(manager: THREE.LoadingManager | undefined = undefined) {
+export async function createGLTFLoader(manager: THREE.LoadingManager | undefined = undefined) {
     const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
     const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader.js');
     const { KTX2Loader } = await import('three/examples/jsm/loaders/KTX2Loader.js');
