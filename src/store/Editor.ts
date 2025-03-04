@@ -115,6 +115,20 @@ export class Editor {
         return object;
     }
 
+    @action replaceObject = (oldObject: THREE.Object3D, newObject: THREE.Object3D, select: boolean = false) => {
+        const oldParent = oldObject.parent;
+
+        this.removeObject(oldObject);
+        newObject.position.copy(oldObject.position);
+        if (oldParent instanceof THREE.Scene) {
+            this.addObject(newObject, select);
+        }
+        else {
+            oldParent?.add(newObject);
+            select && this.viewport.setTarget(newObject);
+        }
+    }
+
     /** Adds helper to the scene, returns the added helper */
     @action addHelper = (helper: THREE.Object3D) => {
         this.sceneHelpers.push(helper);
@@ -124,7 +138,7 @@ export class Editor {
     // this is broken when it comes to helpers, fix!
     /** Removes object from the scene, returns the removed object */
     @action removeObject = (object: THREE.Object3D) => {
-        this.viewport.setTarget(null);
+        this.viewport.target == object && this.viewport.setTarget(null);
         // remove the helper first
         if (object.userData.helper) {
             const helper = object.userData.helper as THREE.Object3D;

@@ -3,9 +3,10 @@ import { useEditor } from "@orb_Editor";
 import { Dropdown, message, Button, Modal, Form, Upload, UploadProps, UploadFile, Divider } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
+import * as PINATA from '@dgreenheck/three-pinata'
 import * as IMPORTER from '@orb_tools/Importer'
 import * as EXPORTER from '@orb_tools/Exporter'
-import * as CONVERTER from '@orb_tools/Converter'
+// import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
 import { Sphere } from "@orb_tools/create/Primitive";
 import { invertGeometry } from "@orb_utils/Geometry";
@@ -13,8 +14,10 @@ import { PANEL_SCREENSHOT } from "@orb_UI/panels/Panels";
 import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { useViewport } from "src/store/Viewport";
 
+import * as GEOMETRYUTILS from "three/examples/jsm/utils/BufferGeometryUtils.js";
+
 export const Tools = observer(() => {
-    const { addObject, activatePanel } = useEditor();
+    const { addObject, replaceObject, activatePanel } = useEditor();
     const { target } = useViewport();
     const [open, setOpen] = useState(false);
     return (
@@ -59,6 +62,35 @@ export const Tools = observer(() => {
                                         message.warning("Select an object to import an animation!");
                                 }
                             }]
+                        },
+                        {
+                            type: 'divider'
+                        },
+                        {
+                            label: 'Object to Fragements',
+                            key: '1',
+                            icon: <ICONS.SketchOutlined />,
+                            disabled: !(target instanceof THREE.Mesh),
+                            onClick: () => {
+                                const o = target as THREE.Mesh;
+                                console.log(o, o.geometry);
+                                const fragmentGroup = new THREE.Group();
+                                const options = new PINATA.FractureOptions({ fragmentCount: 25 });
+                                const outMat = Array.isArray(o.material) ? o.material[0] : o.material; //new THREE.MeshStandardMaterial({ color: 0xffffff });
+                                const inMat = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+                                const g = GEOMETRYUTILS.mergeVertices(o.geometry)
+                                PINATA.fracture(g, options).forEach((fragment) => {
+                                    const fragmentMesh = new THREE.Mesh(fragment, [outMat, inMat]);
+
+                                    fragment.computeBoundingBox();
+                                    fragment.boundingBox?.getCenter(fragmentMesh.position);
+                                    // Store fragment position in user data so it can be animated later
+                                    fragmentMesh.userData.center = fragmentMesh.position.clone();
+                                    fragmentGroup.add(fragmentMesh);
+                                    fragmentMesh.position.set(0,0,0);    
+                                });
+                                replaceObject(o, fragmentGroup, true);
+                            }
                         },
                         {
                             type: 'divider'
@@ -159,9 +191,9 @@ export const ConvertModal = (props: ConvertModalInterface) => {
         const list = fileList as any as FileList;
         const res = exportSettings;
         if (fileList) {
-            CONVERTER.doConvertFileList(list, { type: res.type as EXPORTER.ExportType, name: res.name /*, maxTextureSize: res.textureSize*/ }, (blob) => {
-                EXPORTER.save(blob, (res.name || "export") + "." + res.type)
-            });
+            // CONVERTER.doConvertFileList(list, { type: res.type as EXPORTER.ExportType, name: res.name /*, maxTextureSize: res.textureSize*/ }, (blob) => {
+            //     EXPORTER.save(blob, (res.name || "export") + "." + res.type)
+            // });
         }
         setFileList([]);
         onSubmit();
