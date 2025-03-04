@@ -1,4 +1,4 @@
-import { ItemBoolean, ItemButton, ItemCollapse, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemTable, ItemVector3 } from "@orb_UI/controller/ControllerItems";
+import { ItemBoolean, ItemButton, ItemCollapse, ItemColor, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemTable, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { observer } from "mobx-react-lite";
 import * as THREE from 'three';
 import { EyeOutlined, QuestionCircleOutlined } from "@ant-design/icons";
@@ -71,6 +71,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
                 }
 
             </ItemCollapse >
+            <ChildObject3D object={object} />
             <ItemCollapse label={"Object3D"} alwaysOpen>
                 <ItemInput object={{ type: object.constructor.name }} variable="type" labelInVariable readonly />
                 <ItemInput object={object} variable="name" labelInVariable />
@@ -92,10 +93,17 @@ export const InspectorObject3D = observer((props: Object3D) => {
 
 export const ChildObject3D = observer((props: Object3D) => {
     const { object } = props;
-    switch (object.constructor) {
-        case THREE.Mesh: return <Mesh object={object as THREE.Mesh} />
-        default: return <>{object.constructor.name}</>;
-    }
+
+    return <ItemCollapse label={object.constructor.name} alwaysOpen>
+        {(() => {
+            switch (object.constructor) {
+                case THREE.Mesh: return <Mesh object={object as THREE.Mesh} />
+                case THREE.PointLight: return <PointLight object={object as THREE.PointLight} />;
+                case THREE.HemisphereLight: return <HemisphereLight object={object as THREE.HemisphereLight} />;
+                default: return <Alert message="This child is not defined!" type="warning" />;
+            }
+        })()}
+    </ItemCollapse>
 })
 
 interface Mesh {
@@ -114,6 +122,47 @@ export const Mesh = observer((props: Mesh) => {
                 <ItemInput object={{ material: object.material.constructor.name.replace("_", "") }} variable="material" readonly />
                 <ItemButton buttonName={<EyeOutlined />} onClick={() => { message.info("Implement viewing material tab!") }} />
             </ItemGroup>
+        </>
+    )
+})
+
+interface PointLight {
+    object: THREE.PointLight
+}
+
+export const PointLight = observer((props: PointLight) => {
+    const { object } = props;
+    const power = { value: object.intensity * 4 * Math.PI };
+
+    return (
+        <>
+            <ItemNumber object={object} variable="intensity" labelInVariable onChange={(v) => power.value = v * 4 * Math.PI} />
+            <ItemNumber
+                object={power}
+                variable="value"
+                label="Power"
+                onChange={(v) => { object.intensity = v / (4 * Math.PI) }}
+            />
+            <ItemNumber object={object} variable="distance" labelInVariable />
+            <ItemBoolean object={object} variable="castShadow" labelInVariable />
+            <ItemNumber object={object} variable="decay" labelInVariable />
+        </>
+    )
+})
+
+interface HemisphereLight {
+    object: THREE.HemisphereLight
+}
+
+export const HemisphereLight = observer((props: HemisphereLight) => {
+    const { object } = props;
+
+    return (
+        <>
+            <ItemNumber object={object} variable="intensity" labelInVariable />
+            <ItemVector3 object={object} variable="position" labelInVariable />
+            <ItemColor object={object} variable="color" labelInVariable />
+            <ItemColor object={object} variable="groundColor" labelInVariable />
         </>
     )
 })
