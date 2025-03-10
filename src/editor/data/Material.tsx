@@ -9,6 +9,7 @@ import { useViewport } from 'src/store/Viewport';
 import { useEditor } from '@orb_Editor';
 import { EyeOutlined } from '@ant-design/icons';
 import { passParameters } from '@orb_utils/Material';
+import * as INTERFACES from 'src/store/Interfaces';
 
 const needsUpdate = (m: THREE.Material) => { m.needsUpdate = true; }
 
@@ -423,20 +424,7 @@ const PhysicalMaterial = observer((props: MeshPhysicalMaterial) => {
 // GROUP COMPONENTS //
 // ################ //
 
-// Every material implements these differently, so we make sure to constraint it for typescript sake.
-interface Alpha { material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshDepthMaterial | THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial }
-interface AmbientOcclusion { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshBasicMaterial }
-interface Bump { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial }
-interface Displacement { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshDepthMaterial | THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial }
-interface Emissive { material: THREE.MeshStandardMaterial | THREE.MeshLambertMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial }
-interface Environment { material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshLambertMaterial }
-interface Light { material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshLambertMaterial }
-interface Normal { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial | THREE.MeshLambertMaterial | THREE.MeshToonMaterial }
-interface Roughness { material: THREE.MeshStandardMaterial }
-interface Specular { material: THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshLambertMaterial }
-interface Reflectivity { material: THREE.MeshPhongMaterial | THREE.MeshBasicMaterial }
-
-const Alpha = observer((props: Alpha) => {
+const Alpha = observer((props: INTERFACES.Alpha) => {
     const { material } = props;
     return (
         <>
@@ -446,7 +434,7 @@ const Alpha = observer((props: Alpha) => {
     )
 })
 
-const AmbientOcclusion = observer((props: AmbientOcclusion) => {
+const AmbientOcclusion = observer((props: INTERFACES.AmbientOcclusion) => {
     const { material } = props;
     return (
         <>
@@ -457,7 +445,7 @@ const AmbientOcclusion = observer((props: AmbientOcclusion) => {
     )
 })
 
-const Bump = observer((props: Bump) => {
+const Bump = observer((props: INTERFACES.Bump) => {
     const { material } = props;
     return (
         <>
@@ -468,7 +456,7 @@ const Bump = observer((props: Bump) => {
     )
 })
 
-const Displacement = observer((props: Displacement) => {
+const Displacement = observer((props: INTERFACES.Displacement) => {
     const { material } = props;
     return (
         <>
@@ -480,7 +468,7 @@ const Displacement = observer((props: Displacement) => {
     )
 })
 
-const Emissive = observer((props: Emissive) => {
+const Emissive = observer((props: INTERFACES.Emissive) => {
     const { material } = props;
     return (
         <>
@@ -492,7 +480,7 @@ const Emissive = observer((props: Emissive) => {
     )
 })
 
-const Environment = observer((props: Environment) => {
+const Environment = observer((props: INTERFACES.Environment) => {
     const { material } = props;
     return (
         <>
@@ -504,7 +492,7 @@ const Environment = observer((props: Environment) => {
     )
 })
 
-const Light = observer((props: Light) => {
+const Light = observer((props: INTERFACES.Light) => {
     const { material } = props;
     return (
         <>
@@ -515,7 +503,7 @@ const Light = observer((props: Light) => {
     )
 })
 
-const Normal = observer((props: Normal) => {
+const Normal = observer((props: INTERFACES.Normal) => {
     const { material } = props;
     const NormalTypesSelect = [
         { value: THREE.TangentSpaceNormalMap, label: "Tangent Space" },
@@ -539,7 +527,7 @@ const Normal = observer((props: Normal) => {
     )
 })
 
-const Roughness = observer((props: Roughness) => {
+const Roughness = observer((props: INTERFACES.Roughness) => {
     const { material } = props;
     return (
         <>
@@ -550,7 +538,7 @@ const Roughness = observer((props: Roughness) => {
     )
 })
 
-const Specular = observer((props: Specular) => {
+const Specular = observer((props: INTERFACES.Specular) => {
     const { material } = props;
     return (
         <>
@@ -568,7 +556,7 @@ const Specular = observer((props: Specular) => {
     )
 })
 
-const Reflectivity = observer((props: Reflectivity) => {
+const Reflectivity = observer((props: INTERFACES.Reflectivity) => {
     const { material } = props;
     const CombineSelect = [
         { value: THREE.MultiplyOperation, label: "Multiply" },
