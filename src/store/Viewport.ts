@@ -18,7 +18,7 @@ export class Viewport {
 
     /** Currently selected Objects */
     @observable target: THREE.Object3D | null = null;
-
+    
     targetLastPlace: THREE.Vector3 | null = null;
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -37,7 +37,7 @@ export class Viewport {
             new THREE.MeshBasicMaterial({ color: "red" })
         )
     )
-    
+
     @observable boundingBoxEnabled: boolean = true;
     targetBoundingBox: THREE.Box3 = new THREE.Box3();
 
@@ -70,7 +70,6 @@ export class Viewport {
         picker.rotate.remove(...picker.rotate.children.filter(c => c.name == "XYZE" || c.name == "E"));
         gizmo.rotate.remove(...gizmo.rotate.children.filter(c => c.name == "XYZE" || c.name == "E"));
     }
-
     public static get Instance() { return this._instance; }
 
     @action setTarget = (object: THREE.Object3D | null) => {
@@ -80,6 +79,7 @@ export class Viewport {
             object = object.parent;
         }
         this.target = object;
+
         if (this.target instanceof THREE.Mesh) {
             this.targetBoundingBox.setFromObject(this.target);
             this.setWireframeHelper(this.target.geometry);
@@ -102,7 +102,6 @@ export class Viewport {
             this.controls.detach();
             if (this.controls.domElement) this.controls.disconnect();
         }
-
     }
 
     @action setTransforming = (b?: boolean) => { this.transforming = b != undefined ? b : !this.transforming }

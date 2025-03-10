@@ -102,7 +102,7 @@ export const SelectedObject = observer(() => {
                         </Col>
                         <Col span={23} style={{ maxWidth: "calc(100% - 40px)" }}>
                             <div style={{ height: "calc(100% - 32px)", overflowY: "auto", overflowX: "hidden", scrollbarWidth: "thin", scrollbarGutter: "auto" }}>
-                                <Form labelAlign="left" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
+                                <Form key={Math.random().toString() + target?.uuid} labelAlign="left" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
                                     {tab == "SCENE" && <InspectorScene />}
                                     {tab == "OBJECT" && target && <InspectorObject3D object={target} />}
                                     {

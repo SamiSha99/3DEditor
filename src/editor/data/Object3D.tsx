@@ -6,6 +6,7 @@ import { Alert, message, Tooltip } from "antd";
 import { useViewport } from "src/store/Viewport";
 import { useEditor } from "@orb_Editor";
 import { ItemQuaternion } from "@orb_UI/controller/items/ItemQuaternion";
+import { LIMIT_01 } from "@orb_UI/controller/items/Item";
 
 interface Object3D {
     object: THREE.Object3D
@@ -41,15 +42,15 @@ export const InspectorObject3D = observer((props: Object3D) => {
                         ]} />
                 }
                 {
-                    object.parent == scene &&
                     <ItemGroup label="Parent" sizes={["100%"]}>
-                        <Alert type="info" showIcon message={<>Object is attached to the current Scene. <Tooltip title={"All objects are placed inside a scene, the top of each object's parent is always attached to the Scene."} children={<QuestionCircleOutlined />} /></>} />
-                    </ItemGroup>
-                }
-                {
-                    object.parent == null &&
-                    <ItemGroup label="Parent" sizes={["100%"]}>
-                        <Alert type="warning" showIcon message={`Object isn't attached to the active Scene!`} />
+                        {
+                            object.parent == scene &&
+                            <Alert type="info" showIcon message={<>Attached to Scene. <Tooltip title={"All objects are placed inside a scene, the top of each object's parent is always attached to the Scene."} children={<QuestionCircleOutlined />} /></>} />
+                        }
+                        {
+                            object.parent == null &&
+                            <Alert type="warning" showIcon message={`This object isn't attached to the active Scene, it will not be visible!`} />
+                        }
                     </ItemGroup>
                 }
                 {
@@ -100,17 +101,14 @@ export const ChildObject3D = observer((props: Object3D) => {
                 case THREE.Mesh: return <Mesh object={object as THREE.Mesh} />
                 case THREE.PointLight: return <PointLight object={object as THREE.PointLight} />;
                 case THREE.HemisphereLight: return <HemisphereLight object={object as THREE.HemisphereLight} />;
+                case THREE.SpotLight: return <SpotLight object={object as THREE.SpotLight} />;
                 default: return <Alert message="This child is not defined!" type="warning" />;
             }
         })()}
     </ItemCollapse>
 })
 
-interface Mesh {
-    object: THREE.Mesh
-}
-
-export const Mesh = observer((props: Mesh) => {
+export const Mesh = observer((props: { object: THREE.Mesh }) => {
     const { object } = props;
     return (
         <>
@@ -126,11 +124,7 @@ export const Mesh = observer((props: Mesh) => {
     )
 })
 
-interface PointLight {
-    object: THREE.PointLight
-}
-
-export const PointLight = observer((props: PointLight) => {
+export const PointLight = observer((props: { object: THREE.PointLight }) => {
     const { object } = props;
     const power = { value: object.intensity * 4 * Math.PI };
 
@@ -143,6 +137,7 @@ export const PointLight = observer((props: PointLight) => {
                 label="Power"
                 onChange={(v) => { object.intensity = v / (4 * Math.PI) }}
             />
+            <ItemColor object={object} variable="color" labelInVariable />
             <ItemNumber object={object} variable="distance" labelInVariable />
             <ItemBoolean object={object} variable="castShadow" labelInVariable />
             <ItemNumber object={object} variable="decay" labelInVariable />
@@ -150,19 +145,30 @@ export const PointLight = observer((props: PointLight) => {
     )
 })
 
-interface HemisphereLight {
-    object: THREE.HemisphereLight
-}
-
-export const HemisphereLight = observer((props: HemisphereLight) => {
+export const HemisphereLight = observer((props: { object: THREE.HemisphereLight }) => {
     const { object } = props;
 
     return (
         <>
-            <ItemNumber object={object} variable="intensity" labelInVariable />
-            <ItemVector3 object={object} variable="position" labelInVariable />
-            <ItemColor object={object} variable="color" labelInVariable />
+            <ItemColor object={object} variable="color" label="Sky Color" />
             <ItemColor object={object} variable="groundColor" labelInVariable />
+            <ItemNumber object={object} variable="intensity" labelInVariable />
+        </>
+    )
+})
+
+export const SpotLight = observer((props: { object: THREE.SpotLight }) => {
+    const { object } = props;
+
+    return (
+        <>
+            <ItemColor object={object} variable="color" labelInVariable />
+            <ItemNumber object={object} variable="intensity" labelInVariable />
+            <ItemNumber object={object} variable="distance" labelInVariable />
+            <ItemNumber object={object} variable="angle" labelInVariable />
+            <ItemNumber object={object} variable="penumbra" labelInVariable limit={LIMIT_01} />
+            <ItemNumber object={object} variable="decay" labelInVariable limit={LIMIT_01} />
+            <ItemVector3 object={object.target} variable="position" label="Target" labelInVariable />
         </>
     )
 })

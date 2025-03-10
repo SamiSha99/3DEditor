@@ -16,7 +16,7 @@ export function PointLight() {
     const light = new THREE.PointLight();
     light.name = "PointLight";
     const helper = CreateHelper(THREE.PointLightHelper, light);
-    return { object: light, helper: helper } as GenerateInfo;
+    return { object: light, helper: helper as THREE.PointLightHelper } as GenerateInfo;
 }
 
 export function HemisphereLight() {

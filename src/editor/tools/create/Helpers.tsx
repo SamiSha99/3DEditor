@@ -13,15 +13,13 @@ export function CreateHelper(helper: Helpers, object: THREE.Object3D) {
     let helperObject = null;
     switch (helper) {
         case THREE.PointLightHelper:
-            helperObject = new THREE.PointLightHelper(object as THREE.PointLight, 1);
+            helperObject = new THREE.PointLightHelper(object as THREE.PointLight, 1, (object as THREE.PointLight).color);
             break;
         case THREE.HemisphereLightHelper:
             helperObject = new THREE.HemisphereLightHelper(object as THREE.HemisphereLight, 1);
             break;
         case THREE.SpotLightHelper:
-            console.log((object as THREE.SpotLight));
-            console.log((object as THREE.Light));
-            helperObject = new THREE.SpotLightHelper((object as THREE.SpotLight), "white");
+            helperObject = new THREE.SpotLightHelper((object as THREE.SpotLight));
             break;
         default:
             return helperObject;
@@ -29,11 +27,9 @@ export function CreateHelper(helper: Helpers, object: THREE.Object3D) {
 
     if (helperObject) {
         helperObject.name = 'helper';
-        helperObject.traverse((helperComponent) => {
-            helperComponent.userData = userData;
-        })
+        helperObject.traverse((helperComponent) => { helperComponent.userData = userData; });
         helperObject.userData = userData;
-        object.userData = {"helper": helperObject};
+        object.userData = { "helper": helperObject };
         const picker = CreatePicker(object);
         helperObject.add(picker);
     }
