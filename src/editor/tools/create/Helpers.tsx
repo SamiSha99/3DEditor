@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 const DEBUG_SHOW_HELPER = false;
 
-export type Helpers = typeof THREE.PointLightHelper | typeof THREE.SpotLightHelper | typeof THREE.HemisphereLightHelper
+export type Helpers = typeof THREE.PointLightHelper | typeof THREE.SpotLightHelper | typeof THREE.HemisphereLightHelper | typeof THREE.DirectionalLightHelper;
 
 export type HelperUserData = {
     "object": THREE.Object3D
@@ -20,6 +20,9 @@ export function CreateHelper(helper: Helpers, object: THREE.Object3D) {
             break;
         case THREE.SpotLightHelper:
             helperObject = new THREE.SpotLightHelper((object as THREE.SpotLight));
+            break;
+        case THREE.DirectionalLightHelper:
+            helperObject = new THREE.DirectionalLightHelper((object as THREE.DirectionalLight), 1);
             break;
         default:
             return helperObject;

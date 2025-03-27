@@ -33,3 +33,12 @@ export function SpotLight() {
     helper?.update();
     return { object: light, helper: helper } as GenerateInfo;
 }
+
+export function DirectionalLight() {
+    const light = new THREE.DirectionalLight();
+    light.name = "DirectionalLight";
+    light.shadow.autoUpdate = true;
+    const helper = CreateHelper(THREE.DirectionalLightHelper, light);
+    helper?.update();
+    return { object: light, helper: helper } as GenerateInfo;
+}

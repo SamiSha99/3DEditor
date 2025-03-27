@@ -38,7 +38,7 @@ export const InspectorScene = observer(() => {
 
     return (
         <ItemCollapse label={"Scene"}>
-            <Alert style={{ marginBottom: 10 }} type="info" showIcon message="Scene options don't impact the export of the modal." />
+            <Alert style={{ marginBottom: 10 }} type="info" showIcon message="Scene options don't impact exports." />
             <Background />
             <Environment />
             <Fog />

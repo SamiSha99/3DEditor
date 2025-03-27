@@ -35,7 +35,10 @@ export interface I3DFileSettings {
     addToAnalytics: boolean
 }
 
-// Every material implements these differently, so we make sure to constraint it for typescript sake.
+// Goes around Typescript instanceof checks, instead we just check if the object has the update method.
+export interface UpdatableObject3D extends THREE.Object3D { update?: () => void; }
+
+// Every material implements these differently, so we make sure to constraint it.
 export interface Alpha { material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshDepthMaterial | THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial }
 export interface AmbientOcclusion { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshBasicMaterial }
 export interface Bump { material: THREE.MeshStandardMaterial | THREE.MeshPhongMaterial | THREE.MeshToonMaterial | THREE.MeshLambertMaterial | THREE.MeshMatcapMaterial | THREE.MeshNormalMaterial }

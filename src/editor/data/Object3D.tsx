@@ -102,6 +102,8 @@ export const ChildObject3D = observer((props: Object3D) => {
                 case THREE.PointLight: return <PointLight object={object as THREE.PointLight} />;
                 case THREE.HemisphereLight: return <HemisphereLight object={object as THREE.HemisphereLight} />;
                 case THREE.SpotLight: return <SpotLight object={object as THREE.SpotLight} />;
+                case THREE.AmbientLight: return <AmbientLight object={object as THREE.AmbientLight} />;
+                case THREE.DirectionalLight: return <DirectionalLight object={object as THREE.DirectionalLight} />;
                 default: return <Alert message="This child is not defined!" type="warning" />;
             }
         })()}
@@ -120,6 +122,8 @@ export const Mesh = observer((props: { object: THREE.Mesh }) => {
                 <ItemInput object={{ material: object.material.constructor.name.replace("_", "") }} variable="material" readonly />
                 <ItemButton buttonName={<EyeOutlined />} onClick={() => { message.info("Implement viewing material tab!") }} />
             </ItemGroup>
+            <ItemBoolean object={object} variable="castShadow" labelInVariable />
+            <ItemBoolean object={object} variable="receiveShadow" labelInVariable />
         </>
     )
 })
@@ -169,6 +173,44 @@ export const SpotLight = observer((props: { object: THREE.SpotLight }) => {
             <ItemNumber object={object} variable="penumbra" labelInVariable limit={LIMIT_01} />
             <ItemNumber object={object} variable="decay" labelInVariable limit={LIMIT_01} />
             <ItemVector3 object={object.target} variable="position" label="Target" labelInVariable />
+        </>
+    )
+})
+
+export const AmbientLight = observer((props: { object: THREE.AmbientLight }) => {
+    const { object } = props;
+    const power = { value: object.intensity * 4 * Math.PI };
+    return (
+        <>
+            <ItemColor object={object} variable="color" labelInVariable />
+            <ItemNumber object={object} variable="intensity" labelInVariable />
+            <ItemNumber
+                object={power}
+                variable="value"
+                label="Power"
+                onChange={(v) => { object.intensity = v / (4 * Math.PI) }}
+            />
+            <ItemColor object={object} variable="color" labelInVariable />
+            <ItemBoolean object={object} variable="castShadow" labelInVariable />
+        </>
+    )
+})
+
+export const DirectionalLight = observer((props: { object: THREE.DirectionalLight }) => {
+    const { object } = props;
+    const power = { value: object.intensity * 4 * Math.PI };
+    return (
+        <>
+            <ItemColor object={object} variable="color" labelInVariable />
+            <ItemNumber object={object} variable="intensity" labelInVariable />
+            <ItemNumber
+                object={power}
+                variable="value"
+                label="Power"
+                onChange={(v) => { object.intensity = v / (4 * Math.PI) }}
+            />
+            <ItemColor object={object} variable="color" labelInVariable />
+            <ItemBoolean object={object} variable="castShadow" labelInVariable />
         </>
     )
 })

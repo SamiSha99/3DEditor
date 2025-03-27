@@ -57,6 +57,7 @@ export const Add = () => {
                             { label: 'Point Light', key: 'PointLight', onClick: () => { const o = LIGHT.PointLight(); onCreate(o.object, o.helper) } },
                             { label: 'Hemisphere Light', key: 'HemisphereLight', onClick: () => { const o = LIGHT.HemisphereLight(); onCreate(o.object, o.helper) } },
                             { label: 'Spot Light', key: 'SpotLight', onClick: () => { const o = LIGHT.SpotLight(); onCreate(o.object, o.helper) } },
+                            { label: 'Directional Light', key: 'DirectionalLight', onClick: () => { const o = LIGHT.DirectionalLight(); onCreate(o.object, o.helper) } },
                         ]
                     },
                 ],

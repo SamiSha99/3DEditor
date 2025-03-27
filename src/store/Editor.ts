@@ -3,7 +3,7 @@ import { makeObservable, observable, action } from "mobx";
 import { Panel } from "@orb_UI/panels/Panels";
 import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
-import { IModelFileResponse } from './Interfaces';
+import { IModelFileResponse, UpdatableObject3D } from './Interfaces';
 import { DEBUG_STORAGE_MODALS_TEST } from './Data';
 
 export const EditorContext = createContext<Editor>({} as any)
@@ -158,9 +158,12 @@ export class Editor {
     onLoad = (canvas: HTMLCanvasElement, gl: THREE.WebGLRenderer) => {
         this.canvas = canvas;
         this.gl = gl;
+        this.gl.shadowMap.enabled = true;
         gl.setAnimationLoop(this.update);
         this.viewport.onLoad(this.canvas, this.gl);
     }
+
+
 
     update = (delta = this.clock.getDelta()) => {
         this.viewport.update(delta);
@@ -170,11 +173,10 @@ export class Editor {
                     if (!(o instanceof THREE.Group)) {
                         o.lookAt(this.viewport.camera.position);
                     }
-
                 });
             }
-            if (helper instanceof THREE.SpotLightHelper)
-                helper.update();
+            const updatable = (helper as UpdatableObject3D);
+            updatable.update && updatable.update();
         })
     }
 

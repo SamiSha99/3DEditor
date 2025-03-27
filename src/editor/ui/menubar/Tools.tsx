@@ -78,7 +78,7 @@ export const Tools = observer(() => {
                                 const options = new PINATA.FractureOptions({ fragmentCount: 25 });
                                 const outMat = Array.isArray(o.material) ? o.material[0] : o.material; //new THREE.MeshStandardMaterial({ color: 0xffffff });
                                 const inMat = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-                                const g = GEOMETRYUTILS.mergeVertices(o.geometry)
+                                const g = GEOMETRYUTILS.mergeVertices(o.geometry);
                                 PINATA.fracture(g, options).forEach((fragment) => {
                                     const fragmentMesh = new THREE.Mesh(fragment, [outMat, inMat]);
 

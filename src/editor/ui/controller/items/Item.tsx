@@ -17,13 +17,12 @@ export interface ItemBase extends FormItemProps {
 }
 
 export interface Item extends ItemBase {
-    default?: any
     labelInVariable?: boolean
 }
 
 export interface ItemObject<T extends Record<string, any>, K> extends Item {
     object: T,
-    variable: K
+    variable: K,
 }
 
 export type Limit = { min?: number, max?: number }
