@@ -345,12 +345,12 @@ export const InspectorBoxGeometry = observer((props: BoxGeometry) => {
             const old = (target.geometry as THREE.BoxGeometry).parameters;
             (target.geometry as THREE.BoxGeometry).dispose();
             target.geometry = new THREE.BoxGeometry(
-                p.w != undefined ? p.w : old.width,
-                p.h != undefined ? p.h : old.height,
-                p.d != undefined ? p.d : old.depth,
-                p.wS != undefined ? p.wS : old.widthSegments,
-                p.hS != undefined ? p.hS : old.heightSegments,
-                p.dS != undefined ? p.dS : old.depthSegments
+                p.w ?? old.width,
+                p.h ?? old.height,
+                p.d ?? old.depth,
+                p.wS ?? old.widthSegments,
+                p.hS ?? old.heightSegments,
+                p.dS ?? old.depthSegments
             );
             onNewGeometry(target.geometry);
         }
@@ -405,13 +405,13 @@ export const InspectorSphereGeometry = observer((props: SphereGeometry) => {
             switch (geometry.constructor) {
                 case THREE.SphereGeometry:
                     target.geometry = new THREE.SphereGeometry(
-                        p.r != undefined ? p.r : old.radius,
-                        p.wS != undefined ? p.wS : old.widthSegments,
-                        p.hS != undefined ? p.hS : old.heightSegments,
-                        p.pS != undefined ? p.pS : old.phiStart,
-                        p.pL != undefined ? p.pL : old.phiLength,
-                        p.tS != undefined ? p.tS : old.thetaStart,
-                        p.tL != undefined ? p.tL : old.thetaLength
+                        p.r ?? old.radius,
+                        p.wS ?? old.widthSegments,
+                        p.hS ?? old.heightSegments,
+                        p.pS ?? old.phiStart,
+                        p.pL ?? old.phiLength,
+                        p.tS ?? old.thetaStart,
+                        p.tL ?? old.thetaLength
                     );
                     break;
             }
@@ -488,24 +488,24 @@ export const InspectorCylinderGeometry = observer((props: CylinderGeometry) => {
             switch (geometry.constructor) {
                 case THREE.ConeGeometry:
                     target.geometry = new THREE.ConeGeometry(
-                        p.rB != undefined ? p.rB : old.radiusBottom, // Radius of cone
-                        p.h != undefined ? p.h : old.height,
-                        p.rS != undefined ? p.rS : old.radialSegments,
-                        p.hS != undefined ? p.hS : old.heightSegments,
-                        p.openEnded != undefined ? p.openEnded : old.openEnded,
-                        p.tS != undefined ? p.tS : old.thetaStart,
+                        p.rB ?? old.radiusBottom, // Radius of cone
+                        p.h ?? old.height,
+                        p.rS ?? old.radialSegments,
+                        p.hS ?? old.heightSegments,
+                        p.openEnded ?? old.openEnded,
+                        p.tS ?? old.thetaStart,
                     );
                     break;
                 case THREE.CylinderGeometry:
                     target.geometry = new THREE.CylinderGeometry(
-                        p.rT != undefined ? p.rT : old.radiusTop,
-                        p.rB != undefined ? p.rB : old.radiusBottom,
-                        p.h != undefined ? p.h : old.height,
-                        p.rS != undefined ? p.rS : old.radialSegments,
-                        p.hS != undefined ? p.hS : old.heightSegments,
-                        p.openEnded != undefined ? p.openEnded : old.openEnded,
-                        p.tS != undefined ? p.tS : old.thetaStart,
-                        p.tL != undefined ? p.tL : old.thetaLength
+                        p.rT ?? old.radiusTop,
+                        p.rB ?? old.radiusBottom,
+                        p.h ?? old.height,
+                        p.rS ?? old.radialSegments,
+                        p.hS ?? old.heightSegments,
+                        p.openEnded ?? old.openEnded,
+                        p.tS ?? old.thetaStart,
+                        p.tL ?? old.thetaLength
                     );
             }
             onNewGeometry(target.geometry);
@@ -600,10 +600,10 @@ export const InspectorPlaneGeometry = observer((props: PlaneGeometry) => {
             const old = (target.geometry as THREE.PlaneGeometry).parameters;
             (target.geometry as THREE.PlaneGeometry).dispose();
             target.geometry = new THREE.PlaneGeometry(
-                p.w != undefined ? p.w : old.width,
-                p.h != undefined ? p.h : old.height,
-                p.wS != undefined ? p.wS : old.widthSegments,
-                p.hS != undefined ? p.hS : old.heightSegments,
+                p.w ?? old.width,
+                p.h ?? old.height,
+                p.wS ?? old.widthSegments,
+                p.hS ?? old.heightSegments,
             );
             onNewGeometry(target.geometry);
         }
@@ -653,10 +653,10 @@ export const InspectorCapsuleGeometry = observer((props: CapsuleGeometry) => {
             const old = (target.geometry as THREE.CapsuleGeometry).parameters;
             (target.geometry as THREE.CapsuleGeometry).dispose();
             target.geometry = new THREE.CapsuleGeometry(
-                p.r != undefined ? p.r : old.radius,
-                p.l != undefined ? p.l : old.length,
-                p.cS != undefined ? p.cS : old.capSegments,
-                p.rS != undefined ? p.rS : old.radialSegments,
+                p.r ?? old.radius,
+                p.l ?? old.length,
+                p.cS ?? old.capSegments,
+                p.rS ?? old.radialSegments
             );
             onNewGeometry(target.geometry);
         }
@@ -710,11 +710,11 @@ export const InspectorTorusGeometry = observer((props: TorusGeometry) => {
             const old = (target.geometry as THREE.TorusGeometry).parameters;
             (target.geometry as THREE.TorusGeometry).dispose();
             target.geometry = new THREE.TorusGeometry(
-                p.r != undefined ? p.r : old.radius,
-                p.t != undefined ? p.t : old.tube,
-                p.rS != undefined ? p.rS : old.radialSegments,
-                p.tS != undefined ? p.tS : old.tubularSegments,
-                p.a != undefined ? p.a : old.arc
+                p.r ?? old.radius,
+                p.t ?? old.tube,
+                p.rS ?? old.radialSegments,
+                p.tS ?? old.tubularSegments,
+                p.a ?? old.arc
             );
             onNewGeometry(target.geometry);
         }
@@ -772,8 +772,8 @@ export const InspectorIcosahedronGeometry = observer((props: IcosahedronGeometry
             const old = (target.geometry as THREE.IcosahedronGeometry).parameters;
             (target.geometry as THREE.IcosahedronGeometry).dispose();
             target.geometry = new THREE.IcosahedronGeometry(
-                p.r != undefined ? p.r : old.radius,
-                p.d != undefined ? p.d : old.detail,
+                p.r ?? old.radius,
+                p.d ?? old.detail
             );
             onNewGeometry(target.geometry);
         }

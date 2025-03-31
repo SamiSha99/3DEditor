@@ -48,10 +48,10 @@ export const ItemQuaternion = <T extends Record<string, any>, K extends KeyToVal
 
     const onChangeQuaternion = (v: { x?: number, y?: number, z?: number, w?: number }) => {
         (object[variable] as THREE.Quaternion).set(
-            v.x != undefined ? v.x : x,
-            v.y != undefined ? v.y : y,
-            v.z != undefined ? v.z : z,
-            v.w != undefined ? v.w : w
+            v.x ?? x,
+            v.y ?? y,
+            v.z ?? z,
+            v.w ?? w
         );
         v.x != undefined && setX(v.x);
         v.y != undefined && setY(v.y);
@@ -76,7 +76,7 @@ export const ItemQuaternion = <T extends Record<string, any>, K extends KeyToVal
                         v != null && onChangeQuaternion({ x: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={x}
                 min={limit?.x?.min}
                 max={limit?.x?.max}
@@ -104,7 +104,7 @@ export const ItemQuaternion = <T extends Record<string, any>, K extends KeyToVal
                         v != null && onChangeQuaternion({ y: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={y}
                 min={limit?.y?.min}
                 max={limit?.y?.max}
@@ -132,7 +132,7 @@ export const ItemQuaternion = <T extends Record<string, any>, K extends KeyToVal
                         v != null && onChangeQuaternion({ z: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={z}
                 min={limit?.z?.min}
                 max={limit?.z?.max}
@@ -160,7 +160,7 @@ export const ItemQuaternion = <T extends Record<string, any>, K extends KeyToVal
                         v != null && onChangeQuaternion({ w: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={w}
                 min={limit?.w?.min}
                 max={limit?.w?.max}

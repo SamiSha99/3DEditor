@@ -23,7 +23,7 @@ export const ItemSelect = <T extends Record<string, any>, K extends KeyToValueOf
     return (
         <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
             <Select
-                disabled={disabled != undefined ? disabled : false}
+                disabled={disabled}
                 defaultValue={defaultValue ? { value: defaultValue, label: defaultValue } : undefined}
                 labelInValue={labelInValue}
                 onChange={(select: { value: string, label: string }) => { onChangeSelect && onChangeSelect(select); }}
