@@ -54,8 +54,8 @@ export const ItemVector2 = <T extends Record<string, any>, K extends KeyToValueO
 
     const onChangeVector2 = (v: { x?: number, y?: number }) => {
         (object[variable] as THREE.Vector2).set(
-            v.x != undefined ? v.x : x,
-            v.y != undefined ? v.y : y
+            v.x ?? x,
+            v.y ?? y
         );
         v.x != undefined && setX(v.x);
         v.y != undefined && setY(v.y);
@@ -74,7 +74,7 @@ export const ItemVector2 = <T extends Record<string, any>, K extends KeyToValueO
                             v != null && onChangeVector2({ x: v });
                         }
                     }}
-                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                    precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                     value={x}
                     min={limit?.x?.min}
                     max={limit?.x?.max}
@@ -100,7 +100,7 @@ export const ItemVector2 = <T extends Record<string, any>, K extends KeyToValueO
                             v != null && onChangeVector2({ y: v });
                         }
                     }}
-                    precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                    precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                     value={y}
                     min={limit?.y?.min}
                     max={limit?.y?.max}
@@ -143,9 +143,9 @@ export const ItemVector3 = <T extends Record<string, any>, K extends KeyToValueO
 
     const onChangeVector3 = (v: { x?: number, y?: number, z?: number }) => {
         (object[variable] as THREE.Vector3).set(
-            v.x != undefined ? v.x : x,
-            v.y != undefined ? v.y : y,
-            v.z != undefined ? v.z : z
+            v.x ?? x,
+            v.y ?? y,
+            v.z ?? z
         );
         v.x != undefined && setX(v.x);
         v.y != undefined && setY(v.y);
@@ -169,7 +169,7 @@ export const ItemVector3 = <T extends Record<string, any>, K extends KeyToValueO
                         v != null && onChangeVector3({ x: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={x}
                 min={limit?.x?.min}
                 max={limit?.x?.max}
@@ -197,7 +197,7 @@ export const ItemVector3 = <T extends Record<string, any>, K extends KeyToValueO
                         v != null && onChangeVector3({ y: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={y}
                 min={limit?.y?.min}
                 max={limit?.y?.max}
@@ -225,7 +225,7 @@ export const ItemVector3 = <T extends Record<string, any>, K extends KeyToValueO
                         v != null && onChangeVector3({ z: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={z}
                 min={limit?.z?.min}
                 max={limit?.z?.max}
@@ -269,10 +269,10 @@ export const ItemVector4 = <T extends Record<string, any>, K extends KeyToValueO
 
     const onChangeVector4 = (v: { x?: number, y?: number, z?: number, w?: number }) => {
         (object[variable] as THREE.Vector4).set(
-            v.x != undefined ? v.x : x,
-            v.y != undefined ? v.y : y,
-            v.z != undefined ? v.z : z,
-            v.w != undefined ? v.w : w
+            v.x ?? x,
+            v.y ?? y,
+            v.z ?? z,
+            v.w ?? w
         );
         v.x != undefined && setX(v.x);
         v.y != undefined && setY(v.y);
@@ -297,7 +297,7 @@ export const ItemVector4 = <T extends Record<string, any>, K extends KeyToValueO
                         v != null && onChangeVector4({ x: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={x}
                 min={limit?.x?.min}
                 max={limit?.x?.max}
@@ -325,7 +325,7 @@ export const ItemVector4 = <T extends Record<string, any>, K extends KeyToValueO
                         v != null && onChangeVector4({ y: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={y}
                 min={limit?.y?.min}
                 max={limit?.y?.max}
@@ -353,7 +353,7 @@ export const ItemVector4 = <T extends Record<string, any>, K extends KeyToValueO
                         v != null && onChangeVector4({ z: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={z}
                 min={limit?.z?.min}
                 max={limit?.z?.max}
@@ -381,7 +381,7 @@ export const ItemVector4 = <T extends Record<string, any>, K extends KeyToValueO
                         v != null && onChangeVector4({ w: v });
                     }
                 }}
-                precision={precision == false ? 0 : precision != undefined ? precision : PRECISION_AMOUNT}
+                precision={precision == false ? 0 : precision ?? PRECISION_AMOUNT}
                 value={w}
                 min={limit?.w?.min}
                 max={limit?.w?.max}

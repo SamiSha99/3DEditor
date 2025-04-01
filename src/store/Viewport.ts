@@ -104,7 +104,7 @@ export class Viewport {
         }
     }
 
-    @action setTransforming = (b?: boolean) => { this.transforming = b != undefined ? b : !this.transforming }
+    @action setTransforming = (b?: boolean) => { this.transforming = b ?? !this.transforming }
 
     // 0 = translate | 1 = rotate | 2 = scale
     @action setTransformControlsMode = (mode: TYPE.Range<0, 3> | TYPE.TransformModes) => {
