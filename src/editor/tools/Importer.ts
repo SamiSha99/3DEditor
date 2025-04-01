@@ -5,7 +5,7 @@ import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 import { isFileImage, sleep } from '@orb_utils/Main';
 import { USDZLoader as USDC_Loader } from "three-usdz-loader";
 import { doExport } from './Exporter';
-import { computeAllVertexNormals } from '@orb_utils/Geometry';
+import { computeAllVertexNormals } from '@orb_utils/three/Geometry';
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 

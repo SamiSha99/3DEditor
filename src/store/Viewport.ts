@@ -5,7 +5,7 @@ import { createContext, useContext } from 'react';
 import { Editor } from '@orb_Editor';
 import { TransformControls, TransformControlsGizmo } from 'three/examples/jsm/controls/TransformControls';
 import { OrbitControls } from 'three/examples/jsm/Addons';
-import { translateOriginPoint } from '@orb_utils/Geometry';
+import { translateOriginPoint } from '@orb_utils/three/Geometry';
 
 export const ViewportContext = createContext<Viewport>({} as any)
 export const useViewport = () => useContext(ViewportContext);

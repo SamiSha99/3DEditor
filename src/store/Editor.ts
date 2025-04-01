@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { makeObservable, observable, action } from "mobx";
-import { Panel } from "@orb_UI/panels/Panels";
+import { Panel } from "@orb_UI/panels/Main";
 import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
 import { IModelFileResponse, UpdatableObject3D } from './Interfaces';
@@ -53,7 +53,7 @@ export class Editor {
             loadEnvironmentSample('forest').then((o) => o && this.setEnvironment(o.data));
             this.viewport.setTarget(box);
             if (DEBUGGING) {
-                const { geometryPositionToText } = await import("@orb_utils/Geometry");
+                const { geometryPositionToText } = await import("@orb_utils/three/Geometry");
                 const group = geometryPositionToText(b.geometry, 2)
                 group && this.addHelper(group);
             }

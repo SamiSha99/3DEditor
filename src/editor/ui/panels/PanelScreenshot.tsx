@@ -3,7 +3,7 @@ import { DraggablePanel } from "../antd/DraggablePanel";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Alert, Button, Form, message, Row, Space } from "antd";
 import { observer } from "mobx-react-lite";
-import { PANEL_SCREENSHOT } from "./Panels";
+import { PANEL_SCREENSHOT } from "./Main";
 import { Canvas } from "@react-three/fiber";
 import { useRef } from "react";
 import * as EXPORTER from '@orb_tools/Exporter';
