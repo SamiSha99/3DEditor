@@ -73,7 +73,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
 
             </ItemCollapse >
             <ChildObject3D object={object} />
-            <ItemCollapse label={"Object3D"} alwaysOpen>
+            <ItemCollapse label={"Object3D"}>
                 <ItemInput object={{ type: object.constructor.name }} variable="type" labelInVariable readonly />
                 <ItemInput object={object} variable="name" labelInVariable />
                 <ItemNumber object={{ id: object.id }} variable="id" label="ID" readonly />
@@ -95,7 +95,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
 export const ChildObject3D = observer((props: Object3D) => {
     const { object } = props;
 
-    return <ItemCollapse label={object.constructor.name} alwaysOpen>
+    return <ItemCollapse label={object.constructor.name}>
         {(() => {
             switch (object.constructor) {
                 case THREE.Mesh: return <Mesh object={object as THREE.Mesh} />

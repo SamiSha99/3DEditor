@@ -14,11 +14,11 @@ export const ItemCollapse = (props: ItemCollapseInterface) => {
     let { label, children, collapsed, size, extra, alwaysOpen } = props;
     return (
         <Collapse
-            defaultActiveKey={!collapsed ? ["1"] : undefined}
+            defaultActiveKey={!collapsed ? "1" : undefined}
             style={{ width: "100%" }}
             size={size}
             collapsible={alwaysOpen ? "icon" : undefined}
-            items={[{ label: label, key: "1", children: <div>{children}</div>, extra: extra, showArrow: !alwaysOpen }]}
+            items={[{ label: <h4>{label}</h4>, key: "1", children: <div>{children}</div>, extra: extra, showArrow: !alwaysOpen }]}
         />
     )
 }
