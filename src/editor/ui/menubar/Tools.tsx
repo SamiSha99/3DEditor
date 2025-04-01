@@ -67,7 +67,7 @@ export const Tools = observer(() => {
                             type: 'divider'
                         },
                         {
-                            label: 'Object to Fragements',
+                            label: 'Object to Fragments',
                             key: '1',
                             icon: <ICONS.SketchOutlined />,
                             disabled: !(target instanceof THREE.Mesh),
@@ -75,11 +75,12 @@ export const Tools = observer(() => {
                                 const o = target as THREE.Mesh;
                                 console.log(o, o.geometry);
                                 const fragmentGroup = new THREE.Group();
+                                fragmentGroup.name = o.name + "_group_fragments";
                                 const options = new PINATA.FractureOptions({ fragmentCount: 25 });
                                 const outMat = Array.isArray(o.material) ? o.material[0] : o.material; //new THREE.MeshStandardMaterial({ color: 0xffffff });
                                 const inMat = new THREE.MeshStandardMaterial({ color: 0xff0000 });
                                 const g = GEOMETRYUTILS.mergeVertices(o.geometry);
-                                PINATA.fracture(g, options).forEach((fragment) => {
+                                PINATA.fracture(g, options).forEach((fragment, index) => {
                                     const fragmentMesh = new THREE.Mesh(fragment, [outMat, inMat]);
 
                                     fragment.computeBoundingBox();
@@ -87,7 +88,8 @@ export const Tools = observer(() => {
                                     // Store fragment position in user data so it can be animated later
                                     fragmentMesh.userData.center = fragmentMesh.position.clone();
                                     fragmentGroup.add(fragmentMesh);
-                                    fragmentMesh.position.set(0,0,0);    
+                                    fragmentMesh.position.set(0,0,0);
+                                    fragmentMesh.name = "fragment_" + index;
                                 });
                                 replaceObject(o, fragmentGroup, true);
                             }
