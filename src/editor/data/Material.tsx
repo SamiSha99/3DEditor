@@ -8,7 +8,7 @@ import { ItemColor } from '@orb_UI/controller/items/ItemColor';
 import { useViewport } from 'src/store/Viewport';
 import { useEditor } from '@orb_Editor';
 import { EyeOutlined } from '@ant-design/icons';
-import { passParameters } from '@orb_utils/Material';
+import { passParameters } from '@orb_utils/three/Material';
 import * as INTERFACES from 'src/store/Interfaces';
 
 const needsUpdate = (m: THREE.Material) => { m.needsUpdate = true; }

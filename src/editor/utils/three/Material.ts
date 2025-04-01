@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { commonKeys, getAllPropertyNames } from './Main';
+import { commonKeys, getAllPropertyNames } from '../Main';
 
 /** 
  * Passes matching parameters from two different material classes
