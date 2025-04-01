@@ -37,12 +37,12 @@ let lastFogExp2: THREE.FogExp2 | null;
 export const InspectorScene = observer(() => {
 
     return (
-        <ItemCollapse label={"Scene"}>
-            <Alert style={{ marginBottom: 10 }} type="info" showIcon message="Scene options don't impact exports." />
+        <>
+            <Alert style={{ margin: 10 }} type="info" showIcon message="Scene options don't impact exports." />
             <Background />
             <Environment />
             <Fog />
-        </ItemCollapse>
+        </>
     );
 })
 
@@ -65,7 +65,7 @@ export const Background = observer(() => {
             case 2:
                 lastBackgroundTexture && setBackground(lastBackgroundTexture);
                 return <>
-                    <ItemTexture object={{background: scene.background as THREE.Texture}} variable="background" label="Map"
+                    <ItemTexture object={{ background: scene.background as THREE.Texture }} variable="background" label="Map"
                         onChange={(v) => {
                             if (v) {
                                 setBackground(v);
@@ -197,12 +197,12 @@ export const Fog = observer(() => {
                 )
 
             case 2:
-                if (!lastFogExp2) lastFogExp2 = new THREE.FogExp2(0x000000);
+                if (!lastFogExp2) lastFogExp2 = new THREE.FogExp2(0x000000, 0.01);
                 setFog(lastFogExp2);
                 return (
                     <>
                         <ItemColor key="exponential" object={lastFogExp2} variable="color" labelInVariable />
-                        <ItemNumber object={lastFogExp2} variable="density" labelInVariable />
+                        <ItemNumber object={lastFogExp2} variable="density" labelInVariable step={0.005} />
                     </>
                 )
             // Off
@@ -213,7 +213,7 @@ export const Fog = observer(() => {
     })()
 
     return (
-        <ItemCollapse label="Fog">
+        <ItemCollapse label={scene.fog instanceof THREE.FogExp2 ? "FogExp2" : "Fog"}>
             <ItemSelect object={{ type: fogOptions }} variable="type" defaultValue={backgroundOptions[fogOption].label} labelInVariable onChangeSelect={(s) => setFogOption(s as number)} />
             {itemFog}
         </ItemCollapse>
