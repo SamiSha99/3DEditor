@@ -82,7 +82,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
                     <ItemButton buttonName="Generate" onClick={() => { object.uuid = THREE.MathUtils.generateUUID() }} size='small' />
                 </ItemGroup>
                 <ItemVector3 object={object} variable="position" labelInVariable />
-                <ItemEuler object={object} variable="rotation" isDegree labelInVariable tooltip="Syncs with Quaternion." />
+                <ItemEuler object={object} variable="rotation" isDegree labelInVariable tooltip="Syncs with Quaternion. Numbers are shown in Degrees." />
                 <ItemVector3 object={object} variable="scale" labelInVariable />
                 <ItemQuaternion object={object} variable="quaternion" labelInVariable limit={{ x: { min: -1, max: 1 }, y: { min: -1, max: 1 }, z: { min: -1, max: 1 }, w: { min: -1, max: 1 } }} tooltip="Syncs with Rotation, clamped between [-1, 1]." />
                 <ItemBoolean object={object} variable="visible" labelInVariable />

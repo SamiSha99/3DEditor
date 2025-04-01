@@ -223,10 +223,10 @@ const GeometryToolsTranslation = () => {
                     <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
                 </Space.Compact>
                 <Space.Compact {...spaceCompactProps}>
-                    <Tooltip title="While enabled, moves the Object while keeping the origin point in place.">
+                    <Tooltip title="While enabled, the position becomes an anchor, moving the object around it instead.">
                         <Checkbox
                             // disabled={true}
-                            children={"Lock Origin Point"}
+                            children={"Lock Object Position"}
                             defaultChecked={onConstraintObject}
                             onChange={(e) => {
                                 setOnConstraintObject(e.target.checked);

@@ -98,16 +98,16 @@ export const InspectorMaterial = observer((props: Material) => {
                     meshMaterial &&
                     <>
                         <ItemInput object={meshMaterial} variable="name" labelInVariable />
-                        <ItemGroup label="UUID" sizes={["75%", "25%"]}>
+                        <ItemGroup label="UUID" sizes={["75%", "25%"]} tooltip={"Universally unique identifier"}>
                             <ItemInput object={meshMaterial} variable="uuid" readonly />
-                            <ItemButton buttonName="Regenerate" onClick={() => { meshMaterial.uuid = THREE.MathUtils.generateUUID() }} size='small' />
+                            <ItemButton buttonName="New UUID" onClick={() => { meshMaterial.uuid = THREE.MathUtils.generateUUID() }} size='small' />
                         </ItemGroup>
                         <ItemGroup label={"Version"} sizes={["75%", "25%"]} tooltip={"Automatically increments whenever an update to the material is required."}>
                             <ItemNumber object={meshMaterial} variable="version" readonly />
                             <ItemButton buttonName="Update" onClick={() => needsUpdate(meshMaterial)} size='small' />
                         </ItemGroup>
                         <ItemBoolean object={meshMaterial} variable="transparent" labelInVariable onChange={() => { needsUpdate(meshMaterial) }} />
-                        <ItemNumber object={meshMaterial} variable="opacity" labelInVariable limit={LIMIT_01} />
+                        <ItemNumber object={meshMaterial} variable="opacity" labelInVariable limit={LIMIT_01} tooltip={"Requires \"Transparent\"."} />
                         <ItemBoolean object={meshMaterial} variable="visible" labelInVariable />
                         <ItemBoolean object={meshMaterial} variable="vertexColors" labelInVariable onChange={() => { needsUpdate(meshMaterial) }} />
 

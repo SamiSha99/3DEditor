@@ -20,7 +20,7 @@ export const Inspector = () => {
     return (
         <Splitter>
             {/* disabled being resizable */}
-            <Splitter.Panel resizable={false} defaultSize={"70%"} min={"62.5%"} max={"77.5%"}>
+            <Splitter.Panel resizable={false} defaultSize={"66.667%"} min={"33.3%"} max={"80%"}>
                 <Splitter layout="vertical">
                     <Splitter.Panel resizable={false} defaultSize={"75%"} style={{ display: "flex", position: "relative", overflow: "hidden" }}>
                         <Canvas />
@@ -63,7 +63,7 @@ export const HierarchyTree = observer(() => {
     };
 
     return (
-        <div style={{ height: "100%", alignContent: "top", overflow: "auto", background: "#141414" }}>
+        <div style={{ height: "100%", alignContent: "top", overflow: "auto", scrollbarColor: "grey transparent", background: "#141414" }}>
             <h2 style={{ paddingLeft: 10 }}>Scene</h2>
             {/* <Divider variant="dashed" style={{margin: 0}}/> */}
             <Tree defaultExpandAll showLine blockNode onSelect={onSelect} treeData={treeData} />
@@ -75,7 +75,7 @@ export const SelectedObject = observer(() => {
     const { target } = useViewport();
     const [tab, setTab] = useState(target ? "OBJECT" : "");
     const tabCSS: React.CSSProperties = { width: "100%", height: 48 };
-    const BUTTON_SIZE = 48;
+    const BUTTON_SIZE = "48px";
 
     useEffect(() => { target && setTab("OBJECT"); !target && setTab(""); }, [target]);
 
@@ -86,7 +86,7 @@ export const SelectedObject = observer(() => {
         <>
             {
                 <>
-                    <Row style={{ background: "#212121", height: "100%", width: "100%", flexWrap: "nowrap" }}>
+                    <Row style={{ background: "#212121", height: "100%", flexWrap: "nowrap" }}>
                         <Col span={1} style={{ minWidth: BUTTON_SIZE, background: "#141414" }}>
                             <Tooltip title="Scene" placement="left">
                                 <Button style={tabCSS} children={<IconScene size="lg" />} onClick={() => setTab("SCENE")} />
@@ -104,8 +104,8 @@ export const SelectedObject = observer(() => {
                                 <Button style={tabCSS} disabled={!isMesh || !material} children={<IconMaterial size="lg" />} onClick={() => setTab("MATERIAL")} />
                             </Tooltip>
                         </Col>
-                        <Col span={23} style={{ maxWidth: "calc(100% - " + BUTTON_SIZE + ")" }}>
-                            <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden" }}>
+                        <Col span={23} style={{ maxWidth: "calc(100% - " + BUTTON_SIZE + ")",}}>
+                            <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden", scrollbarColor: "grey transparent"}}>
                                 <Form key={Math.random().toString() + target?.uuid} labelAlign="left" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
                                     {tab == "SCENE" && <InspectorScene />}
                                     {tab == "OBJECT" && target && <InspectorObject3D object={target} />}
