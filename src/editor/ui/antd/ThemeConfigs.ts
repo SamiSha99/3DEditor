@@ -80,7 +80,9 @@ export const InspectorTheme: ThemeConfig = {
             defaultBorderColor: "none",
             defaultShadow: "none",
             defaultHoverBg: "#141414",
-            defaultActiveBg: "#141414"
+            defaultActiveBg: "#141414",
+            colorBgContainerDisabled: "transparent",
+            colorTextDisabled: "#666", // 😰😰😰
         },
         Radio: {
             colorBorderSecondary: "none",
