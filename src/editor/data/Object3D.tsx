@@ -1,6 +1,6 @@
+import * as THREE from 'three';
 import { ItemBoolean, ItemButton, ItemCollapse, ItemColor, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemTable, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { observer } from "mobx-react-lite";
-import * as THREE from 'three';
 import { EyeOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Alert, message, Tooltip } from "antd";
 import { useViewport } from "src/store/Viewport";
@@ -84,7 +84,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
                 <ItemVector3 object={object} variable="position" labelInVariable />
                 <ItemEuler object={object} variable="rotation" isDegree labelInVariable tooltip="Syncs with Quaternion. Numbers are shown in Degrees." />
                 <ItemVector3 object={object} variable="scale" labelInVariable />
-                <ItemQuaternion object={object} variable="quaternion" labelInVariable limit={{ x: { min: -1, max: 1 }, y: { min: -1, max: 1 }, z: { min: -1, max: 1 }, w: { min: -1, max: 1 } }} tooltip="Syncs with Rotation, clamped between [-1, 1]." />
+                <ItemQuaternion object={object} variable="quaternion" labelInVariable limit={{ x: LIMIT_01, y: LIMIT_01, z: LIMIT_01, w: LIMIT_01 }} tooltip="Syncs with Rotation, clamped between [-1, 1]." />
                 <ItemBoolean object={object} variable="visible" labelInVariable />
                 <ItemNumber object={object} variable="renderOrder" label="Order" />
             </ItemCollapse>

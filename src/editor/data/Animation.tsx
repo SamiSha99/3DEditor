@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
-import { Button } from 'antd';
+import { Alert, Button } from 'antd';
 import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
 import ButtonGroup from 'antd/es/button/button-group';
 import { CaretRightOutlined, PauseOutlined, StopOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import { ItemCollapse, ItemTable } from '@orb_UI/controller/ControllerItems';
+import { ItemCollapse, ItemSelect, ItemTable } from '@orb_UI/controller/ControllerItems';
 
 type AnimatorInterface = {
     mixer?: THREE.AnimationMixer | null,
@@ -45,39 +45,50 @@ export const InspectorAnimation = observer((props: Animation) => {
         }
     }, []);
 
-    const dataSource = animations ? animations.map((ani, i) => {
-        return {
-            key: i,
-            index: i,
-            name: ani.name,
-            time: (
-                <ActionTime action={animator.actions![ani.uuid]} />
-            ),
-            actions: (
-                <ActionControls action={animator.actions![ani.uuid]} />
-            )
-        }
-    }) : undefined;
+    const animationSelect = animations ? animations.map((ani) => { return { value: ani.uuid, label: ani.name } }) as { value: string, label: string }[] : undefined;
 
     return (
-        <ItemCollapse label={"Animation"}>
+        <>
             {
-                <ItemTable
-                    label={"Clips"}
-                    style={{ border: "1px solid grey", width: "95%", margin: "auto" }}
-                    showHeader={false}
-                    pagination={false}
-                    tableLayout="auto"
-                    columns={[
-                        { dataIndex: 'index' },
-                        { dataIndex: 'name', width: "100%" },
-                        { dataIndex: 'time', minWidth: 85 },
-                        { dataIndex: 'actions' }
-                    ]}
-                    dataSource={dataSource}
-                />
+                (!animationSelect || animationSelect.length == 0) &&
+                <Alert style={{ margin: 10 }} type="info" showIcon message="No animations :(" />
             }
-        </ItemCollapse>
+            {
+                animationSelect && animationSelect.length != 0 &&
+                <AnimationClips list={animationSelect} />
+            }
+        </>
+    );
+})
+
+interface AnimationClips {
+    list: { value: string, label: string }[]
+
+}
+
+export const AnimationClips = observer((props: AnimationClips) => {
+    const { list } = props;
+    const [selected, setSelected] = useState(list[0].value);
+    const [name, setName] = useState(list[0].label);
+    console.log(selected);
+    return (
+        <>
+            <ItemCollapse label={"Animation Clips"}>
+                <ItemSelect object={{ clips: list }} variable="clips" labelInVariable defaultValue={list[0].label}
+                    onChangeSelect={(v) => {
+                        stopAll();
+                        setSelected(v as string);
+                        setName(animator.actions![v as string].getClip().name);
+                    }} />
+            </ItemCollapse>
+            {
+                selected &&
+                <ItemCollapse key={selected} label={`${name} (Animation Clip)`}>
+                    <ActionTime action={animator.actions![selected]} />
+                    <ActionControls action={animator.actions![selected]} />
+                </ItemCollapse>
+            }
+        </>
     );
 })
 
