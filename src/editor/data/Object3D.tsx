@@ -77,9 +77,9 @@ export const InspectorObject3D = observer((props: Object3D) => {
                 <ItemInput object={{ type: object.constructor.name }} variable="type" labelInVariable readonly />
                 <ItemInput object={object} variable="name" labelInVariable />
                 <ItemNumber object={{ id: object.id }} variable="id" label="ID" readonly />
-                <ItemGroup label="UUID" sizes={["66.666%", "33.334%"]}>
+                <ItemGroup label="UUID" sizes={["75%", "25%"]} tooltip={"Universally unique identifier"}>
                     <ItemInput object={object} variable="uuid" readonly />
-                    <ItemButton buttonName="Generate" onClick={() => { object.uuid = THREE.MathUtils.generateUUID() }} size='small' />
+                    <ItemButton buttonName="New UUID" onClick={() => { object.uuid = THREE.MathUtils.generateUUID() }} size='small' />
                 </ItemGroup>
                 <ItemVector3 object={object} variable="position" labelInVariable />
                 <ItemEuler object={object} variable="rotation" isDegree labelInVariable tooltip="Syncs with Quaternion. Numbers are shown in Degrees." />
