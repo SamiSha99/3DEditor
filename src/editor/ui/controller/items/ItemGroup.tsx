@@ -5,7 +5,10 @@ import { ItemBase } from "./Item"
 interface ItemGroupInterface extends ItemBase {
     label?: string,
     children: React.ReactNode | React.ReactNode[]
-    sizes?: string[]
+    // string is the sizes in % up to 100%
+    // number is coverted to string[] with the sum of all numbers = 100% 
+    // e.g [1, 2, 3] = ["16.67%", "33.33%", "50%"]
+    sizes?: string[] | number[]
     tooltip?: LabelTooltipType
 }
 
@@ -13,9 +16,13 @@ export const ItemGroup = (props: ItemGroupInterface) => {
     let { label, sizes, children, tooltip } = props
     if (!Array.isArray(children)) children = [children];
     if (Array.isArray(children)) {
-        if (!sizes) {
-            sizes = []
+        if (sizes == undefined) {
+            sizes = [] as string[];
             sizes.push(...Array(children.length).fill(100 / children.length + "%"))
+        }
+        else if (sizes.every(item => typeof item === "number")) {
+            const totalSum = sizes.reduce((a, b) => a + b, 0) as number;
+            sizes = sizes.map((item) => { return `${(item / totalSum) * 100}%`; }) as string[];
         }
         return (
             <Form.Item label={label} tooltip={tooltip}>
