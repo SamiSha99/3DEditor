@@ -30,43 +30,6 @@ export const Tools = observer(() => {
                 menu={{
                     items: [
                         {
-                            label: 'Animations...',
-                            key: '2',
-                            icon: <ICONS.VideoCameraOutlined />,
-                            children: [{
-                                label: 'Export from Selected Object',
-                                key: '2.1',
-                                onClick: () => {
-                                    if (target) {
-                                        const animations = (target as THREE.Object3D).animations;
-                                        if (!animations || animations.length <= 0) {
-                                            message.warning("The selected model has no animations!");
-                                            return;
-                                        }
-                                        animations.map((ac) => EXPORTER.exportAnimationClip(ac, true, (blob) => EXPORTER.save(blob, ac.name + ".ac")));
-                                    }
-                                    else
-                                        message.warning("Select an object that has animations to export!");
-                                }
-                            },
-                            {
-                                label: 'Import into Selected Object',
-                                key: '2.2',
-                                onClick: () => {
-                                    if (target) {
-                                        IMPORTER.doImportAnimationClip((clip) => {
-                                            (target as THREE.Object3D).animations.push(clip);
-                                        })
-                                    }
-                                    else
-                                        message.warning("Select an object to import an animation!");
-                                }
-                            }]
-                        },
-                        {
-                            type: 'divider'
-                        },
-                        {
                             label: 'Object to Fragments',
                             key: '1',
                             icon: <ICONS.SketchOutlined />,
@@ -88,7 +51,7 @@ export const Tools = observer(() => {
                                     // Store fragment position in user data so it can be animated later
                                     fragmentMesh.userData.center = fragmentMesh.position.clone();
                                     fragmentGroup.add(fragmentMesh);
-                                    fragmentMesh.position.set(0,0,0);
+                                    fragmentMesh.position.set(0, 0, 0);
                                     fragmentMesh.name = "fragment_" + index;
                                 });
                                 replaceObject(o, fragmentGroup, true);

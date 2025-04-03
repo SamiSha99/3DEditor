@@ -1,19 +1,29 @@
 import * as THREE from 'three';
+import * as IMPORTER from '@orb_tools/Importer'
+import * as EXPORTER from '@orb_tools/Exporter'
 import { observer } from "mobx-react-lite";
 import { useViewport } from "src/store/Viewport";
-import { Alert, Button } from 'antd';
+import { Alert, Button, message } from 'antd';
 import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
 import ButtonGroup from 'antd/es/button/button-group';
 import { CaretRightOutlined, PauseOutlined, StopOutlined } from '@ant-design/icons';
-import { useState } from 'react';
-import { ItemCollapse, ItemSelect, ItemTable } from '@orb_UI/controller/ControllerItems';
+import { useEffect, useState } from 'react';
+import { ItemButton, ItemCollapse, ItemGroup, ItemSelect } from '@orb_UI/controller/ControllerItems';
+import { Left, Right } from 'src/assets/icons';
+
+enum AnimatorStatus {
+    STOPPED = 0,
+    PLAYING = 1,
+    PAUSED = 2
+}
 
 type AnimatorInterface = {
     mixer?: THREE.AnimationMixer | null,
-    actions?: { [key: string]: THREE.AnimationAction } | null
+    actions?: { [key: string]: THREE.AnimationAction } | null,
+    status: AnimatorStatus
 }
 
-const animator: AnimatorInterface = { mixer: null, actions: null };
+const animator: AnimatorInterface = { mixer: null, actions: null, status: AnimatorStatus.STOPPED };
 
 const initialize = (obj: THREE.Object3D, clips: THREE.AnimationClip[]) => {
     if (animator.actions) animator.actions = null;
@@ -22,10 +32,9 @@ const initialize = (obj: THREE.Object3D, clips: THREE.AnimationClip[]) => {
     Object.assign(animator.actions, ...clips.map((c) => { return { [c.uuid]: animator.mixer!.clipAction(c) } }));
 }
 
-const play = (action: THREE.AnimationAction) => { stop(action); action.play(); }
-const pause = (action: THREE.AnimationAction) => { action.paused = !action.paused; }
-const stop = (action: THREE.AnimationAction) => { action.stop(); }
-const stopAll = () => { animator.actions && Object.keys(animator.actions).forEach((key) => stop(animator.actions![key])) }
+const add = (clip: THREE.AnimationClip) => {
+    animator.actions && Object.assign(animator.actions, { [clip.uuid]: animator.mixer!.clipAction(clip) });
+}
 
 interface Animation {
     animations: THREE.AnimationClip[]
@@ -45,18 +54,15 @@ export const InspectorAnimation = observer((props: Animation) => {
         }
     }, []);
 
+    useEffect(() => {
+
+    }, [target?.animations])
+
     const animationSelect = animations ? animations.map((ani) => { return { value: ani.uuid, label: ani.name } }) as { value: string, label: string }[] : undefined;
 
     return (
         <>
-            {
-                (!animationSelect || animationSelect.length == 0) &&
-                <Alert style={{ margin: 10 }} type="info" showIcon message="No animations :(" />
-            }
-            {
-                animationSelect && animationSelect.length != 0 &&
-                <AnimationClips list={animationSelect} />
-            }
+            <AnimationClips list={animationSelect} />
         </>
     );
 })
@@ -68,22 +74,69 @@ interface AnimationClips {
 
 export const AnimationClips = observer((props: AnimationClips) => {
     const { list } = props;
-    const [selected, setSelected] = useState(list[0].value);
-    const [name, setName] = useState(list[0].label);
-    console.log(selected);
+    const [index, setIndex] = useState(list.length == 0 ? -1 : 0);
+    const { target } = useViewport();
+    console.log(list, index);
+    const selected = list.length == 0 ? null : list[index].value;
+    const label = list.length == 0 ? null : list[index].label;
+
     return (
         <>
             <ItemCollapse label={"Animation Clips"}>
-                <ItemSelect object={{ clips: list }} variable="clips" labelInVariable defaultValue={list[0].label}
-                    onChangeSelect={(v) => {
-                        stopAll();
-                        setSelected(v as string);
-                        setName(animator.actions![v as string].getClip().name);
-                    }} />
+                {
+                    list.length == 0 &&
+                    <ItemGroup sizes={[1]} label='Clips'>
+                        <Alert style={{ margin: 10 }} type="info" showIcon message="No animations 🙁" />
+                    </ItemGroup>
+                }
+                {
+                    list && list.length != 0 &&
+                    <ItemGroup sizes={[1, 8, 1]} label='Clips'>
+                        <ItemButton buttonName={<Left />} disabled={list.length <= 1} size="middle" onClick={() => { setIndex(index - 1 < 0 ? (list.length - 1) : (index - 1)), stopAll(); }} />
+                        <ItemSelect key={selected} object={{ clips: list }} variable="clips" label={false} defaultValue={label!}
+                            onChangeSelect={(v) => {
+                                stopAll();
+                                const index = list.findIndex((item) => item.value == v);
+                                setIndex(index);
+                            }}
+                        />
+                        <ItemButton buttonName={<Right />} disabled={list.length <= 1} size="middle" onClick={() => { setIndex(index + 1 > list.length - 1 ? (0) : (index + 1)), stopAll(); }} />
+                    </ItemGroup>
+                }
+                <ItemGroup sizes={[1, 1, 1]} label=" ">
+                    <ItemButton
+                        buttonName="Import"
+                        onClick={() => {
+                            if (target) {
+                                IMPORTER.doImportAnimationClip((clip) => {
+                                    (target as THREE.Object3D).animations.push(clip);
+                                    add(clip);
+                                    Object.assign(list, { [list.length]: { value: clip.uuid, label: clip.name } });
+                                    setIndex(list.length - 1);
+                                })
+                            }
+                            else
+                                message.warning("Select an object to import an animation!");
+                        }}
+                    />
+                    <ItemButton
+                        buttonName="Export"
+                        disabled={list.length == 0}
+                        onClick={() => {
+                            const ac = animator.actions![selected!].getClip();
+                            EXPORTER.exportAnimationClip(ac, true, (blob) => EXPORTER.save(blob, ac.name + ".ac"))
+                        }}
+                    />
+                    <ItemButton
+                        buttonName="Remove"
+                        disabled={list.length == 0}
+                        onClick={() => {message.warning("Remove animation clip not implemented yet!");}}
+                    />
+                </ItemGroup>
             </ItemCollapse>
             {
-                selected &&
-                <ItemCollapse key={selected} label={`${name} (Animation Clip)`}>
+                list && list.length != 0 && selected != undefined &&
+                <ItemCollapse key={selected} label={`${label} (Animation Clip)`}>
                     <ActionTime action={animator.actions![selected]} />
                     <ActionControls action={animator.actions![selected]} />
                 </ItemCollapse>
@@ -109,6 +162,29 @@ export const ActionControls = observer((props: AnimationAction) => {
         </ButtonGroup>
     )
 })
+
+const play = (action: THREE.AnimationAction) => {
+    stop(action);
+    action.play();
+    animator.status = AnimatorStatus.PLAYING;
+}
+
+const pause = (action: THREE.AnimationAction) => {
+    action.paused = !action.paused;
+    animator.status = action.paused ? AnimatorStatus.PAUSED : AnimatorStatus.PLAYING;
+}
+
+const stop = (action: THREE.AnimationAction) => {
+    action.stop();
+    animator.status = AnimatorStatus.STOPPED;
+}
+
+const stopAll = () => {
+    if (animator.status != AnimatorStatus.STOPPED && animator.actions) {
+        Object.keys(animator.actions).forEach((key) => stop(animator.actions![key]))
+    }
+    animator.status = AnimatorStatus.STOPPED;
+}
 
 export const ActionTime = observer((props: AnimationAction) => {
     const { action } = props;
