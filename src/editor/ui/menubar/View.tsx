@@ -1,3 +1,4 @@
+
 import { Dropdown, Button } from "antd"
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
@@ -32,22 +33,25 @@ export const View = observer(() => {
                         },
                         {
                             key: "1",
-                            label: "FPS",
-                            icon: checkedIcon(fpsEnabled),
-                            onClick: () => { setFPS(!fpsEnabled) }
-                        },
-                        {
-                            key: "2",
                             label: "Helper",
                             icon: checkedIcon(viewHelperEnabled),
                             onClick: () => { setViewHelper(!viewHelperEnabled) },
                         },
                         {
-                            key: "3",
+                            key: "2",
                             label: "Bounding Box",
                             icon: checkedIcon(boundingBoxEnabled),
                             onClick: () => { setBoundingBox(!boundingBoxEnabled) }
-                        }
+                        },
+                        {
+                            type: "divider"
+                        },
+                        {
+                            key: "3",
+                            label: "FPS",
+                            icon: checkedIcon(fpsEnabled),
+                            onClick: () => { setFPS(!fpsEnabled) }
+                        },
                     ],
                     onClick: () => { setOpen(true) },
                     onMouseLeave: () => { setOpen(false) }
