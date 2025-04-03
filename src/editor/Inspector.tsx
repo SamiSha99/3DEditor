@@ -14,7 +14,7 @@ import AssetsMenu from './AssetsMenu'
 import Overlay from "./Overlay";
 import { useViewport } from "src/store/Viewport";
 import { InspectorAnimation } from "./data/Animation";
-import { IconAnimation, IconGeometry, IconMaterial, IconObject, IconScene } from "src/assets/icons";
+import { TabIcon } from "src/assets/icons";
 
 export const Inspector = () => {
     return (
@@ -71,60 +71,66 @@ export const HierarchyTree = observer(() => {
     )
 })
 
+interface TabButtonProps {
+    type: TabIcon;
+    disabled?: boolean;
+    onClick?: () => void;
+}
+
+const TAB_BUTTON_SIZE = 48;
+
+export const TabButton = observer((props: TabButtonProps) => {
+    const tabCSS: React.CSSProperties = { width: "100%", height: TAB_BUTTON_SIZE };
+    const { type, disabled, onClick } = props;
+    const title = (type as string).charAt(0).toUpperCase() + (type as string).slice(1);
+    return (
+        <Tooltip title={title} placement="left" children={
+            <Button style={tabCSS} disabled={disabled} children={<TabIcon iconType={type} />} onClick={() => onClick && onClick()} />
+        } />
+    );
+})
+
 export const SelectedObject = observer(() => {
     const { target } = useViewport();
-    const [tab, setTab] = useState(target ? "OBJECT" : "");
-    const tabCSS: React.CSSProperties = { width: "100%", height: 48 };
-    const BUTTON_SIZE = "48px";
+    const [tab, setTab] = useState(target ? "Object" : "");
 
-    useEffect(() => { target && setTab("OBJECT"); !target && setTab(""); }, [target]);
+    useEffect(() => { target instanceof THREE.Object3D && setTab("Object"); !target && setTab(""); }, [target]);
 
-    const isMesh = target != null && (target instanceof THREE.Mesh || (target?.constructor.name == "Mesh" && (target as THREE.Mesh).isMesh));
+    const isMesh = target != null && (target instanceof THREE.Mesh || (target.constructor.name == "Mesh" && (target as THREE.Mesh).isMesh));
     const material = isMesh ? (target as THREE.Mesh)?.material as THREE.Material : undefined;
     const geometry = (target as THREE.Mesh)?.geometry;
+
     return (
         <>
             {
-                <>
-                    <Row style={{ background: "#212121", height: "100%", flexWrap: "nowrap" }}>
-                        <Col span={1} style={{ minWidth: BUTTON_SIZE, background: "#141414" }}>
-                            <Tooltip title="Scene" placement="left">
-                                <Button style={tabCSS} children={<IconScene size="lg" />} onClick={() => setTab("SCENE")} />
-                            </Tooltip>
-                            <Tooltip title="Object" placement="left">
-                                <Button style={tabCSS} disabled={target == null} children={<IconObject size="lg" />} onClick={() => setTab("OBJECT")} />
-                            </Tooltip>
-                            <Tooltip title="Animation" placement="left">
-                                <Button style={tabCSS} disabled={target == null} children={<IconAnimation size="lg" />} onClick={() => setTab("ANIMATION")} />
-                            </Tooltip>
-                            <Tooltip title="Geometry" placement="left">
-                                <Button style={tabCSS} disabled={!isMesh || !geometry} children={<IconGeometry size="lg" />} onClick={() => setTab("GEOMETRY")} />
-                            </Tooltip>
-                            <Tooltip title="Material" placement="left">
-                                <Button style={tabCSS} disabled={!isMesh || !material} children={<IconMaterial size="lg" />} onClick={() => setTab("MATERIAL")} />
-                            </Tooltip>
-                        </Col>
-                        <Col span={23} style={{ maxWidth: "calc(100% - " + BUTTON_SIZE + ")",}}>
-                            <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden", scrollbarColor: "grey transparent"}}>
-                                <Form key={Math.random().toString() + target?.uuid} labelAlign="left" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
-                                    {tab == "SCENE" && <InspectorScene />}
-                                    {tab == "OBJECT" && target && <InspectorObject3D object={target} />}
-                                    {
-                                        isMesh &&
-                                        <>
-                                            {tab == "MATERIAL" && <InspectorMaterial material={material} />}
-                                            {tab == "GEOMETRY" && <InspectorGeometry geometry={geometry} />}
-                                        </>
-                                    }
-                                    {
-                                        tab == "ANIMATION" && target instanceof THREE.Object3D &&
-                                        <InspectorAnimation animations={target.animations} />
-                                    }
-                                </Form>
-                            </div>
-                        </Col>
-                    </Row>
-                </>
+                <Row style={{ background: "#212121", height: "100%", flexWrap: "nowrap" }}>
+                    <Col style={{ width: TAB_BUTTON_SIZE, background: "#141414" }}>
+                        <TabButton type="scene" onClick={() => setTab("Scene")} />
+                        <TabButton type="object" disabled={target == null} onClick={() => setTab("Object")} />
+                        <TabButton type="animation" disabled={target == null} onClick={() => setTab("Animation")} />
+                        <TabButton type="geometry" disabled={!isMesh || !geometry} onClick={() => setTab("Geometry")} />
+                        <TabButton type="material" disabled={!isMesh || !geometry} onClick={() => setTab("Material")} />
+                    </Col>
+                    <Col style={{ width: "100%"}}>
+                        <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden", scrollbarColor: "grey transparent" }}>
+                            <Form key={Math.random().toString() + target?.uuid} labelAlign="left" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
+                                {tab == "Scene" && <InspectorScene />}
+                                {tab == "Object" && target && <InspectorObject3D object={target} />}
+                                {
+                                    isMesh &&
+                                    <>
+                                        {tab == "Material" && <InspectorMaterial material={material} />}
+                                        {tab == "Geometry" && <InspectorGeometry geometry={geometry} />}
+                                    </>
+                                }
+                                {
+                                    tab == "Animation" && target instanceof THREE.Object3D &&
+                                    <InspectorAnimation animations={target.animations} />
+                                }
+                            </Form>
+                        </div>
+                    </Col>
+                </Row>
             }
         </>
     )
