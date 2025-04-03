@@ -6,13 +6,40 @@ import {
     faPersonRunning,
     faCircleHalfStroke,
     faCheck,
-    faX
+    faX,
+    IconDefinition,
+    faArrowLeft,
+    faArrowRight
 } from '@fortawesome/free-solid-svg-icons';
 
-export const IconScene = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={faMountainSun} /> }
-export const IconObject = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={faCube} /> }
-export const IconGeometry = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={faCircleNodes} /> }
-export const IconAnimation = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={faPersonRunning} /> }
-export const IconMaterial = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={faCircleHalfStroke} /> }
-export const Check = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={faCheck} /> }
-export const X = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={faX} /> }
+// also to-do: by doing something with these cause not used lol
+export const Check = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} color='#6CB4EE' icon={faCheck} /> }
+export const X = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} color='#888' icon={faX} /> }
+
+export const Left = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={faArrowLeft} /> }
+export const Right = (props: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={faArrowRight} /> }
+
+// to-do: use these icons to like anything!!!!!!!!!!!!
+export const Icon = (icon: IconDefinition, props?: Partial<FontAwesomeIconProps>) => { return <FontAwesomeIcon {...props} icon={icon} /> }
+
+// For convenience just pass the key name to get the font awesome icon
+// TODO fix this hsit comment ^
+export const tabIconCollection = {
+    scene: { icon: faMountainSun, title: "Scene" },
+    object: { icon: faCube, title: "Object" },
+    animation: { icon: faPersonRunning, title: "Animation" },
+    geometry: { icon: faCircleNodes, title: "Geometry" },
+    material: { icon: faCircleHalfStroke, title: "Material" }
+};
+
+export type TabIcon = keyof typeof tabIconCollection;
+
+interface TabIconProps {
+    iconType: TabIcon;
+    props?: Partial<FontAwesomeIconProps>;
+}
+
+export const TabIcon = (props: TabIconProps) => {
+    const { iconType } = props;
+    return <FontAwesomeIcon {...props} icon={tabIconCollection[iconType].icon} size='lg' />
+}
