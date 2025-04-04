@@ -13,7 +13,8 @@ export interface ItemBase extends FormItemProps {
     default?: any
     label?: string | false,
     disabled?: boolean,
-    readonly?: boolean
+    readonly?: boolean,
+    nodrag?: boolean
 }
 
 export interface Item extends ItemBase {

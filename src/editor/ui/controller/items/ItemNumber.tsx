@@ -18,10 +18,12 @@ interface InputNumberInterface<T extends Record<string, any>, K extends KeyToVal
     addonBefore?: React.ReactNode
     addonAfter?: React.ReactNode
     onChange?: (value: number) => void
+    onFocus?: (e?: any) => void
+    onBlur?: (e?: any) => void
 }
 
 export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOfType<T, NumberTypes>>(props: InputNumberInterface<T, K>) => {
-    let { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, tooltip, addonBefore, addonAfter, } = props;
+    let { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, onFocus, onBlur, tooltip, addonBefore, addonAfter, nodrag } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
 
@@ -41,11 +43,14 @@ export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOf
             {
                 !readonly && limit &&
                 <Slider
-                    style={{ display: 'inline-block', width: "calc(80% - 20px)", marginRight: 15 }}
+                    style={{ display: 'inline-block', width: "calc(66.666% - 20px)", marginRight: 15 }}
                     min={limit?.min}
                     max={limit?.max}
                     step={stepSlider == undefined ? 0.01 : stepSlider}
                     onChange={(v) => onChangeNumber(v as number)}
+                    tooltip={{ formatter: (value) => value && toFixedStripped(value, 2) }}
+                    onBlur={() => onBlur && onBlur()}
+                    onFocus={() => onFocus && onFocus()}
                     value={v}
                 />
 
@@ -54,7 +59,7 @@ export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOf
                 <InputNumberStyle
                     style={{ width: readonly ? "100%" : `calc(100% - ${DRAGGABLE_CONTROLLER_WIDTH})` }}
                     controls={false}
-                    onFocus={loopStop}
+                    onFocus={(e) => { loopStop(); onFocus && onFocus(e); }}
                     onKeyDown={(e) => {
                         if (e.code == "Enter") {
                             const v = evaluateFormula((e.target as HTMLInputElement).value);
@@ -65,12 +70,13 @@ export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOf
                         loopStart();
                         const v = evaluateFormula(e.target.value);
                         v != null && onChangeNumber(v);
+                        onBlur && onBlur(e);
                     }}
                     value={v}
                     min={limit?.min}
                     max={limit?.max}
-                    precision={PRECISION_AMOUNT}
-                    formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, PRECISION_AMOUNT)}` }}
+                    precision={addonAfter ? 2 : PRECISION_AMOUNT}
+                    formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, addonAfter ? 2 : PRECISION_AMOUNT)}` }}
                     parser={(v) => v as unknown as number}
                     addonBefore={addonBefore}
                     addonAfter={addonAfter}
@@ -81,7 +87,7 @@ export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOf
                     onChange={(v) => onChangeNumber(v as number)}
                 />
                 {
-                    !readonly &&
+                    !readonly && !nodrag &&
                     <DraggableButtonController
                         onStep={(value, _rate, direction) => {
                             const newVal = object[variable] as number + value * direction;

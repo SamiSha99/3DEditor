@@ -8,8 +8,9 @@ import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
 import ButtonGroup from 'antd/es/button/button-group';
 import { CaretRightOutlined, PauseOutlined, StopOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { ItemButton, ItemCollapse, ItemGroup, ItemSelect } from '@orb_UI/controller/ControllerItems';
+import { ItemButton, ItemCollapse, ItemGroup, ItemNumber, ItemSelect } from '@orb_UI/controller/ControllerItems';
 import { Left, Right } from 'src/assets/icons';
+import { LIMIT_01 } from '@orb_UI/controller/items/Item';
 
 enum AnimatorStatus {
     STOPPED = 0,
@@ -85,9 +86,7 @@ export const AnimationClips = observer((props: AnimationClips) => {
             <ItemCollapse label={"Animation Clips"}>
                 {
                     list.length == 0 &&
-                    <ItemGroup sizes={[1]} label='Clips'>
-                        <Alert style={{ margin: 10 }} type="info" showIcon message="No animations 🙁" />
-                    </ItemGroup>
+                    <ItemGroup label='Clips' children={<Alert type="info" showIcon message="No animations 🎬" />} />
                 }
                 {
                     list && list.length != 0 &&
@@ -130,7 +129,7 @@ export const AnimationClips = observer((props: AnimationClips) => {
                     <ItemButton
                         buttonName="Remove"
                         disabled={list.length == 0}
-                        onClick={() => {message.warning("Remove animation clip not implemented yet!");}}
+                        onClick={() => { message.warning("Remove animation clip not implemented yet!"); }}
                     />
                 </ItemGroup>
             </ItemCollapse>
@@ -153,13 +152,55 @@ export const ActionControls = observer((props: AnimationAction) => {
     const { action } = props;
     const [playing, setPlaying] = useState(action.isRunning());
     const [started, setStarted] = useState(false);
+    const [time, setTime] = useState(action.time);
+    const clip = action.getClip();
+    const [_loopStop, _loopStart, _isActive] = useDeltaTime(() => { setTime(action.time) })
+
+    const playAction = () => {
+        play(action);
+        setPlaying(true);
+        !started && setStarted(true)
+    }
+
+    const pauseAction = (b?: boolean) => {
+        pause(action, b);
+        setPlaying(false);
+    }
+
+    const stopAction = () => {
+        stop(action);
+        setPlaying(false);
+        setStarted(false);
+    }
 
     return (
-        <ButtonGroup>
-            {!playing && !started && <Button icon={<CaretRightOutlined />} onClick={() => { play(action); setPlaying(true); !started && setStarted(true) }} />}
-            {started && <Button icon={playing ? <PauseOutlined /> : <CaretRightOutlined />} onClick={() => { pause(action); setPlaying(false); }} />}
-            {<Button disabled={!started} icon={<StopOutlined />} onClick={() => { stop(action); setPlaying(false); setStarted(false) }} />}
-        </ButtonGroup>
+        <ItemGroup label={"Controls"} sizes={[1, 5]}>
+            <ButtonGroup>
+                {!playing && !started && <Button icon={<CaretRightOutlined />} onClick={playAction} />}
+                {started && <Button icon={action.paused ? <PauseOutlined /> : <CaretRightOutlined />} onClick={() => pauseAction(undefined)} />}
+                {<Button disabled={!started} icon={<StopOutlined />} onClick={stopAction} />}
+            </ButtonGroup>
+            <ItemNumber
+                object={{ time: time }}
+                variable="time"
+                addonAfter={clip.duration.toFixed(2)}
+                nodrag
+                limit={{ min: 0, max: clip.duration }}
+                onFocus={() => pauseAction(true)}
+                onBlur={() => pauseAction(true)}
+                onChange={(v) => {
+                    // action hasn't started? then start it since the value is defined
+                    if (action.time <= 0 && v > 0) {
+                        playAction();
+                        pauseAction(true);
+                    }
+                    action.time = v;
+                    // Stop if we set it back to 0
+                    if (action.time <= 0)
+                        stopAction()
+                }}
+            />
+        </ItemGroup>
     )
 })
 
@@ -169,8 +210,9 @@ const play = (action: THREE.AnimationAction) => {
     animator.status = AnimatorStatus.PLAYING;
 }
 
-const pause = (action: THREE.AnimationAction) => {
-    action.paused = !action.paused;
+const pause = (action: THREE.AnimationAction, b?: boolean) => {
+    console.log(b, action.paused);
+    action.paused = b ?? !action.paused;
     animator.status = action.paused ? AnimatorStatus.PAUSED : AnimatorStatus.PLAYING;
 }
 
@@ -188,8 +230,6 @@ const stopAll = () => {
 
 export const ActionTime = observer((props: AnimationAction) => {
     const { action } = props;
-    const [time, setTime] = useState(action.time);
-    const clip = action.getClip();
-    const [_loopStop, _loopStart, _isActive] = useDeltaTime(() => { setTime(action.time) })
-    return <>{time.toFixed(2) + " / " + clip.duration.toFixed(2)}</>
+
+    return <>{ }</>
 })
