@@ -75,12 +75,6 @@ export const AnimationClips = observer((props: AnimationClips) => {
 
     return (
         <>
-            {
-                list && list.length != 0 && selected != undefined &&
-                <ItemCollapse key={selected} label={`${label} (Animation Clip)`}>
-                    <ActionControls action={animator.actions![selected]} />
-                </ItemCollapse>
-            }
             <ItemCollapse label={"Animation Clips"}>
                 {
                     list.length == 0 &&
@@ -131,6 +125,12 @@ export const AnimationClips = observer((props: AnimationClips) => {
                     />
                 </ItemGroup>
             </ItemCollapse>
+            {
+                list && list.length != 0 && selected != undefined &&
+                <ItemCollapse key={selected} label={`${label} (Animation Clip)`}>
+                    <ActionControls action={animator.actions![selected]} />
+                </ItemCollapse>
+            }
         </>
     );
 })
