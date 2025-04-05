@@ -134,10 +134,11 @@ export function geometryPositionToText(geometry: THREE.BufferGeometry, mode: Ran
     }
 }
 /**
-* Returns an additive value to Translate Geometry and its Object3D, Returns Vectors as [Geometry, Object] | 
-* o - the Object we want to translate |
-* amount - the translation amount |
-* byObject - switches the translation by using the object or its origin point
+* Returns an additive value to Translate Geometry and its Object3D.
+* @param o - the Object we want to translate
+* @param amount - the translation amount 
+* @param byObject - switches the translation by using the object or its origin point
+* @return {[THREE.Vector3, THREE.Vector3]} [Geometry, Object] 
 */
 export function getTranslationAmount(o: THREE.Object3D, amount: THREE.Vector3, byObject?: boolean) {
     const distance = amount.distanceTo(byObject ? o.position : { x: 0, y: 0, z: 0 });
