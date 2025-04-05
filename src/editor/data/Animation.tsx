@@ -8,7 +8,7 @@ import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
 import ButtonGroup from 'antd/es/button/button-group';
 import { CaretRightOutlined, PauseOutlined, StopOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import { ItemButton, ItemCollapse, ItemGroup, ItemInput, ItemNumber, ItemSelect } from '@orb_UI/controller/ControllerItems';
+import { ItemBoolean, ItemButton, ItemCollapse, ItemGroup, ItemInput, ItemNumber, ItemSelect } from '@orb_UI/controller/ControllerItems';
 import { Left, Right } from 'src/assets/icons';
 
 enum AnimatorStatus {
@@ -255,9 +255,9 @@ export const ActionControls = observer((props: AnimationAction) => {
                 />
             </ItemGroup>
             <ItemNumber object={action} variable="timeScale" labelInVariable />
-            <ItemGroup sizes={[1, 1]}>
-                <ItemButton buttonName={"Infinite"} onClick={() => { action.setLoop(THREE.LoopRepeat, Number.MAX_SAFE_INTEGER) }} />
-                <ItemNumber object={action} variable="loop" step={1} labelInVariable onChange={(v) => {
+            <ItemGroup label='Loop' sizes={[1, 1]}>
+                <ItemBoolean object={{ loop: false }} variable='loop' onChange={() => { action.setLoop(THREE.LoopRepeat, Number.MAX_SAFE_INTEGER) }} />
+                <ItemNumber object={action} variable="loop" step={1} onChange={(v) => {
                     action.setLoop(THREE.LoopRepeat, v)
                 }} />
             </ItemGroup>
