@@ -7,10 +7,9 @@ import { Alert, Button, message } from 'antd';
 import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
 import ButtonGroup from 'antd/es/button/button-group';
 import { CaretRightOutlined, PauseOutlined, StopOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ItemButton, ItemCollapse, ItemGroup, ItemNumber, ItemSelect } from '@orb_UI/controller/ControllerItems';
 import { Left, Right } from 'src/assets/icons';
-import { LIMIT_01 } from '@orb_UI/controller/items/Item';
 
 enum AnimatorStatus {
     STOPPED = 0,
@@ -27,15 +26,20 @@ type AnimatorInterface = {
 const animator: AnimatorInterface = { mixer: null, actions: null, status: AnimatorStatus.STOPPED };
 
 const initialize = (obj: THREE.Object3D, clips: THREE.AnimationClip[]) => {
-    if (animator.actions) animator.actions = null;
+    if (animator.actions) cleanup();
     animator.mixer = new THREE.AnimationMixer(obj);
     animator.actions = {};
     Object.assign(animator.actions, ...clips.map((c) => { return { [c.uuid]: animator.mixer!.clipAction(c) } }));
 }
 
-const add = (clip: THREE.AnimationClip) => {
-    animator.actions && Object.assign(animator.actions, { [clip.uuid]: animator.mixer!.clipAction(clip) });
+const cleanup = () => {
+    if (!animator.actions) return;
+    stopAll();
+    animator.actions = null;
 }
+
+const add = (clip: THREE.AnimationClip) => animator.actions && Object.assign(animator.actions, { [clip.uuid]: animator.mixer!.clipAction(clip) });
+
 
 interface Animation {
     animations: THREE.AnimationClip[]
@@ -47,19 +51,9 @@ export const InspectorAnimation = observer((props: Animation) => {
     initialize(target!, animations);
 
     const [_loopStop, _loopStart, _isActive] = useDeltaTime((d) => { animator.mixer?.update(d); })
+    useOnUnmount(() => cleanup(), []);
 
-    useOnUnmount(() => {
-        if (animator.actions) {
-            stopAll();
-            animator.actions = null;
-        }
-    }, []);
-
-    useEffect(() => {
-
-    }, [target?.animations])
-
-    const animationSelect = animations ? animations.map((ani) => { return { value: ani.uuid, label: ani.name } }) as { value: string, label: string }[] : undefined;
+    const animationSelect = animations.map((ani) => { return { value: ani.uuid, label: ani.name } }) as { value: string, label: string }[];
 
     return (
         <>
@@ -70,19 +64,23 @@ export const InspectorAnimation = observer((props: Animation) => {
 
 interface AnimationClips {
     list: { value: string, label: string }[]
-
 }
 
 export const AnimationClips = observer((props: AnimationClips) => {
     const { list } = props;
     const [index, setIndex] = useState(list.length == 0 ? -1 : 0);
     const { target } = useViewport();
-    console.log(list, index);
-    const selected = list.length == 0 ? null : list[index].value;
-    const label = list.length == 0 ? null : list[index].label;
+    const selected = list[index]?.value;
+    const label = list[index]?.label;
 
     return (
         <>
+            {
+                list && list.length != 0 && selected != undefined &&
+                <ItemCollapse key={selected} label={`${label} (Animation Clip)`}>
+                    <ActionControls action={animator.actions![selected]} />
+                </ItemCollapse>
+            }
             <ItemCollapse label={"Animation Clips"}>
                 {
                     list.length == 0 &&
@@ -133,13 +131,6 @@ export const AnimationClips = observer((props: AnimationClips) => {
                     />
                 </ItemGroup>
             </ItemCollapse>
-            {
-                list && list.length != 0 && selected != undefined &&
-                <ItemCollapse key={selected} label={`${label} (Animation Clip)`}>
-                    <ActionTime action={animator.actions![selected]} />
-                    <ActionControls action={animator.actions![selected]} />
-                </ItemCollapse>
-            }
         </>
     );
 })
@@ -177,7 +168,7 @@ export const ActionControls = observer((props: AnimationAction) => {
         <ItemGroup label={"Controls"} sizes={[1, 5]}>
             <ButtonGroup>
                 {!playing && !started && <Button icon={<CaretRightOutlined />} onClick={playAction} />}
-                {started && <Button icon={action.paused ? <PauseOutlined /> : <CaretRightOutlined />} onClick={() => pauseAction(undefined)} />}
+                {started && <Button icon={action.paused ? <PauseOutlined /> : <CaretRightOutlined />} onClick={() => pauseAction()} />}
                 {<Button disabled={!started} icon={<StopOutlined />} onClick={stopAction} />}
             </ButtonGroup>
             <ItemNumber
@@ -211,7 +202,6 @@ const play = (action: THREE.AnimationAction) => {
 }
 
 const pause = (action: THREE.AnimationAction, b?: boolean) => {
-    console.log(b, action.paused);
     action.paused = b ?? !action.paused;
     animator.status = action.paused ? AnimatorStatus.PAUSED : AnimatorStatus.PLAYING;
 }
@@ -227,9 +217,3 @@ const stopAll = () => {
     }
     animator.status = AnimatorStatus.STOPPED;
 }
-
-export const ActionTime = observer((props: AnimationAction) => {
-    const { action } = props;
-
-    return <>{ }</>
-})
