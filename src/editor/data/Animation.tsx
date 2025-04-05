@@ -8,7 +8,7 @@ import { useDeltaTime, useOnUnmount } from '@orb_Hooks';
 import ButtonGroup from 'antd/es/button/button-group';
 import { CaretRightOutlined, PauseOutlined, StopOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import { ItemButton, ItemCollapse, ItemGroup, ItemNumber, ItemSelect } from '@orb_UI/controller/ControllerItems';
+import { ItemButton, ItemCollapse, ItemGroup, ItemInput, ItemNumber, ItemSelect } from '@orb_UI/controller/ControllerItems';
 import { Left, Right } from 'src/assets/icons';
 
 enum AnimatorStatus {
@@ -224,34 +224,46 @@ export const ActionControls = observer((props: AnimationAction) => {
     };
 
     return (
-        <ItemGroup label={"Controls"} sizes={[1, 5]}>
-            <ButtonGroup>
-                {!playing && !started && <Button icon={<CaretRightOutlined />} onClick={playAction} />}
-                {started && (
-                    <Button
-                        icon={action.paused ? <PauseOutlined /> : <CaretRightOutlined />}
-                        onClick={() => pauseAction()}
-                    />
-                )}
-                {<Button disabled={!started} icon={<StopOutlined />} onClick={stopAction} />}
-            </ButtonGroup>
-            <ItemNumber
-                object={{ time: time }}
-                variable="time"
-                addonAfter={clip.duration.toFixed(2)}
-                nodrag
-                limit={{ min: 0, max: clip.duration }}
-                onFocus={() => pauseAction(true)}
-                onBlur={() => pauseAction(true)}
-                onChange={(v) => {
-                    if (action.time <= 0 && v > 0) {
-                        playAction();
-                        pauseAction(true);
-                    }
-                    action.time = v;
-                    if (action.time <= 0) stopAction();
-                }}
-            />
-        </ItemGroup>
+        <>
+            <ItemGroup label={"Controls"} sizes={[1, 5]}>
+                <ButtonGroup>
+                    {!playing && !started && <Button icon={<CaretRightOutlined />} onClick={playAction} />}
+                    {started && (
+                        <Button
+                            icon={action.paused ? <PauseOutlined /> : <CaretRightOutlined />}
+                            onClick={() => pauseAction()}
+                        />
+                    )}
+                    {<Button disabled={!started} icon={<StopOutlined />} onClick={stopAction} />}
+                </ButtonGroup>
+                <ItemNumber
+                    object={{ time: time }}
+                    variable="time"
+                    addonAfter={clip.duration.toFixed(2)}
+                    nodrag
+                    limit={{ min: 0, max: clip.duration }}
+                    onFocus={() => pauseAction(true)}
+                    onBlur={() => pauseAction(true)}
+                    onChange={(v) => {
+                        if (action.time <= 0 && v > 0) {
+                            playAction();
+                            pauseAction(true);
+                        }
+                        action.time = v;
+                        if (action.time <= 0) stopAction();
+                    }}
+                />
+            </ItemGroup>
+            <ItemNumber object={action} variable="timeScale" labelInVariable />
+            <ItemGroup sizes={[1, 1]}>
+                <ItemButton buttonName={"Infinite"} onClick={() => { action.setLoop(THREE.LoopRepeat, Number.MAX_SAFE_INTEGER) }} />
+                <ItemNumber object={action} variable="loop" step={1} labelInVariable onChange={(v) => {
+                    action.setLoop(THREE.LoopRepeat, v)
+                }} />
+            </ItemGroup>
+            {clip.tracks.map((k) => {
+                return <ItemInput object={{ [k.name]: k.name }} variable={k.name} labelInVariable onChange={(v) => k.name = v} />
+            })}
+        </>
     );
 });
