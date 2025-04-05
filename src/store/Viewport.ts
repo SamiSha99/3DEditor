@@ -96,7 +96,7 @@ export class Viewport {
             }
             else
                 this.controls.attach(object);
-            if (this.controls.domElement) this.controls.connect();
+            this.controls.connect(this.editor.canvas);
         }
         else {
             this.controls.detach();
@@ -153,15 +153,15 @@ export class Viewport {
 
     onLoad = (canvas: HTMLCanvasElement, _gl: THREE.WebGLRenderer) => {
         canvas.onpointerup = this.onSelectObject;
-        this.cameraControls.domElement = canvas;
-        this.cameraControls.connect();
+        
+        this.cameraControls.connect(canvas);
 
         this.cameraControls.enableDamping = true;
         this.cameraControls.dampingFactor = 0.15;
         this.cameraControls.zoomSpeed = 2;
 
         this.controls.domElement = canvas;
-        this.controls.connect();
+        this.controls.connect(canvas);
 
         // Handles whether we should consider left click selection for tracing and selecting an object in the scene,
         // if transforming becomes true then we ignore onSelectObject
@@ -250,7 +250,7 @@ export class Viewport {
             setTimeout(() => {
                 const transHelper = this.editor.scene.getObjectByName("TRANSFORM_ORIGIN_DRAGGER");
                 transHelper && this.controls.attach(transHelper);
-                if (this.controls.domElement) this.controls.connect();
+                this.controls.connect(this.editor.canvas);
             }, 1);
         }
     }
