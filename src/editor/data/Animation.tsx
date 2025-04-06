@@ -22,13 +22,15 @@ class Animator {
     actions: { [key: string]: THREE.AnimationAction } | null = null;
     status: AnimatorStatus = AnimatorStatus.STOPPED;
 
+    constructor() { }
+
     initialize = (obj: THREE.Object3D, clips: THREE.AnimationClip[]) => {
         this.cleanup();
         this.mixer = new THREE.AnimationMixer(obj);
         this.actions = {};
-        clips.forEach((clip) => {
-            this.actions![clip.uuid] = this.mixer!.clipAction(clip);
-        });
+        clips.forEach((clip) => this.actions![clip.uuid] = this.mixer!.clipAction(clip));
+        !this.mixer.hasEventListener("finished", (e) => this.onFinished(e)) && this.mixer.addEventListener("finished", (e) => this.onFinished(e));
+        !this.mixer.hasEventListener("loop", (e) => this.onLoop(e)) && this.mixer.addEventListener("loop", (e) => this.onLoop(e));
     }
 
     cleanup = () => {
@@ -64,6 +66,16 @@ class Animator {
             Object.values(this.actions).forEach((action) => this.stop(action));
         }
         this.status = AnimatorStatus.STOPPED;
+    }
+
+    onLoop = (event: { action: THREE.AnimationAction; loopDelta: number; }) => {
+        console.log("onLoop:", event);
+    }
+
+    onFinished = (event: { action: THREE.AnimationAction; direction: number }) => {
+        console.log("onFinished:", event);
+        event.action.time = 0;
+        this.stop(event.action);
     }
 }
 
@@ -202,25 +214,29 @@ export const ActionControls = observer((props: AnimationAction) => {
     const [started, setStarted] = useState(false);
     const [time, setTime] = useState(action.time);
     const clip = action.getClip();
-    const [_loopStop, _loopStart, _isActive] = useDeltaTime(() => {
+
+    const [loopStop, loopStart, _isActive] = useDeltaTime(() => {
         setTime(action.time);
-    });
+    }, false);
 
     const playAction = () => {
         animator.play(action);
         setPlaying(true);
         !started && setStarted(true);
+        loopStart();
     };
 
     const pauseAction = (b?: boolean) => {
         animator.pause(action, b);
         setPlaying(false);
+        b ? loopStop() : loopStart();
     };
 
     const stopAction = () => {
         animator.stop(action);
         setPlaying(false);
         setStarted(false);
+        loopStop();
     };
 
     return (
@@ -256,14 +272,13 @@ export const ActionControls = observer((props: AnimationAction) => {
             </ItemGroup>
             <ItemNumber object={action} variable="timeScale" labelInVariable />
             <ItemGroup label='Loop' sizes={[1, 1]}>
-                <ItemBoolean object={{ loop: false }} variable='loop' onChange={() => { action.setLoop(THREE.LoopRepeat, Number.MAX_SAFE_INTEGER) }} />
-                <ItemNumber object={action} variable="loop" step={1} onChange={(v) => {
-                    action.setLoop(THREE.LoopRepeat, v)
-                }} />
+                <ItemBoolean object={{ infinite: action.loop == THREE.LoopRepeat && action.repetitions == Infinity }} variable='infinite' onChange={(b) => { action.setLoop(b ? THREE.LoopRepeat : THREE.LoopOnce, b ? Infinity : 0); action.clampWhenFinished = !b; }} />
+                <ItemNumber object={action} variable="repetitions" step={1} onChange={(v) => { action.setLoop(v > 1 ? THREE.LoopRepeat : THREE.LoopOnce, v) }} />
             </ItemGroup>
-            {clip.tracks.map((k) => {
+
+            {/* {clip.tracks.map((k) => {
                 return <ItemInput object={{ [k.name]: k.name }} variable={k.name} labelInVariable onChange={(v) => k.name = v} />
-            })}
+            })} */}
         </>
     );
 });
