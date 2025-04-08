@@ -13,7 +13,7 @@ import Canvas from './Canvas'
 import AssetsMenu from './AssetsMenu'
 import Overlay from "./Overlay";
 import { useViewport } from "src/store/Viewport";
-import { InspectorAnimation } from "./data/Animation";
+import { Animator } from "./data/Animation";
 import { TabIcon } from "src/assets/icons";
 
 export const Inspector = () => {
@@ -99,7 +99,7 @@ export const SelectedObject = observer(() => {
     const isMesh = target != null && (target instanceof THREE.Mesh || (target.constructor.name == "Mesh" && (target as THREE.Mesh).isMesh));
     const material = isMesh ? (target as THREE.Mesh)?.material as THREE.Material : undefined;
     const geometry = (target as THREE.Mesh)?.geometry;
-
+    const animation = tab == "Animation" && target instanceof THREE.Object3D ? new Animator(target, target.animations) : undefined;
     return (
         <>
             {
@@ -111,7 +111,7 @@ export const SelectedObject = observer(() => {
                         <TabButton type="geometry" disabled={!isMesh || !geometry} onClick={() => setTab("Geometry")} />
                         <TabButton type="material" disabled={!isMesh || !geometry} onClick={() => setTab("Material")} />
                     </Col>
-                    <Col style={{ width: "100%"}}>
+                    <Col style={{ width: "100%" }}>
                         <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden", scrollbarColor: "grey transparent" }}>
                             <Form key={Math.random().toString() + target?.uuid} labelAlign="left" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
                                 {tab == "Scene" && <InspectorScene />}
@@ -124,8 +124,8 @@ export const SelectedObject = observer(() => {
                                     </>
                                 }
                                 {
-                                    tab == "Animation" && target instanceof THREE.Object3D &&
-                                    <InspectorAnimation animations={target.animations} />
+                                    animation &&
+                                    <animation.TabAnimation />
                                 }
                             </Form>
                         </div>
