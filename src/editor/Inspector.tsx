@@ -123,10 +123,7 @@ export const SelectedObject = observer(() => {
                                         {tab == "Geometry" && <InspectorGeometry geometry={geometry} />}
                                     </>
                                 }
-                                {
-                                    animation &&
-                                    <animation.TabAnimation />
-                                }
+                                {animation && <animation.TabAnimation />}
                             </Form>
                         </div>
                     </Col>
