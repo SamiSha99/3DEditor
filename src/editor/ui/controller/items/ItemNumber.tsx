@@ -23,7 +23,7 @@ interface InputNumberInterface<T extends Record<string, any>, K extends KeyToVal
 }
 
 export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOfType<T, NumberTypes>>(props: InputNumberInterface<T, K>) => {
-    let { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, onFocus, onBlur, tooltip, addonBefore, addonAfter, nodrag } = props;
+    let { label, labelInVariable, object, variable, limit, readonly, step, stepSlider, onChange, onFocus, onBlur, tooltip, addonBefore, addonAfter, nodrag, disabled } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const [v, setValue] = useState<number>(object[variable]);
 
@@ -52,6 +52,7 @@ export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOf
                     onBlur={() => onBlur && onBlur()}
                     onFocus={() => onFocus && onFocus()}
                     value={v}
+                    disabled={disabled}
                 />
 
             }
@@ -83,11 +84,11 @@ export const ItemNumber = <T extends Record<string, any>, K extends KeyToValueOf
                     changeOnWheel
                     readOnly={readonly}
                     step={step == undefined ? 0.1 : step}
-                    disabled={readonly}
+                    disabled={readonly || disabled}
                     onChange={(v) => onChangeNumber(v as number)}
                 />
                 {
-                    !readonly && !nodrag &&
+                    !readonly && !nodrag && !disabled &&
                     <DraggableButtonController
                         onStep={(value, _rate, direction) => {
                             const newVal = object[variable] as number + value * direction;

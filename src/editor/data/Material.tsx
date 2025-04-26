@@ -52,12 +52,8 @@ export const InspectorMaterial = observer((props: Material) => {
     const [meshMaterial, setMeshMaterial] = useState(material);
     const references: THREE.Object3D[] = [];
     scene.traverse((o) => {
-        if (o instanceof THREE.Mesh) {
-            if (Array.isArray(o.material) && o.material.includes(material))
-                references.push(o);
-            else if (o.material == material) {
-                references.push(o);
-            }
+        if (o instanceof THREE.Mesh && (Array.isArray(o.material) && o.material.includes(material) || o.material == material)) {
+            references.push(o);
         }
     });
 
