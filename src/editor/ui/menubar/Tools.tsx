@@ -1,6 +1,6 @@
 import * as ICONS from "@ant-design/icons";
 import { useEditor } from "@orb_Editor";
-import { Dropdown, message, Button, Modal, Form, Upload, UploadProps, UploadFile, Divider } from "antd"
+import { Dropdown, Button, Modal, Form, Upload, UploadProps, UploadFile, Divider } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
 import * as PINATA from '@dgreenheck/three-pinata'
@@ -13,20 +13,20 @@ import { invertGeometry } from "@orb_utils/three/Geometry";
 import { PANEL_SCREENSHOT } from "@orb_UI/panels/Main";
 import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { useViewport } from "src/store/Viewport";
+import { MenuButtonProps } from "@orb_types";
 
 import * as GEOMETRYUTILS from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
-export const Tools = observer(() => {
+export const Tools = observer((props: MenuButtonProps) => {
     const { addObject, replaceObject, activatePanel } = useEditor();
     const { target } = useViewport();
-    const [open, setOpen] = useState(false);
+    const { onclick } = props;
     return (
         <>
             <Dropdown
-                open={open}
                 trigger={["click"]}
                 children={<Button children={"Tools"} />}
-                onOpenChange={() => { setOpen(true) }}
+                onOpenChange={(b) => { onclick(b) }}
                 menu={{
                     items: [
                         {
@@ -99,7 +99,8 @@ export const Tools = observer(() => {
                     ],
                     onClick: () => { setOpen(true) },
                     onMouseLeave: () => { setOpen(false) }
-                }} />
+                }}
+            />
         </>
     )
 })

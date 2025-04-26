@@ -8,16 +8,19 @@ import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_ST
 import { ItemBoolean, ItemInput, ItemNumber, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { useViewport } from "src/store/Viewport";
 import { GLTFExporterOptions, USDZExporterOptions } from "three/examples/jsm/Addons";
+import { MenuButtonProps } from "@orb_types";
 
-export const File = () => {
+export const File = (props: MenuButtonProps) => {
     const { setScene, addObject } = useEditor();
     const [modalExport, toggleModalExport] = useState(false);
+    const { onclick } = props;
     return (
         <>
             <ExportModal open={modalExport} onSubmit={() => toggleModalExport(false)} onCancel={() => toggleModalExport(false)} />
             <Dropdown
                 trigger={["click"]}
                 children={<Button children={"File"} />}
+                onOpenChange={(b) => { onclick(b) }}
                 menu={{
                     items: [
                         {
@@ -46,15 +49,10 @@ export const File = () => {
                             key: '2',
                             icon: <ExportOutlined />,
                             onClick: () => toggleModalExport(true)
-                        },
-                        // {
-                        //     label: 'Convert...',
-                        //     key: '3',
-                        //     icon: <EditOutlined />,
-                        //     onClick: () => toggleModalConvert(true)
-                        // },
+                        }
                     ]
-                }} />
+                }}
+            />
         </>
     )
 }

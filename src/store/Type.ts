@@ -17,6 +17,9 @@ export type TransformModes = typeof transformModes[number];
 export const transformSpaces = ['world', 'local'] as const;
 export type TransformSpaces = typeof transformSpaces[number];
 
+// For the menu bar buttons
+export type MenuButtonProps = { onclick: (opened: boolean) => void; }
+
 // From pmndrs/assets, courtesy of Poly Haven
 export const environments = [
     undefined,

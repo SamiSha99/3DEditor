@@ -4,10 +4,11 @@ import { Button3D } from "@orb_tools/create/Button3D";
 import { Object3D } from "three";
 import * as LIGHT from "@orb_tools/create/Light"
 import * as GEOMETRY from "@orb_tools/create/Primitive"
+import { MenuButtonProps } from "@orb_types";
 
-export const Add = () => {
+export const Add = (props: MenuButtonProps) => {
     const { addObject, addHelper } = useEditor();
-
+    const { onclick } = props;
     const onCreate = (object: Object3D, helper?: Object3D) => {
         object && addObject(object);
         helper && addHelper(helper);
@@ -64,8 +65,9 @@ export const Add = () => {
                 onClick: (e) => {
                     message.success('Created ' + (e.domEvent.target as HTMLElement).innerText)
                 }
+                
             }}
-
+            onOpenChange={(b) => { onclick(b) }}
         />
     )
 }

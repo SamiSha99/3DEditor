@@ -1,28 +1,25 @@
 
 import { Dropdown, Button } from "antd"
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
 import { Check, X } from "src/assets/icons";
 import { useViewport } from "src/store/Viewport";
+import { MenuButtonProps } from "@orb_types";
 
-export const View = observer(() => {
+export const View = observer((props: MenuButtonProps) => {
     const {
         setGrid, gridEnabled,
         setFPS, fpsEnabled,
         setViewHelper, viewHelperEnabled,
         setBoundingBox, boundingBoxEnabled
     } = useViewport();
-
-    const [open, setOpen] = useState(false);
     const checkedIcon = (b: boolean) => b ? <Check /> : <X />;
-
+    const { onclick } = props;
     return (
         <>
             <Dropdown
-                open={open}
                 trigger={["click"]}
                 children={<Button children={"View"} />}
-                onOpenChange={() => { setOpen(true) }}
+                onOpenChange={(b) => { onclick(b) }}
                 menu={{
                     items: [
                         {
@@ -56,7 +53,8 @@ export const View = observer(() => {
                     onClick: () => { setOpen(true) },
                     onMouseLeave: () => { setOpen(false) }
 
-                }} />
+                }}
+            />
         </>
     )
 })
