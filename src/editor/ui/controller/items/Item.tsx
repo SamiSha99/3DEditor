@@ -28,3 +28,4 @@ export interface ItemObject<T extends Record<string, any>, K> extends Item {
 
 export type Limit = { min?: number, max?: number }
 export const LIMIT_01 = { min: 0, max: 1 } as Limit;
+export const LIMIT_BIPOLAR = { min: -1, max: 1 } as Limit;

@@ -1,12 +1,12 @@
 import * as THREE from 'three';
-import { ItemBoolean, ItemButton, ItemCollapse, ItemColor, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemTable, ItemVector3 } from "@orb_UI/controller/ControllerItems";
+import { ItemBoolean, ItemButton, ItemCollapse, ItemColor, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemSelect, ItemTable, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { observer } from "mobx-react-lite";
 import { EyeOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Alert, message, Tooltip } from "antd";
 import { useViewport } from "src/store/Viewport";
 import { useEditor } from "@orb_Editor";
 import { ItemQuaternion } from "@orb_UI/controller/items/ItemQuaternion";
-import { LIMIT_01 } from "@orb_UI/controller/items/Item";
+import { LIMIT_01, LIMIT_BIPOLAR } from "@orb_UI/controller/items/Item";
 
 interface Object3D {
     object: THREE.Object3D
@@ -42,6 +42,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
                         ]} />
                 }
                 {
+                    object.parent && object.parent instanceof THREE.Scene &&
                     <ItemGroup label="Parent" sizes={["100%"]}>
                         {
                             object.parent == scene &&
@@ -84,7 +85,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
                 <ItemVector3 object={object} variable="position" labelInVariable />
                 <ItemEuler object={object} variable="rotation" isDegree labelInVariable tooltip="Syncs with Quaternion. Numbers are shown in Degrees." />
                 <ItemVector3 object={object} variable="scale" labelInVariable />
-                <ItemQuaternion object={object} variable="quaternion" labelInVariable limit={{ x: LIMIT_01, y: LIMIT_01, z: LIMIT_01, w: LIMIT_01 }} tooltip="Syncs with Rotation, clamped between [-1, 1]." />
+                <ItemQuaternion object={object} variable="quaternion" labelInVariable limit={{ x: LIMIT_BIPOLAR, y: LIMIT_BIPOLAR, z: LIMIT_BIPOLAR, w: LIMIT_BIPOLAR }} tooltip="Syncs with Rotation, clamped between [-1, 1]." />
                 <ItemBoolean object={object} variable="visible" labelInVariable />
                 <ItemNumber object={object} variable="renderOrder" label="Order" />
             </ItemCollapse>
@@ -94,7 +95,9 @@ export const InspectorObject3D = observer((props: Object3D) => {
 
 export const ChildObject3D = observer((props: Object3D) => {
     const { object } = props;
-
+    if (object.constructor == THREE.Group ||
+        object.constructor.name == "_Object3D"
+    ) return <></>
     return <ItemCollapse label={object.constructor.name}>
         {(() => {
             switch (object.constructor) {
@@ -104,7 +107,8 @@ export const ChildObject3D = observer((props: Object3D) => {
                 case THREE.SpotLight: return <SpotLight object={object as THREE.SpotLight} />;
                 case THREE.AmbientLight: return <AmbientLight object={object as THREE.AmbientLight} />;
                 case THREE.DirectionalLight: return <DirectionalLight object={object as THREE.DirectionalLight} />;
-                default: return <Alert message="This child is not defined!" type="warning" />;
+                case THREE.SkinnedMesh: return <InspectorSkinnedMesh object={object as THREE.SkinnedMesh} />;
+                default: return <Alert message={object.constructor.name + " is not defined!"} type="warning" />;
             }
         })()}
     </ItemCollapse>
@@ -211,6 +215,27 @@ export const DirectionalLight = observer((props: { object: THREE.DirectionalLigh
             />
             <ItemColor object={object} variable="color" labelInVariable />
             <ItemBoolean object={object} variable="castShadow" labelInVariable />
+        </>
+    )
+})
+
+export const InspectorSkinnedMesh = observer((props: { object: THREE.SkinnedMesh }) => {
+    const { object } = props;
+
+    const BindModeSelect = [
+        { value: THREE.AttachedBindMode, label: "attached" },
+        { value: THREE.DetachedBindMode, label: "dettached" }
+    ]
+
+    return (
+        <>
+            <ItemSelect
+                object={{ BindMode: BindModeSelect }}
+                variable="BindMode"
+                labelInVariable
+                defaultValue={object.bindMode}
+                tooltip={`"attached" means the skinned mesh shares the same world space as the skeleton.
+                This is not true when using "dettached" which is useful when sharing a skeleton across multiple skinned meshes.`} />
         </>
     )
 })
