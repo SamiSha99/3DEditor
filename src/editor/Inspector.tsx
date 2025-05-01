@@ -19,8 +19,7 @@ import { TabIcon } from "src/assets/icons";
 export const Inspector = () => {
     return (
         <Splitter>
-            {/* disabled being resizable */}
-            <Splitter.Panel resizable={false} defaultSize={"66.667%"} min={"33.3%"} max={"80%"}>
+            <Splitter.Panel resizable={true} defaultSize={"72.5%"} min={"40%"} max={"72.5%"}>
                 <Splitter layout="vertical">
                     <Splitter.Panel resizable={false} defaultSize={"75%"} style={{ display: "flex", position: "relative", overflow: "hidden" }}>
                         <Canvas />
