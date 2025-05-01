@@ -50,13 +50,16 @@ export const InspectorMaterial = observer((props: Material) => {
     const { target, setTarget } = useViewport();
     const { scene } = useEditor();
     const [meshMaterial, setMeshMaterial] = useState(material);
+    const [, setUpdate] = useState(false);
+    const update = () => { setUpdate((prev) => !prev); meshMaterial && needsUpdate(meshMaterial); };
+    
     const references: THREE.Object3D[] = [];
     scene.traverse((o) => {
         if (o instanceof THREE.Mesh && (Array.isArray(o.material) && o.material.includes(material) || o.material == material)) {
             references.push(o);
         }
     });
-
+    
     const dataSource = references ? references.map((r, _i) => {
         return {
             index: r.id,
@@ -65,15 +68,13 @@ export const InspectorMaterial = observer((props: Material) => {
             action: <Button disabled={target == r} icon={< EyeOutlined />} onClick={() => { setTarget(r) }} />
         }
     }) : undefined;
-
-
+    
     return (
         <>
             <ItemCollapse label={"References"} collapsed={true}>
-                <Alert showIcon type="info" message={"Material is referenced in " + references.length + " Objects."} />
-                <br />
+                <Alert showIcon type="info" message={`Material is referenced in ${references.length} object${references.length > 1 ? "s" : ""}.`} />
                 <Table
-                    style={{ border: "1px solid grey", width: "95%", margin: "auto" }}
+                    style={{ border: "1px solid grey", margin: "10px 0" }}
                     showHeader={false}
                     pagination={false}
                     tableLayout="auto"
@@ -98,14 +99,14 @@ export const InspectorMaterial = observer((props: Material) => {
                             <ItemInput object={meshMaterial} variable="uuid" readonly />
                             <ItemButton buttonName="New UUID" onClick={() => { meshMaterial.uuid = THREE.MathUtils.generateUUID() }} size='small' />
                         </ItemGroup>
-                        <ItemGroup label={"Version"} sizes={["75%", "25%"]} tooltip={"Automatically increments whenever an update to the material is required."}>
+                        <ItemGroup label={"Version"} sizes={[3,1]} tooltip={"Automatically increments whenever an update to the material is required."}>
                             <ItemNumber object={meshMaterial} variable="version" readonly />
-                            <ItemButton buttonName="Update" onClick={() => needsUpdate(meshMaterial)} size='small' />
+                            <ItemButton buttonName="Update" onClick={() => { update() }} size='small' />
                         </ItemGroup>
-                        <ItemBoolean object={meshMaterial} variable="transparent" labelInVariable onChange={() => { needsUpdate(meshMaterial) }} />
-                        <ItemNumber object={meshMaterial} variable="opacity" labelInVariable limit={LIMIT_01} tooltip={"Requires \"Transparent\"."} />
+                        <ItemBoolean object={meshMaterial} variable="transparent" labelInVariable onChange={() => { update() }} />
+                        <ItemNumber object={meshMaterial} variable="opacity" labelInVariable limit={LIMIT_01} disabled={!meshMaterial.transparent} tooltip={"Requires \"Transparent\"."} />
                         <ItemBoolean object={meshMaterial} variable="visible" labelInVariable />
-                        <ItemBoolean object={meshMaterial} variable="vertexColors" labelInVariable onChange={() => { needsUpdate(meshMaterial) }} />
+                        <ItemBoolean object={meshMaterial} variable="vertexColors" labelInVariable onChange={() => { update() }} />
 
                     </>
                 }
