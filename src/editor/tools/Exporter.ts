@@ -54,7 +54,7 @@ export const DEFAULT_USDZ_EXPORTER_OPTIONS_AR = {
 // Ditto above
 export const DEFAULT_USDZ_EXPORTER_OPTIONS: Readonly<USDZExporterOptions> = {
     ar: { ...DEFAULT_USDZ_EXPORTER_OPTIONS_AR },
-    includeAnchoringProperties: true,
+    includeAnchoringProperties: false,
     quickLookCompatible: false,
     maxTextureSize: 1024
 };
