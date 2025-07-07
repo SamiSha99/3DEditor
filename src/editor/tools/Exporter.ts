@@ -7,7 +7,7 @@ export type OnExport = (result: Blob) => void;
 export type USDZExporterAnchoringTypes = "plane" | "image" //| "object" // apparently object not supported
 export type USDZExporterAlignmentTypes = "horizontal" | "vertical" | "any"
 
-export type ExportType = "gltf" | "usdz" | "obj" | "ply" | "stl"
+export type ExportType = undefined | "gltf" | "usdz" | "obj" | "ply" | "stl" | "json"
 
 export interface ExportOptions<T extends ExportParameters> {
     type: ExportType,
@@ -81,6 +81,11 @@ export function doExport(scene: THREE.Object3D, options: ExportOptions<ExportPar
         case "stl": exportSTL(scene, options as ExportOptions<STLExporterOptions>, onExport); break;
         case "ply": exportPLY(scene, options as ExportOptions<PLYExporterOptions>, onExport); break;
         case "obj": exportOBJ(scene, onExport); break;
+        case "json": 
+            const json = scene.toJSON();
+            const blob = saveJSON(json as any as string);
+            onExport && onExport(blob);
+            break;
     }
 }
 

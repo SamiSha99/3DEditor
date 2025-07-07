@@ -3,7 +3,7 @@ import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons"
 import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
 import * as THREE from "three";
 import { useEditor } from "@orb_Editor";
-import { doImport } from "@orb_tools/Importer";
+import { doImport, doImportScene } from "@orb_tools/Importer";
 import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, ExportOptions, ExportParameters, ExportType, USDZExporterAlignmentTypes, doExport, save } from "@orb_tools/Exporter";
 import { ItemBoolean, ItemInput, ItemNumber, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { useViewport } from "src/store/Viewport";
@@ -30,6 +30,18 @@ export const File = (props: MenuButtonProps) => {
                             disabled: false,
                             onClick: () => setScene()
                         },
+                        {
+                            label: 'Open Scene...',
+                            key: '0-1',
+                            icon: <ImportOutlined />,
+                            onClick: () => {
+                                doImportScene((scene) => {
+                                    console.log(scene);
+                                    setScene(scene.children);
+                                });
+                            }
+                        }
+                        ,
                         {
                             type: "divider"
                         },
@@ -58,11 +70,13 @@ export const File = (props: MenuButtonProps) => {
 }
 
 const exportOptions = [
+    { value: 'undefined', label: 'Choose...' },
     { value: 'gltf', label: 'GLTF / GLB' },
     { value: 'usdz', label: 'USDZ' },
     { value: 'obj', label: 'OBJ' },
     { value: 'ply', label: 'PLY' },
-    { value: 'stl', label: 'STL' }
+    { value: 'stl', label: 'STL' },
+    { value: 'json', label: 'Scene (JSON)' }
 ]
 
 const USDZAlignmentSelect = [
@@ -79,7 +93,7 @@ const USDZAnchoringSelect = [
     { value: "none", label: "none" }
 ] as { value: string, label: string }[];
 
-const exportSettings: ExportOptions<ExportParameters> = { name: "exportName", type: "gltf", selectionOnly: false, parameters: { ...DEFAULT_GLTF_EXPORTER_OPTIONS } }
+const exportSettings: ExportOptions<ExportParameters> = { name: "exportName", type: undefined, selectionOnly: false, parameters: { ...DEFAULT_GLTF_EXPORTER_OPTIONS } }
 
 interface ExportModal {
     open: boolean,
@@ -124,6 +138,11 @@ const ExportModal = (props: ExportModal) => {
                     defaultValue={exportOptions[0].label}
                     label="Type"
                     onChangeSelect={(select) => {
+                        if (select == "undefined") {
+                            setType(undefined);
+                            return;
+                        }
+
                         exportSettings.type = select as ExportType
                         switch (exportSettings.type) {
                             case "gltf":
@@ -133,6 +152,7 @@ const ExportModal = (props: ExportModal) => {
                                 exportSettings.parameters = { ...DEFAULT_USDZ_EXPORTER_OPTIONS };
                                 break;
                             case "obj":
+                            case "json":
                                 exportSettings.parameters = undefined;
                                 break;
                             case "ply":
@@ -146,7 +166,7 @@ const ExportModal = (props: ExportModal) => {
                     }}
                 />
                 {
-                    exportSettings.parameters &&
+                    exportSettings.parameters && type &&
                     <>
                         <Divider children="Options" />
                         {
@@ -195,6 +215,7 @@ const ExportModal = (props: ExportModal) => {
                             type == "stl" &&
                             <ItemBoolean variable="binary" object={exportSettings.parameters} labelInVariable />
                         }
+
                         <Divider />
                     </>
                 }

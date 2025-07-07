@@ -139,6 +139,42 @@ export function doImportAnimationClip(onImport: OnImport<THREE.AnimationClip>) {
     })
 }
 
+export function doImportScene(onImport: OnImport<THREE.Scene>) {
+    const input = document.createElement('input');
+    input.type = "file";
+    input.style.display = "none";
+    input.multiple = false;
+    input.accept = ".scene, .json";
+    input.click();
+    input.onchange = ((e: Event) => {
+        const filelist = (e as any as React.ChangeEvent<HTMLInputElement>).target.files;
+        if (filelist) {
+            if (filelist.length <= 0) {
+                message.error("No files were selected.");
+                return;
+            }
+            let files: File[] = [];
+            for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
+            files.map((file) => {
+                const reader = new FileReader();
+                reader.addEventListener('load', async function (event) {
+                    const contents = event.target?.result as string;
+                    const loader = new THREE.ObjectLoader();
+                    loader.parse(contents, (object) => {
+                        object.name = file.name;
+                        if (object instanceof THREE.Scene) {
+                            onImport(object);
+                        }
+                    });
+                });
+                reader.readAsText(file)
+            })
+        }
+        else
+            message.error("FileList returned null.")
+    })
+}
+
 export function doImportFile(file: File, onImport: OnImport<THREE.Object3D>) {
     if (!file) {
         message.error("No files were selected.");
