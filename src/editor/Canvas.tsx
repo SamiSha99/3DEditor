@@ -40,7 +40,7 @@ const Canvas = observer(() => {
                         <EditorHelpers />
                     </>
                 }
-                {fpsEnabled && <Perf colorBlind position="bottom-left" style={{ position: "absolute" }} />}
+                {fpsEnabled && <Perf showGraph colorBlind position="bottom-left" style={{ position: "absolute" }} />}
             </R3FC>
         </>
     )

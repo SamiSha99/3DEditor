@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { Check, X } from "src/assets/icons";
 import { useViewport } from "src/store/Viewport";
 import { MenuButtonProps } from "@orb_types";
+import { useState } from "react";
 
 export const View = observer((props: MenuButtonProps) => {
     const {
@@ -14,6 +15,7 @@ export const View = observer((props: MenuButtonProps) => {
     } = useViewport();
     const checkedIcon = (b: boolean) => b ? <Check /> : <X />;
     const { onclick } = props;
+
     return (
         <>
             <Dropdown
@@ -46,13 +48,11 @@ export const View = observer((props: MenuButtonProps) => {
                         {
                             key: "3",
                             label: "FPS",
+                            disabled: true,
                             icon: checkedIcon(fpsEnabled),
                             onClick: () => { setFPS(!fpsEnabled) }
                         },
-                    ],
-                    onClick: () => { setOpen(true) },
-                    onMouseLeave: () => { setOpen(false) }
-
+                    ]
                 }}
             />
         </>
