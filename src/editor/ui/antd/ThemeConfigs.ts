@@ -90,6 +90,7 @@ export const InspectorTheme: ThemeConfig = {
             buttonBg: "rgb(0,0,0,0.2)",
             colorBorder: "rgb(0,0,0,0)",
         },
+      
         Table: {
             cellPaddingInline: 8,
             cellPaddingBlock: 0,

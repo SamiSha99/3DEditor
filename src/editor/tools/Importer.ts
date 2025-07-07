@@ -153,22 +153,24 @@ export function doImportScene(onImport: OnImport<THREE.Scene>) {
                 message.error("No files were selected.");
                 return;
             }
-            let files: File[] = [];
-            for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
-            files.map((file) => {
-                const reader = new FileReader();
-                reader.addEventListener('load', async function (event) {
-                    const contents = event.target?.result as string;
-                    const loader = new THREE.ObjectLoader();
-                    loader.parse(contents, (object) => {
-                        object.name = file.name;
-                        if (object instanceof THREE.Scene) {
-                            onImport(object);
-                        }
-                    });
-                });
-                reader.readAsText(file)
-            })
+            let file: File = filelist[0];
+            // files.map((file) => {
+            // const reader = new FileReader();
+            // reader.addEventListener('load', async function (event) {
+            const loader = new THREE.ObjectLoader();
+            const objUrl = URL.createObjectURL(file);
+            loader.load(objUrl, (object) => {
+                object.name = file.name;
+                if (object instanceof THREE.Scene) {
+                    onImport(object);
+                }
+                URL.revokeObjectURL(objUrl);
+            }, () => { }, (error) => {
+                console.error("Failed to load scene file.", error);
+                message.error("Failed to load scene file. [" + error + "]");
+                URL.revokeObjectURL(objUrl);
+            });
+
         }
         else
             message.error("FileList returned null.")

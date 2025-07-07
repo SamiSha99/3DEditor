@@ -1,6 +1,5 @@
 import { FontAwesomeIcon, FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 import {
-    faMountainSun,
     faCube,
     faCircleNodes,
     faPersonRunning,
@@ -9,7 +8,8 @@ import {
     faX,
     IconDefinition,
     faArrowLeft,
-    faArrowRight
+    faArrowRight,
+    faMountain
 } from '@fortawesome/free-solid-svg-icons';
 
 // also to-do: by doing something with these cause not used lol
@@ -25,11 +25,11 @@ export const Icon = (icon: IconDefinition, props?: Partial<FontAwesomeIconProps>
 // For convenience just pass the key name to get the font awesome icon
 // TODO fix this hsit comment ^
 export const tabIconCollection = {
-    scene: { icon: faMountainSun, title: "Scene" },
-    object: { icon: faCube, title: "Object" },
-    animation: { icon: faPersonRunning, title: "Animation" },
-    geometry: { icon: faCircleNodes, title: "Geometry" },
-    material: { icon: faCircleHalfStroke, title: "Material" }
+    Scene: { icon: faMountain, title: "Scene" },
+    Object: { icon: faCube, title: "Object" },
+    Animation: { icon: faPersonRunning, title: "Animation" },
+    Geometry: { icon: faCircleNodes, title: "Geometry" },
+    Material: { icon: faCircleHalfStroke, title: "Material" }
 };
 
 export type TabIcon = keyof typeof tabIconCollection;
@@ -41,5 +41,5 @@ interface TabIconProps {
 
 export const TabIcon = (props: TabIconProps) => {
     const { iconType } = props;
-    return <FontAwesomeIcon {...props} icon={tabIconCollection[iconType].icon} size='lg' />
+    return <FontAwesomeIcon style={{ verticalAlign: "bottom", textAlign: "start"}} size='lg' {...props} icon={tabIconCollection[iconType].icon} />
 }

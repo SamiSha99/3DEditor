@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import { useEditor } from "@orb_Editor";
-import { Button, Col, ConfigProvider, Divider, Form, Row, Splitter, Tooltip, Tree, TreeDataNode, TreeProps } from "antd";
+import { Button, Col, ConfigProvider, Divider, Form, Radio, Row, Splitter, Tooltip, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
@@ -79,12 +79,14 @@ interface TabButtonProps {
 const TAB_BUTTON_SIZE = 48;
 
 export const TabButton = observer((props: TabButtonProps) => {
-    const tabCSS: React.CSSProperties = { width: "100%", height: TAB_BUTTON_SIZE };
+    const tabCSS: React.CSSProperties = { width: TAB_BUTTON_SIZE, height: TAB_BUTTON_SIZE, display: "flex" };
     const { type, disabled, onClick } = props;
     const title = (type as string).charAt(0).toUpperCase() + (type as string).slice(1);
     return (
         <Tooltip title={title} placement="left" children={
-            <Button style={tabCSS} disabled={disabled} children={<TabIcon iconType={type} />} onClick={() => onClick && onClick()} />
+            <Radio.Button value={type} style={tabCSS} disabled={disabled} onClick={() => onClick && onClick()}>
+                <TabIcon iconType={type} />
+            </Radio.Button>
         } />
     );
 })
@@ -104,11 +106,13 @@ export const SelectedObject = observer(() => {
             {
                 <Row style={{ background: "#212121", height: "100%", flexWrap: "nowrap" }}>
                     <Col style={{ width: TAB_BUTTON_SIZE, background: "#141414" }}>
-                        <TabButton type="scene" onClick={() => setTab("Scene")} />
-                        <TabButton type="object" disabled={target == null} onClick={() => setTab("Object")} />
-                        <TabButton type="animation" disabled={target == null} onClick={() => setTab("Animation")} />
-                        <TabButton type="geometry" disabled={!isMesh || !geometry} onClick={() => setTab("Geometry")} />
-                        <TabButton type="material" disabled={!isMesh || !geometry} onClick={() => setTab("Material")} />
+                        <Radio.Group value={tab} buttonStyle="outline" style={{ height: "100%", display: "flex", flexDirection: "column"}}>
+                            <TabButton type="Scene" onClick={() => setTab("Scene")} />
+                            <TabButton type="Object" disabled={target == null} onClick={() => setTab("Object")} />
+                            <TabButton type="Animation" disabled={target == null} onClick={() => setTab("Animation")} />
+                            <TabButton type="Geometry" disabled={!isMesh || !geometry} onClick={() => setTab("Geometry")} />
+                            <TabButton type="Material" disabled={!isMesh || !geometry} onClick={() => setTab("Material")} />
+                        </Radio.Group>
                     </Col>
                     <Col style={{ width: "100%" }}>
                         <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden", scrollbarColor: "grey transparent" }}>
