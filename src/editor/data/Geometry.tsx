@@ -644,7 +644,7 @@ export const InspectorCapsuleGeometry = observer((props: CapsuleGeometry) => {
     const { target } = useViewport();
 
     const radius = geometry.parameters.radius;
-    const length = geometry.parameters.length;
+    const length = geometry.parameters.height;
     const capSegments = geometry.parameters.capSegments;
     const radialSegments = geometry.parameters.radialSegments;
 
@@ -654,7 +654,7 @@ export const InspectorCapsuleGeometry = observer((props: CapsuleGeometry) => {
             (target.geometry as THREE.CapsuleGeometry).dispose();
             target.geometry = new THREE.CapsuleGeometry(
                 p.r ?? old.radius,
-                p.l ?? old.length,
+                p.l ?? old.height,
                 p.cS ?? old.capSegments,
                 p.rS ?? old.radialSegments
             );

@@ -40,15 +40,16 @@ export const ItemTexture = <T extends Record<string, any>, K extends KeyToValueO
         const ctx = canvas.getContext('2d');
         ctx?.clearRect(0, 0, canvas.width, canvas.height);
         if (!t.image) return;
-        const width = t.image.width;
-        const height = t.image.height;
+        const image = t.image as HTMLImageElement | HTMLCanvasElement | ImageBitmap;
+        const width = image.width;
+        const height = image.height;
         canvas.width = width;
         canvas.height = height;
         if (t instanceof DataTexture) {
             const c = renderToCanvas(t);
             ctx?.drawImage(c, 0, 0, width, height, 0, 0, width, height)
         } else {
-            ctx?.drawImage(t.image, 0, 0, width, height, 0, 0, width, height);
+            ctx?.drawImage(image, 0, 0, width, height, 0, 0, width, height);
         }
         canvas.toBlob((b) => {
             if (!b) return;

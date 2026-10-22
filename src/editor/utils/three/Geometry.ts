@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import HelvetikerFont from "three/examples/fonts/helvetiker_regular.typeface.json";
+import HelvetikerFont from "../../../assets/fonts/helvetiker_regular.typeface.json";
 import { BufferGeometryUtils, FontLoader } from 'three/examples/jsm/Addons';
 import { Range } from '@orb_types';
 

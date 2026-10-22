@@ -15,7 +15,7 @@ export class Editor {
     /** This is passed from Fiber through onCanvasLoaded */
     gl!: THREE.WebGLRenderer;
     canvas!: HTMLCanvasElement;
-    clock = new THREE.Clock();
+    timer = new THREE.Timer();
 
     /** All instatiated Objects in the scene */
     @observable scene: THREE.Scene = new THREE.Scene();
@@ -164,7 +164,7 @@ export class Editor {
 
 
 
-    update = (delta = this.clock.getDelta()) => {
+    update = (delta = this.timer.update().getDelta()) => {
         this.viewport.update(delta);
         this.sceneHelpers.map((helper) => {
             if (helper.name == "debug_indexing") {

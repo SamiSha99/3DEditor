@@ -97,7 +97,7 @@ export const InspectorMaterial = observer((props: Material) => {
                         <ItemInput object={meshMaterial} variable="name" labelInVariable />
                         <ItemGroup label="UUID" sizes={["75%", "25%"]} tooltip={"Universally unique identifier"}>
                             <ItemInput object={meshMaterial} variable="uuid" readonly />
-                            <ItemButton buttonName="New UUID" onClick={() => { meshMaterial.uuid = THREE.MathUtils.generateUUID() }} size='small' />
+                            <ItemButton buttonName="New UUID" onClick={() => { (meshMaterial as { uuid: string }).uuid = THREE.MathUtils.generateUUID() }} size='small' />
                         </ItemGroup>
                         <ItemGroup label={"Version"} sizes={[3,1]} tooltip={"Automatically increments whenever an update to the material is required."}>
                             <ItemNumber object={meshMaterial} variable="version" readonly />

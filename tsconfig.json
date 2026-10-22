@@ -34,7 +34,9 @@
       "@orb_types" : ["src/store/Type.ts"],
       "@orb_UI/*": ["./src/editor/ui/*"],
       "@orb_utils/*": ["./src/editor/utils/*"],
-      "@orb_Hooks": ["./src/store/Hooks.ts"]
+      "@orb_Hooks": ["./src/store/Hooks.ts"],
+      /* @types/three re-exports from this subpath, which "Node" resolution can't find via package exports */
+      "meshoptimizer/decoder": ["./node_modules/meshoptimizer/meshopt_decoder.d.ts"]
     }
   },
   "include": ["src"],

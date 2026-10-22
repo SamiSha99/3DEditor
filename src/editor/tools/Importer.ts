@@ -1,11 +1,8 @@
 import * as THREE from 'three';
 import { message } from 'antd';
-import { OBJLoader, USDZLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader, RGBELoader } from 'three/examples/jsm/Addons.js';
+import { OBJLoader, USDLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader, HDRLoader } from 'three/examples/jsm/Addons.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
-import { isFileImage, sleep } from '@orb_utils/Main';
-import { USDZLoader as USDC_Loader } from "three-usdz-loader";
-import { doExport } from './Exporter';
-import { computeAllVertexNormals } from '@orb_utils/three/Geometry';
+import { isFileImage } from '@orb_utils/Main';
 /** Extension of the file including a dot "." */
 const EXTENSION_REGEX = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/i;
 
@@ -72,8 +69,8 @@ export function importTexture(file: File, onImport: OnImport<THREE.Texture>) {
     const url = URL.createObjectURL(file);
     const type = file.type;
     console.log("type", file.name.match(/\.[0-9a-z]+$/i)![0], type)
-    const loader = file.name.match(/\.[0-9a-z]+$/i)![0] == ".hdr" ? new RGBELoader() : new THREE.TextureLoader();
-    if (loader instanceof RGBELoader)
+    const loader = file.name.match(/\.[0-9a-z]+$/i)![0] == ".hdr" ? new HDRLoader() : new THREE.TextureLoader();
+    if (loader instanceof HDRLoader)
         loader.load(
             url,
             (res) => {
@@ -274,41 +271,24 @@ function handleFile(file: File, manager: THREE.LoadingManager | null = null, onI
         case ".usdc":
         case ".usd":
             reader.addEventListener('load', async function (event) {
-                const contents = event.target!.result as string | ArrayBuffer;
+                const contents = event.target!.result as ArrayBuffer;
+                // USDLoader detects ASCII (USDA), crate (USDC) and USDZ archives from the file contents.
+                // Normals are taken from the file, or computed by the loader when missing.
+                // onLoad fires once all textures have loaded.
                 try {
-                    const group = new USDZLoader(manager).parse(contents);
-                    group.name = file.name;
-                    // this isn't normal, no pun intended
-                    // material result requires vertex normals to be computed to look normal? why?
-                    // same problem on https://threejs.org/editor/ ... why?????
-                    // :peeposad:
-                    computeAllVertexNormals(group);
-                    onImport(group);
+                    new USDLoader(manager).parse(contents, '',
+                        (group) => {
+                            group.name = file.name;
+                            onImport(group);
+                        },
+                        (error) => {
+                            console.error(error);
+                            message.error("Failed to load USD model. [" + error + "]");
+                        });
                 }
                 catch (err) {
-                    // A hack to avoid massive amount of inexplainable bugs that I don't want to tackle with
-                    // Loads the file via a three-usdz-loader fork that syncs with threejs version
-                    // waits 0.05 seconds for textures/materials to load
-                    // then convert it to GLB and import it immediatly
-                    // nothing of the model should be technically lost
-                    if (("" + err).includes(".usdc")) {
-                        message.warning("Crate type detected (USDC). We recommend USD ASCII (USDA) whenever possible for better results!", 5);
-                        const loader = new USDC_Loader("wasm");
-                        const loadedModel = (await loader.loadFile(file, new THREE.Group()));
-                        const group = loadedModel.getGroup().clone(true);
-                        await sleep(50);
-                        doExport(group.children[0], { type: "gltf", parameters: { binary: true } },
-                            (b) => {
-                                const filydummy = new File([b], file.name + ".glb");
-                                doImportFile(filydummy, (o) => {
-                                    o.name = file.name;
-                                    onImport(o);
-                                });
-                                loadedModel.clear();
-                            })
-                    }
-                    else
-                        message.error("Failed to load USDZ model.");
+                    console.error(err);
+                    message.error("Failed to load USD model. [" + err + "]");
                 }
             }, false);
             reader.readAsArrayBuffer(file);

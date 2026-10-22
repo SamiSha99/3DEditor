@@ -103,7 +103,7 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions<GLTFExp
             options.parameters.animations = getAnimations(scene);
 
         if ((options.parameters as AnimationParameters).optimizeAnimations)
-            options.parameters.animations = optimizeAnimations(options.parameters.animations);
+            options.parameters.animations = optimizeAnimations(options.parameters.animations as THREE.AnimationClip[]);
     }
 
     exporter.parse(
@@ -128,7 +128,7 @@ export function exportGLB(scene: THREE.Object3D, options: ExportOptions<GLTFExpo
             options.parameters.animations = getAnimations(scene);
 
         if ((options.parameters as AnimationParameters).optimizeAnimations)
-            options.parameters.animations = optimizeAnimations(options.parameters.animations);
+            options.parameters.animations = optimizeAnimations(options.parameters.animations as THREE.AnimationClip[]);
     }
 
     exporter.parse(
