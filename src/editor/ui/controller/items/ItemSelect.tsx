@@ -1,12 +1,13 @@
-import { Form, Select } from "antd";
-import { ItemObject, labelFromVariable } from "./Item";
-import { invalidVariable, ItemInvalidAlert } from "./ItemAlert";
+import { Select } from "antd";
+import { ItemObject, resolveLabel, AnyObject, invalidVariable } from "./Item";
+import { ItemRow } from "./ItemRow";
+import { ItemInvalidAlert } from "./ItemAlert";
 import { DefaultOptionType } from "antd/es/select";
 import { KeyToValueOfType } from "@orb_types";
 
 type SelectType = DefaultOptionType[]
 
-interface SelectInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, SelectType>> extends ItemObject<T, K> {
+interface SelectInterface<T extends AnyObject, K extends KeyToValueOfType<T, SelectType>> extends ItemObject<T, K> {
     disabled?: boolean
     defaultValue?: string
     labelInValue?: boolean
@@ -15,21 +16,22 @@ interface SelectInterface<T extends Record<string, any>, K extends KeyToValueOfT
     onChangeSelect?: (select: { value: string, label: string } | string | number) => void;
 }
 
-export const ItemSelect = <T extends Record<string, any>, K extends KeyToValueOfType<T, SelectType>>(props: SelectInterface<T, K>) => {
-    let { label, labelInVariable, object, variable, disabled, defaultValue, labelInValue, onChangeSelect, tooltip } = props;
+export const ItemSelect = <T extends AnyObject, K extends KeyToValueOfType<T, SelectType>>(props: SelectInterface<T, K>) => {
+    const { object, variable, disabled, defaultValue, labelInValue, onChangeSelect, tooltip, layout } = props;
     if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
     const list = object[variable] as DefaultOptionType[];
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
+        <ItemRow label={resolveLabel(props)} tooltip={tooltip} layout={layout}>
             <Select
+                style={{ width: "100%" }}
                 disabled={disabled}
                 defaultValue={defaultValue ? { value: defaultValue, label: defaultValue } : undefined}
                 labelInValue={labelInValue}
                 onChange={(select: { value: string, label: string }) => { onChangeSelect && onChangeSelect(select); }}
                 options={list}
             />
-        </Form.Item>
+        </ItemRow>
     )
 }
 

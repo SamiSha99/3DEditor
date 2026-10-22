@@ -1,5 +1,6 @@
 import { Collapse } from "antd"
 import { SizeType } from "antd/es/config-provider/SizeContext"
+import { ItemRowBoundary } from "./ItemRow"
 
 type ItemCollapseInterface = {
     label: React.ReactNode,
@@ -11,14 +12,14 @@ type ItemCollapseInterface = {
 }
 
 export const ItemCollapse = (props: ItemCollapseInterface) => {
-    let { label, children, collapsed, size, extra, alwaysOpen } = props;
+    const { label, children, collapsed, size, extra, alwaysOpen } = props;
     return (
         <Collapse
             defaultActiveKey={!collapsed ? "1" : undefined}
             style={{ width: "100%" }}
             size={size}
             collapsible={alwaysOpen ? "icon" : undefined}
-            items={[{ label: <h4>{label}</h4>, key: "1", children: <div>{children}</div>, extra: extra, showArrow: !alwaysOpen }]}
+            items={[{ label: <h4>{label}</h4>, key: "1", children: <ItemRowBoundary>{children}</ItemRowBoundary>, extra: extra, showArrow: !alwaysOpen }]}
         />
     )
 }

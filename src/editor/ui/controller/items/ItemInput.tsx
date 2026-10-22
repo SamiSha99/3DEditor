@@ -1,29 +1,31 @@
-import { Form, Input } from "antd";
+import { Input } from "antd";
 import React, { useState } from "react";
-import { ItemObject, labelFromVariable } from "./Item";
-import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
+import { ItemObject, resolveLabel, AnyObject, invalidVariable } from "./Item";
+import { ItemRow } from "./ItemRow";
+import { ItemInvalidAlert } from "./ItemAlert";
 import { useDeltaTime } from "src/store/Hooks";
 import TextArea from "antd/es/input/TextArea";
 import { KeyToValueOfType } from "@orb_types";
 
-interface InputInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, string>> extends ItemObject<T, K> {
+interface InputInterface<T extends AnyObject, K extends KeyToValueOfType<T, string>> extends ItemObject<T, K> {
     onChange?: (value: string) => void
     addonBefore?: React.ReactNode,
     addonAfter?: React.ReactNode,
     textArea?: boolean,
 }
 
-export const ItemInput = <T extends Record<string, any>, K extends KeyToValueOfType<T, string>>(props: InputInterface<T, K>) => {
-    let { label, labelInVariable, object, variable, readonly, onChange, tooltip, addonBefore, addonAfter, textArea } = props;
-    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+export const ItemInput = <T extends AnyObject, K extends KeyToValueOfType<T, string>>(props: InputInterface<T, K>) => {
+    const { object, variable, readonly, onChange, tooltip, layout, addonBefore, addonAfter, textArea } = props;
     const [v, setValue] = useState<string>(object[variable]);
 
-    const [loopStop, loopStart, _] = useDeltaTime(() => {
+    const [loopStop, loopStart] = useDeltaTime(() => {
         v != object[variable] && setValue(object[variable])
     });
 
+    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
+        <ItemRow label={resolveLabel(props)} tooltip={tooltip} layout={layout}>
             {
                 textArea &&
                 <TextArea
@@ -59,7 +61,7 @@ export const ItemInput = <T extends Record<string, any>, K extends KeyToValueOfT
                         onChange && onChange(v.target.value);
                     }} />
             }
-        </Form.Item>
+        </ItemRow>
     )
 }
 

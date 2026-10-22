@@ -1,7 +1,8 @@
-import { Button, Form } from "antd";
+import { Button } from "antd";
 import React from "react";
 import { SizeType } from "antd/es/config-provider/SizeContext";
 import { ItemBase } from "./Item";
+import { ItemRow } from "./ItemRow";
 
 
 interface ButtonInterface extends ItemBase {
@@ -15,12 +16,12 @@ interface ButtonInterface extends ItemBase {
 }
 
 export const ItemButton = (props: ButtonInterface) => {
-    let { label, size, buttonName, onClick, tooltip, disabled } = props;
+    const { label, size, buttonName, onClick, tooltip, disabled, layout } = props;
 
     return (
-        <Form.Item label={label} tooltip={tooltip}>
+        <ItemRow label={label} tooltip={tooltip} layout={layout}>
             <Button size={size ? size : "small"} block style={{ width: "100%" }} onClick={() => { onClick && onClick() }} children={buttonName} disabled={disabled} />
-        </Form.Item>
+        </ItemRow>
     )
 }
 

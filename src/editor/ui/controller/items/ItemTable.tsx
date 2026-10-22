@@ -1,14 +1,15 @@
-import { Form, Table } from "antd";
+import { Table } from "antd";
 import { ItemBase } from "./Item";
+import { ItemRow } from "./ItemRow";
 import { TableProps } from "antd/es/table";
 
-interface TableInterface extends Omit<TableProps, 'children'>, ItemBase { };
+interface TableInterface extends Omit<TableProps, 'children'>, ItemBase { }
 
 export const ItemTable = (props: TableInterface) => {
-    let { label, tooltip, columns, dataSource, showHeader, style, scroll } = props;
+    const { label, tooltip, layout, columns, dataSource, showHeader, style, scroll } = props;
 
     return (
-        <Form.Item label={label} tooltip={tooltip}>
+        <ItemRow label={label} tooltip={tooltip} layout={layout}>
             <Table
                 style={style}
                 showHeader={showHeader}
@@ -18,7 +19,7 @@ export const ItemTable = (props: TableInterface) => {
                 dataSource={dataSource}
                 scroll={scroll}
             />
-        </Form.Item>
+        </ItemRow>
     )
 }
 

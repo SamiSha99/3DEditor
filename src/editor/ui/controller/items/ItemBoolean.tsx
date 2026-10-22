@@ -1,27 +1,29 @@
-import { Form, Switch } from "antd";
+import { Switch } from "antd";
 import React, { useState } from "react";
-import { ItemObject, labelFromVariable } from "./Item";
-import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
+import { ItemObject, resolveLabel, AnyObject, invalidVariable } from "./Item";
+import { ItemRow } from "./ItemRow";
+import { ItemInvalidAlert } from "./ItemAlert";
 import { useDeltaTime } from "src/store/Hooks";
 import { KeyToValueOfType } from "@orb_types";
 
-interface BooleanInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, boolean>> extends ItemObject<T, K> {
+interface BooleanInterface<T extends AnyObject, K extends KeyToValueOfType<T, boolean>> extends ItemObject<T, K> {
     onChange?: (value: boolean) => void
     icons?: { on?: React.ReactNode, off?: React.ReactNode }
 }
 
-export const ItemBoolean = <T extends Record<string, any>, K extends KeyToValueOfType<T, boolean>>(props: BooleanInterface<T, K>) => {
-    let { label, labelInVariable, object, variable, icons, onChange, tooltip } = props;
-    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+export const ItemBoolean = <T extends AnyObject, K extends KeyToValueOfType<T, boolean>>(props: BooleanInterface<T, K>) => {
+    const { object, variable, icons, onChange, tooltip, layout } = props;
     const [v, setValue] = useState<boolean>(object[variable]);
 
-    const [_loopStop, _loopStart, _isActive] = useDeltaTime(() => {
+    useDeltaTime(() => {
         v != object[variable] && setValue(object[variable])
     });
 
+    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label} tooltip={tooltip}>
-            <div style={{ float: "right" }}>
+        <ItemRow label={resolveLabel(props)} tooltip={tooltip} layout={layout}>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Switch
                     style={{ margin: "2px 5px" }}
                     defaultChecked={object[variable]}
@@ -33,7 +35,7 @@ export const ItemBoolean = <T extends Record<string, any>, K extends KeyToValueO
                         onChange && onChange(e);
                     }} />
             </div>
-        </Form.Item>
+        </ItemRow>
     )
 }
 

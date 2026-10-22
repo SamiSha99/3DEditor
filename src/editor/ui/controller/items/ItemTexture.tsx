@@ -1,7 +1,9 @@
-import { Button, Form, Image, Popconfirm, Tooltip } from "antd";
-import { useEffect, useState } from "react";
-import { ItemObject, labelFromVariable } from "./Item";
-import { ItemInvalidAlert, invalidVariable } from "./ItemAlert";
+import { Button, Image, Popconfirm, Tooltip } from "antd";
+import { useState } from "react";
+import useMount from "react-use/lib/useMount";
+import { ItemObject, resolveLabel, AnyObject, invalidVariable } from "./Item";
+import { ItemRow } from "./ItemRow";
+import { ItemInvalidAlert } from "./ItemAlert";
 import { DataTexture, Material, MeshBasicMaterial, Texture, WebGLRenderer } from "three";
 import { saveLink } from "@orb_tools/Exporter";
 import { CloudUploadOutlined, DeleteOutlined, DownloadOutlined, EyeOutlined } from "@ant-design/icons";
@@ -12,7 +14,7 @@ import { KeyToValueOfType } from "@orb_types";
 
 type TextureTypes = Texture | null | undefined;
 
-interface TextureInterface<T extends Record<string, any>, K extends KeyToValueOfType<T, TextureTypes>> extends ItemObject<T, K> {
+interface TextureInterface<T extends AnyObject, K extends KeyToValueOfType<T, TextureTypes>> extends ItemObject<T, K> {
     hdr?: boolean,
     size?: { width: number, height: number }
     onChange?: (value?: Texture) => void
@@ -26,13 +28,11 @@ type TextureObject = {
     type: string
 }
 
-export const ItemTexture = <T extends Record<string, any>, K extends KeyToValueOfType<T, TextureTypes>>(props: TextureInterface<T, K>) => {
-    let { label, labelInVariable, object, variable, hdr, readonly, size, onChange } = props;
-    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
+export const ItemTexture = <T extends AnyObject, K extends KeyToValueOfType<T, TextureTypes>>(props: TextureInterface<T, K>) => {
+    const { object, variable, hdr, readonly, size = DEFAULT_SIZE, onChange, tooltip, layout } = props;
     const [textureObject, setTextureObject] = useState<TextureObject | undefined>(undefined);
     const [hoverUploadIcon, setHoverUploadIcon] = useState(false);
 
-    if (!size) size = DEFAULT_SIZE;
 
     const makeImageObject = (t?: Texture | null) => {
         if (!t) return;
@@ -78,17 +78,19 @@ export const ItemTexture = <T extends Record<string, any>, K extends KeyToValueO
         textureObject && saveLink(textureObject.url, variable, textureObject.type)
     }
 
-    useEffect(() => { makeImageObject(object[variable]) }, []);
+    useMount(() => makeImageObject(object[variable]));
     // clean up 
-    useOnUnmount(() => textureObject && URL.revokeObjectURL(textureObject.url), [textureObject])
+    useOnUnmount(() => { textureObject && URL.revokeObjectURL(textureObject.url) });
+
+    if (invalidVariable(object, variable)) return <ItemInvalidAlert variable={variable} object={object} />;
 
     return (
-        <Form.Item label={labelInVariable && !label ? labelFromVariable(variable) : label}>
+        <ItemRow label={resolveLabel(props)} tooltip={tooltip} layout={layout}>
             <div style={{ display: "flex" }}>
                 {
                     !readonly &&
-                    <div style={{ width: "100%", padding: "0 5px" }}>
-                        <div style={{ float: "right", backgroundColor: "#303030", border: "2px solid #404040" }}>
+                    <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "flex-start", padding: "0 5px" }}>
+                        <div style={{ backgroundColor: "#303030", border: "2px solid #404040" }}>
                             <Tooltip title="Upload Texture">
                                 <Button icon={<CloudUploadOutlined />} onClick={requestUploadTexture} />
                             </Tooltip>
@@ -135,7 +137,7 @@ export const ItemTexture = <T extends Record<string, any>, K extends KeyToValueO
                     }
                 </div>
             </div>
-        </Form.Item >
+        </ItemRow>
     )
 }
 
