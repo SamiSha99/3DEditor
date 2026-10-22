@@ -65,7 +65,7 @@ export const InspectorMaterial = observer((props: Material) => {
             key: r.id,
             index: r.id,
             name: r.name,
-            typeClass: r.constructor.name,
+            typeClass: r.type,
             action: <Button disabled={target == r} icon={< EyeOutlined />} onClick={() => { setTarget(r) }} />
         }
     }) : undefined;
@@ -89,7 +89,7 @@ export const InspectorMaterial = observer((props: Material) => {
                     dataSource={dataSource}
                 />
             </ItemCollapse>
-            <ItemCollapse label={THREE.Material.name}>
+            <ItemCollapse label={"Material"}>
                 {/* Change material type */}
                 <MaterialSetter material={material} onSet={(m) => { setMeshMaterial(m) }} />
                 {/* Material Properties */}
@@ -116,7 +116,7 @@ export const InspectorMaterial = observer((props: Material) => {
             {/* Don't render if its the parent */}
             {
                 meshMaterial && meshMaterial.constructor != THREE.Material &&
-                <ItemCollapse label={meshMaterial.constructor.name} children={<ChildMaterial material={meshMaterial} />} />
+                <ItemCollapse label={meshMaterial.type} children={<ChildMaterial material={meshMaterial} />} />
             }
         </>
     );
@@ -166,7 +166,7 @@ export const MaterialSetter = observer((props: MaterialSetter) => {
                 object={{ Materials: allowNullType ? MaterialSelect : MaterialSelect.filter(v => v.value != "undefined") }}
                 variable="Materials"
                 label="Material"
-                defaultValue={material && material.constructor.name != "Material" ? material.constructor.name.replace("Mesh", "").replace("Material", "") : "None"}
+                defaultValue={material && !Array.isArray(material) && material.type != "Material" ? material.type.replace("Mesh", "").replace("Material", "") : "None"}
                 onChangeSelect={(s) => {
                     const str = s as unknown as string;
                     instantiateMaterial(str)

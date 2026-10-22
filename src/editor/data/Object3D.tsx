@@ -78,7 +78,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
             </ItemCollapse >
             <ChildObject3D object={object} />
             <ItemCollapse label={"Object3D"}>
-                <ItemInput object={{ type: object.constructor.name }} variable="type" labelInVariable readonly />
+                <ItemInput object={{ type: object.type }} variable="type" labelInVariable readonly />
                 <ItemInput object={object} variable="name" labelInVariable />
                 <ItemNumber object={{ id: object.id }} variable="id" label="ID" readonly />
                 <ItemGroup label="UUID" sizes={["75%", "25%"]} tooltip={"Universally unique identifier"}>
@@ -99,9 +99,9 @@ export const InspectorObject3D = observer((props: Object3D) => {
 export const ChildObject3D = observer((props: Object3D) => {
     const { object } = props;
     if (object.constructor == THREE.Group ||
-        object.constructor.name == "_Object3D"
+        object.type == "Object3D"
     ) return <></>
-    return <ItemCollapse label={object.constructor.name}>
+    return <ItemCollapse label={object.type}>
         {(() => {
             switch (object.constructor) {
                 case THREE.Mesh: return <Mesh object={object as THREE.Mesh} />
@@ -111,7 +111,7 @@ export const ChildObject3D = observer((props: Object3D) => {
                 case THREE.AmbientLight: return <AmbientLight object={object as THREE.AmbientLight} />;
                 case THREE.DirectionalLight: return <DirectionalLight object={object as THREE.DirectionalLight} />;
                 case THREE.SkinnedMesh: return <InspectorSkinnedMesh object={object as THREE.SkinnedMesh} />;
-                default: return <Alert message={object.constructor.name + " is not defined!"} type="warning" />;
+                default: return <Alert message={object.type + " is not defined!"} type="warning" />;
             }
         })()}
     </ItemCollapse>
@@ -122,11 +122,11 @@ export const Mesh = observer((props: { object: THREE.Mesh }) => {
     return (
         <>
             <ItemGroup label="Geometry" sizes={["85%", "15%"]}>
-                <ItemInput object={{ geometry: object.geometry.constructor.name.replace("_", "") }} variable="geometry" readonly />
+                <ItemInput object={{ geometry: object.geometry.type }} variable="geometry" readonly />
                 <ItemButton buttonName={<EyeOutlined />} onClick={() => { message.info("Implement viewing geometry tab!") }} />
             </ItemGroup>
             <ItemGroup label="Material" sizes={["85%", "15%"]}>
-                <ItemInput object={{ material: object.material.constructor.name.replace("_", "") }} variable="material" readonly />
+                <ItemInput object={{ material: [object.material].flat().map((m) => m.type).join(", ") }} variable="material" readonly />
                 <ItemButton buttonName={<EyeOutlined />} onClick={() => { message.info("Implement viewing material tab!") }} />
             </ItemGroup>
             <ItemBoolean object={object} variable="castShadow" labelInVariable />

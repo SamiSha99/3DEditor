@@ -98,7 +98,7 @@ export const SelectedObject = observer(() => {
 
     useEffect(() => { target instanceof THREE.Object3D && setTab("Object"); !target && setTab(""); }, [target]);
 
-    const isMesh = target != null && (target instanceof THREE.Mesh || (target.constructor.name == "Mesh" && (target as THREE.Mesh).isMesh));
+    const isMesh = target != null && (target instanceof THREE.Mesh || (target.type == "Mesh" && (target as THREE.Mesh).isMesh));
     const material = isMesh ? (target as THREE.Mesh)?.material as THREE.Material : undefined;
     const geometry = (target as THREE.Mesh)?.geometry;
     const animation = tab == "Animation" && target instanceof THREE.Object3D ? new Animator(target, target.animations) : undefined;
