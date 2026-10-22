@@ -21,7 +21,8 @@ const AssetsMenu = observer(() => {
                     flexWrap: "wrap",
                     marginTop: "10px"
                 }}>
-                    {storageModels.map((asset) => { return <Asset asset={asset} /> })}
+                    {storageModels.length == 0 && <span>None... yet.</span>}
+                    {storageModels.map((asset) => { return <Asset key={asset.fileName} asset={asset} /> })}
                 </div>
             </div>
         </div>

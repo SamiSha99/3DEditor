@@ -4,7 +4,6 @@ import { Panel } from "@orb_UI/panels/Main";
 import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
 import { IModelFileResponse, UpdatableObject3D } from './Interfaces';
-import { DEBUG_STORAGE_MODALS_TEST } from './Data';
 
 export const EditorContext = createContext<Editor>({} as any)
 export const useEditor = () => useContext(EditorContext);
@@ -35,7 +34,7 @@ export class Editor {
     @observable flags = observable.array<string>();
 
     /** Metadata of models from the storage. */
-    @observable storageModels = observable.array<IModelFileResponse>(DEBUG_STORAGE_MODALS_TEST);
+    @observable storageModels = observable.array<IModelFileResponse>();
 
     /** Handles all related controls in the Canvas scene. */
     @observable viewport = new Viewport(this);
