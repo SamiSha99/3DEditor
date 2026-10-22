@@ -49,6 +49,7 @@ export const DraggablePanel = observer((props: DraggablePanelInterface) => {
 
     return (
         <Draggable
+            nodeRef={ref}
             bounds="parent"
             handle=".handle"
             cancel=".noHandle"

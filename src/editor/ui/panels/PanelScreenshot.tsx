@@ -68,12 +68,12 @@ export const PanelScreenshot = observer(() => {
                                     style={{ width: 192, height: 192, cursor: "all-scroll" }}
                                     scene={scene}
                                     camera={camera}
-                                    gl={(node) => {
+                                    gl={({ canvas }) => {
                                         if (previewRenderer) {
                                             previewRenderer.dispose();
                                             previewRenderer = undefined;
                                         }
-                                        previewRenderer = new THREE.WebGLRenderer({ canvas: node, alpha: true, antialias: true });
+                                        previewRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
                                         return previewRenderer;
                                     }}
                                     onCreated={(_s) => {

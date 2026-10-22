@@ -27,7 +27,7 @@ const Canvas = observer(() => {
                 style={{ bottom: 0, height: "100%", width: loaded ? "100%" : "1px" }}
                 scene={scene}
                 camera={camera}
-                shadows
+                shadows="percentage"
                 onCreated={(_s) => {
                     onLoad(_s.gl.domElement, _s.gl)
                     setLoaded(true);
@@ -100,7 +100,7 @@ const EditorHelpers = observer(() => {
                         </group>
                     </group>
                 }
-                {boundingBoxEnabled && target && <box3Helper box={targetBoundingBox} />}
+                {boundingBoxEnabled && target && <box3Helper args={[targetBoundingBox]} />}
                 <primitive object={controls.getHelper()} />
                 {targetWireframeHelper && <primitive object={targetWireframeHelper} />}
                 {/* <Line segments={true}/> */}
