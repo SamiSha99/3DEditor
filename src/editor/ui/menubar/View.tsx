@@ -48,7 +48,6 @@ export const View = observer((props: MenuButtonProps) => {
                         {
                             key: "3",
                             label: "FPS",
-                            disabled: true,
                             icon: checkedIcon(fpsEnabled),
                             onClick: () => { setFPS(!fpsEnabled) }
                         },
