@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
-import { Dropdown, Button, message, Modal, Form, Divider } from "antd";
+import { Dropdown, Button, message, Modal, Divider } from "antd";
 import * as THREE from "three";
 import { useEditor } from "@orb_Editor";
 import { doImport, doImportScene } from "@orb_tools/Importer";
-import { DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, ExportOptions, ExportParameters, ExportType, USDZExporterAlignmentTypes, doExport, save } from "@orb_tools/Exporter";
-import { ItemBoolean, ItemInput, ItemNumber, ItemSelect } from "@orb_UI/controller/ControllerItems";
+import { AnimationParameters, DEFAULT_GLTF_EXPORTER_OPTIONS, DEFAULT_PLY_EXPORTER_OPTIONS, DEFAULT_STL_EXPORTER_OPTIONS, DEFAULT_USDZ_EXPORTER_OPTIONS, ExportOptions, ExportParameters, ExportType, USDZExporterAlignmentTypes, doExport, save } from "@orb_tools/Exporter";
+import { ItemBoolean, ItemInput, ItemList, ItemNumber, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { useViewport } from "src/store/Viewport";
-import { GLTFExporterOptions, USDZExporterOptions } from "three/examples/jsm/Addons";
+import { GLTFExporterOptions, PLYExporterOptions, STLExporterOptions, USDZExporterOptions } from "three/examples/jsm/Addons";
 import { MenuButtonProps } from "@orb_types";
 
 export const File = (props: MenuButtonProps) => {
@@ -85,14 +85,6 @@ const USDZAlignmentSelect = [
     { value: "any", label: "any" }
 ] as { value: string, label: string }[];
 
-// @ts-ignore
-const USDZAnchoringSelect = [
-    { value: "plane", label: "plane" },
-    { value: "image", label: "image" },
-    { value: "face", label: "face" },
-    { value: "none", label: "none" }
-] as { value: string, label: string }[];
-
 const exportSettings: ExportOptions<ExportParameters> = { name: "exportName", type: undefined, selectionOnly: false, parameters: { ...DEFAULT_GLTF_EXPORTER_OPTIONS } }
 
 interface ExportModal {
@@ -107,6 +99,10 @@ const ExportModal = (props: ExportModal) => {
     const { target } = useViewport();
     const [type, setType] = useState(exportSettings.type);
     const [changed, setChanged] = useState(false);
+    const gltf = exportSettings.parameters as GLTFExporterOptions & AnimationParameters;
+    const usdz = exportSettings.parameters as USDZExporterOptions;
+    const ply = exportSettings.parameters as PLYExporterOptions;
+    const stl = exportSettings.parameters as STLExporterOptions;
 
     const doDownload = () => {
         const arg = exportSettings;
@@ -129,7 +125,7 @@ const ExportModal = (props: ExportModal) => {
 
     return (
         <Modal title={"Export..."} open={open} onOk={doDownload} onCancel={onCancel}>
-            <Form colon={false}>
+            <ItemList labelWidth="40%">
                 <ItemInput object={exportSettings} variable="name" labelInVariable />
                 <ItemBoolean object={exportSettings} variable="selectionOnly" labelInVariable />
                 <ItemSelect
@@ -172,34 +168,33 @@ const ExportModal = (props: ExportModal) => {
                         {
                             type == "gltf" &&
                             <>
-                                <ItemBoolean variable="binary" label="Binary" tooltip="Export in binary (.glb) format instead of .gltf" object={exportSettings.parameters} />
-                                <ItemBoolean variable="trs" object={exportSettings.parameters} label="Transformation" tooltip="Export position, rotation and scale instead of matrix per node." />
-                                <ItemBoolean variable="onlyVisible" object={exportSettings.parameters} label="Visible Only" />
-                                <ItemBoolean variable="truncateDrawRange" object={exportSettings.parameters} labelInVariable />
-                                <ItemBoolean variable="forceIndices" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="binary" label="Binary" tooltip="Export in binary (.glb) format instead of .gltf" object={gltf} />
+                                <ItemBoolean variable="trs" object={gltf} label="Transformation" tooltip="Export position, rotation and scale instead of matrix per node." />
+                                <ItemBoolean variable="onlyVisible" object={gltf} label="Visible Only" />
+                                <ItemBoolean variable="truncateDrawRange" object={gltf} labelInVariable />
+                                <ItemBoolean variable="forceIndices" object={gltf} labelInVariable />
                                 <Divider children="Animations" />
-                                <ItemBoolean variable="optimizeAnimations" object={exportSettings.parameters} labelInVariable onChange={() => console.log(exportSettings.parameters)} />
+                                <ItemBoolean variable="optimizeAnimations" object={gltf} labelInVariable onChange={() => console.log(exportSettings.parameters)} />
                                 <Divider children="Images" />
-                                <ItemBoolean variable="embedImages" object={exportSettings.parameters} label="Enabled" onChange={() => setChanged(!changed)} />
-                                <ItemNumber variable="maxTextureSize" object={exportSettings.parameters} readonly={!(exportSettings.parameters as GLTFExporterOptions).embedImages} label="Max Size" tooltip="Restricts the image maximum size (both width and height) to the given value. This option works only if Embed Images is true." />
+                                <ItemBoolean variable="embedImages" object={gltf} label="Enabled" onChange={() => setChanged(!changed)} />
+                                <ItemNumber variable="maxTextureSize" object={gltf} readonly={!gltf.embedImages} label="Max Size" tooltip="Restricts the image maximum size (both width and height) to the given value. This option works only if Embed Images is true." />
                                 {/* to-do maybe make it so users can select animations, for now it will export all animations off of what the model has */}
-                                {/* <ItemBoolean variable="animations" object={exportSettings.parameters} /> */}
+                                {/* <ItemBoolean variable="animations" object={gltf} /> */}
                             </>
                         }
                         {
                             type == "usdz" &&
                             <>
-                                <ItemBoolean variable="includeAnchoringProperties" object={exportSettings.parameters} labelInVariable />
-                                <ItemBoolean variable="quickLookCompatible" object={exportSettings.parameters} labelInVariable />
-                                <ItemNumber variable="maxTextureSize" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="includeAnchoringProperties" object={usdz} labelInVariable />
+                                <ItemBoolean variable="quickLookCompatible" object={usdz} labelInVariable />
+                                <ItemNumber variable="maxTextureSize" object={usdz} labelInVariable />
                                 <ItemSelect
-                                    disabled={!(exportSettings.parameters as USDZExporterOptions).includeAnchoringProperties}
+                                    disabled={!usdz.includeAnchoringProperties}
                                     object={{ alignment: USDZAlignmentSelect }}
                                     defaultValue="horizontal"
                                     variable="alignment" label="Anchor Alignment"
                                     onChangeSelect={(s) => {
-                                        const p = (exportSettings.parameters as USDZExporterOptions)
-                                        p.ar!.planeAnchoring.alignment = s as USDZExporterAlignmentTypes;
+                                        usdz.ar!.planeAnchoring.alignment = s as USDZExporterAlignmentTypes;
                                     }}
                                 />
                             </>
@@ -207,19 +202,19 @@ const ExportModal = (props: ExportModal) => {
                         {
                             type == "ply" &&
                             <>
-                                <ItemBoolean variable="binary" object={exportSettings.parameters} labelInVariable />
-                                <ItemBoolean variable="littleEndian" object={exportSettings.parameters} labelInVariable />
+                                <ItemBoolean variable="binary" object={ply} labelInVariable />
+                                <ItemBoolean variable="littleEndian" object={ply} labelInVariable />
                             </>
                         }
                         {
                             type == "stl" &&
-                            <ItemBoolean variable="binary" object={exportSettings.parameters} labelInVariable />
+                            <ItemBoolean variable="binary" object={stl} labelInVariable />
                         }
 
                         <Divider />
                     </>
                 }
-            </Form>
+            </ItemList>
         </Modal>
     )
 }

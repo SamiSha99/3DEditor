@@ -1,14 +1,13 @@
 
 import { useEditor } from "@orb_Editor";
 import { useOnUnmount } from "@orb_Hooks";
-import { ItemBoolean, ItemCollapse, ItemGroup, ItemNumber, ItemRadioButton, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
+import { ItemBoolean, ItemCollapse, ItemGroup, ItemNumber, ItemRadioButton, ItemRow, ItemSection, ItemSelect, ItemVector2, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { Limit } from "@orb_UI/controller/items/Item";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as THREE from 'three'
 
-import { Space, Button, Checkbox, Tooltip, Form, Divider, Alert } from "antd";
-import { SpaceCompactProps } from "antd/es/space/Compact";
+import { Button, Checkbox, Tooltip, Alert } from "antd";
 import { useViewport } from "src/store/Viewport";
 import { DragOutlined, ExpandAltOutlined, SyncOutlined } from "@ant-design/icons";
 
@@ -47,7 +46,7 @@ export const InspectorGeometry = observer((props: { geometry: THREE.BufferGeomet
                 <GeometrySetter geometry={geometry} onSet={(g) => setG(g)} />
                 {
                     Object.keys(g.attributes).length == 0 &&
-                    <Alert type="info" showIcon message="Geometry Buffer is empty! Set a custom geometry!" />
+                    <ItemRow layout="full" children={<Alert type="info" showIcon message="Geometry Buffer is empty! Set a custom geometry!" />} />
                 }
                 {
                     Object.keys(g.attributes).length != 0 &&
@@ -117,7 +116,7 @@ const GeometryTools = observer(() => {
     const { transformControlsMode, setTransformControlsMode } = useViewport();
     const [enabled, setEnabled] = useState(hasFlag("geometry_tools"));
 
-    useOnUnmount(() => { flag(["geometry_tools", "drag_object"], true) }, [])
+    useOnUnmount(() => { flag(["geometry_tools", "drag_object"], true) })
 
     return (
         <>
@@ -147,8 +146,14 @@ const GeometryTools = observer(() => {
     )
 })
 
-const spaceCompactProps: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "5px" }, block: true }
-const spaceCompactPropsButtons: SpaceCompactProps = { style: { display: "flex", justifyContent: "center", alignItems: "center" } }
+// Centered grid of buttons, the rounded outer corners are clipped by the grid.
+const ButtonPad = (props: { columns: number, children: React.ReactNode }) => {
+    return (
+        <div style={{ display: "grid", gridTemplateColumns: `repeat(${props.columns}, minmax(0, 50px))`, width: "fit-content", maxWidth: "100%", margin: "0 auto", borderRadius: 10, overflow: "hidden" }}>
+            {props.children}
+        </div>
+    )
+}
 
 const GeometryToolsTranslation = () => {
     const { target } = useViewport();
@@ -201,28 +206,24 @@ const GeometryToolsTranslation = () => {
         }
     }
 
-    useOnUnmount(() => { flag(["drag_object"], true) }, [])
+    useOnUnmount(() => { flag(["drag_object"], true) })
 
     return (
         <>
-            <Divider children="Translate" orientation="left" />
-            <Form.Item label="Controls">
-                <Space.Compact {...spaceCompactPropsButtons}>
-                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "10px 0 0 0" }} children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
-                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
-                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 10px 0 0" }} children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
-                </Space.Compact>
-                <Space.Compact {...spaceCompactPropsButtons}>
-                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
-                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
-                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
-                </Space.Compact>
-                <Space.Compact {...spaceCompactPropsButtons}>
-                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 0 10px" }} children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
-                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)" }} children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
-                    <Button disabled={!target} style={{ width: "min(33.3%, 50px)", borderRadius: "0 0 10px 0" }} children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
-                </Space.Compact>
-                <Space.Compact {...spaceCompactProps}>
+            <ItemSection label="Translate" />
+            <ItemRow label="Controls">
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
+                    <ButtonPad columns={3}>
+                        <Button disabled={!target} block children={"-𝑋"} onClick={() => setOriginPoint({ x: -1 })} />
+                        <Button disabled={!target} block children={"𝑋"} onClick={() => setOriginPoint({ x: 0 })} />
+                        <Button disabled={!target} block children={"+𝑋"} onClick={() => setOriginPoint({ x: 1 })} />
+                        <Button disabled={!target} block children={"-𝑌"} onClick={() => setOriginPoint({ y: -1 })} />
+                        <Button disabled={!target} block children={"𝑌"} onClick={() => setOriginPoint({ y: 0 })} />
+                        <Button disabled={!target} block children={"+𝑌"} onClick={() => setOriginPoint({ y: 1 })} />
+                        <Button disabled={!target} block children={"-𝑍"} onClick={() => setOriginPoint({ z: -1 })} />
+                        <Button disabled={!target} block children={"𝑍"} onClick={() => setOriginPoint({ z: 0 })} />
+                        <Button disabled={!target} block children={"+𝑍"} onClick={() => setOriginPoint({ z: 1 })} />
+                    </ButtonPad>
                     <Tooltip title="While enabled, the position becomes an anchor, moving the object around it instead.">
                         <Checkbox
                             // disabled={true}
@@ -233,11 +234,9 @@ const GeometryToolsTranslation = () => {
                                 flag("drag_object", !e.target.checked);
                             }} />
                     </Tooltip>
-                </Space.Compact>
-                <Space.Compact {...spaceCompactProps}>
-                    <Button disabled={!target} style={{ margin: "auto", width: "50px" }} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
-                </Space.Compact>
-            </Form.Item>
+                    <Button disabled={!target} children={"Center"} onClick={() => setOriginPoint(undefined, true)} />
+                </div>
+            </ItemRow>
         </>
     )
 }
@@ -254,21 +253,17 @@ const GeometryToolsRotate = () => {
 
     return (
         <>
-            <Divider children="Rotate" orientation="left" />
-            <Form.Item label="Controls">
-                <Space.Compact {...spaceCompactPropsButtons}>
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "10px 0 0 0" }} children={"-45 𝑋"} onClick={() => doRotation({ x: -Math.PI / 4 })} />
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 10px 0 0" }} children={"+45 𝑋"} onClick={() => doRotation({ x: Math.PI / 4 })} />
-                </Space.Compact>
-                <Space.Compact {...spaceCompactPropsButtons}>
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"-45 𝑌"} onClick={() => doRotation({ y: -Math.PI / 4 })} />
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"+45 𝑌"} onClick={() => doRotation({ y: Math.PI / 4 })} />
-                </Space.Compact>
-                <Space.Compact {...spaceCompactPropsButtons}>
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 0 10px" }} children={"-45 𝑍"} onClick={() => doRotation({ z: -Math.PI / 4 })} />
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 10px 0" }} children={"+45 𝑍"} onClick={() => doRotation({ z: Math.PI / 4 })} />
-                </Space.Compact>
-            </Form.Item>
+            <ItemSection label="Rotate" />
+            <ItemRow label="Controls">
+                <ButtonPad columns={2}>
+                    <Button disabled={!target} block children={"-45 𝑋"} onClick={() => doRotation({ x: -Math.PI / 4 })} />
+                    <Button disabled={!target} block children={"+45 𝑋"} onClick={() => doRotation({ x: Math.PI / 4 })} />
+                    <Button disabled={!target} block children={"-45 𝑌"} onClick={() => doRotation({ y: -Math.PI / 4 })} />
+                    <Button disabled={!target} block children={"+45 𝑌"} onClick={() => doRotation({ y: Math.PI / 4 })} />
+                    <Button disabled={!target} block children={"-45 𝑍"} onClick={() => doRotation({ z: -Math.PI / 4 })} />
+                    <Button disabled={!target} block children={"+45 𝑍"} onClick={() => doRotation({ z: Math.PI / 4 })} />
+                </ButtonPad>
+            </ItemRow>
         </>
     )
 }
@@ -286,21 +281,17 @@ const GeometryToolsScale = () => {
 
     return (
         <>
-            <Divider children="Scale" orientation="left" />
-            <Form.Item label="Controls">
-                <Space.Compact {...spaceCompactPropsButtons}>
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "10px 0 0 0" }} children={"x0.5 𝑋"} onClick={() => doScale({ x: 0.5 })} />
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 10px 0 0" }} children={"x2 𝑋"} onClick={() => doScale({ x: 2 })} />
-                </Space.Compact>
-                <Space.Compact {...spaceCompactPropsButtons}>
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"x0.5 𝑌"} onClick={() => doScale({ y: 0.5 })} />
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)" }} children={"x2 𝑌"} onClick={() => doScale({ y: 2 })} />
-                </Space.Compact>
-                <Space.Compact {...spaceCompactPropsButtons}>
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 0 10px" }} children={"x0.5 𝑍"} onClick={() => doScale({ z: 0.5 })} />
-                    <Button disabled={!target} style={{ width: "min(50%, 50px)", borderRadius: "0 0 10px 0" }} children={"x2 𝑍"} onClick={() => doScale({ z: 2 })} />
-                </Space.Compact>
-            </Form.Item>
+            <ItemSection label="Scale" />
+            <ItemRow label="Controls">
+                <ButtonPad columns={2}>
+                    <Button disabled={!target} block children={"x0.5 𝑋"} onClick={() => doScale({ x: 0.5 })} />
+                    <Button disabled={!target} block children={"x2 𝑋"} onClick={() => doScale({ x: 2 })} />
+                    <Button disabled={!target} block children={"x0.5 𝑌"} onClick={() => doScale({ y: 0.5 })} />
+                    <Button disabled={!target} block children={"x2 𝑌"} onClick={() => doScale({ y: 2 })} />
+                    <Button disabled={!target} block children={"x0.5 𝑍"} onClick={() => doScale({ z: 0.5 })} />
+                    <Button disabled={!target} block children={"x2 𝑍"} onClick={() => doScale({ z: 2 })} />
+                </ButtonPad>
+            </ItemRow>
         </>
     )
 }
@@ -640,7 +631,7 @@ interface CapsuleGeometry {
 }
 
 export const InspectorCapsuleGeometry = observer((props: CapsuleGeometry) => {
-    let { geometry, onNewGeometry } = props;
+    const { geometry, onNewGeometry } = props;
     const { target } = useViewport();
 
     const radius = geometry.parameters.radius;

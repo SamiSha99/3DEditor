@@ -3,9 +3,6 @@ import { theme, ThemeConfig } from "antd";
 export const MainTheme: ThemeConfig = {
     algorithm: [theme.darkAlgorithm,],
     components: {
-        Form: {
-            itemMarginBottom: 0
-        },
         InputNumber: {
             size: 10,
             inputFontSizeSM: 12,
@@ -71,9 +68,6 @@ export const InspectorTheme: ThemeConfig = {
         },
         Checkbox: {
             controlInteractiveSize: 18
-        },
-        Form: {
-            itemMarginBottom: 5
         },
         Button: {
             defaultBg: "#141414",

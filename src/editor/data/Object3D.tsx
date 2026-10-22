@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ItemBoolean, ItemButton, ItemCollapse, ItemColor, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemSelect, ItemTable, ItemVector3 } from "@orb_UI/controller/ControllerItems";
+import { ItemBoolean, ItemButton, ItemCollapse, ItemColor, ItemEuler, ItemGroup, ItemInput, ItemNumber, ItemRow, ItemSelect, ItemTable, ItemVector3 } from "@orb_UI/controller/ControllerItems";
 import { observer } from "mobx-react-lite";
 import { EyeOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Alert, message, Tooltip } from "antd";
@@ -34,7 +34,8 @@ export const InspectorObject3D = observer((props: Object3D) => {
                     object.parent && !(object.parent instanceof THREE.Scene) &&
                     <ItemTable
                         label="Parent"
-                        dataSource={[{ name: `${object.parent.name}`, id: `${object.parent.id}`, action: <ItemButton size="small" buttonName={<EyeOutlined />} onClick={() => { setTarget(object.parent) }} /> }]}
+                        layout="stacked"
+                        dataSource={[{ key: object.parent.id, name: `${object.parent.name}`, id: `${object.parent.id}`, action: <ItemButton size="small" buttonName={<EyeOutlined />} onClick={() => { setTarget(object.parent) }} /> }]}
                         columns={[
                             { dataIndex: 'id', title: 'id', width: 0 },
                             { dataIndex: 'name', title: 'parent', width: "85%" },
@@ -43,7 +44,7 @@ export const InspectorObject3D = observer((props: Object3D) => {
                 }
                 {
                     object.parent && object.parent instanceof THREE.Scene &&
-                    <ItemGroup label="Parent" sizes={["100%"]}>
+                    <ItemRow label="Parent" layout="stacked">
                         {
                             object.parent == scene &&
                             <Alert type="info" showIcon message={<>Attached to Scene. <Tooltip title={"All objects are placed inside a scene, the top of each object's parent is always attached to the Scene."} children={<QuestionCircleOutlined />} /></>} />
@@ -52,12 +53,13 @@ export const InspectorObject3D = observer((props: Object3D) => {
                             object.parent == null &&
                             <Alert type="warning" showIcon message={`This object isn't attached to the active Scene, it will not be visible!`} />
                         }
-                    </ItemGroup>
+                    </ItemRow>
                 }
                 {
                     object.children.length > 0 &&
                     <ItemTable
                         label="Children"
+                        layout="stacked"
                         dataSource={children}
                         columns={[
                             { dataIndex: 'id', title: 'id', width: 0 },
@@ -67,9 +69,9 @@ export const InspectorObject3D = observer((props: Object3D) => {
                 }
                 {
                     object.children.length == 0 &&
-                    <ItemGroup label="Children" sizes={["100%"]}>
+                    <ItemRow label="Children" layout="stacked">
                         <Alert type="info" showIcon message={`No children attached to object "${object.name}".`} />
-                    </ItemGroup>
+                    </ItemRow>
                 }
 
             </ItemCollapse >

@@ -1,9 +1,10 @@
 import * as THREE from "three"
 import { useEditor } from "@orb_Editor";
-import { Button, Col, ConfigProvider, Divider, Form, Radio, Row, Splitter, Tooltip, Tree, TreeDataNode, TreeProps } from "antd";
+import { Col, ConfigProvider, Divider, Radio, Row, Splitter, Tooltip, Tree, TreeDataNode, TreeProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { InspectorTheme } from "@orb_UI/antd/ThemeConfigs";
+import { ItemList } from "@orb_UI/controller/ControllerItems";
 import { InspectorScene } from "./data/Scene";
 import { InspectorObject3D } from "@orb_data/Object3D";
 import { InspectorMaterial } from "@orb_data/Material";
@@ -52,7 +53,7 @@ export const Inspector = () => {
 export const HierarchyTree = observer(() => {
     const { sceneObjects, scene } = useEditor();
     const { setTarget } = useViewport();
-    let treeData = getTreeDataNodes(sceneObjects as THREE.Object3D[]);
+    const treeData = getTreeDataNodes(sceneObjects as THREE.Object3D[]);
 
     const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
         console.log('selected', selectedKeys, info);
@@ -116,18 +117,21 @@ export const SelectedObject = observer(() => {
                     </Col>
                     <Col style={{ width: "100%" }}>
                         <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden", scrollbarColor: "grey transparent" }}>
-                            <Form key={Math.random().toString() + target?.uuid} labelAlign="left" labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} colon={false} labelWrap>
-                                {tab == "Scene" && <InspectorScene />}
-                                {tab == "Object" && target && <InspectorObject3D object={target} />}
-                                {
-                                    isMesh &&
-                                    <>
-                                        {tab == "Material" && <InspectorMaterial material={material} />}
-                                        {tab == "Geometry" && <InspectorGeometry geometry={geometry} />}
-                                    </>
-                                }
-                                {animation && <animation.TabAnimation />}
-                            </Form>
+                            <ItemList resizable>
+                                {/* Items read their values on mount, so they're remounted for every selection and tab. */}
+                                <Fragment key={`${target?.uuid}-${tab}`}>
+                                    {tab == "Scene" && <InspectorScene />}
+                                    {tab == "Object" && target && <InspectorObject3D object={target} />}
+                                    {
+                                        isMesh &&
+                                        <>
+                                            {tab == "Material" && <InspectorMaterial material={material} />}
+                                            {tab == "Geometry" && <InspectorGeometry geometry={geometry} />}
+                                        </>
+                                    }
+                                    {animation && <animation.TabAnimation />}
+                                </Fragment>
+                            </ItemList>
                         </div>
                     </Col>
                 </Row>
@@ -139,7 +143,7 @@ export const SelectedObject = observer(() => {
 
 // Want to avoid showing the "Scene" node, so the first function is just iterating the root objects before going deeper on each one.
 function getTreeDataNodes(sceneObjects: THREE.Object3D[]) {
-    let tree: TreeDataNode[] = [];
+    const tree: TreeDataNode[] = [];
     sceneObjects.forEach(o => {
         const node = createTreeDataNode(o);
         if (node)
@@ -151,7 +155,7 @@ function getTreeDataNodes(sceneObjects: THREE.Object3D[]) {
 function createTreeDataNode(object: THREE.Object3D) {
     let nodeObject: TreeDataNode;
     if (object.children?.length > 0) {
-        let childrenNodes: TreeDataNode[] = [];
+        const childrenNodes: TreeDataNode[] = [];
         object.children.forEach(child => {
             const childNode = createTreeDataNode(child);
             if (childNode)

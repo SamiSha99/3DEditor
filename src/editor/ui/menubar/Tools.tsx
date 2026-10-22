@@ -1,17 +1,17 @@
 import * as ICONS from "@ant-design/icons";
 import { useEditor } from "@orb_Editor";
-import { Dropdown, Button, Modal, Form, Upload, UploadProps, UploadFile, Divider } from "antd"
+import { Dropdown, Button, Modal, Upload, UploadProps, UploadFile, Divider } from "antd"
 import { useState } from "react";
 import * as THREE from 'three';
 import * as PINATA from '@dgreenheck/three-pinata'
 import * as IMPORTER from '@orb_tools/Importer'
-import * as EXPORTER from '@orb_tools/Exporter'
+// import * as EXPORTER from '@orb_tools/Exporter'
 // import * as CONVERTER from '@orb_tools/Converter'
 import { observer } from "mobx-react-lite";
 import { Sphere } from "@orb_tools/create/Primitive";
 import { invertGeometry } from "@orb_utils/three/Geometry";
 import { PANEL_SCREENSHOT } from "@orb_UI/panels/Main";
-import { ItemInput, ItemSelect } from "@orb_UI/controller/ControllerItems";
+import { ItemInput, ItemList, ItemSelect } from "@orb_UI/controller/ControllerItems";
 import { useViewport } from "src/store/Viewport";
 import { MenuButtonProps } from "@orb_types";
 
@@ -67,7 +67,7 @@ export const Tools = observer((props: MenuButtonProps) => {
                             onClick: () => {
                                 IMPORTER.doImportTexture((res) => {
                                     const mat = new THREE.MeshStandardMaterial({ map: res });
-                                    const sphere = Sphere([, , 32], mat);
+                                    const sphere = Sphere([undefined, undefined, 32], mat);
                                     sphere.name = "Skydome"
                                     invertGeometry(sphere.geometry);
 
@@ -96,9 +96,7 @@ export const Tools = observer((props: MenuButtonProps) => {
                                 activatePanel(PANEL_SCREENSHOT);
                             }
                         }
-                    ],
-                    onClick: () => { setOpen(true) },
-                    onMouseLeave: () => { setOpen(false) }
+                    ]
                 }}
             />
         </>
@@ -112,7 +110,7 @@ const exportOptions = [
     { value: 'obj', label: 'OBJ' }
 ]
 
-export const textureSizeOptions = [
+const textureSizeOptions = [
     { value: '2048', label: '2048' },
     { value: '1024', label: '1024' },
     { value: '512', label: '512' },
@@ -154,9 +152,9 @@ export const ConvertModal = (props: ConvertModalInterface) => {
     };
 
     const onRequest = () => {
-        const list = fileList as any as FileList;
-        const res = exportSettings;
         if (fileList) {
+            // const list = fileList as any as FileList;
+            // const res = exportSettings;
             // CONVERTER.doConvertFileList(list, { type: res.type as EXPORTER.ExportType, name: res.name /*, maxTextureSize: res.textureSize*/ }, (blob) => {
             //     EXPORTER.save(blob, (res.name || "export") + "." + res.type)
             // });
@@ -167,10 +165,10 @@ export const ConvertModal = (props: ConvertModalInterface) => {
 
     return (
         <Modal title={"Convert File(s)..."} open={open} onOk={onRequest} onCancel={onCancel}>
-            <Form>
+            <ItemList>
                 <p>Convert 3D model files into .glb, .gtlf, .usdz (ASCII), .ply, .stl and .obj.</p>
                 <Divider />
-                <ItemSelect object={{ exportOptions: exportOptions }} variable="exportOptions" labelInVariable defaultValue={exportOptions[0].value} onChangeSelect={(s) => { exportSettings.type = s as EXPORTER.ExportType }} />
+                <ItemSelect object={{ exportOptions: exportOptions }} variable="exportOptions" labelInVariable defaultValue={exportOptions[0].value} onChangeSelect={(s) => { exportSettings.type = s as string }} />
                 <ItemSelect object={{ textureSize: textureSizeOptions }} variable="textureSize" labelInVariable defaultValue={textureSizeOptions[0].value} onChangeSelect={(s) => { exportSettings.textureSize = parseFloat("" + s) }} />
                 <ItemInput object={exportSettings} variable="name" labelInVariable />
                 <Dragger {...uploadProps}>
@@ -183,7 +181,7 @@ export const ConvertModal = (props: ConvertModalInterface) => {
                         banned files.
                     </p>
                 </Dragger>
-            </Form>
+            </ItemList>
         </Modal>
     )
 }

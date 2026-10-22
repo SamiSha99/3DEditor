@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import { observer } from "mobx-react-lite";
-import { ItemBoolean, ItemButton, ItemCollapse, ItemNumber, ItemSelect, ItemTexture, ItemVector2, ItemGroup, ItemInput, ItemEuler } from '@orb_UI/controller/ControllerItems';
+import { ItemBoolean, ItemButton, ItemCollapse, ItemNumber, ItemSelect, ItemTexture, ItemVector2, ItemGroup, ItemInput, ItemEuler, ItemRow, ItemSection, ItemTable } from '@orb_UI/controller/ControllerItems';
 import { LIMIT_01 } from '@orb_UI/controller/items/Item';
 import { useState } from 'react';
-import { Alert, Button, Divider, Table } from 'antd';
+import { Alert, Button } from 'antd';
 import { ItemColor } from '@orb_UI/controller/items/ItemColor';
 import { useViewport } from 'src/store/Viewport';
 import { useEditor } from '@orb_Editor';
@@ -60,8 +60,9 @@ export const InspectorMaterial = observer((props: Material) => {
         }
     });
     
-    const dataSource = references ? references.map((r, _i) => {
+    const dataSource = references ? references.map((r) => {
         return {
+            key: r.id,
             index: r.id,
             name: r.name,
             typeClass: r.constructor.name,
@@ -72,12 +73,13 @@ export const InspectorMaterial = observer((props: Material) => {
     return (
         <>
             <ItemCollapse label={"References"} collapsed={true}>
-                <Alert showIcon type="info" message={`Material is referenced in ${references.length} object${references.length > 1 ? "s" : ""}.`} />
-                <Table
-                    style={{ border: "1px solid grey", margin: "10px 0" }}
+                <ItemRow layout="full">
+                    <Alert showIcon type="info" message={`Material is referenced in ${references.length} object${references.length > 1 ? "s" : ""}.`} />
+                </ItemRow>
+                <ItemTable
+                    layout="full"
+                    style={{ border: "1px solid grey" }}
                     showHeader={false}
-                    pagination={false}
-                    tableLayout="auto"
                     columns={[
                         { dataIndex: 'index' },
                         { dataIndex: 'name', width: "100%" },
@@ -174,7 +176,7 @@ export const MaterialSetter = observer((props: MaterialSetter) => {
 })
 
 export const ChildMaterial = observer((props: Material) => {
-    let { material } = props;
+    const { material } = props;
     switch (material!.constructor) {
         case THREE.MeshBasicMaterial: return <BasicMaterial material={material as THREE.MeshBasicMaterial} />
         case THREE.MeshStandardMaterial: return <StandardMaterial material={material as THREE.MeshStandardMaterial} />
@@ -277,7 +279,7 @@ const ToonMaterial = observer((props: MeshToonMaterial) => {
             <Emissive material={material} />
             {/* BEGIN GRADIENT */}
             {/* TO-DO: THE TEXTURE NEEDS TO BE A VERY SPECIFIC TYPE -> THREE.NearestFilter */}
-            <Divider children="Gradient" orientation="left" />
+            <ItemSection label="Gradient" />
             <ItemTexture object={material} variable="gradientMap" label="Map" />
             {/* END GRADIENT */}
             <Light material={material} />
@@ -357,7 +359,7 @@ const PhysicalMaterial = observer((props: MeshPhysicalMaterial) => {
     const { material } = props;
     return (
         <>
-            <Divider children="General" orientation="left" />
+            <ItemSection label="General" />
             <ItemNumber object={material} variable="ior" label="IOR" tooltip="Index Of Refraction" />
             {/**
             * Related to IOR! 
@@ -369,12 +371,12 @@ const PhysicalMaterial = observer((props: MeshPhysicalMaterial) => {
             <ItemNumber object={material} variable="thickness" label="Thickness" />
             <ItemTexture object={material} variable="thicknessMap" label="Thickness Map" />
 
-            <Divider children="Anisotropy" orientation="left" />
+            <ItemSection label="Anisotropy" />
             <ItemNumber object={material} variable="anisotropy" label="Anisotropy" />
             <ItemNumber object={material} variable="anisotropyRotation" label="Rotation" />
             <ItemTexture object={material} variable="anisotropyMap" label="Map" />
 
-            <Divider children="Clearcoat" orientation="left" />
+            <ItemSection label="Clearcoat" />
             <ItemNumber object={material} variable="clearcoat" label="Clearcoat" />
             <ItemNumber object={material} variable="clearcoatRoughness" label="Roughness" />
             <ItemVector2 object={material} variable="clearcoatNormalScale" label="Normal Scale" />
@@ -382,31 +384,31 @@ const PhysicalMaterial = observer((props: MeshPhysicalMaterial) => {
             <ItemTexture object={material} variable="clearcoatRoughnessMap" label="Roughness Map" />
             <ItemTexture object={material} variable="clearcoatNormalMap" label="Normal Map" />
 
-            <Divider children="Iridescence" orientation="left" />
+            <ItemSection label="Iridescence" />
             <ItemNumber object={material} variable="iridescence" label="Iridescence" />
             <ItemNumber object={material} variable="iridescenceIOR" label="IOR" tooltip="Iridescence's Index Of Refraction" />
             <ItemTexture object={material} variable="iridescenceMap" label="Map" />
             {/* Bad [number, number]! Won't work with Vector2 */}
             {/* <ItemNumber object={material} variable="iridescenceThicknessRange" /> */}
 
-            <Divider children="Sheen" orientation="left" />
+            <ItemSection label="Sheen" />
             <ItemNumber object={material} variable="sheen" label="Sheen" />
             <ItemColor object={material} variable="sheenColor" label="Color" />
             <ItemNumber object={material} variable="sheenRoughness" label="Roughness" />
             <ItemTexture object={material} variable="sheenColorMap" label="Color Map" />
             <ItemTexture object={material} variable="sheenRoughnessMap" label="Roughness Map" />
 
-            <Divider children="Attenuation" orientation="left" />
+            <ItemSection label="Attenuation" />
             <ItemNumber object={material} variable="attenuationDistance" label="Distance" />
             <ItemColor object={material} variable="attenuationColor" label="Color" />
 
-            <Divider children="Specular" orientation="left" />
+            <ItemSection label="Specular" />
             <ItemNumber object={material} variable="specularIntensity" label="Intensity" />
             <ItemColor object={material} variable="specularColor" label="Color" />
             <ItemTexture object={material} variable="specularIntensityMap" label="Intensity Map" />
             <ItemTexture object={material} variable="specularColorMap" label="Color Map" />
 
-            <Divider children="Transmission" orientation="left" />
+            <ItemSection label="Transmission" />
             <ItemNumber object={material} variable="transmission" label="Transmission" />
             <ItemTexture object={material} variable="transmissionMap" label="Map" />
 
@@ -425,7 +427,7 @@ const Alpha = observer((props: INTERFACES.Alpha) => {
     const { material } = props;
     return (
         <>
-            <Divider children="Alpha" orientation="left" />
+            <ItemSection label="Alpha" />
             <ItemTexture object={material} variable="alphaMap" label="Map" />
         </>
     )
@@ -435,7 +437,7 @@ const AmbientOcclusion = observer((props: INTERFACES.AmbientOcclusion) => {
     const { material } = props;
     return (
         <>
-            <Divider children="Ambient Occlusion" orientation="left" />
+            <ItemSection label="Ambient Occlusion" />
             <ItemTexture object={material} variable="aoMap" label="Map" />
             <ItemNumber object={material} variable="aoMapIntensity" label="Intensity" />
         </>
@@ -446,7 +448,7 @@ const Bump = observer((props: INTERFACES.Bump) => {
     const { material } = props;
     return (
         <>
-            <Divider children="Bump" orientation="left" />
+            <ItemSection label="Bump" />
             <ItemTexture object={material} variable="bumpMap" label="Map" />
             <ItemNumber object={material} variable="bumpScale" label="Scale" />
         </>
@@ -457,7 +459,7 @@ const Displacement = observer((props: INTERFACES.Displacement) => {
     const { material } = props;
     return (
         <>
-            <Divider children="Displacement" orientation="left" />
+            <ItemSection label="Displacement" />
             <ItemTexture object={material} variable="displacementMap" label="Map" />
             <ItemNumber object={material} variable="displacementScale" label="Scale" />
             <ItemNumber object={material} variable="displacementBias" label="Bias" />
@@ -469,7 +471,7 @@ const Emissive = observer((props: INTERFACES.Emissive) => {
     const { material } = props;
     return (
         <>
-            <Divider children="Emissive" orientation="left" />
+            <ItemSection label="Emissive" />
             <ItemTexture object={material} variable="emissiveMap" label="Map" />
             <ItemColor object={material} variable="emissive" label="Color" allowClear />
             <ItemNumber object={material} variable="emissiveIntensity" label="Scale" />
@@ -481,7 +483,7 @@ const Environment = observer((props: INTERFACES.Environment) => {
     const { material } = props;
     return (
         <>
-            <Divider children="Environment" orientation="left" />
+            <ItemSection label="Environment" />
             {/* to-do EquirectangularReflectionMapping and EquirectangularRefractionMapping are two different things for differnet purposes! We need to make modifying textures directly important */}
             <ItemTexture object={material} variable="envMap" label="Map" onChange={(v) => { v!.mapping = THREE.EquirectangularReflectionMapping }} />
             <ItemEuler object={material} variable="envMapRotation" label="Map Rotation" isDegree />
@@ -493,7 +495,7 @@ const Light = observer((props: INTERFACES.Light) => {
     const { material } = props;
     return (
         <>
-            <Divider children="Light" orientation="left" />
+            <ItemSection label="Light" />
             <ItemTexture object={material} variable="lightMap" label="Map" />
             <ItemNumber object={material} variable="lightMapIntensity" label="Map" />
         </>
@@ -509,7 +511,7 @@ const Normal = observer((props: INTERFACES.Normal) => {
 
     return (
         <>
-            <Divider children="Normal" orientation="left" />
+            <ItemSection label="Normal" />
             <ItemTexture object={material} variable="normalMap" label="Map" />
             <ItemSelect
                 object={{ types: NormalTypesSelect }}
@@ -528,7 +530,7 @@ const Roughness = observer((props: INTERFACES.Roughness) => {
     const { material } = props;
     return (
         <>
-            <Divider children="Roughness" orientation="left" />
+            <ItemSection label="Roughness" />
             <ItemTexture object={material} variable="roughnessMap" label="Map" />
             <ItemNumber object={material} variable="roughness" label="Intensity" />
         </>
@@ -539,7 +541,7 @@ const Specular = observer((props: INTERFACES.Specular) => {
     const { material } = props;
     return (
         <>
-            <Divider children="Specular" orientation="left" />
+            <ItemSection label="Specular" />
             <ItemTexture object={material} variable="specularMap" label="Map" />
             {/* Exclusive to Phong material */}
             {
@@ -563,7 +565,7 @@ const Reflectivity = observer((props: INTERFACES.Reflectivity) => {
 
     return (
         <>
-            <Divider children="Reflectivity" orientation="left" />
+            <ItemSection label="Reflectivity" />
             <ItemNumber object={material} variable="refractionRatio" labelInVariable limit={LIMIT_01} tooltip="the amount of refracted light on the material." />
             <ItemNumber object={material} variable="reflectivity" label="Amount" limit={LIMIT_01} tooltip="Affects how much the Environment map affects the surface." />
             <ItemSelect
