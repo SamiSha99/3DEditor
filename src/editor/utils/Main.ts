@@ -15,7 +15,7 @@ export const commonKeys = (keyList1: string[], keyList2: string[]) => keyList1.f
 /**
  * Similar to Object.keys() but works for Class types, returns a list of property names.
  */
-export const getAllPropertyNames = (obj: any): string[] => {
+export const getAllPropertyNames = (obj: object): string[] => {
     let props: string[] = [];
     do {
         props = props.concat(Object.getOwnPropertyNames(obj));

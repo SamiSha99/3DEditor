@@ -25,7 +25,7 @@ export function invertGeometry(geometry: THREE.BufferGeometry) {
     const index = geometry.index.array
 
     for (let i = 0, il = index.length / 3; i < il; i++) {
-        let x = index[i * 3]
+        const x = index[i * 3]
         index[i * 3] = index[i * 3 + 2]
         index[i * 3 + 2] = x
     }
@@ -125,12 +125,13 @@ export function geometryPositionToText(geometry: THREE.BufferGeometry, mode: Ran
             return geometryVertexPositionToText(geometry);
         case 1:
             return geometryFacePositionToText(geometry);
-        case 2:
+        case 2: {
             const group = new THREE.Group();
             group.add(geometryVertexPositionToText(geometry))
             group.add(geometryFacePositionToText(geometry))
             group.name = "debug_indexing";
             return group;
+        }
     }
 }
 /**

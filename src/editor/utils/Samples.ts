@@ -22,13 +22,14 @@ const sample = ({
     venice: await import('@pmndrs/assets/hdri/venice.exr'),
     warehouse: await import('@pmndrs/assets/hdri/warehouse.exr'),
     workshop: await import('@pmndrs/assets/hdri/workshop.exr'),
-} as { [environments: string]: any });
+} as { [environments: string]: { default: string } | null });
 
 /** Loads an Environment data by a list of provided names */
 export const loadEnvironmentSample = async (sampleName: Environments) => {
     if (!sampleName) return;
 
     const s = sample[sampleName];
+    if (!s) return;
 
     const { EXRLoader } = await import('three/examples/jsm/Addons');
     return new EXRLoader().loadAsync(s.default).then((texture) => {

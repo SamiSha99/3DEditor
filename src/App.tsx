@@ -3,7 +3,7 @@ import { ConfigProvider } from 'antd'
 import { MainTheme } from '@orb_UI/antd/ThemeConfigs.ts'
 import { Editor } from '@orb_Editor'
 import { EditorProvider, ViewportProvider } from './store/Providers'
-import Menubar from './editor/Menubar'
+import Menubar from './editor/MenuBar'
 import Inspector from './editor/Inspector'
 
 const editor = new Editor();

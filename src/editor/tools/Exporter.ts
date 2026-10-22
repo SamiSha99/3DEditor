@@ -81,11 +81,11 @@ export function doExport(scene: THREE.Object3D, options: ExportOptions<ExportPar
         case "stl": exportSTL(scene, options as ExportOptions<STLExporterOptions>, onExport); break;
         case "ply": exportPLY(scene, options as ExportOptions<PLYExporterOptions>, onExport); break;
         case "obj": exportOBJ(scene, onExport); break;
-        case "json": 
-            const json = scene.toJSON();
-            const blob = saveJSON(json as any as string);
+        case "json": {
+            const blob = saveJSON(scene.toJSON());
             onExport && onExport(blob);
             break;
+        }
     }
 }
 
@@ -109,7 +109,7 @@ export function exportGLTF(scene: THREE.Object3D, options: ExportOptions<GLTFExp
     exporter.parse(
         scene,
         (result) => {
-            const json = JSON.stringify(result as any, null, 2)
+            const json = JSON.stringify(result, null, 2)
             const blob = saveString(json);
             onExport && onExport(blob);
         },
@@ -191,7 +191,7 @@ export function exportPLY(scene: THREE.Object3D, options: ExportOptions<PLYExpor
 export function exportSTL(scene: THREE.Object3D, options: ExportOptions<STLExporterOptions>, onExport?: OnExport) {
     const exporter = new STLExporter();
     const result = exporter.parse(scene, options.parameters);
-    const blob = options.parameters?.binary ? saveArrayBuffer(result as any as ArrayBuffer) : saveString(result as string);
+    const blob = options.parameters?.binary ? saveArrayBuffer(result as unknown as ArrayBuffer) : saveString(result as string);
     onExport && onExport(blob);
 }
 
@@ -199,7 +199,7 @@ export function exportAnimationClip(ac: THREE.AnimationClip, optimize: boolean =
     if (optimize)
         ac = ac.optimize();
     const json = THREE.AnimationClip.toJSON(ac);
-    const blob = saveJSON(json as any);
+    const blob = saveJSON(json);
     onExport && onExport(blob);
 }
 
@@ -228,7 +228,7 @@ export function saveLink(link: string, fileName: string, type?: string) {
 
 export function saveArrayBuffer(buffer: ArrayBuffer) { return new Blob([buffer], { type: 'application/octet-stream' }); }
 export function saveString(text: string) { return new Blob([text], { type: 'text/plain' }); }
-export function saveJSON(text: string) { return new Blob([JSON.stringify(text, null, "\t")], { type: 'application/json' }) }
+export function saveJSON(data: unknown) { return new Blob([JSON.stringify(data, null, "\t")], { type: 'application/json' }) }
 
 // export function materialToData(material: THREE.Material) {
 //

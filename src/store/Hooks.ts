@@ -4,10 +4,10 @@ import useRafLoop from "react-use/lib/useRafLoop";
 /**
  * Runs when the component unmounts
 */
-export const useOnUnmount = (callback: React.EffectCallback, dependencies: React.DependencyList) => {
-    const isUnmounting = useRef(false);
-    useEffect(() => () => { isUnmounting.current = true }, []);
-    useEffect(() => () => { isUnmounting.current && callback(); }, dependencies);
+export const useOnUnmount = (callback: () => void) => {
+    const callbackRef = useRef(callback);
+    callbackRef.current = callback;
+    useEffect(() => () => callbackRef.current(), []);
 };
 
 /**
@@ -19,5 +19,5 @@ export function useDeltaTime(callback: FrameRequestCallback, initiallyActive?: b
         const delta = (time - oldTime) / 1000;
         oldTime = time;
         callback(delta)
-    }, initiallyActive);;
+    }, initiallyActive);
 }

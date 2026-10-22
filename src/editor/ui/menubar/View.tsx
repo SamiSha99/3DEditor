@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import { Check, X } from "src/assets/icons";
 import { useViewport } from "src/store/Viewport";
 import { MenuButtonProps } from "@orb_types";
-import { useState } from "react";
 
 export const View = observer((props: MenuButtonProps) => {
     const {

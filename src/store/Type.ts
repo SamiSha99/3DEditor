@@ -1,4 +1,4 @@
-export type KeyToValueOfType<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T] & string;
+export type KeyToValueOfType<T, V> = { [K in keyof T]-?: Exclude<T[K], undefined> extends V ? K : never }[keyof T] & string;
 
 type Enumerate<N extends number, Acc extends number[] = []> = Acc['length'] extends N
     ? Acc[number]

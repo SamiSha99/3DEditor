@@ -7,7 +7,7 @@ export type Panel = {
     id: string,
     panel: React.ReactNode,
     flags?: string[],
-    parameters?: { [key: string]: any }
+    parameters?: Record<string, unknown>
 }
 
 // export const PANEL_ORIGIN_POINT: Panel = { id: "origin_point", panel: <PanelOriginPoint />, flags: ["drag_object"] }

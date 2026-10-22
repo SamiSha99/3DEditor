@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export type Args<T> = T extends new (...args: any) => any ? ConstructorParameters<T> : T;
+export type Args<T> = T extends new (...args: infer P) => unknown ? P : T;
 
 export function Box(
     [width, height, depth, widthSegments, heightSegments, depthSegments]: Args<typeof THREE.BoxGeometry> = [],

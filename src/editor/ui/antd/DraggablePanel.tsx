@@ -39,7 +39,7 @@ export const DraggablePanel = observer((props: DraggablePanelInterface) => {
         onClose && onClose()
     }
     onresize = () => setBounds(getCanvasBounds(w, h));
-    useEffect(() => setBounds(getCanvasBounds(w, h)), [ref.current]);
+    useEffect(() => setBounds(getCanvasBounds(w, h)), [w, h]);
 
 
     const startPos = startingPositionNormalized ? startingPositionNormalized : { x: 0.05, y: 0.2 };
@@ -54,9 +54,6 @@ export const DraggablePanel = observer((props: DraggablePanelInterface) => {
             handle=".handle"
             cancel=".noHandle"
             defaultPosition={defaultPosition}
-            onDrag={(_e, _d) => {
-                // console.log("event:", e, "\n", "data:", d)
-            }}
         >
             <div ref={ref} style={{ position: "absolute", width: width, height: height, pointerEvents: "all" }}>
                 <Card

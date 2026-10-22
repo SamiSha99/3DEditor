@@ -16,7 +16,7 @@ export const passParameters = (from: THREE.Material, to: THREE.Material, ignore:
         const toDescriptor = Object.getOwnPropertyDescriptor(to, c);
         const fromDescriptor = Object.getOwnPropertyDescriptor(from, c);
         if (toDescriptor && fromDescriptor && toDescriptor.writable) {
-            (to as any)[c] = (from as any)[c];
+            Reflect.set(to, c, Reflect.get(from, c));
         }
     });
     to.needsUpdate = true;

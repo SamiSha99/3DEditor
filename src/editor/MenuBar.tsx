@@ -6,7 +6,7 @@ import View from "@orb_UI/menubar/View"
 import { MenuBarStyle } from "@orb_UI/style";
 
 export const Menubar = () => {
-    const [_state, setState] = useState("");
+    const [, setState] = useState("");
     return (
         <MenuBarStyle>
             <File onclick={() => setState("file")} />

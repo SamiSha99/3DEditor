@@ -15,7 +15,7 @@ export function doImport(onImport: OnImport<THREE.Object3D>) {
     input.multiple = true;
     input.click();
     input.onchange = ((e: Event) => {
-        const filelist = (e as any as React.ChangeEvent<HTMLInputElement>).target.files;
+        const filelist = (e.target as HTMLInputElement).files;
         if (filelist) {
             if (filelist.length <= 0) {
                 message.error("No files were selected.");
@@ -46,13 +46,13 @@ export function doImportTexture(onImport: OnImport<THREE.Texture>) {
     input.accept = ".png, .svg, .jpg, .jpeg, .tga, .bmp, .webp, .hdr";
     input.click();
     input.onchange = ((e: Event) => {
-        const filelist = (e as any as React.ChangeEvent<HTMLInputElement>).target.files;
+        const filelist = (e.target as HTMLInputElement).files;
         if (filelist) {
             if (filelist.length <= 0) {
                 message.error("No files were selected.");
                 return;
             }
-            let files: File[] = [];
+            const files: File[] = [];
             for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
             files.map((file) => {
                 importTexture(file, (res) => {
@@ -112,13 +112,13 @@ export function doImportAnimationClip(onImport: OnImport<THREE.AnimationClip>) {
     input.accept = ".ac";
     input.click();
     input.onchange = ((e: Event) => {
-        const filelist = (e as any as React.ChangeEvent<HTMLInputElement>).target.files;
+        const filelist = (e.target as HTMLInputElement).files;
         if (filelist) {
             if (filelist.length <= 0) {
                 message.error("No files were selected.");
                 return;
             }
-            let files: File[] = [];
+            const files: File[] = [];
             for (let i = 0; i < filelist.length; i++) files.push(filelist[i]);
             files.map((file) => {
                 const reader = new FileReader();
@@ -144,13 +144,13 @@ export function doImportScene(onImport: OnImport<THREE.Scene>) {
     input.accept = ".scene, .json";
     input.click();
     input.onchange = ((e: Event) => {
-        const filelist = (e as any as React.ChangeEvent<HTMLInputElement>).target.files;
+        const filelist = (e.target as HTMLInputElement).files;
         if (filelist) {
             if (filelist.length <= 0) {
                 message.error("No files were selected.");
                 return;
             }
-            let file: File = filelist[0];
+            const file: File = filelist[0];
             // files.map((file) => {
             // const reader = new FileReader();
             // reader.addEventListener('load', async function (event) {
@@ -415,7 +415,7 @@ async function handleZIP(data: string | ArrayBuffer | null | undefined, onImport
             case ".obj": {
                 // Get MTL via pathing
                 const objMap = strFromU8(zip[path]);
-                const mtlPath = path.includes("/") ? path.replace(/([^\/]+$)/g, matchOnMap(objMap, "mtllib")) : matchOnMap(objMap, "mtllib");
+                const mtlPath = path.includes("/") ? path.replace(/([^/]+$)/g, matchOnMap(objMap, "mtllib")) : matchOnMap(objMap, "mtllib");
 
                 let object: THREE.Object3D;
                 const loader = new OBJLoader(manager);
@@ -458,7 +458,7 @@ export function modifyMap(input: string, key: string, value: string) {
 }
 
 function createFilesMap(files: FileList | File[]) {
-    const map = {} as Record<string, any>;
+    const map = {} as Record<string, File>;
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         map[file.name] = file;

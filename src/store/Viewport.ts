@@ -7,7 +7,7 @@ import { TransformControls, TransformControlsGizmo } from 'three/examples/jsm/co
 import { OrbitControls } from 'three/examples/jsm/Addons';
 import { translateOriginPoint } from '@orb_utils/three/Geometry';
 
-export const ViewportContext = createContext<Viewport>({} as any)
+export const ViewportContext = createContext<Viewport>({} as Viewport)
 export const useViewport = () => useContext(ViewportContext);
 
 // This controls all related content that allows the user to interact with the scene
@@ -96,7 +96,7 @@ export class Viewport {
             }
             else
                 this.controls.attach(object);
-            this.controls.connect(this.editor.canvas);
+            this.editor.canvas && this.controls.connect(this.editor.canvas);
         }
         else {
             this.controls.detach();
@@ -151,7 +151,7 @@ export class Viewport {
         this.setTarget(hit);
     }
 
-    onLoad = (canvas: HTMLCanvasElement, _gl: THREE.WebGLRenderer) => {
+    onLoad = (canvas: HTMLCanvasElement) => {
         canvas.onpointerup = this.onSelectObject;
         
         this.cameraControls.connect(canvas);
@@ -222,18 +222,20 @@ export class Viewport {
                         translateOriginPoint(this.target, draggedTo, true);
                     }
                     break;
-                case "rotate":
+                case "rotate": {
                     const draggerRot = transHelper.rotation;
                     geometry.rotateX(draggerRot.x);
                     geometry.rotateY(draggerRot.y);
                     geometry.rotateZ(draggerRot.z);
                     transHelper.rotation.set(0, 0, 0);
                     break;
-                case "scale":
+                }
+                case "scale": {
                     const draggerScale = transHelper.scale;
                     geometry.scale(draggerScale.x, draggerScale.y, draggerScale.z);
                     transHelper.scale.set(1, 1, 1);
                     break;
+                }
             }
 
         }

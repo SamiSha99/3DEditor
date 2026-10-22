@@ -95,10 +95,10 @@ export const Background = observer(() => {
 export const Environment = observer(() => {
     const { scene, setEnvironment } = useEditor();
     const [environmentOption, setEnvironmentOption] = useState<number>(() => { return !scene.environment ? 0 : (scene.environment == lastEnvironmentSample?.data ? 1 : 2) });
-    const [_selectedSample, setSelectedSample] = useState<string | undefined>(lastEnvironmentSample?.name);
+    const [, setSelectedSample] = useState<string | undefined>(lastEnvironmentSample?.name);
 
     const list = (() => {
-        let options: { value: string, label: string }[] = [];
+        const options: { value: string, label: string }[] = [];
         environments.map((e) => {
             const obj = { value: e ? e : "undefined", label: e ? e.replace(/^./, e[0].toUpperCase()) : "None" };
             if (e)

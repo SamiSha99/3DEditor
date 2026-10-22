@@ -5,7 +5,7 @@ import { Viewport } from "./Viewport";
 import { createContext, useContext } from "react";
 import { IModelFileResponse, UpdatableObject3D } from './Interfaces';
 
-export const EditorContext = createContext<Editor>({} as any)
+export const EditorContext = createContext<Editor>({} as Editor)
 export const useEditor = () => useContext(EditorContext);
 
 export class Editor {
@@ -159,7 +159,7 @@ export class Editor {
         this.gl = gl;
         this.gl.shadowMap.enabled = true;
         gl.setAnimationLoop(this.update);
-        this.viewport.onLoad(this.canvas, this.gl);
+        this.viewport.onLoad(this.canvas);
     }
 
 

@@ -24,7 +24,7 @@ export const Icon = (icon: IconDefinition, props?: Partial<FontAwesomeIconProps>
 
 // For convenience just pass the key name to get the font awesome icon
 // TODO fix this hsit comment ^
-export const tabIconCollection = {
+const tabIconCollection = {
     Scene: { icon: faMountain, title: "Scene" },
     Object: { icon: faCube, title: "Object" },
     Animation: { icon: faPersonRunning, title: "Animation" },

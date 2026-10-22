@@ -86,9 +86,9 @@ export class Animator {
 
     TabAnimation = observer(() => {
 
-        const [_loopStop, _loopStart, _isActive] = useDeltaTime((d) => { this.mixer.update(d); });
+        useDeltaTime((d) => { this.mixer.update(d); });
 
-        useOnUnmount(() => this.cleanup(), []);
+        useOnUnmount(() => this.cleanup());
 
         const animationSelect = this.clips.map((ani) => {
             return { value: ani.uuid, label: ani.name };
@@ -198,7 +198,7 @@ export class Animator {
         const [time, setTime] = useState(action.time);
         const clip = action.getClip();
 
-        const [loopStop, loopStart, _isActive] = useDeltaTime(() => {
+        const [loopStop, loopStart] = useDeltaTime(() => {
             setTime(action.time);
         }, false);
 

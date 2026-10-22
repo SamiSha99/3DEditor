@@ -23,9 +23,7 @@ type DraggableButtonControllerInterface = {
 }
 
 export const DraggableButtonController = (props: DraggableButtonControllerInterface) => {
-    let { step, triggerSize, onStep, onDragEnd } = props;
-    if (!triggerSize) triggerSize = DEFAULT_TRIGGER_SIZE
-    if (!step) step = DEFAULT_STEP;
+    const { step = DEFAULT_STEP, triggerSize = DEFAULT_TRIGGER_SIZE, onStep, onDragEnd } = props;
     const buttonRef = useRef<HTMLButtonElement>(null);
     let stepPosition = -1;
     let stepRate = 0;
