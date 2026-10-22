@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { message } from 'antd';
+import { message } from "@orb_utils/Message";
 import { OBJLoader, USDLoader, MTLLoader, FBXLoader, PLYLoader, STLLoader, HDRLoader } from 'three/examples/jsm/Addons.js';
 import { strFromU8, unzipSync } from 'three/examples/jsm/libs/fflate.module.js';
 import { isFileImage } from '@orb_utils/Main';

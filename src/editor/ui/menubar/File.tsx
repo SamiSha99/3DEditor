@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ExportOutlined, ImportOutlined, SwapOutlined } from "@ant-design/icons";
-import { Dropdown, Button, message, Modal, Divider } from "antd";
+import { Dropdown, Button, Modal, Divider } from "antd";
+import { message } from "@orb_utils/Message";
 import * as THREE from "three";
 import { useEditor } from "@orb_Editor";
 import { doImport, doImportScene } from "@orb_tools/Importer";

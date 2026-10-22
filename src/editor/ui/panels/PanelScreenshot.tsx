@@ -1,7 +1,8 @@
 import { screenshotCanvas } from "@orb_tools/Previewer";
 import { DraggablePanel } from "../antd/DraggablePanel";
 import { Environment, OrbitControls } from "@react-three/drei";
-import { Alert, Button, message, Row, Space } from "antd";
+import { Alert, Button, Row, Space } from "antd";
+import { message } from "@orb_utils/Message";
 import { observer } from "mobx-react-lite";
 import { PANEL_SCREENSHOT } from "./Main";
 import { Canvas } from "@react-three/fiber";

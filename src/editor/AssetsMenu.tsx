@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite"
-import { Dropdown, Image, MenuProps, message, Tooltip } from "antd";
+import { Dropdown, Image, MenuProps, Tooltip } from "antd";
+import { message } from "@orb_utils/Message";
 import { useEditor } from "@orb_Editor";
 import { IModelFileResponse } from "src/store/Interfaces";
 import { doImportFile } from "@orb_tools/Importer";

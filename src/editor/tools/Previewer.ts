@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
-import { message } from 'antd';
+import { message } from "@orb_utils/Message";
 import { sleep } from '../utils/Main.ts';
 
 export async function Screenshot(object: THREE.Object3D, width: number = 1024, height: number = 1024) {
