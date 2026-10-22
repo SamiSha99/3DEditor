@@ -1,4 +1,4 @@
-import { Slider } from "antd";
+import { Slider, Space } from "antd";
 import React, { useState } from "react";
 import { PRECISION_AMOUNT, Limit, resolveLabel, ItemObject, AnyObject, invalidVariable } from "./Item";
 import { useInsideItemRow } from "./ItemContext";
@@ -68,36 +68,38 @@ export const ItemNumber = <T extends AnyObject, K extends KeyToValueOfType<T, Nu
                     </div>
                 }
                 <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center" }}>
-                    <InputNumberStyle
-                        style={{ flex: 1, minWidth: 0 }}
-                        controls={false}
-                        onFocus={(e) => { loopStop(); onFocus && onFocus(e); }}
-                        onKeyDown={(e) => {
-                            if (e.code == "Enter") {
-                                const v = evaluateFormula((e.target as HTMLInputElement).value);
+                    <Space.Compact style={{ flex: 1, minWidth: 0 }}>
+                        {addonBefore != null && <Space.Addon>{addonBefore}</Space.Addon>}
+                        <InputNumberStyle
+                            style={{ flex: 1, minWidth: 0 }}
+                            controls={false}
+                            onFocus={(e) => { loopStop(); onFocus && onFocus(e); }}
+                            onKeyDown={(e) => {
+                                if (e.code == "Enter") {
+                                    const v = evaluateFormula((e.target as HTMLInputElement).value);
+                                    v != null && onChangeNumber(v);
+                                }
+                            }}
+                            onBlur={(e) => {
+                                loopStart();
+                                const v = evaluateFormula(e.target.value);
                                 v != null && onChangeNumber(v);
-                            }
-                        }}
-                        onBlur={(e) => {
-                            loopStart();
-                            const v = evaluateFormula(e.target.value);
-                            v != null && onChangeNumber(v);
-                            onBlur && onBlur(e);
-                        }}
-                        value={v}
-                        min={limit?.min}
-                        max={limit?.max}
-                        precision={addonAfter ? 2 : PRECISION_AMOUNT}
-                        formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, addonAfter ? 2 : PRECISION_AMOUNT)}` }}
-                        parser={(v) => v as unknown as number}
-                        addonBefore={addonBefore}
-                        addonAfter={addonAfter}
-                        changeOnWheel
-                        readOnly={readonly}
-                        step={step == undefined ? 0.1 : step}
-                        disabled={readonly || disabled}
-                        onChange={(v) => onChangeNumber(v as number)}
-                    />
+                                onBlur && onBlur(e);
+                            }}
+                            value={v}
+                            min={limit?.min}
+                            max={limit?.max}
+                            precision={addonAfter ? 2 : PRECISION_AMOUNT}
+                            formatter={(v) => { return `${!v ? 0 : toFixedStripped(v, addonAfter ? 2 : PRECISION_AMOUNT)}` }}
+                            parser={(v) => v as unknown as number}
+                            changeOnWheel
+                            readOnly={readonly}
+                            step={step == undefined ? 0.1 : step}
+                            disabled={readonly || disabled}
+                            onChange={(v) => onChangeNumber(v as number)}
+                        />
+                        {addonAfter != null && <Space.Addon>{addonAfter}</Space.Addon>}
+                    </Space.Compact>
                     {
                         !readonly && !nodrag && !disabled &&
                         <DraggableButtonController

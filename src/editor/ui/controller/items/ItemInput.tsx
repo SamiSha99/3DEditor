@@ -1,4 +1,4 @@
-import { Input } from "antd";
+import { Input, Space } from "antd";
 import React, { useState } from "react";
 import { ItemObject, resolveLabel, AnyObject, invalidVariable } from "./Item";
 import { ItemRow } from "./ItemRow";
@@ -45,21 +45,23 @@ export const ItemInput = <T extends AnyObject, K extends KeyToValueOfType<T, str
             }
             {
                 !textArea &&
-                <Input
-                    onFocus={loopStop}
-                    onBlur={loopStart}
-                    style={{ display: 'inline-block', width: '100%' }}
-                    value={v}
-                    addonBefore={addonBefore}
-                    addonAfter={addonAfter}
-                    readOnly={readonly}
-                    disabled={readonly}
-                    onChange={(v) => {
-                        if (v == null) return;
-                        setValue(v.target.value);
-                        object[variable] = v.target.value as T[K];
-                        onChange && onChange(v.target.value);
-                    }} />
+                <Space.Compact block>
+                    {addonBefore != null && <Space.Addon>{addonBefore}</Space.Addon>}
+                    <Input
+                        onFocus={loopStop}
+                        onBlur={loopStart}
+                        style={{ flex: 1, minWidth: 0 }}
+                        value={v}
+                        readOnly={readonly}
+                        disabled={readonly}
+                        onChange={(v) => {
+                            if (v == null) return;
+                            setValue(v.target.value);
+                            object[variable] = v.target.value as T[K];
+                            onChange && onChange(v.target.value);
+                        }} />
+                    {addonAfter != null && <Space.Addon>{addonAfter}</Space.Addon>}
+                </Space.Compact>
             }
         </ItemRow>
     )

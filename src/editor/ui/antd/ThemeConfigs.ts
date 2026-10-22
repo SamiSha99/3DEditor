@@ -22,6 +22,11 @@ export const MainTheme: ThemeConfig = {
         Select: {
             colorBorder: "rgba(0, 0, 0, 0.02)"
         },
+        Space: {
+            fontSize: 12,
+            colorBorder: "rgba(0, 0, 0, 0.02)",
+            colorBgContainerDisabled: "rgba(255, 255, 255, 0.04)"
+        },
         Button: {
             defaultBg: "#212121",
             defaultHoverBg: "#323232",

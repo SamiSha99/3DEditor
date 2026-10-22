@@ -1,4 +1,4 @@
-import { Tooltip } from "antd";
+import { Space, Tooltip } from "antd";
 import { useState } from "react";
 import { MathUtils } from "three";
 import { toFixedStripped } from "@orb_utils/Main";
@@ -54,24 +54,26 @@ export const AxisInput = (props: AxisInputInterface) => {
 
     const field = (
         <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center" }}>
-            <InputNumberStyle
-                style={{ flex: 1, minWidth: 0 }}
-                size="small"
-                controls={false}
-                changeOnWheel
-                precision={precision}
-                formatter={(v) => `${!v ? 0 : toFixedStripped(v, precision)}`}
-                parser={(v) => v as unknown as number}
-                value={value}
-                min={limit?.min}
-                max={limit?.max}
-                step={step}
-                addonBefore={label}
-                onFocus={onFocus}
-                onBlur={(e) => { onBlur && onBlur(); commit(e.target.value); }}
-                onKeyDown={(e) => { e.code == "Enter" && commit((e.target as HTMLInputElement).value); }}
-                onChange={(v) => { v != null && onChange(v); }}
-            />
+            <Space.Compact size="small" style={{ flex: 1, minWidth: 0 }}>
+                <Space.Addon>{label}</Space.Addon>
+                <InputNumberStyle
+                    style={{ flex: 1, minWidth: 0 }}
+                    size="small"
+                    controls={false}
+                    changeOnWheel
+                    precision={precision}
+                    formatter={(v) => `${!v ? 0 : toFixedStripped(v, precision)}`}
+                    parser={(v) => v as unknown as number}
+                    value={value}
+                    min={limit?.min}
+                    max={limit?.max}
+                    step={step}
+                    onFocus={onFocus}
+                    onBlur={(e) => { onBlur && onBlur(); commit(e.target.value); }}
+                    onKeyDown={(e) => { e.code == "Enter" && commit((e.target as HTMLInputElement).value); }}
+                    onChange={(v) => { v != null && onChange(v); }}
+                />
+            </Space.Compact>
             <DraggableButtonController step={step} onStep={(value, _rate, direction) => onStep(value * direction)} />
         </div>
     );
